@@ -11,12 +11,12 @@ public class CommonProxy implements ISidedProxy {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
-		
+		GameRegistry.registerTileEntity(TileEntityHeater.class, "blockHeater");
 	}
 
 	@Override
 	public void init(FMLInitializationEvent event) {
-		GameRegistry.registerTileEntity(TileEntityHeater.class, "blockHeater");
+		
 	}
 
 	@Override
