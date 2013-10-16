@@ -27,9 +27,13 @@ public class RIOConfiguration {
 	}
 	
 	public void scanConfig() {
+		this.config.load();
 		this.blockRIOID = config.getBlock("block_id.RIO", 600).getInt(600);
 		this.blockHeaterID = config.getBlock("block_id.heater", 601).getInt(601);
-		this.itemUpgradeID = config.getItem("item_id.upgrade", 6001).getInt(6001);
+		this.itemUpgradeID = config.getItem("item_id.upgrade", 6000).getInt(6000);
+		if (this.config.hasChanged()) {
+			this.config.save();
+		}
 		
 		// Item/Block init
 		this.blockHeater = new BlockHeater(blockHeaterID).setUnlocalizedName("blockHeater");
