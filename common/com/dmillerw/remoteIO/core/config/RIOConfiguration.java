@@ -1,4 +1,4 @@
-package com.dmillerw.remoteIO.core;
+package com.dmillerw.remoteIO.core.config;
 
 import com.dmillerw.remoteIO.block.BlockHeater;
 
@@ -15,13 +15,11 @@ public class RIOConfiguration {
 	public int blockRIOID;
 	public int blockHeaterID;
 	
-	public int itemToolID;
 	public int itemUpgradeID;
 	
 	public Block blockRIO;
 	public Block blockHeater;
 	
-	public Item itemTool;
 	public Item itemUpgrade;
 	
 	public RIOConfiguration(Configuration config) {
@@ -31,7 +29,6 @@ public class RIOConfiguration {
 	public void scanConfig() {
 		this.blockRIOID = config.getBlock("block_id.RIO", 600).getInt(600);
 		this.blockHeaterID = config.getBlock("block_id.heater", 601).getInt(601);
-		this.itemToolID = config.getItem("item_id.tool", 6000).getInt(6001);
 		this.itemUpgradeID = config.getItem("item_id.upgrade", 6001).getInt(6001);
 		
 		// Item/Block init
