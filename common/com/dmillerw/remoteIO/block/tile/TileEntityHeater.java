@@ -1,6 +1,10 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.ForgeDirection;
@@ -9,27 +13,33 @@ public class TileEntityHeater extends TileEntityCore {
 
 	public boolean hasLava = false;
 	
-	public TileEntityFurnace furnaceTile = null;
+	public List<TileEntityFurnace> furnaceTiles = new ArrayList<TileEntityFurnace>();
 	
 	public void updateEntity() {
 		if (!this.worldObj.isRemote) {
 			if (this.worldObj.getTotalWorldTime() % 20 == 0) {
-				onNeighborBlockUpdate(0);
+				updateLavaSources();
 			}
 			
-			if (this.worldObj.getTotalWorldTime() % 5 == 0) {
+			for (TileEntityFurnace furnaceTile : furnaceTiles) {
 				if (furnaceTile != null && hasLava) {
-					furnaceTile.furnaceBurnTime = furnaceTile.currentItemBurnTime = 20;
+					furnaceTile.furnaceBurnTime = furnaceTile.currentItemBurnTime = 100;
 				}
 			}
 		}
 	}
 	
-	public void onNeighborBlockUpdate(int blockID) {
-		boolean prevHasLava = hasLava;
+	public void onNeighborBlockUpdate() {
+		updateLavaSources();
+		updateFurnaces();
+	}
+
+	private void updateLavaSources() {
 		int lavaSources = 0;
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ) == Block.lavaStill.blockID) {
+			int id = this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			int meta = this.worldObj.getBlockMetadata(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			if (id == Block.lavaStill.blockID || (id == Block.lavaMoving.blockID && meta == 0)) {
 				++lavaSources;
 			}
 		}
@@ -38,25 +48,20 @@ public class TileEntityHeater extends TileEntityCore {
 		} else {
 			hasLava = false;
 		}
+		updateLava();
+	}
+	
+	private void updateFurnaces() {
+		this.furnaceTiles.clear();
 		
-		if (prevHasLava != hasLava) {
-			updateLava();
-		}
-		
-		
-		if (blockID == Block.furnaceIdle.blockID || blockID == Block.furnaceBurning.blockID) {
-			this.furnaceTile = null;
-			
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				int id = this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
-				if (id == Block.furnaceIdle.blockID || id == Block.furnaceBurning.blockID) {
-					this.furnaceTile = (TileEntityFurnace) worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
-					break;
-				}
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			int id = this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			if (id == Block.furnaceIdle.blockID || id == Block.furnaceBurning.blockID) {
+				this.furnaceTiles.add((TileEntityFurnace) worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ));
 			}
 		}
 	}
-
+	
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
@@ -69,7 +74,6 @@ public class TileEntityHeater extends TileEntityCore {
 		super.readFromNBT(nbt);
 		
 		this.hasLava = nbt.getBoolean("hasLava");
-		this.updateLava();
 	}
 	
 	@Override

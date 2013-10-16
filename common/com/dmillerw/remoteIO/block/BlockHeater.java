@@ -25,6 +25,8 @@ public class BlockHeater extends BlockContainer {
 	public BlockHeater(int id) {
 		super(id, Material.rock);
 		
+		this.setHardness(5F);
+		this.setResistance(1F);
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
@@ -33,7 +35,7 @@ public class BlockHeater extends BlockContainer {
 		TileEntityHeater tile = (TileEntityHeater) world.getBlockTileEntity(x, y, z);
 		
 		if (tile != null) {
-			tile.onNeighborBlockUpdate(Block.furnaceIdle.blockID);
+			tile.onNeighborBlockUpdate();
 		}
 	}
 	
@@ -42,7 +44,7 @@ public class BlockHeater extends BlockContainer {
 		TileEntityHeater tile = (TileEntityHeater) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null) {
-			tile.onNeighborBlockUpdate(blockID);
+			tile.onNeighborBlockUpdate();
 		}
 	}
 	
