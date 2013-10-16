@@ -15,11 +15,13 @@ public class RIOConfiguration {
 	public int blockRIOID;
 	public int blockHeaterID;
 	
+	public int itemToolID;
 	public int itemUpgradeID;
 	
 	public Block blockRIO;
 	public Block blockHeater;
 	
+	public Item itemTool;
 	public Item itemUpgrade;
 	
 	public RIOConfiguration(Configuration config) {
@@ -30,7 +32,8 @@ public class RIOConfiguration {
 		this.config.load();
 		this.blockRIOID = config.getBlock("block_id.RIO", 600).getInt(600);
 		this.blockHeaterID = config.getBlock("block_id.heater", 601).getInt(601);
-		this.itemUpgradeID = config.getItem("item_id.upgrade", 6000).getInt(6000);
+		this.itemToolID = config.getItem("item_id.tool", 6000).getInt(6000);
+		this.itemUpgradeID = config.getItem("item_id.upgrade", 6001).getInt(6001);
 		if (this.config.hasChanged()) {
 			this.config.save();
 		}
