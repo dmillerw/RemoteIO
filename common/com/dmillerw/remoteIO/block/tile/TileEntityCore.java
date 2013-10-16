@@ -1,10 +1,10 @@
 package com.dmillerw.remoteIO.block.tile;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 public abstract class TileEntityCore extends TileEntity {
 

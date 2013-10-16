@@ -1,19 +1,20 @@
 package com.dmillerw.remoteIO.block;
 
-import com.dmillerw.remoteIO.block.render.RenderBlockHeater;
-import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
-import com.dmillerw.remoteIO.lib.ModInfo;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+
+import com.dmillerw.remoteIO.block.render.RenderBlockHeater;
+import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.lib.ModInfo;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -24,7 +25,7 @@ public class BlockHeater extends BlockContainer {
 	public BlockHeater(int id) {
 		super(id, Material.rock);
 		
-		this.setCreativeTab(CreativeTabs.tabRedstone);
+		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
 	@Override

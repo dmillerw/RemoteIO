@@ -1,12 +1,14 @@
 package com.dmillerw.remoteIO.core.config;
 
-import com.dmillerw.remoteIO.block.BlockHeater;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.Configuration;
+
+import com.dmillerw.remoteIO.block.BlockHeater;
+import com.dmillerw.remoteIO.item.ItemTool;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class RIOConfiguration {
 
@@ -42,6 +44,10 @@ public class RIOConfiguration {
 		this.blockHeater = new BlockHeater(blockHeaterID).setUnlocalizedName("blockHeater");
 		GameRegistry.registerBlock(this.blockHeater, "blockHeater");
 		LanguageRegistry.addName(this.blockHeater, "Heater");
+		
+		this.itemTool = new ItemTool(itemToolID).setUnlocalizedName("itemTool");
+		GameRegistry.registerItem(this.itemTool, "itemTool");
+		LanguageRegistry.addName(this.itemTool, "RemoteIO Linker");
 	}
 	
 }
