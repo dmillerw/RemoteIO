@@ -1,0 +1,23 @@
+package com.dmillerw.remoteIO.block.tile;
+
+import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.tileentity.TileEntity;
+
+public abstract class TileEntityCore extends TileEntity {
+
+	@Override
+	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
+		onUpdatePacket(pkt.data);
+		worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+	}
+	
+	public void sendUpdateToClient(NBTTagCompound tag) {
+		PacketDispatcher.sendPacketToAllInDimension(new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, tag), this.worldObj.provider.dimensionId);
+	}
+	
+	public abstract void onUpdatePacket(NBTTagCompound tag);
+	
+}
