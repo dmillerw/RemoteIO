@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileEntityRIO extends TileEntityCore implements IInventory, IFluidHandler {
+public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler {
 
 	public boolean validCoordinates = false;
 	
@@ -22,13 +22,22 @@ public class TileEntityRIO extends TileEntityCore implements IInventory, IFluidH
 	public int z;
 	public int d;
 	
+	@Override
+	public void updateEntity() {
+		if (!worldObj.isRemote) {
+			if (worldObj.getTotalWorldTime() % 200 == 0) { // Force detection check every 10 seconds
+				setValid(getTileEntity() != null);
+			}
+		}
+	}
+	
 	public void setCoordinates(int x, int y, int z, int d) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.d = d;
 		
-		this.validCoordinates = true;
+		setValid(true);
 	}
 	
 	public boolean hasCoordinates() {
@@ -41,7 +50,7 @@ public class TileEntityRIO extends TileEntityCore implements IInventory, IFluidH
 		this.z = 0;
 		this.d = 0;
 		
-		this.validCoordinates = false;
+		setValid(false);
 	}
 	
 	@Override
@@ -79,7 +88,7 @@ public class TileEntityRIO extends TileEntityCore implements IInventory, IFluidH
 		if (tile != null) {
 			return tile;
 		} else {
-			this.validCoordinates = false;
+			setValid(false);
 			return null;
 		}
 	}
@@ -100,8 +109,19 @@ public class TileEntityRIO extends TileEntityCore implements IInventory, IFluidH
 		return null;
 	}
 	
+	private void setValid(boolean valid) {
+		this.validCoordinates = valid;
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setBoolean("valid", valid);
+		sendUpdateToClient(nbt);
+	}
+	
 	@Override
-	public void onUpdatePacket(NBTTagCompound tag) {}
+	public void onUpdatePacket(NBTTagCompound tag) {
+		if (tag.hasKey("valid")) {
+			this.validCoordinates = tag.getBoolean("valid");
+		}
+	}
 
 	/* IINVENTORY */
 	@Override

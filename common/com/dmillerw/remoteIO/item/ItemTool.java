@@ -11,7 +11,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.tile.TileEntityRIO;
+import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -34,7 +34,7 @@ public class ItemTool extends Item {
 			int meta = world.getBlockMetadata(x, y, z);
 			
 			if (id == RemoteIO.instance.config.blockRIOID) {
-				TileEntityRIO tile = (TileEntityRIO) world.getBlockTileEntity(x, y, z);
+				TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {

@@ -5,8 +5,10 @@ import net.minecraft.item.Item;
 import net.minecraftforge.common.Configuration;
 
 import com.dmillerw.remoteIO.block.BlockHeater;
-import com.dmillerw.remoteIO.block.BlockRIO;
+import com.dmillerw.remoteIO.block.BlockIO;
 import com.dmillerw.remoteIO.item.ItemTool;
+import com.dmillerw.remoteIO.item.ItemUpgrade;
+import com.dmillerw.remoteIO.item.Upgrade;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -42,7 +44,7 @@ public class RIOConfiguration {
 		}
 		
 		// Item/Block init
-		this.blockRIO = new BlockRIO(blockRIOID).setUnlocalizedName("blockIO");
+		this.blockRIO = new BlockIO(blockRIOID).setUnlocalizedName("blockIO");
 		GameRegistry.registerBlock(this.blockRIO, "blockIO");
 		LanguageRegistry.addName(this.blockRIO, "IO Block");
 		
@@ -53,6 +55,12 @@ public class RIOConfiguration {
 		this.itemTool = new ItemTool(itemToolID).setUnlocalizedName("itemTool");
 		GameRegistry.registerItem(this.itemTool, "itemTool");
 		LanguageRegistry.addName(this.itemTool, "RemoteIO Linker");
+		
+		this.itemUpgrade = new ItemUpgrade(itemUpgradeID).setUnlocalizedName("itemUpgrade");
+		GameRegistry.registerItem(this.itemUpgrade, "itemUpgrade");
+		for (Upgrade upgrade : Upgrade.values()) {
+			LanguageRegistry.addName(upgrade.toItemStack(), upgrade.localizedName);
+		}
 	}
 	
 }
