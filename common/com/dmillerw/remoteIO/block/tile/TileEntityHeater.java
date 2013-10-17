@@ -12,11 +12,17 @@ import net.minecraftforge.common.ForgeDirection;
 public class TileEntityHeater extends TileEntityCore {
 
 	public boolean hasLava = false;
+	public boolean firstLoad = true;
 	
 	public List<TileEntityFurnace> furnaceTiles = new ArrayList<TileEntityFurnace>();
 	
 	public void updateEntity() {
 		if (!this.worldObj.isRemote) {
+			if (firstLoad) {
+				updateFurnaces();
+				firstLoad = false;
+			}
+			
 			if (this.worldObj.getTotalWorldTime() % 20 == 0) {
 				updateLavaSources();
 			}
