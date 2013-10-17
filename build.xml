@@ -85,7 +85,7 @@
          <fileset dir="${api.dir}/codechicken" />
 	  </copy> -->
    </target>
-   <target name="build" depends="copy-source,copy-api" unless="already-compiled">
+   <target name="build" depends="copy-source,setup-forge" unless="already-compiled">
       <!-- Recompile -->
       <exec dir="${mcp.dir}" executable="cmd" osfamily="windows" failonerror="true">
          <arg line="/c recompile.bat" />
