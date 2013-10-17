@@ -59,9 +59,9 @@
    <target name="rebuild" depends="clean,install" />
    <target name="forgeinstalled.check" />
    <target name="copy-source">
-      <delete dir="${mcpsrc.dir}/remoteIO" />
-      <copy todir="${mcpsrc.dir}/remoteIO">
-         <fileset dir="${src.dir}/remoteIO" />
+      <delete dir="${mcpsrc.dir}/com" />
+      <copy todir="${mcpsrc.dir}/com">
+         <fileset dir="${src.dir}/com" />
          <filterset>
             <filter token="MAJOR_VERSION" value="${major.ver}" />
             <filter token="MINOR_VERSION" value="${minor.ver}" />
