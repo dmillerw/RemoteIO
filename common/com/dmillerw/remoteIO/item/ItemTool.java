@@ -49,6 +49,7 @@ public class ItemTool extends Item {
 					}
 				} else {
 					if (tile.hasCoordinates()) {
+						tile.clearCoordinates();
 						player.addChatMessage("Cleared selected Remote IO's coordinates!");
 						return false;
 					}
