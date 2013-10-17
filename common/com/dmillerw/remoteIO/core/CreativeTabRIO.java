@@ -3,7 +3,7 @@ package com.dmillerw.remoteIO.core;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
-import com.dmillerw.remoteIO.RemoteInteraction;
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -16,7 +16,7 @@ public class CreativeTabRIO extends CreativeTabs {
 	public int itemMeta = 0;
 
 	static {
-		tab = new CreativeTabRIO(ModInfo.NAME).setIcon(RemoteInteraction.instance.config.itemToolID + 256, 0);
+		tab = new CreativeTabRIO(ModInfo.NAME).setIcon(RemoteIO.instance.config.itemToolID + 256, 0);
 	}
 
 	public CreativeTabRIO(String label) {

@@ -15,10 +15,10 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
-public class RemoteInteraction {
+public class RemoteIO {
 
 	@Instance(ModInfo.ID)
-	public static RemoteInteraction instance;
+	public static RemoteIO instance;
 	
 	@SidedProxy(serverSide=ModInfo.COMMON_PROXY, clientSide=ModInfo.CLIENT_PROXY)
 	public static ISidedProxy proxy;
