@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.common.Configuration;
 
 import com.dmillerw.remoteIO.block.BlockHeater;
+import com.dmillerw.remoteIO.block.BlockRIO;
 import com.dmillerw.remoteIO.item.ItemTool;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -41,6 +42,10 @@ public class RIOConfiguration {
 		}
 		
 		// Item/Block init
+		this.blockRIO = new BlockRIO(blockRIOID).setUnlocalizedName("blockIO");
+		GameRegistry.registerBlock(this.blockRIO, "blockIO");
+		LanguageRegistry.addName(this.blockRIO, "IO Block");
+		
 		this.blockHeater = new BlockHeater(blockHeaterID).setUnlocalizedName("blockHeater");
 		GameRegistry.registerBlock(this.blockHeater, "blockHeater");
 		LanguageRegistry.addName(this.blockHeater, "Heater");

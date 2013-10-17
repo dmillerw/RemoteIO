@@ -1,6 +1,7 @@
 package com.dmillerw.remoteIO.core.proxy;
 
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
+import com.dmillerw.remoteIO.block.tile.TileEntityRIO;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -12,6 +13,7 @@ public class CommonProxy implements ISidedProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		GameRegistry.registerTileEntity(TileEntityHeater.class, "blockHeater");
+		GameRegistry.registerTileEntity(TileEntityRIO.class, "blockIO");
 	}
 
 	@Override
