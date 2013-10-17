@@ -1,0 +1,14 @@
+[
+{
+	"modid": "RemoteIO",
+	"name": "Remote IO",
+	"version": "@VERSION@",
+	"description": "[description pending]",
+	"credits": "CyanideX, Royalixor",
+	"url": "http://www.electrodynamicsmod.com",
+	"authors": [ "dmillerw" ],
+	"dependencies": [
+		"mod_MinecraftForge"
+	]
+}
+]
