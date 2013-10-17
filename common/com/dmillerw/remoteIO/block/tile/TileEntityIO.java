@@ -1,5 +1,7 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import java.util.EnumSet;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -81,6 +83,13 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 		}
 	}
 	
+	public EnumSet<Interface> getValidInterfaces() {
+		EnumSet set = EnumSet.noneOf(Interface.class);
+		if (getInventory() != null) set.add(Interface.INVENTORY);
+		if (getFluidHandler() != null) set.add(Interface.FLUID);
+		return set;
+	}
+	
 	private TileEntity getTileEntity() {
 		World world = MinecraftServer.getServer().worldServerForDimension(d);
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
@@ -94,7 +103,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 	}
 	
 	private IInventory getInventory() {
-		if (getTileEntity() instanceof IInventory) {
+		if (getTileEntity() != null && getTileEntity() instanceof IInventory) {
 			return (IInventory)getTileEntity();
 		}
 		
@@ -102,7 +111,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 	}
 	
 	private IFluidHandler getFluidHandler() {
-		if (getTileEntity() instanceof IFluidHandler) {
+		if (getTileEntity() != null && getTileEntity() instanceof IFluidHandler) {
 			return (IFluidHandler)getTileEntity();
 		}
 		
@@ -215,4 +224,8 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 		return getFluidHandler() != null ? getFluidHandler().getTankInfo(from) : new FluidTankInfo[0];
 	}
 
+	public enum Interface {
+		INVENTORY, FLUID;
+	}
+	
 }
