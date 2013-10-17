@@ -50,10 +50,10 @@
    <target name="install" depends="build">
       <delete>
          <fileset dir="${dist.dir}">
-            <include name="RemoteIO_*" />
+            <include name="RemoteIO*" />
          </fileset>
       </delete>
-      <jar destfile="${dist.dir}/RemoteIO_-${fullversion}.jar" basedir="${classes.dir}" />
+      <jar destfile="${dist.dir}/RemoteIO-${fullversion}.jar" basedir="${classes.dir}" />
       <delete dir="${classes.dir}" />
    </target>
    <target name="rebuild" depends="clean,install" />
@@ -104,7 +104,7 @@
          <fileset dir="${mcp.dir}/reobf/minecraft" />
       </copy>
       <mkdir dir="${classes.dir}/assets" />
-      <copy todir="${classes.dir}/assets/edx">
+      <copy todir="${classes.dir}/assets/remoteio">
          <fileset dir="${resources.dir}" />
       </copy>
       <copy todir="${classes.dir}" file="pack.mcmeta">
@@ -143,7 +143,7 @@
       <chmod file="${mcp.dir}/reobfuscate.sh" perm="+x" />
       <chmod file="${mcp.dir}/runtime/bin/astyle-osx" perm="+x" />
       <chmod file="${mcp.dir}/runtime/bin/jad-osx" perm="+x" />
-      <mkdir dir="${mcpsrc.dir}/electrodynamics" />
+      <mkdir dir="${mcpsrc.dir}/com" />
    </target>
    <target name="download-forge" depends="download-ant-contrib" unless="forge-exists">
       <taskdef resource="net/sf/antcontrib/antlib.xml">
