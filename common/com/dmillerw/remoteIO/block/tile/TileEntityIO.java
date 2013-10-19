@@ -14,8 +14,15 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.power.IPowerEmitter;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.core.IMachine;
 
-public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler {
+public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler, IMachine, IActionReceptor, IPowerReceptor, IPowerEmitter {
 
 	public boolean validCoordinates = false;
 	
@@ -117,6 +124,38 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 		
 		return null;
 	}
+	
+	private IMachine getBCMachine() {
+		if (getTileEntity() != null && getTileEntity() instanceof IMachine) {
+			return (IMachine)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IActionReceptor getBCActionHandler() {
+		if (getTileEntity() != null && getTileEntity() instanceof IActionReceptor) {
+			return (IActionReceptor)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IPowerReceptor getBCPowerReceptor() {
+		if (getTileEntity() != null && getTileEntity() instanceof IPowerReceptor) {
+			return (IPowerReceptor)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IPowerEmitter getBCPowerEmitter() {
+		if (getTileEntity() != null && getTileEntity() instanceof IPowerEmitter) {
+			return (IPowerEmitter)getTileEntity();
+		}
+		
+		return null;
+	}	
 	
 	private void setValid(boolean valid) {
 		this.validCoordinates = valid;
@@ -224,8 +263,57 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 		return getFluidHandler() != null ? getFluidHandler().getTankInfo(from) : new FluidTankInfo[0];
 	}
 
+	/* IMACHINE */
+	@Override
+	public boolean isActive() {
+		return getBCMachine() != null ? getBCMachine().isActive() : false;
+	}
+
+	@Override
+	public boolean manageFluids() {
+		return getBCMachine() != null ? getBCMachine().manageFluids() : false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return getBCMachine() != null ? getBCMachine().manageSolids() : false;
+	}
+
+	@Override
+	public boolean allowAction(IAction action) {
+		return getBCMachine() != null ? getBCMachine().allowAction(action) : false;
+	}
+	
+	/* IACTIONRECEPTOR */
+	@Override
+	public void actionActivated(IAction action) {
+		if (getBCActionHandler() != null) getBCActionHandler().actionActivated(action);
+	}
+	
+	/* IPOWEREMITTER */
+	@Override
+	public boolean canEmitPowerFrom(ForgeDirection side) {
+		return getBCPowerEmitter() != null ? getBCPowerEmitter().canEmitPowerFrom(side) : false;
+	}
+
+	/* IPOWERRECEPTOR */
+	@Override
+	public PowerReceiver getPowerReceiver(ForgeDirection side) {
+		return getBCPowerReceptor() != null ? getBCPowerReceptor().getPowerReceiver(side) : null;
+	}
+
+	@Override
+	public void doWork(PowerHandler workProvider) {
+		if (getBCPowerReceptor() != null) getBCPowerReceptor().doWork(workProvider);
+	}
+
+	@Override
+	public World getWorld() {
+		return getBCPowerReceptor() != null ? getBCPowerReceptor().getWorld() : null;
+	}
+
 	public enum Interface {
 		INVENTORY, FLUID;
 	}
-	
+
 }

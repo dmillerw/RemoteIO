@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
+import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -17,8 +18,9 @@ public class CommonProxy implements ISidedProxy {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
-		GameRegistry.registerTileEntity(TileEntityHeater.class, "blockHeater");
 		GameRegistry.registerTileEntity(TileEntityIO.class, "blockIO");
+		GameRegistry.registerTileEntity(TileEntityHeater.class, "blockHeater");
+		GameRegistry.registerTileEntity(TileEntityReservoir.class, "blockReservoir");
 	}
 
 	@Override

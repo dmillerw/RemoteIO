@@ -1,6 +1,8 @@
 package com.dmillerw.remoteIO.core.proxy;
 
+import com.dmillerw.remoteIO.block.render.BlockRenderer;
 import com.dmillerw.remoteIO.block.render.RenderBlockHeater;
+import com.dmillerw.remoteIO.block.render.RenderBlockReservoir;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -14,6 +16,7 @@ public class ClientProxy extends CommonProxy {
 		super.preInit(event);
 		
 		RenderingRegistry.registerBlockHandler(new RenderBlockHeater());
+		RenderingRegistry.registerBlockHandler(new RenderBlockReservoir());
 	}
 
 	@Override
