@@ -29,7 +29,7 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IMachine;
 
-public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler, IMachine, IActionReceptor, IActionProvider, ITriggerProvider, IPowerReceptor, IPowerEmitter {
+public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler, IMachine, IActionReceptor, IPowerReceptor, IPowerEmitter {
 
 	public boolean validCoordinates = false;
 	
@@ -151,14 +151,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 	private IActionProvider getBCActionProvider() {
 		if (getTileEntity() != null && getTileEntity() instanceof IActionProvider) {
 			return (IActionProvider)getTileEntity();
-		}
-		
-		return null;
-	}
-	
-	private ITriggerProvider getBCTriggerProvider() {
-		if (getTileEntity() != null && getTileEntity() instanceof ITriggerProvider) {
-			return (ITriggerProvider)getTileEntity();
 		}
 		
 		return null;
@@ -311,23 +303,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 	@Override
 	public void actionActivated(IAction action) {
 		if (getBCActionHandler() != null) getBCActionHandler().actionActivated(action);
-	}
-	
-	/* IACTIONPROVIDER */
-	@Override
-	public LinkedList<IAction> getNeighborActions(Block block, TileEntity tile) {
-		return getBCActionProvider() != null ? getBCActionProvider().getNeighborActions(block, tile) : new LinkedList<IAction>();
-	}
-	
-	/* ITRIGGERPROVIDER */
-	@Override
-	public LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
-		return getBCTriggerProvider() != null ? getBCTriggerProvider().getPipeTriggers(pipe) : new LinkedList<ITrigger>();
-	}
-
-	@Override
-	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
-		return getBCTriggerProvider() != null ? getBCTriggerProvider().getNeighborTriggers(block, tile) : new LinkedList<ITrigger>();
 	}
 	
 	/* IPOWEREMITTER */
