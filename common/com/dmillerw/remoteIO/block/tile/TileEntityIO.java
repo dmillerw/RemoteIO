@@ -1,7 +1,10 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -15,13 +18,18 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.IMachine;
 
-public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler, IMachine, IPowerReceptor, IPowerEmitter {
+public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHandler, IMachine, IActionReceptor, IActionProvider, ITriggerProvider, IPowerReceptor, IPowerEmitter {
 
 	public boolean validCoordinates = false;
 	
@@ -127,6 +135,30 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 	private IMachine getBCMachine() {
 		if (getTileEntity() != null && getTileEntity() instanceof IMachine) {
 			return (IMachine)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IActionReceptor getBCActionHandler() {
+		if (getTileEntity() != null && getTileEntity() instanceof IActionReceptor) {
+			return (IActionReceptor)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IActionProvider getBCActionProvider() {
+		if (getTileEntity() != null && getTileEntity() instanceof IActionProvider) {
+			return (IActionProvider)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private ITriggerProvider getBCTriggerProvider() {
+		if (getTileEntity() != null && getTileEntity() instanceof ITriggerProvider) {
+			return (ITriggerProvider)getTileEntity();
 		}
 		
 		return null;
@@ -273,6 +305,29 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 	@Override
 	public boolean allowAction(IAction action) {
 		return getBCMachine() != null ? getBCMachine().allowAction(action) : false;
+	}
+	
+	/* IACTIONRECEPTOR */
+	@Override
+	public void actionActivated(IAction action) {
+		if (getBCActionHandler() != null) getBCActionHandler().actionActivated(action);
+	}
+	
+	/* IACTIONPROVIDER */
+	@Override
+	public LinkedList<IAction> getNeighborActions(Block block, TileEntity tile) {
+		return getBCActionProvider() != null ? getBCActionProvider().getNeighborActions(block, tile) : new LinkedList<IAction>();
+	}
+	
+	/* ITRIGGERPROVIDER */
+	@Override
+	public LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
+		return getBCTriggerProvider() != null ? getBCTriggerProvider().getPipeTriggers(pipe) : new LinkedList<ITrigger>();
+	}
+
+	@Override
+	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
+		return getBCTriggerProvider() != null ? getBCTriggerProvider().getNeighborTriggers(block, tile) : new LinkedList<ITrigger>();
 	}
 	
 	/* IPOWEREMITTER */
