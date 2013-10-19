@@ -60,6 +60,7 @@
    <target name="forgeinstalled.check" />
    <target name="copy-source">
       <delete dir="${mcpsrc.dir}/com" />
+	  <delete dir="${mcpsrc.dir}/buildcraft" />
       <copy todir="${mcpsrc.dir}/com">
          <fileset dir="${src.dir}/com" />
          <filterset>
@@ -69,6 +70,9 @@
             <filter token="BUILD" value="${env.BUILD_NUMBER}" />
          </filterset>
       </copy>
+	  <copy todir="${mcpsrc.dir}/buildcraft">
+         <fileset dir="${src.dir}/buildcraft" />
+	  </copy>
    </target>
    <target name="copy-api">
 	  <!-- <delete dir="${mcpsrc.dir}/thaumcraft" />
