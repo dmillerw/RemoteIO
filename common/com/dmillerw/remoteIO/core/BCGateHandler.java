@@ -54,7 +54,9 @@ public class BCGateHandler {
 			LinkedList<ITriggerProvider> providers = (LinkedList<ITriggerProvider>) triggerProviders.get(actionManager);
 
 			for (ITriggerProvider provider : providers) {
-				triggers.addAll(provider.getNeighborTriggers(tile.blockType, tile));
+				if (!(provider instanceof IOTriggerProvider)) {
+					triggers.addAll(provider.getNeighborTriggers(tile.blockType, tile));
+				}
 			}
 		} catch(Exception ex) {
 			FMLLog.log(Level.WARNING, "[RemoteIO] Failed to grab triggers for IO block connection!", new Object[0]);
@@ -73,7 +75,9 @@ public class BCGateHandler {
 			LinkedList<IActionProvider> providers = (LinkedList<IActionProvider>) actionProviders.get(actionManager);
 
 			for (IActionProvider provider : providers) {
-				actions.addAll(provider.getNeighborActions(tile.blockType, tile));
+				if (!(provider instanceof IOActionProvider)) {
+					actions.addAll(provider.getNeighborActions(tile.blockType, tile));
+				}
 			}
 		} catch(Exception ex) {
 			FMLLog.log(Level.WARNING, "[RemoteIO] Failed to grab actions for IO block connection!", new Object[0]);
