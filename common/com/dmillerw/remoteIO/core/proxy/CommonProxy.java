@@ -25,8 +25,9 @@ public class CommonProxy implements ISidedProxy {
 
 	@Override
 	public void init(FMLInitializationEvent event) {
-		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockHeater), new Object[] {"SSS", "SFS", "SBS", 'S', Block.cobblestone, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
 		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockRIO, 2, 0), new Object[] {"SIS", "ESE", "SIS", 'S', Block.stone, 'I', Block.blockIron, 'E', Item.enderPearl});
+		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockHeater), new Object[] {"SSS", "SFS", "SBS", 'S', Block.cobblestone, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
+		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockReservoir), new Object[] {"SSS", "SFS", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
 		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
 	}
 
