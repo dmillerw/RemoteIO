@@ -19,6 +19,7 @@ public class ItemUpgrade extends Item {
 		super(id);
 		
 		this.setHasSubtypes(true);
+		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
 	@Override
