@@ -40,7 +40,6 @@ public class BCGateHandler {
 			}
 		} catch(Exception ex) {
 			FMLLog.log(Level.WARNING, "[RemoteIO] Failed to register main trigger provider!", new Object[0]);
-			FMLLog.log(Level.WARNING, ex.getMessage(), new Object[0]);
 		}
 	}
 	
@@ -54,8 +53,12 @@ public class BCGateHandler {
 			LinkedList<ITriggerProvider> providers = (LinkedList<ITriggerProvider>) triggerProviders.get(actionManager);
 
 			for (ITriggerProvider provider : providers) {
-				if (!(provider instanceof IOTriggerProvider)) {
-					triggers.addAll(provider.getNeighborTriggers(tile.blockType, tile));
+				if (provider != null && !(provider instanceof IOTriggerProvider)) {
+					for (ITrigger trigger : provider.getNeighborTriggers(tile.blockType, tile)) {
+						if (trigger != null) {
+							triggers.add(trigger);
+						}
+					}
 				}
 			}
 		} catch(Exception ex) {
@@ -75,8 +78,12 @@ public class BCGateHandler {
 			LinkedList<IActionProvider> providers = (LinkedList<IActionProvider>) actionProviders.get(actionManager);
 
 			for (IActionProvider provider : providers) {
-				if (!(provider instanceof IOActionProvider)) {
-					actions.addAll(provider.getNeighborActions(tile.blockType, tile));
+				if (provider != null && !(provider instanceof IOActionProvider)) {
+					for (IAction trigger : provider.getNeighborActions(tile.blockType, tile)) {
+						if (trigger != null) {
+							actions.add(trigger);
+						}
+					}
 				}
 			}
 		} catch(Exception ex) {
