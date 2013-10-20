@@ -2,8 +2,8 @@ package com.dmillerw.remoteIO;
 
 import net.minecraftforge.common.Configuration;
 
-import com.dmillerw.remoteIO.core.BCGateHandler;
 import com.dmillerw.remoteIO.core.config.RIOConfiguration;
+import com.dmillerw.remoteIO.core.helper.GateHelper;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -43,7 +43,7 @@ public class RemoteIO {
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
 		
-		BCGateHandler.inject();
+		GateHelper.inject();
 	}
 	
 }

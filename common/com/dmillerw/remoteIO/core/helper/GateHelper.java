@@ -1,4 +1,4 @@
-package com.dmillerw.remoteIO.core;
+package com.dmillerw.remoteIO.core.helper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 
-public class BCGateHandler {
+public class GateHelper {
 
 	public static final String BC_API_GATE_PACKAGE = "buildcraft.api.gates";
 	public static final String BC_ACTION_MANAGER_CLASS = BC_API_GATE_PACKAGE + ".ActionManager";
@@ -59,7 +59,7 @@ public class BCGateHandler {
 					if (providedTriggers != null) {
 						for (ITrigger trigger : providedTriggers) {
 							if (trigger != null) {
-								triggers.add(trigger);
+								triggers.add(TriggerHelper.wrapTrigger(trigger));
 							}
 						}
 					}
