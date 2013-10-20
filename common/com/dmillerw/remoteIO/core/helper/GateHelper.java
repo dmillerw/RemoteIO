@@ -33,10 +33,19 @@ public class GateHelper {
 		try {
 			if (Loader.isModLoaded("BuildCraft|Core")) {
 				Class actionManager = Class.forName(BC_ACTION_MANAGER_CLASS);
-				Method registerTrigger = actionManager.getMethod(BC_ACTION_MANAGER_REGISTER_TRIGGER, ITriggerProvider.class);
-				registerTrigger.invoke(null, new IOTriggerProvider());
-				Method registerAction = actionManager.getMethod(BC_ACTION_MANAGER_REGISTER_ACTION, IActionProvider.class);
-				registerAction.invoke(null, new IOActionProvider());
+				Field triggerProviderF = actionManager.getDeclaredField(BC_TRIGGER_PROVIDER_LIST);
+				triggerProviderF.setAccessible(true);
+				Field actionProviderF = actionManager.getDeclaredField(BC_ACTION_PROVIDER_LIST);
+				actionProviderF.setAccessible(true);
+				LinkedList<ITriggerProvider> triggerProviders = (LinkedList<ITriggerProvider>) triggerProviderF.get(actionManager);
+				LinkedList<IActionProvider> actionProviders = (LinkedList<IActionProvider>) actionProviderF.get(actionManager);
+				ITriggerProvider firstTrigger = triggerProviders.getFirst();
+				IActionProvider firstAction = actionProviders.getFirst();
+				
+				triggerProviders.add(0, new IOTriggerProvider());
+				actionProviders.add(0, new IOActionProvider());
+				triggerProviders.add(firstTrigger);
+				actionProviders.add(firstAction);
 			}
 		} catch(Exception ex) {
 			FMLLog.log(Level.WARNING, "[RemoteIO] Failed to register main trigger provider!", new Object[0]);

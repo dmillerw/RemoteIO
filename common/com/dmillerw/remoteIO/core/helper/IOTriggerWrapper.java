@@ -66,4 +66,15 @@ public class IOTriggerWrapper implements ITrigger {
 		return trigger.createParameter();
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ITrigger) {
+			ITrigger trigger = (ITrigger) obj;
+			
+			return (this.trigger.getLegacyId() == trigger.getLegacyId()) || (this.trigger.getUniqueTag() == trigger.getUniqueTag());
+		}
+		
+		return false;
+	}
+	
 }
