@@ -63,6 +63,7 @@ public class BCGateHandler {
 			}
 		} catch(Exception ex) {
 			FMLLog.log(Level.WARNING, "[RemoteIO] Failed to grab triggers for IO block connection!", new Object[0]);
+			ex.printStackTrace();
 		}
 		
 		return triggers;
