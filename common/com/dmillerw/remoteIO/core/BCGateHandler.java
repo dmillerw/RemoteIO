@@ -43,7 +43,7 @@ public class BCGateHandler {
 		}
 	}
 	
-	public static LinkedList<ITrigger> getTriggersForIO(TileEntityIO tile) {
+	public static LinkedList<ITrigger> getTriggersForIO(TileEntity tile) {
 		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 		
 		try {
@@ -73,7 +73,7 @@ public class BCGateHandler {
 		return triggers;
 	}
 
-	public static LinkedList<IAction> getActionsForIO(TileEntityIO tile) {
+	public static LinkedList<IAction> getActionsForIO(TileEntity tile) {
 		LinkedList<IAction> actions = new LinkedList<IAction>();
 		
 		try {
@@ -112,7 +112,7 @@ public class BCGateHandler {
 		@Override
 		public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
 			if (tile instanceof TileEntityIO) {
-				return getTriggersForIO((TileEntityIO) tile);
+				return getTriggersForIO(((TileEntityIO)tile).getTileEntity());
 			}
 			
 			return null;
@@ -125,7 +125,7 @@ public class BCGateHandler {
 		@Override
 		public LinkedList<IAction> getNeighborActions(Block block, TileEntity tile) {
 			if (tile instanceof TileEntityIO) {
-				return getActionsForIO((TileEntityIO) tile);
+				return getActionsForIO(((TileEntityIO)tile).getTileEntity());
 			}
 			
 			return null;

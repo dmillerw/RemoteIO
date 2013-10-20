@@ -104,7 +104,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 		return set;
 	}
 	
-	private TileEntity getTileEntity() {
+	public TileEntity getTileEntity() {
 		World world = MinecraftServer.getServer().worldServerForDimension(d);
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		
