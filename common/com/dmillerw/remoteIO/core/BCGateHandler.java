@@ -54,9 +54,13 @@ public class BCGateHandler {
 
 			for (ITriggerProvider provider : providers) {
 				if (provider != null && !(provider instanceof IOTriggerProvider)) {
-					for (ITrigger trigger : provider.getNeighborTriggers(tile.blockType, tile)) {
-						if (trigger != null) {
-							triggers.add(trigger);
+					LinkedList<ITrigger> providedTriggers = provider.getNeighborTriggers(tile.blockType, tile);
+					
+					if (providedTriggers != null) {
+						for (ITrigger trigger : providedTriggers) {
+							if (trigger != null) {
+								triggers.add(trigger);
+							}
 						}
 					}
 				}
@@ -80,9 +84,13 @@ public class BCGateHandler {
 
 			for (IActionProvider provider : providers) {
 				if (provider != null && !(provider instanceof IOActionProvider)) {
-					for (IAction trigger : provider.getNeighborActions(tile.blockType, tile)) {
-						if (trigger != null) {
-							actions.add(trigger);
+					LinkedList<IAction> providedActions = provider.getNeighborActions(tile.blockType, tile);
+					
+					if (providedActions != null) {
+						for (IAction action : providedActions) {
+							if (action != null) {
+								actions.add(action);
+							}
 						}
 					}
 				}
