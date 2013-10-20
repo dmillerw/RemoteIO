@@ -296,7 +296,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, IFluidHa
 
 	@Override
 	public boolean allowAction(IAction action) {
-		return getBCMachine() != null ? getBCMachine().allowAction(action) : false;
+		return getBCMachine() != null ? getBCMachine().allowAction(action) : true
 	}
 	
 	/* IACTIONRECEPTOR */
