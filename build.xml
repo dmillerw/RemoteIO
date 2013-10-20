@@ -27,7 +27,7 @@
    <property name="resources.dir" value="resources/assets/remoteio" />
    <!-- URLs -->
    <property name="forge.url" value="http://files.minecraftforge.net/minecraftforge/minecraftforge-src-${forge.version}.zip" />
-   <property name="apisource.url" value="http://files.royalixor.com/" />
+   <property name="apisource.url" value="http://dmillerw.nodedevs.net/files/" />
    <!-- Name -->
    <property name="package.meta-inf" value="META-INF" />
    <!-- Version Checking -->
