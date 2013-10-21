@@ -3,6 +3,7 @@ package com.dmillerw.remoteIO;
 import net.minecraftforge.common.Configuration;
 
 import com.dmillerw.remoteIO.core.config.RIOConfiguration;
+import com.dmillerw.remoteIO.core.handler.GuiHandler;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -13,8 +14,11 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 @Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
+@NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
 public class RemoteIO {
 
 	@Instance(ModInfo.ID)
@@ -29,6 +33,8 @@ public class RemoteIO {
 	public void preInit(FMLPreInitializationEvent event) {
 		this.config = new RIOConfiguration(new Configuration(event.getSuggestedConfigurationFile()));
 		this.config.scanConfig();
+		
+		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
 		
 		proxy.preInit(event);
 	}

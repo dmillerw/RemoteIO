@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.Upgrade;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -34,7 +36,7 @@ import buildcraft.core.IMachine;
 
 public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IMachine, IPowerReceptor, IPowerEmitter {
 
-	public EnumSet<Upgrade> installedUpgrades = EnumSet.noneOf(Upgrade.class);
+	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	
 	public boolean validCoordinates = false;
 	
@@ -86,6 +88,8 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			coords.setInteger("d", d);
 			nbt.setCompoundTag("coords", coords);
 		}
+		
+		InventoryHelper.writeToNBT(upgrades, nbt);
 	}
 	
 	@Override
@@ -100,6 +104,11 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			this.d = coords.getInteger("d");
 			this.validCoordinates = true;
 		}
+		
+		ItemStack[] items = InventoryHelper.readFromNBT(upgrades, nbt);
+		for (int i=0; i<items.length; i++) {
+			this.upgrades.setInventorySlotContents(i, items[i]);
+		}
 	}
 	
 	public EnumSet<Interface> getValidInterfaces() {
@@ -110,7 +119,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	public TileEntity getTileEntity() {
-		if (!this.installedUpgrades.contains(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
+		if (!hasUpgrade(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
 			return null;
 		} else {
 			World world = MinecraftServer.getServer().worldServerForDimension(d);
@@ -126,7 +135,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	private IInventory getInventory() {
-		if (getTileEntity() != null && getTileEntity() instanceof IInventory && this.installedUpgrades.contains(Upgrade.ITEM)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IInventory && hasUpgrade(Upgrade.ITEM)) {
 			return (IInventory)getTileEntity();
 		}
 		
@@ -134,7 +143,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	private ISidedInventory getSidedInventory() {
-		if (getTileEntity() != null && getTileEntity() instanceof ISidedInventory && this.installedUpgrades.contains(Upgrade.ISIDED_AWARE)) {
+		if (getTileEntity() != null && getTileEntity() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE)) {
 			return (ISidedInventory)getTileEntity();
 		}
 		
@@ -142,7 +151,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	private IFluidHandler getFluidHandler() {
-		if (getTileEntity() != null && getTileEntity() instanceof IFluidHandler && this.installedUpgrades.contains(Upgrade.FLUID)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID)) {
 			return (IFluidHandler)getTileEntity();
 		}
 		
@@ -150,7 +159,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	private IMachine getBCMachine() {
-		if (getTileEntity() != null && getTileEntity() instanceof IMachine && this.installedUpgrades.contains(Upgrade.POWER_BC)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IMachine && hasUpgrade(Upgrade.POWER_BC)) {
 			return (IMachine)getTileEntity();
 		}
 		
@@ -158,7 +167,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	private IPowerReceptor getBCPowerReceptor() {
-		if (getTileEntity() != null && getTileEntity() instanceof IPowerReceptor && this.installedUpgrades.contains(Upgrade.POWER_BC)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_BC)) {
 			return (IPowerReceptor)getTileEntity();
 		}
 		
@@ -166,12 +175,20 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	private IPowerEmitter getBCPowerEmitter() {
-		if (getTileEntity() != null && getTileEntity() instanceof IPowerEmitter && this.installedUpgrades.contains(Upgrade.POWER_BC)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_BC)) {
 			return (IPowerEmitter)getTileEntity();
 		}
 		
 		return null;
 	}	
+	
+	private boolean hasUpgrade(Upgrade upgrade) {
+		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
+	}
+
+	private int upgradeCount(Upgrade upgrade) {
+		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
+	}
 	
 	private void setValid(boolean valid) {
 		this.validCoordinates = valid;

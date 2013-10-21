@@ -11,8 +11,10 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.item.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
@@ -34,27 +36,9 @@ public class BlockIO extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		if (!world.isRemote) {
-			ItemStack held = player.getHeldItem();
-			
-			if (held != null && held.getItem() instanceof ItemUpgrade) {
-				Upgrade upgrade = Upgrade.values()[held.getItemDamage()];
-				TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
-				
-				if (!tile.installedUpgrades.contains(upgrade)) {
-					tile.installedUpgrades.add(upgrade);
-					
-					if (!player.capabilities.isCreativeMode) {
-						if (--held.stackSize == 0) {
-							held = null;
-						}
-						
-						((EntityPlayerMP)player).updateHeldItem();
-					}
-					
-					return true;
-				}
-			}
+		if (!player.isSneaking()) {
+			player.openGui(RemoteIO.instance, 0, world, x, y, z);
+			return true;
 		}
 		
 		return false;
@@ -65,8 +49,8 @@ public class BlockIO extends BlockContainer {
 		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null) {
-			for (Upgrade upgrade : tile.installedUpgrades) {
-				this.dropBlockAsItem_do(world, x, y, z, upgrade.toItemStack());
+			for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
+				if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
 			}
 		}
 	}

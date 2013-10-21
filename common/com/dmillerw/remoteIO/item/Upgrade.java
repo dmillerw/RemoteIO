@@ -11,7 +11,8 @@ public enum Upgrade {
 	POWER_BC("powerBC", "Buildcraft Power"),
 	RANGE("range", "Range"),
 	CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional"),
-	ISIDED_AWARE("iSidedAware", "Side Awareness");
+	ISIDED_AWARE("iSidedAware", "Side Awareness"),
+	CAMO("camo", "Block Camouflage");
 	
 	public String texture;
 	public String localizedName;
