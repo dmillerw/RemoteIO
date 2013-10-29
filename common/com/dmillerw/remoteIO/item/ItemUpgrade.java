@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -23,6 +24,13 @@ public class ItemUpgrade extends Item {
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean idk) {
+		for (String string : Upgrade.values()[stack.getItemDamage()].description) {
+			list.add(string);
+		}
+	}
+	
 	@Override
 	public Icon getIconFromDamage(int damage) {
 		return this.icons[damage];

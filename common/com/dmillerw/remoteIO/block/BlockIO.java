@@ -4,7 +4,6 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
@@ -15,8 +14,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
-import com.dmillerw.remoteIO.item.ItemUpgrade;
-import com.dmillerw.remoteIO.item.Upgrade;
+import com.dmillerw.remoteIO.item.ItemTool;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.relauncher.Side;
@@ -36,7 +34,7 @@ public class BlockIO extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		if (!player.isSneaking()) {
+		if (!player.isSneaking() && (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof ItemTool))) {
 			player.openGui(RemoteIO.instance, 0, world, x, y, z);
 			return true;
 		}

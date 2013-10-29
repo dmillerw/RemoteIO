@@ -1,13 +1,17 @@
 package com.dmillerw.remoteIO.block.tile;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.LinkedList;
+import buildcraft.api.gates.IAction;
+import buildcraft.api.power.IPowerEmitter;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.core.IMachine;
 
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.Upgrade;
 
-import net.minecraft.block.Block;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.server.FMLServerHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -22,19 +26,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
-import buildcraft.api.gates.IActionReceptor;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerProvider;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.transport.IPipe;
-import buildcraft.core.IMachine;
 
-public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IMachine, IPowerReceptor, IPowerEmitter {
+import java.util.EnumSet;
+
+public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	
@@ -119,19 +114,36 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	public TileEntity getTileEntity() {
-		if (!hasUpgrade(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
-			return null;
-		} else {
-			World world = MinecraftServer.getServer().worldServerForDimension(d);
-			TileEntity tile = world.getBlockTileEntity(x, y, z);
-			
-			if (tile != null) {
-				return tile;
-			} else {
-				setValid(false);
+		if (!this.worldObj.isRemote && validCoordinates) {
+			if (!hasUpgrade(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
 				return null;
+			} else {
+				try {
+					TileEntity tile = null;
+					
+					if (this.worldObj.provider.dimensionId == this.d) {
+						if (this.getDistance() <= (upgradeCount(Upgrade.RANGE) * 8)) {
+							tile = worldObj.getBlockTileEntity(x, y, z);
+						}
+					} else {
+						World world = MinecraftServer.getServer().worldServerForDimension(d);
+						tile = world.getBlockTileEntity(x, y, z);
+					}
+
+					if (tile != null) {
+						return tile;
+					} else {
+						setValid(false);
+						return null;
+					}
+				} catch(NullPointerException ex) {
+					FMLLog.warning("[RemoteIO] The IO block at [" + xCoord + ", " + yCoord + ", " + zCoord + "] has an invalid dimension ID set. It will be reset!");
+					this.clearCoordinates();
+				}
 			}
 		}
+
+		return null;
 	}
 	
 	private IInventory getInventory() {
@@ -153,14 +165,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	private IFluidHandler getFluidHandler() {
 		if (getTileEntity() != null && getTileEntity() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID)) {
 			return (IFluidHandler)getTileEntity();
-		}
-		
-		return null;
-	}
-	
-	private IMachine getBCMachine() {
-		if (getTileEntity() != null && getTileEntity() instanceof IMachine && hasUpgrade(Upgrade.POWER_BC)) {
-			return (IMachine)getTileEntity();
 		}
 		
 		return null;
@@ -188,6 +192,18 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 
 	private int upgradeCount(Upgrade upgrade) {
 		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
+	}
+	
+	private int getDistance() {
+		if (this.validCoordinates) {
+			int dX = Math.abs(this.xCoord - this.x);
+			int dY = Math.abs(this.yCoord - this.y);
+			int dZ = Math.abs(this.zCoord - this.z);
+			
+			return (dX + dY + dZ) / 3; // Return rough average distance?
+		}
+		
+		return 0;
 	}
 	
 	private void setValid(boolean valid) {
@@ -316,27 +332,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		return getFluidHandler() != null ? getFluidHandler().getTankInfo(from) : new FluidTankInfo[0];
 	}
 
-	/* IMACHINE */
-	@Override
-	public boolean isActive() {
-		return getBCMachine() != null ? getBCMachine().isActive() : false;
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return getBCMachine() != null ? getBCMachine().manageFluids() : false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return getBCMachine() != null ? getBCMachine().manageSolids() : false;
-	}
-
-	@Override
-	public boolean allowAction(IAction action) {
-		return getBCMachine() != null ? getBCMachine().allowAction(action) : false;
-	}
-	
 	/* IPOWEREMITTER */
 	@Override
 	public boolean canEmitPowerFrom(ForgeDirection side) {

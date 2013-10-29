@@ -10,7 +10,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-import com.dmillerw.remoteIO.block.render.RenderBlockHeater;
 import com.dmillerw.remoteIO.block.render.RenderBlockReservoir;
 import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
