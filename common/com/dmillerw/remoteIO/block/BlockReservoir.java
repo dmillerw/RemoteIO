@@ -20,7 +20,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockReservoir extends BlockContainer {
 
-	public Icon icon;
+	public Icon iconFrame;
+	public Icon iconGlass;
 	
 	public BlockReservoir(int id) {
 		super(id, Material.rock);
@@ -51,25 +52,24 @@ public class BlockReservoir extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getIcon(int side, int meta) {
-		return this.icon;
+		return Block.waterStill.getIcon(side, meta);
 	}
 	
-	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
-		TileEntityReservoir tile = (TileEntityReservoir) world.getBlockTileEntity(x, y, z);
-
-		if (tile != null && tile.hasWater) {
-			return this.icon;
-		} else {
-			return Block.furnaceIdle.getBlockTextureFromSide(ForgeDirection.UP.ordinal());
-		}
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+	
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
-		this.icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockMachineTransparent");
+		this.iconFrame = register.registerIcon(ModInfo.RESOURCE_PREFIX + "reservoirFrame");
+		this.iconGlass = register.registerIcon(ModInfo.RESOURCE_PREFIX + "reservoirGlass");
 	}
 	
 	@SideOnly(Side.CLIENT)

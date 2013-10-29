@@ -2,7 +2,6 @@ package com.dmillerw.remoteIO.block.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
@@ -29,7 +28,7 @@ public class RenderBlockHeater extends BlockRenderer implements ISimpleBlockRend
 		drawFaces(renderer, block, Block.lavaStill.getBlockTextureFromSide(0), true);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		renderer.setRenderBoundsFromBlock(block);
-		drawFaces(renderer, block, ((BlockHeater)block).icon, true);
+		drawFaces(renderer, block, ((BlockHeater)block).iconBars, true);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glPopMatrix();
 	}
@@ -39,15 +38,19 @@ public class RenderBlockHeater extends BlockRenderer implements ISimpleBlockRend
 		TileEntityHeater tile = (TileEntityHeater) world.getBlockTileEntity(x, y, z);
 		GL11.glColor4f(1, 1, 1, 1);
 		if (tile != null && tile.hasLava) {
-			Tessellator t = Tessellator.instance;
-			t.setBrightness(320);
-			renderAllSides(world, x, y, z, block, renderer, Block.lavaStill.getBlockTextureFromSide(0));
+			setBrightness(world, x, y, z, block);
+			block.setBlockBounds(0.02F, 0.02F, 0.02F, 0.98F, 0.98F, 0.98F);
+			renderer.setRenderBoundsFromBlock(block);
+			renderer.renderStandardBlock(block, x, y, z);
+			renderer.clearOverrideBlockTexture();
 		}
-		setBrightness(world, x, y, z, block);
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		renderer.setRenderBoundsFromBlock(block);
-		renderer.renderStandardBlock(block, x, y, z);
-		renderer.clearOverrideBlockTexture();
+		
+		for (int i = 1; i <= 20; i++) {
+			final float adjustConstant = 0.001F;
+			block.setBlockBounds(0F + (i * adjustConstant), 0F + (i * adjustConstant), 0F + (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant));
+			renderer.setRenderBoundsFromBlock(block);
+			renderAllSides(world, x, y, z, block, renderer, ((BlockHeater)block).iconBars);
+		}
 		return true;
 	}
 

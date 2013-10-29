@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockHeater extends BlockContainer {
 
-	public Icon icon;
+	public Icon iconBars;
 	
 	public BlockHeater(int id) {
 		super(id, Material.rock);
@@ -51,25 +51,23 @@ public class BlockHeater extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getIcon(int side, int meta) {
-		return this.icon;
+		return Block.lavaStill.getIcon(side, meta);
 	}
 	
-	@SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
-		TileEntityHeater tile = (TileEntityHeater) world.getBlockTileEntity(x, y, z);
-
-		if (tile != null && tile.hasLava) {
-			return this.icon;
-		} else {
-			return Block.furnaceIdle.getBlockTextureFromSide(ForgeDirection.UP.ordinal());
-		}
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+	
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister register) {
-		this.icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockMachineTransparent");
+		this.iconBars = register.registerIcon(ModInfo.RESOURCE_PREFIX + "heaterBars");
 	}
 	
 	@SideOnly(Side.CLIENT)

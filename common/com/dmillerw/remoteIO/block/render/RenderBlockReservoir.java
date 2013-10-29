@@ -2,7 +2,6 @@ package com.dmillerw.remoteIO.block.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
@@ -31,7 +30,8 @@ public class RenderBlockReservoir extends BlockRenderer implements ISimpleBlockR
 		drawFaces(renderer, block, Block.waterStill.getBlockTextureFromSide(0), true);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 		renderer.setRenderBoundsFromBlock(block);
-		drawFaces(renderer, block, ((BlockReservoir)block).icon, true);
+		drawFaces(renderer, block, ((BlockReservoir)block).iconFrame, true);
+		drawFaces(renderer, block, ((BlockReservoir)block).iconGlass, true);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glPopMatrix();
 	}
@@ -41,15 +41,22 @@ public class RenderBlockReservoir extends BlockRenderer implements ISimpleBlockR
 		TileEntityReservoir tile = (TileEntityReservoir) world.getBlockTileEntity(x, y, z);
 		GL11.glColor4f(1, 1, 1, 1);
 		if (tile != null && tile.hasWater) {
-			Tessellator t = Tessellator.instance;
-			t.setBrightness(320);
-			renderAllSides(world, x, y, z, block, renderer, Block.waterStill.getBlockTextureFromSide(0));
+			setBrightness(world, x, y, z, block);
+			block.setBlockBounds(0.02F, 0.02F, 0.02F, 0.98F, 0.98F, 0.98F);
+			renderer.setRenderBoundsFromBlock(block);
+			renderer.renderStandardBlock(block, x, y, z);
+			renderer.clearOverrideBlockTexture();
 		}
-		setBrightness(world, x, y, z, block);
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+		
+		for (int i = 1; i <= 20; i++) {
+			final float adjustConstant = 0.001F;
+			block.setBlockBounds(0F + (i * adjustConstant), 0F + (i * adjustConstant), 0F + (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant));
+			renderer.setRenderBoundsFromBlock(block);
+			renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconFrame);
+		}
+		block.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F);
 		renderer.setRenderBoundsFromBlock(block);
-		renderer.renderStandardBlock(block, x, y, z);
-		renderer.clearOverrideBlockTexture();
+		renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconGlass);
 		return true;
 	}
 
