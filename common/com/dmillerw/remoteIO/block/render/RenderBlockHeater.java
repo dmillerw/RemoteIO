@@ -7,6 +7,7 @@ import net.minecraft.world.IBlockAccess;
 import org.lwjgl.opengl.GL11;
 
 import com.dmillerw.remoteIO.block.BlockHeater;
+import com.dmillerw.remoteIO.block.BlockReservoir;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -36,7 +37,18 @@ public class RenderBlockHeater extends BlockRenderer implements ISimpleBlockRend
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntityHeater tile = (TileEntityHeater) world.getBlockTileEntity(x, y, z);
-		GL11.glColor4f(1, 1, 1, 1);
+
+		block.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F);
+		renderer.setRenderBoundsFromBlock(block);
+		renderAllSides(world, x, y, z, block, renderer, ((BlockHeater)block).iconBars);
+		
+		for (int i = 1; i <= 20; i++) {
+			final float adjustConstant = 0.001F;
+			block.setBlockBounds(0F + (i * adjustConstant), 0F + (i * adjustConstant), 0F + (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant));
+			renderer.setRenderBoundsFromBlock(block);
+			renderAllSides(world, x, y, z, block, renderer, ((BlockHeater)block).iconBarsDark);
+		}
+		
 		if (tile != null && tile.hasLava) {
 			setBrightness(world, x, y, z, block);
 			block.setBlockBounds(0.02F, 0.02F, 0.02F, 0.98F, 0.98F, 0.98F);
@@ -45,12 +57,6 @@ public class RenderBlockHeater extends BlockRenderer implements ISimpleBlockRend
 			renderer.clearOverrideBlockTexture();
 		}
 		
-		for (int i = 1; i <= 20; i++) {
-			final float adjustConstant = 0.001F;
-			block.setBlockBounds(0F + (i * adjustConstant), 0F + (i * adjustConstant), 0F + (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant));
-			renderer.setRenderBoundsFromBlock(block);
-			renderAllSides(world, x, y, z, block, renderer, ((BlockHeater)block).iconBars);
-		}
 		return true;
 	}
 

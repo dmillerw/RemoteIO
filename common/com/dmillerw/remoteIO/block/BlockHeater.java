@@ -21,6 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockHeater extends BlockContainer {
 
 	public Icon iconBars;
+	public Icon iconBarsDark;
 	
 	public BlockHeater(int id) {
 		super(id, Material.rock);
@@ -68,6 +69,7 @@ public class BlockHeater extends BlockContainer {
 	@Override
 	public void registerIcons(IconRegister register) {
 		this.iconBars = register.registerIcon(ModInfo.RESOURCE_PREFIX + "heaterBars");
+		this.iconBarsDark = register.registerIcon(ModInfo.RESOURCE_PREFIX + "heaterBarsDark");
 	}
 	
 	@SideOnly(Side.CLIENT)

@@ -21,6 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockReservoir extends BlockContainer {
 
 	public Icon iconFrame;
+	public Icon iconFrameDark;
 	public Icon iconGlass;
 	
 	public BlockReservoir(int id) {
@@ -69,6 +70,7 @@ public class BlockReservoir extends BlockContainer {
 	@Override
 	public void registerIcons(IconRegister register) {
 		this.iconFrame = register.registerIcon(ModInfo.RESOURCE_PREFIX + "reservoirFrame");
+		this.iconFrameDark = register.registerIcon(ModInfo.RESOURCE_PREFIX + "reservoirFrameDark");
 		this.iconGlass = register.registerIcon(ModInfo.RESOURCE_PREFIX + "reservoirGlass");
 	}
 	

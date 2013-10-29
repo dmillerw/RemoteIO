@@ -39,7 +39,20 @@ public class RenderBlockReservoir extends BlockRenderer implements ISimpleBlockR
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntityReservoir tile = (TileEntityReservoir) world.getBlockTileEntity(x, y, z);
-		GL11.glColor4f(1, 1, 1, 1);
+
+		block.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F);
+		renderer.setRenderBoundsFromBlock(block);
+		renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconGlass);
+		
+		renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconFrame);
+		
+		for (int i = 1; i <= 20; i++) {
+			final float adjustConstant = 0.001F;
+			block.setBlockBounds(0F + (i * adjustConstant), 0F + (i * adjustConstant), 0F + (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant));
+			renderer.setRenderBoundsFromBlock(block);
+			renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconFrameDark);
+		}
+		
 		if (tile != null && tile.hasWater) {
 			setBrightness(world, x, y, z, block);
 			block.setBlockBounds(0.02F, 0.02F, 0.02F, 0.98F, 0.98F, 0.98F);
@@ -48,15 +61,7 @@ public class RenderBlockReservoir extends BlockRenderer implements ISimpleBlockR
 			renderer.clearOverrideBlockTexture();
 		}
 		
-		for (int i = 1; i <= 20; i++) {
-			final float adjustConstant = 0.001F;
-			block.setBlockBounds(0F + (i * adjustConstant), 0F + (i * adjustConstant), 0F + (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant), 1F - (i * adjustConstant));
-			renderer.setRenderBoundsFromBlock(block);
-			renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconFrame);
-		}
-		block.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F);
-		renderer.setRenderBoundsFromBlock(block);
-		renderAllSides(world, x, y, z, block, renderer, ((BlockReservoir)block).iconGlass);
+		
 		return true;
 	}
 
