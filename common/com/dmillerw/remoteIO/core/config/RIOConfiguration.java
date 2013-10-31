@@ -38,6 +38,9 @@ public class RIOConfiguration {
 	
 	public void scanConfig() {
 		this.config.load();
+		
+		this.config.getCategory(Configuration.CATEGORY_BLOCK).setComment("Set any ID to 0 to disable the block entirely");
+		
 		this.blockRIOID = config.getBlock("block_id.RIO", 600).getInt(600);
 		this.blockHeaterID = config.getBlock("block_id.heater", 601).getInt(601);
 		this.blockReservoirID = config.getBlock("block_id.reservoir", 602).getInt(602);
@@ -48,17 +51,23 @@ public class RIOConfiguration {
 		}
 		
 		// Item/Block init
-		this.blockRIO = new BlockIO(blockRIOID).setUnlocalizedName("blockIO");
-		GameRegistry.registerBlock(this.blockRIO, "blockIO");
-		LanguageRegistry.addName(this.blockRIO, "IO Block");
+		if (this.blockRIOID != 0) {
+			this.blockRIO = new BlockIO(blockRIOID).setUnlocalizedName("blockIO");
+			GameRegistry.registerBlock(this.blockRIO, "blockIO");
+			LanguageRegistry.addName(this.blockRIO, "IO Block");
+		}
 		
-		this.blockHeater = new BlockHeater(blockHeaterID).setUnlocalizedName("blockHeater");
-		GameRegistry.registerBlock(this.blockHeater, "blockHeater");
-		LanguageRegistry.addName(this.blockHeater, "Lava-Powered Heater");
+		if (this.blockHeaterID != 0) {
+			this.blockHeater = new BlockHeater(blockHeaterID).setUnlocalizedName("blockHeater");
+			GameRegistry.registerBlock(this.blockHeater, "blockHeater");
+			LanguageRegistry.addName(this.blockHeater, "Lava-Powered Heater");
+		}
 		
-		this.blockReservoir = new BlockReservoir(blockReservoirID).setUnlocalizedName("blockReservoir");
-		GameRegistry.registerBlock(this.blockReservoir, "blockReservoir");
-		LanguageRegistry.addName(this.blockReservoir, "Water Reservoir");
+		if (this.blockReservoirID != 0) {
+			this.blockReservoir = new BlockReservoir(blockReservoirID).setUnlocalizedName("blockReservoir");
+			GameRegistry.registerBlock(this.blockReservoir, "blockReservoir");
+			LanguageRegistry.addName(this.blockReservoir, "Water Reservoir");
+		}
 		
 		this.itemTool = new ItemTool(itemToolID).setUnlocalizedName("itemTool");
 		GameRegistry.registerItem(this.itemTool, "itemTool");

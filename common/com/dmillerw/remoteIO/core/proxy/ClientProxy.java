@@ -1,13 +1,17 @@
 package com.dmillerw.remoteIO.core.proxy;
 
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.render.BlockRenderer;
 import com.dmillerw.remoteIO.block.render.RenderBlockHeater;
 import com.dmillerw.remoteIO.block.render.RenderBlockReservoir;
+import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
+import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ClientProxy extends CommonProxy {
 
@@ -15,8 +19,13 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		
-		RenderingRegistry.registerBlockHandler(new RenderBlockHeater());
-		RenderingRegistry.registerBlockHandler(new RenderBlockReservoir());
+		if (RemoteIO.instance.config.blockHeaterID != 0) {
+			RenderingRegistry.registerBlockHandler(new RenderBlockHeater());
+		}
+		
+		if (RemoteIO.instance.config.blockReservoirID != 0) {
+			RenderingRegistry.registerBlockHandler(new RenderBlockReservoir());
+		}
 	}
 
 	@Override
