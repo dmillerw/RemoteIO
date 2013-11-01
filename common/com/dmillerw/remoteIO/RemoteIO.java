@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 
 import com.dmillerw.remoteIO.core.config.RIOConfiguration;
@@ -26,7 +27,7 @@ public class RemoteIO {
 	
 	@SidedProxy(serverSide=ModInfo.COMMON_PROXY, clientSide=ModInfo.CLIENT_PROXY)
 	public static ISidedProxy proxy;
-	
+
 	public RIOConfiguration config;
 	
 	@EventHandler

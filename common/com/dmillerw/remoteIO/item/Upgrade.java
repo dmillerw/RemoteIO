@@ -1,26 +1,34 @@
 package com.dmillerw.remoteIO.item;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import com.dmillerw.remoteIO.RemoteIO;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+
 public enum Upgrade {
 
-	ITEM("item", "Item", "Allows for the basic transport of items"),
-	FLUID("fluid", "Fluid", "Allows for the basic transport of fluids"),
-	POWER_BC("powerBC", "Buildcraft Power", "Allows for the transfer of BC power (MJ)"),
-	RANGE("range", "Range", "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
-	CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", "Allows the IO block to connect across dimensions"),
-	ISIDED_AWARE("iSidedAware", "Side Awareness", "Allows the IO block to determine side input/output");
+	BLANK("blank", "Blank Upgrade", null),
+	ITEM("item", "Item", new ItemStack(Block.chest), "Allows for the basic transport of items"),
+	FLUID("fluid", "Fluid", new ItemStack(Item.bucketEmpty), "Allows for the basic transport of fluids"),
+	POWER_BC("powerBC", "Buildcraft Power", new ItemStack(Item.redstone), "Allows for the transfer of BC power (MJ)"),
+	RANGE("range", "Range", new ItemStack(Item.glowstone), "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
+	CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", new ItemStack(Block.obsidian), "Allows the IO block to connect across dimensions"),
+	ISIDED_AWARE("iSidedAware", "Side Awareness", new ItemStack(Block.hopperBlock), "Allows the IO block to determine side input/output");
 	
 	public String texture;
 	public String localizedName;
 	
+	public ItemStack recipeComponent;
+	
 	public String[] description;
 	
-	private Upgrade(String texture, String localizedName, String ... description) {
+	private Upgrade(String texture, String localizedName, ItemStack recipeComponent, String ... description) {
 		this.texture = texture;
 		this.localizedName = "Upgrade: " + localizedName;
+		this.recipeComponent = recipeComponent;
 		this.description = description;
 	}
 	

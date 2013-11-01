@@ -76,8 +76,9 @@ public class RIOConfiguration {
 		this.itemUpgrade = new ItemUpgrade(itemUpgradeID).setUnlocalizedName("itemUpgrade");
 		GameRegistry.registerItem(this.itemUpgrade, "itemUpgrade");
 		for (Upgrade upgrade : Upgrade.values()) {
-			LanguageRegistry.addName(upgrade.toItemStack(), upgrade.localizedName);
+			if (upgrade != Upgrade.BLANK) LanguageRegistry.addName(upgrade.toItemStack(), upgrade.localizedName);
 		}
+		LanguageRegistry.addName(Upgrade.BLANK.toItemStack(), "Blank Upgrade");
 	}
 	
 }
