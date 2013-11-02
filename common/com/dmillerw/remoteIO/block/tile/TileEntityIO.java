@@ -34,6 +34,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	
 	public boolean validCoordinates = false;
+	public boolean creativeMode = false;
 	
 	public int x;
 	public int y;
@@ -75,6 +76,8 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		
+		nbt.setBoolean("creative", this.creativeMode);
+		
 		if (this.validCoordinates) {
 			NBTTagCompound coords = new NBTTagCompound();
 			coords.setInteger("x", x);
@@ -90,6 +93,8 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
+		
+		this.creativeMode = nbt.getBoolean("creative");
 		
 		if (nbt.hasKey("coords")) {
 			NBTTagCompound coords = nbt.getCompoundTag("coords");
@@ -122,7 +127,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 					TileEntity tile = null;
 					
 					if (this.worldObj.provider.dimensionId == this.d) {
-						if (this.getDistance() <= (upgradeCount(Upgrade.RANGE) * 8)) {
+						if (this.inRange()) {
 							tile = worldObj.getBlockTileEntity(x, y, z);
 						}
 					} else {
@@ -187,23 +192,24 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}	
 	
 	private boolean hasUpgrade(Upgrade upgrade) {
-		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
+		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || creativeMode;
 	}
 
 	private int upgradeCount(Upgrade upgrade) {
 		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
 	}
 	
-	private int getDistance() {
+	private boolean inRange() {
 		if (this.validCoordinates) {
+			int maxRange = (upgradeCount(Upgrade.RANGE) * 8) + 8;
 			int dX = Math.abs(this.xCoord - this.x);
 			int dY = Math.abs(this.yCoord - this.y);
 			int dZ = Math.abs(this.zCoord - this.z);
-			
-			return (dX + dY + dZ) / 3; // Return rough average distance?
+
+			return (dX <= maxRange || dY <= maxRange || dZ <= maxRange || this.creativeMode);
 		}
 		
-		return 0;
+		return false;
 	}
 	
 	private void setValid(boolean valid) {

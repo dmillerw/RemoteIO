@@ -3,6 +3,7 @@ package com.dmillerw.remoteIO.block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,6 +33,15 @@ public class BlockIO extends BlockContainer {
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
+		super.onBlockPlacedBy(world, x, y, z, entity, stack);
+		
+		if (entity instanceof EntityPlayer && ((EntityPlayer)entity).capabilities.isCreativeMode) {
+			TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+			tile.creativeMode = true;
+		}
+	}
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!player.isSneaking() && (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof ItemTool))) {
@@ -44,6 +54,8 @@ public class BlockIO extends BlockContainer {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
+		super.breakBlock(world, x, y, z, id, meta);
+		
 		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null) {
