@@ -90,7 +90,16 @@
 	  </copy> -->
    </target>
    <target name="build" depends="copy-source,setup-forge" unless="already-compiled">
-      <!-- Recompile -->
+      <!-- Update MD5 -->
+	  <exec dir="${mcp.dir}" executable="cmd" osfamily="windows" failonerror="true">
+         <arg line="/f updatemd5.bat" />
+	  </exec>
+      <exec dir="${mcp.dir}" executable="bash" osfamily="unix" failonerror="true">
+         <arg value="-f" />
+         <arg value="echo Yes | ./updatemd5.sh" />
+      </exec>
+		
+	  <!-- Recompile -->
       <exec dir="${mcp.dir}" executable="cmd" osfamily="windows" failonerror="true">
          <arg line="/c recompile.bat" />
       </exec>
