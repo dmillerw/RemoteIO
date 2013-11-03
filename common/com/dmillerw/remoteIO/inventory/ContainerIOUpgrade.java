@@ -3,11 +3,13 @@ package com.dmillerw.remoteIO.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.inventory.slot.SlotUpgrade;
+import com.dmillerw.remoteIO.item.ItemUpgrade;
+import com.dmillerw.remoteIO.item.Upgrade;
 
 public class ContainerIOUpgrade extends Container {
 
@@ -15,13 +17,25 @@ public class ContainerIOUpgrade extends Container {
 	
 	private final TileEntityIO tile;
 	
-	public ContainerIOUpgrade(EntityPlayer player, TileEntityIO tile) {
+	public ContainerIOUpgrade(EntityPlayer player, final TileEntityIO tile) {
 		this.player = player;
 		this.tile = tile;
 		
 		for (int i = 0; i < 9; ++i) {
 			this.addSlotToContainer(new SlotUpgrade(tile.upgrades, i, 8 + i * 18, 17));
 		}
+		
+		this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55) {
+			@Override
+			protected void onCrafting(ItemStack par1ItemStack, int par2) {
+				tile.dirtyRender = true;
+			}
+			
+			@Override
+			public boolean isItemValid(ItemStack par1ItemStack) {
+				return tile.hasUpgrade(Upgrade.CAMO);
+		    }
+		});
 		
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -48,12 +62,22 @@ public class ContainerIOUpgrade extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (slotID >= 0 && slotID <= 9) {
-				if (!this.mergeItemStack(itemstack1, 10, 45, true)) {
+			if (itemstack1.getItem() instanceof ItemUpgrade) {
+				if (slotID >= 0 && slotID <= 9) {
+					if (!this.mergeItemStack(itemstack1, 11, 45, true)) {
+						return null;
+					}
+				} else if (!this.mergeItemStack(itemstack1, 0, 9, false)) {
 					return null;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, 9, false)) {
-				return null;
+			} else {
+				if (slotID >= 0 && slotID <= 9) {
+					if (!this.mergeItemStack(itemstack1, 11, 45, true)) {
+						return null;
+					}
+				} else if (!this.mergeItemStack(itemstack1, 9, 10, false)) {
+					return null;
+				}
 			}
 
 			if (itemstack1.stackSize == 0) {

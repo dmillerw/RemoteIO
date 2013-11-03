@@ -18,6 +18,8 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -32,10 +34,12 @@ import java.util.EnumSet;
 public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
+	public IInventory camo = new InventoryBasic("Camo", false, 1);
 	
 	public boolean validCoordinates = false;
 	public boolean creativeMode = false;
 	public boolean redstoneState = false;
+	public boolean dirtyRender = true;
 	
 	public int x;
 	public int y;
@@ -48,6 +52,11 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			if (worldObj.getTotalWorldTime() % 200 == 0) { // Force detection check every 10 seconds
 				setValid(getTileEntity() != null);
 			}
+		}
+		
+		if (dirtyRender) {
+			this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			this.dirtyRender = false;
 		}
 	}
 	
@@ -88,7 +97,13 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			nbt.setCompoundTag("coords", coords);
 		}
 		
-		InventoryHelper.writeToNBT(upgrades, nbt);
+		NBTTagCompound upgradesNBT = new NBTTagCompound();
+		InventoryHelper.writeToNBT(upgrades, upgradesNBT);
+		NBTTagCompound camoNBT = new NBTTagCompound();
+		InventoryHelper.writeToNBT(camo, camoNBT);
+		
+		nbt.setCompoundTag("upgrades", upgradesNBT);
+		nbt.setCompoundTag("camo", camoNBT);
 	}
 	
 	@Override
@@ -106,9 +121,18 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			this.validCoordinates = true;
 		}
 		
-		ItemStack[] items = InventoryHelper.readFromNBT(upgrades, nbt);
-		for (int i=0; i<items.length; i++) {
-			this.upgrades.setInventorySlotContents(i, items[i]);
+		if (nbt.hasKey("upgrades")) {
+			ItemStack[] items = InventoryHelper.readFromNBT(upgrades, nbt.getCompoundTag("upgrades"));
+			for (int i=0; i<items.length; i++) {
+				this.upgrades.setInventorySlotContents(i, items[i]);
+			}
+		}
+		
+		if (nbt.hasKey("camo")) {
+			ItemStack[] items = InventoryHelper.readFromNBT(upgrades, nbt.getCompoundTag("camo"));
+			for (int i=0; i<items.length; i++) {
+				this.camo.setInventorySlotContents(i, items[i]);
+			}
 		}
 	}
 	
@@ -202,7 +226,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		return null;
 	}	
 	
-	private boolean hasUpgrade(Upgrade upgrade) {
+	public boolean hasUpgrade(Upgrade upgrade) {
 		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || creativeMode;
 	}
 
@@ -230,10 +254,40 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		sendUpdateToClient(nbt);
 	}
 	
+	public Packet getDescriptionPacket() {
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, getCamoUpdate());
+	}
+	
+	public NBTTagCompound getCamoUpdate() {
+		ItemStack camo = this.camo.getStackInSlot(0);
+		NBTTagCompound nbt = new NBTTagCompound();
+		NBTTagCompound camoNBT = new NBTTagCompound();
+		
+		if (camo != null) {
+			camoNBT.setBoolean("null", false);
+			NBTTagCompound item = new NBTTagCompound();
+			camo.writeToNBT(item);
+			camoNBT.setCompoundTag("item", item);
+		} else {
+			camoNBT.setBoolean("null", true);
+		}
+		
+		nbt.setCompoundTag("camo", camoNBT);
+		return nbt;
+	}
+	
 	@Override
 	public void onUpdatePacket(NBTTagCompound tag) {
 		if (tag.hasKey("valid")) {
 			this.validCoordinates = tag.getBoolean("valid");
+		}
+		
+		if (tag.hasKey("camo")) {
+			if (!tag.getBoolean("null")) {
+				this.camo.setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item")));
+			} else {
+				this.camo.setInventorySlotContents(0, null);
+			}
 		}
 	}
 

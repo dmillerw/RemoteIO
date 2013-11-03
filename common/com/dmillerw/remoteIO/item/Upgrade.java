@@ -17,7 +17,8 @@ public enum Upgrade {
 	RANGE("range", "Range", new ItemStack(Item.glowstone), "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
 	CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", new ItemStack(Block.obsidian), "Allows the IO block to connect across dimensions"),
 	ISIDED_AWARE("iSidedAware", "Side Awareness", new ItemStack(Block.hopperBlock), "Allows the IO block to determine side input/output"),
-	REDSTONE("redstone", "Redstone", new ItemStack(Item.redstoneRepeater), "Allows for the toggle of the remote connection via redstone");
+	REDSTONE("redstone", "Redstone", new ItemStack(Item.redstoneRepeater), "Allows for the toggle of the remote connection via redstone"),
+	CAMO("camo", "Camo", new ItemStack(Block.glass), "Allows the IO block to take on the texture of any other block");
 	
 	public String texture;
 	public String localizedName;

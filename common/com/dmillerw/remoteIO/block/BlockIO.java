@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -16,6 +17,7 @@ import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemTool;
+import com.dmillerw.remoteIO.item.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.relauncher.Side;
@@ -80,10 +82,20 @@ public class BlockIO extends BlockContainer {
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
 		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 
-		if (tile != null && tile.validCoordinates) {
-			return this.icons[0];
+		ItemStack camo = tile.camo.getStackInSlot(0);
+		Block block = null;
+		if (camo != null && camo.itemID < 4096) {
+			block = Block.blocksList[camo.itemID];
+		}
+		
+		if (block != null && tile.hasUpgrade(Upgrade.CAMO)) {
+			return block.getIcon(side, camo.getItemDamage());
 		} else {
-			return this.icons[1];
+			if (tile != null && tile.validCoordinates) {
+				return this.icons[0];
+			} else {
+				return this.icons[1];
+			}
 		}
 	}
 	
