@@ -28,7 +28,7 @@ public class ContainerIOUpgrade extends Container {
 		this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55) {
 			@Override
 			protected void onCrafting(ItemStack par1ItemStack, int par2) {
-				tile.dirtyRender = true;
+				tile.setCamo(par1ItemStack);
 			}
 			
 			@Override

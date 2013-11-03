@@ -39,7 +39,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	public boolean validCoordinates = false;
 	public boolean creativeMode = false;
 	public boolean redstoneState = false;
-	public boolean dirtyRender = true;
 	
 	public int x;
 	public int y;
@@ -52,11 +51,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			if (worldObj.getTotalWorldTime() % 200 == 0) { // Force detection check every 10 seconds
 				setValid(getTileEntity() != null);
 			}
-		}
-		
-		if (dirtyRender) {
-			this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			this.dirtyRender = false;
 		}
 	}
 	
@@ -254,12 +248,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		sendUpdateToClient(nbt);
 	}
 	
-	public Packet getDescriptionPacket() {
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, getCamoUpdate());
-	}
-	
-	public NBTTagCompound getCamoUpdate() {
-		ItemStack camo = this.camo.getStackInSlot(0);
+	public void setCamo(ItemStack camo) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		NBTTagCompound camoNBT = new NBTTagCompound();
 		
@@ -273,7 +262,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		}
 		
 		nbt.setCompoundTag("camo", camoNBT);
-		return nbt;
+		sendUpdateToClient(nbt);
 	}
 	
 	@Override
