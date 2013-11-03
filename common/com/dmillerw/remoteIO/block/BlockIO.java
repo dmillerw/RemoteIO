@@ -88,7 +88,7 @@ public class BlockIO extends BlockContainer {
 			block = Block.blocksList[camo.itemID];
 		}
 		
-		if (block != null && tile.hasUpgrade(Upgrade.CAMO)) {
+		if (block != null && block.renderAsNormalBlock() && tile.hasUpgrade(Upgrade.CAMO)) {
 			return block.getIcon(side, camo.getItemDamage());
 		} else {
 			if (tile != null && tile.validCoordinates) {
