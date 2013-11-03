@@ -64,8 +64,6 @@ public class BlockIO extends BlockContainer {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-		super.breakBlock(world, x, y, z, id, meta);
-		
 		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null) {
@@ -73,6 +71,8 @@ public class BlockIO extends BlockContainer {
 				if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
 			}
 		}
+		
+		super.breakBlock(world, x, y, z, id, meta);
 	}
 	
 	@SideOnly(Side.CLIENT)
