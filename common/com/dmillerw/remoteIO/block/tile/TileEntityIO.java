@@ -35,6 +35,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	
 	public boolean validCoordinates = false;
 	public boolean creativeMode = false;
+	public boolean redstoneState = false;
 	
 	public int x;
 	public int y;
@@ -81,7 +82,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		if (this.validCoordinates) {
 			NBTTagCompound coords = new NBTTagCompound();
 			coords.setInteger("x", x);
-			coords.setInteger("y", y);
+			coords.setInteger("y", y); 
 			coords.setInteger("z", z);
 			coords.setInteger("d", d);
 			nbt.setCompoundTag("coords", coords);
@@ -111,6 +112,10 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		}
 	}
 	
+	public void setRedstoneState(boolean state) {
+		this.redstoneState = state;
+	}
+	
 	public EnumSet<Interface> getValidInterfaces() {
 		EnumSet set = EnumSet.noneOf(Interface.class);
 		if (getInventory() != null) set.add(Interface.INVENTORY);
@@ -119,31 +124,37 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	public TileEntity getTileEntity() {
-		if (!this.worldObj.isRemote && validCoordinates) {
-			if (!hasUpgrade(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
+		if (!this.worldObj.isRemote) {
+			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState) {
 				return null;
-			} else {
-				try {
-					TileEntity tile = null;
-					
-					if (this.worldObj.provider.dimensionId == this.d) {
-						if (this.inRange()) {
-							tile = worldObj.getBlockTileEntity(x, y, z);
+			}
+			
+			if (validCoordinates) {
+				if (!hasUpgrade(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
+					return null;
+				} else {
+					try {
+						TileEntity tile = null;
+						
+						if (this.worldObj.provider.dimensionId == this.d) {
+							if (this.inRange()) {
+								tile = worldObj.getBlockTileEntity(x, y, z);
+							}
+						} else {
+							World world = MinecraftServer.getServer().worldServerForDimension(d);
+							tile = world.getBlockTileEntity(x, y, z);
 						}
-					} else {
-						World world = MinecraftServer.getServer().worldServerForDimension(d);
-						tile = world.getBlockTileEntity(x, y, z);
-					}
 
-					if (tile != null) {
-						return tile;
-					} else {
-						setValid(false);
-						return null;
+						if (tile != null) {
+							return tile;
+						} else {
+							setValid(false);
+							return null;
+						}
+					} catch(NullPointerException ex) {
+						FMLLog.warning("[RemoteIO] The IO block at [" + xCoord + ", " + yCoord + ", " + zCoord + "] has an invalid dimension ID set. It will be reset!");
+						this.clearCoordinates();
 					}
-				} catch(NullPointerException ex) {
-					FMLLog.warning("[RemoteIO] The IO block at [" + xCoord + ", " + yCoord + ", " + zCoord + "] has an invalid dimension ID set. It will be reset!");
-					this.clearCoordinates();
 				}
 			}
 		}

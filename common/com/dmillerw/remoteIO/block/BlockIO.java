@@ -40,6 +40,8 @@ public class BlockIO extends BlockContainer {
 			TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 			tile.creativeMode = true;
 		}
+		
+		onNeighborBlockChange(world, x, y, z, 0);
 	}
 	
 	@Override
@@ -50,6 +52,14 @@ public class BlockIO extends BlockContainer {
 		}
 		
 		return false;
+	}
+	
+	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
+		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+
+		if (tile != null) {
+			tile.setRedstoneState(world.isBlockIndirectlyGettingPowered(x, y, z));
+		}
 	}
 	
 	@Override
