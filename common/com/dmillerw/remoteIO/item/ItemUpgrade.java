@@ -40,7 +40,7 @@ public class ItemUpgrade extends Item {
 	@Override
 	public void getSubItems(int id, CreativeTabs tab, List list) {
 		for (Upgrade upgrade : Upgrade.values()) {
-			if (upgrade.recipeComponent != null || upgrade == Upgrade.BLANK) {
+			if (upgrade.recipeComponents != null || upgrade == Upgrade.BLANK) {
 				list.add(upgrade.toItemStack());
 			}
 		}

@@ -52,8 +52,11 @@ public class CommonProxy implements ISidedProxy {
 		GameRegistry.addRecipe(Upgrade.BLANK.toItemStack(), "ICI", "IRI", "IRI", 'I', Item.ingotIron, 'C', new ItemStack(Item.dyePowder, 1, 2), 'R', Item.redstone);
 	
 		for (Upgrade upgrade : Upgrade.values()) {
-			if (upgrade.recipeComponent != null) {
-				GameRegistry.addRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponent, 'U', Upgrade.BLANK.toItemStack());
+			if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
+				GameRegistry.addRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponents[0], 'U', Upgrade.BLANK.toItemStack());
+			} else if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 2) {
+				GameRegistry.addRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
+				GameRegistry.addRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
 			}
 		}
 	}
