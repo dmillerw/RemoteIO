@@ -18,7 +18,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-@Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
+@Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION, dependencies="after:EnderStorage")
 @NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
 public class RemoteIO {
 
