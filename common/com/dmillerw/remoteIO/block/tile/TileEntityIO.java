@@ -2,7 +2,6 @@ package com.dmillerw.remoteIO.block.tile;
 
 import java.util.EnumSet;
 
-import thaumcraft.api.aspects.IAspectSource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
