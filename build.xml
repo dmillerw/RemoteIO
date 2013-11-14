@@ -61,6 +61,7 @@
    <target name="copy-source">
       <delete dir="${mcpsrc.dir}/com" />
 	  <delete dir="${mcpsrc.dir}/buildcraft" />
+	  <delete dir="${mcpsrc.dir}/thaumcraft" />
       <copy todir="${mcpsrc.dir}/com">
          <fileset dir="${src.dir}/com" />
          <filterset>
@@ -72,6 +73,9 @@
       </copy>
 	  <copy todir="${mcpsrc.dir}/buildcraft">
          <fileset dir="${src.dir}/buildcraft" />
+	  </copy>
+	  <copy todir="${mcpsrc.dir}/thaumcraft">
+         <fileset dir="${src.dir}/thaumcraft" />
 	  </copy>
    </target>
    <target name="copy-api">
