@@ -77,8 +77,7 @@ public class ItemUpgrade extends Item {
 		ISIDED_AWARE("iSidedAware",           "Side Awareness",    new ItemStack[] {new ItemStack(Block.hopperBlock)},                                    "Allows the IO block to determine side input/output"),
 		REDSTONE("redstone",                  "Redstone",          new ItemStack[] {new ItemStack(Item.redstoneRepeater)},                                "Allows for the toggle of the remote connection via redstone"),
 		CAMO("camo",                          "Adaptive Texture",  new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 0)}, "Allows the IO block to take on the texture of any other block"),
-		LOCK("lock",                          "Lock",              new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 1)}, "Allows the IO block to be broken and replaced, while retaining all settings/links"),
-		ESSENTIA("essentia",                  "Essentia",          new ItemStack[0],                                                                      "Allows the IO block to interact with the powerful energies of raw Essentia");
+		LOCK("lock",                          "Lock",              new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 1)}, "Allows the IO block to be broken and replaced, while retaining all settings/links");
 		
 		public String texture;
 		public String localizedName;
