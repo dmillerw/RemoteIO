@@ -1,5 +1,8 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import java.util.Random;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -19,9 +22,12 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 
+import com.dmillerw.remoteIO.client.fx.FXParticlePath;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 
 public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
@@ -49,6 +55,15 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		if (!worldObj.isRemote) {
 			if (worldObj.getTotalWorldTime() % 200 == 0) { // Force detection check every 10 seconds
 				setValid(getTileEntity() != null);
+			}
+		} else {
+			if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer)) {
+				Random rand = new Random();
+				for (int i=0; i<rand.nextInt(5); i++) {
+					FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
+					path.setRBGColorF(0.35F, 0.35F, 1F);
+					Minecraft.getMinecraft().effectRenderer.addEffect(path);
+				}
 			}
 		}
 	}
