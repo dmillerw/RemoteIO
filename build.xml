@@ -2,8 +2,8 @@
 <project name="Remote IO" default="install" basedir=".">
    <!-- Versions -->
    <property name="major.ver" value="1" />
-   <property name="minor.ver" value="1" />
-   <property name="revis.ver" value="4" />
+   <property name="minor.ver" value="2" />
+   <property name="revis.ver" value="0" />
    <property name="build.ver" value="${major.ver}.${minor.ver}.${revis.ver}" />
    <property name="buildNumber" value="${bamboo.buildNumber}" />
    <property name="fullversion" value="${build.ver}-b${buildNumber}" />
