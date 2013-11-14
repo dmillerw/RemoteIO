@@ -30,6 +30,11 @@ public class TileEntityHeater extends TileEntityCore {
 			for (TileEntityFurnace furnaceTile : furnaceTiles) {
 				if (furnaceTile != null && hasLava) {
 					furnaceTile.furnaceBurnTime = furnaceTile.currentItemBurnTime = 100;
+					
+					if (worldObj.getBlockId(furnaceTile.xCoord, furnaceTile.yCoord, furnaceTile.zCoord) != Block.furnaceBurning.blockID) {
+						BlockFurnace.updateFurnaceBlockState(true, worldObj, furnaceTile.xCoord, furnaceTile.yCoord, furnaceTile.zCoord);
+						updateFurnaces();
+					}
 				}
 			}
 		}

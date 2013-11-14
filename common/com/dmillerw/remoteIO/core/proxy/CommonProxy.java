@@ -45,11 +45,11 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		if (RemoteIO.instance.config.blockHeaterID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockHeater), new Object[] {"SSS", "SFS", "SBS", 'S', Block.cobblestone, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
+			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockHeater), new Object[] {"SIS", "IFI", "SBS", 'S', Block.cobblestone, 'I', Block.fenceIron, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
 		}
 		
 		if (RemoteIO.instance.config.blockReservoirID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockReservoir), new Object[] {"SSS", "SFS", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
+			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockReservoir), new Object[] {"SFS", "FFF", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
 		}
 		
 		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
