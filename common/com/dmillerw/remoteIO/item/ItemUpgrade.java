@@ -15,6 +15,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -72,7 +73,7 @@ public class ItemUpgrade extends Item {
 		FLUID("fluid",                        "Fluid",             new ItemStack[] {new ItemStack(Item.bucketEmpty)},                                     "Allows for the basic transport of fluids"),
 		POWER_BC("powerBC",                   "Buildcraft Power",  new ItemStack[] {new ItemStack(Item.redstone)},                                        "Allows for the transfer of BC power (MJ)"),
 		RANGE("range",                        "Range",             new ItemStack[] {new ItemStack(Item.glowstone)},                                       "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
-		CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", getEnderchestRecipe(),                                                                 "Allows the IO block to connect across dimensions"),
+		CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", new ItemStack[] {new ItemStack(Block.obsidian),  new ItemStack(Block.enderChest)},                                                                 "Allows the IO block to connect across dimensions"),
 		ISIDED_AWARE("iSidedAware",           "Side Awareness",    new ItemStack[] {new ItemStack(Block.hopperBlock)},                                    "Allows the IO block to determine side input/output"),
 		REDSTONE("redstone",                  "Redstone",          new ItemStack[] {new ItemStack(Item.redstoneRepeater)},                                "Allows for the toggle of the remote connection via redstone"),
 		CAMO("camo",                          "Adaptive Texture",  new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 0)}, "Allows the IO block to take on the texture of any other block"),
@@ -96,21 +97,6 @@ public class ItemUpgrade extends Item {
 			return new ItemStack(RemoteIO.instance.config.itemUpgrade, 1, this.ordinal());
 		}
 		
-		public static ItemStack[] getEnderchestRecipe() {
-			ItemStack enderChest = new ItemStack(Block.enderChest);
-			
-			// If EnderStorage exists, use CB's Ender Chest
-			// Otherwise, use vanilla
-			if (Loader.isModLoaded("EnderStorage")) {
-				Block cbEnderChest = GameRegistry.findBlock("EnderStorage", "enderChest");
-				
-				if (cbEnderChest != null) {
-					enderChest = new ItemStack(cbEnderChest, 1, OreDictionary.WILDCARD_VALUE);
-				}
-			}
-			
-			return new ItemStack[] {new ItemStack(Block.obsidian), enderChest};
-		}
 	}
 	
 }

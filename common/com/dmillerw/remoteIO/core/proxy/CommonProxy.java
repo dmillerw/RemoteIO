@@ -3,6 +3,8 @@ package com.dmillerw.remoteIO.core.proxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -12,6 +14,8 @@ import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -75,7 +79,25 @@ public class CommonProxy implements ISidedProxy {
 
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
-		
+		// If EnderStorage detected, replace Dimensional Upgrade recipe
+		if (Loader.isModLoaded("EnderStorage")) {
+			ItemStack obsidian = new ItemStack(Block.obsidian);
+			ItemStack enderChest = null;
+			
+			try {
+				Class clazz = Class.forName("codechicken.enderstorage.EnderStorage");
+				enderChest = new ItemStack((Block)clazz.getDeclaredField("blockEnderChest").get(clazz), 1, OreDictionary.WILDCARD_VALUE);
+			} catch(Exception ex) {
+				// IGNORING
+			}
+			
+			if (enderChest != null) {
+				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "C", "U", "D", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
+				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "D", "U", "C", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
+			} else {
+				FMLLog.warning("[Remote IO] Tried to get Ender Storage EnderChest, but failed!");
+			}
+		}
 	}
 
 }
