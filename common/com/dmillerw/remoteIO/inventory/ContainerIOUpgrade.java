@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.inventory;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -7,9 +8,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
-import com.dmillerw.remoteIO.inventory.slot.SlotUpgrade;
+import com.dmillerw.remoteIO.inventory.slot.SlotLimited;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
-import com.dmillerw.remoteIO.item.Upgrade;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 public class ContainerIOUpgrade extends Container {
 
@@ -22,18 +23,18 @@ public class ContainerIOUpgrade extends Container {
 		this.tile = tile;
 		
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new SlotUpgrade(tile.upgrades, i, 8 + i * 18, 17));
+			this.addSlotToContainer(new SlotLimited(tile.upgrades, i, 8 + i * 18, 17, ItemUpgrade.class));
 		}
 		
 		this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55) {
 			@Override
-			protected void onCrafting(ItemStack par1ItemStack, int par2) {
-				tile.setCamo(par1ItemStack);
+			public int getSlotStackLimit() {
+				return 1;
 			}
 			
 			@Override
-			public boolean isItemValid(ItemStack par1ItemStack) {
-				return tile.hasUpgrade(Upgrade.CAMO);
+			public boolean isItemValid(ItemStack stack) {
+				return tile.hasUpgrade(Upgrade.CAMO) && (stack.getItem() instanceof ItemBlock) && (Block.blocksList[stack.getItem().itemID].isOpaqueCube());
 		    }
 		});
 		

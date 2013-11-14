@@ -8,7 +8,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
-import com.dmillerw.remoteIO.item.Upgrade;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;

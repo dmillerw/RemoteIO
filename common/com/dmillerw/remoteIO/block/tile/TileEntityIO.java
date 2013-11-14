@@ -1,25 +1,14 @@
 package com.dmillerw.remoteIO.block.tile;
 
-import buildcraft.api.gates.IAction;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.core.IMachine;
+import java.util.EnumSet;
 
-import com.dmillerw.remoteIO.core.helper.InventoryHelper;
-import com.dmillerw.remoteIO.item.Upgrade;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.server.FMLServerHandler;
+import thaumcraft.api.aspects.IAspectSource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -28,13 +17,26 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.api.power.IPowerEmitter;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
 
-import java.util.EnumSet;
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+
+import cpw.mods.fml.common.FMLLog;
 
 public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
-	public IInventory camo = new InventoryBasic("Camo", false, 1);
+	public IInventory camo = new InventoryBasic("Camo", false, 1) {
+		@Override
+		public void onInventoryChanged() {
+			super.onInventoryChanged();
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+	};
 	
 	public boolean validCoordinates = false;
 	public boolean creativeMode = false;
@@ -77,9 +79,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		
+	public void writeCustomNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("creative", this.creativeMode);
 		
 		if (this.validCoordinates) {
@@ -101,9 +101,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		
+	public void readCustomNBT(NBTTagCompound nbt) {
 		this.creativeMode = nbt.getBoolean("creative");
 		
 		if (nbt.hasKey("coords")) {
@@ -123,7 +121,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		}
 		
 		if (nbt.hasKey("camo")) {
-			ItemStack[] items = InventoryHelper.readFromNBT(upgrades, nbt.getCompoundTag("camo"));
+			ItemStack[] items = InventoryHelper.readFromNBT(camo, nbt.getCompoundTag("camo"));
 			for (int i=0; i<items.length; i++) {
 				this.camo.setInventorySlotContents(i, items[i]);
 			}
@@ -243,43 +241,9 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	
 	private void setValid(boolean valid) {
 		this.validCoordinates = valid;
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setBoolean("valid", valid);
-		sendUpdateToClient(nbt);
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
-	public void setCamo(ItemStack camo) {
-		NBTTagCompound nbt = new NBTTagCompound();
-		NBTTagCompound camoNBT = new NBTTagCompound();
-		
-		if (camo != null) {
-			camoNBT.setBoolean("null", false);
-			NBTTagCompound item = new NBTTagCompound();
-			camo.writeToNBT(item);
-			camoNBT.setCompoundTag("item", item);
-		} else {
-			camoNBT.setBoolean("null", true);
-		}
-		
-		nbt.setCompoundTag("camo", camoNBT);
-		sendUpdateToClient(nbt);
-	}
-	
-	@Override
-	public void onUpdatePacket(NBTTagCompound tag) {
-		if (tag.hasKey("valid")) {
-			this.validCoordinates = tag.getBoolean("valid");
-		}
-		
-		if (tag.hasKey("camo")) {
-			if (!tag.getBoolean("null")) {
-				this.camo.setInventorySlotContents(0, ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item")));
-			} else {
-				this.camo.setInventorySlotContents(0, null);
-			}
-		}
-	}
-
 	/* IINVENTORY */
 	@Override
 	public int getSizeInventory() {

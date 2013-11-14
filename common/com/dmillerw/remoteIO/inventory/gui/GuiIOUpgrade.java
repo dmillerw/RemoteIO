@@ -30,20 +30,6 @@ public class GuiIOUpgrade extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		this.fontRenderer.drawString("IO Upgrades", 8, 6, 4210752);
 		this.fontRenderer.drawString(I18n.getString("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
-	
-		String s = "";
-		int color = 0xFF0000;
-		TileEntity connected = tile.getTileEntity();
-		
-		if (!tile.validCoordinates) {
-			s = "Not Connected";
-			color = 0xFF0000;
-		} else {
-			s = "Connected";
-			color = 0x00FF00;
-		}
-		
-		this.fontRenderer.drawString(s, this.xSize / 2 - (this.fontRenderer.getStringWidth(s) / 2), (this.ySize / 2) - 30, color);
 	}
 	
 	@Override

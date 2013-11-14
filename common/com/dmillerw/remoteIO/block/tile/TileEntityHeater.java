@@ -54,7 +54,8 @@ public class TileEntityHeater extends TileEntityCore {
 		} else {
 			hasLava = false;
 		}
-		updateLava();
+		
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	private void updateFurnaces() {
@@ -69,34 +70,13 @@ public class TileEntityHeater extends TileEntityCore {
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		
+	public void writeCustomNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("hasLava", this.hasLava);
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		
+	public void readCustomNBT(NBTTagCompound nbt) {
 		this.hasLava = nbt.getBoolean("hasLava");
-	}
-	
-	@Override
-	public void onUpdatePacket(NBTTagCompound tag) {
-		if (tag.hasKey("hasLava")) {
-			this.hasLava = tag.getBoolean("hasLava");
-		} else {
-			this.hasLava = false;
-		}
-		
-		this.worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
-	}
-
-	private void updateLava() {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setBoolean("hasLava", this.hasLava);
-		this.sendUpdateToClient(tag);
 	}
 	
 }

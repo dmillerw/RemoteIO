@@ -17,7 +17,7 @@ import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemTool;
-import com.dmillerw.remoteIO.item.Upgrade;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.relauncher.Side;

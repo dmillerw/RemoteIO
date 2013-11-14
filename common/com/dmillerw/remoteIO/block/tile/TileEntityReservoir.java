@@ -50,43 +50,23 @@ public class TileEntityReservoir extends TileEntityCore implements IFluidHandler
 		} else {
 			hasWater = false;
 		}
-		updateWater();
+		
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		
+	public void writeCustomNBT(NBTTagCompound nbt) {
 		nbt.setBoolean("hasWater", this.hasWater);
 		this.waterTank.writeToNBT(nbt);
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		
+	public void readCustomNBT(NBTTagCompound nbt) {
 		this.hasWater = nbt.getBoolean("hasWater");
 		this.waterTank = new FluidTank(FluidRegistry.WATER, 0, FluidContainerRegistry.BUCKET_VOLUME * 10);
 		this.waterTank.readFromNBT(nbt);
 	}
 	
-	@Override
-	public void onUpdatePacket(NBTTagCompound tag) {
-		if (tag.hasKey("hasWater")) {
-			this.hasWater = tag.getBoolean("hasWater");
-		} else {
-			this.hasWater = false;
-		}
-		
-		this.worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
-	}
-
-	private void updateWater() {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setBoolean("hasWater", this.hasWater);
-		this.sendUpdateToClient(tag);
-	}
-
 	/* IFLUIDHANDLER */
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
