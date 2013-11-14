@@ -3,6 +3,8 @@ package com.dmillerw.remoteIO.core.proxy;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
@@ -49,7 +51,7 @@ public class CommonProxy implements ISidedProxy {
 		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
 	
 		// Blank Upgrade
-		GameRegistry.addRecipe(Upgrade.BLANK.toItemStack(), "ICI", "IRI", "IRI", 'I', Item.ingotIron, 'C', new ItemStack(Item.dyePowder, 1, 2), 'R', Item.redstone);
+		GameRegistry.addRecipe(new ShapedOreRecipe(Upgrade.BLANK.toItemStack(), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone));
 	
 		for (Upgrade upgrade : Upgrade.values()) {
 			if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
@@ -59,6 +61,16 @@ public class CommonProxy implements ISidedProxy {
 				GameRegistry.addRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
 			}
 		}
+		
+		// Iron Rod component
+		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2), new Object[] {" I", "I ", 'I', Item.ingotIron});
+		OreDictionary.registerOre("rodIron", new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2));
+		
+		// Camo Component
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 0), new Object[] {"LSL", "SIS", "LSL", 'L', "logWood", 'S', "stone", 'I', Item.ingotIron}));
+		
+		// Padlock Component
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 1), new Object[] {"   ", " R ", " I ", 'R', "rodIron", 'I', Item.ingotIron}));
 	}
 
 	@Override

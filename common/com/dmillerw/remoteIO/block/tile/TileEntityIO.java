@@ -33,7 +33,7 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		@Override
 		public void onInventoryChanged() {
 			super.onInventoryChanged();
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			if (worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	};
 	

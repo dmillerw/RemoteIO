@@ -15,8 +15,8 @@ import com.dmillerw.remoteIO.lib.ModInfo;
 
 public class ItemComponent extends Item {
 
-	public static String[] names = new String[] {"Padlock"};
-	public static String[] subNames = new String[] {"padlock"};
+	public static String[] names = new String[] {"Counter-illumination Panel", "Padlock", "Iron Rod"};
+	public static String[] subNames = new String[] {"camo", "padlock", "ironRod"};
 	
 	public Icon[] icons;
 	
@@ -51,7 +51,7 @@ public class ItemComponent extends Item {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "item." + Upgrade.values()[stack.getItemDamage()] + ".name";
+		return "item.component." + subNames[stack.getItemDamage()] + ".name";
 	}
 	
 }

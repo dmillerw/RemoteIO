@@ -63,19 +63,20 @@ public class ItemUpgrade extends Item {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "item." + Upgrade.values()[stack.getItemDamage()] + ".name";
+		return "item.upgrade." + Upgrade.values()[stack.getItemDamage()] + ".name";
 	}	
 	
 	public static enum Upgrade {
-		BLANK("blank",                        "Blank Upgrade", null),
-		ITEM("item",                          "Item",              new ItemStack[] {new ItemStack(Block.chest)},                            "Allows for the basic transport of items"),
-		FLUID("fluid",                        "Fluid",             new ItemStack[] {new ItemStack(Item.bucketEmpty)},                       "Allows for the basic transport of fluids"),
-		POWER_BC("powerBC",                   "Buildcraft Power",  new ItemStack[] {new ItemStack(Item.redstone)},                          "Allows for the transfer of BC power (MJ)"),
-		RANGE("range",                        "Range",             new ItemStack[] {new ItemStack(Item.glowstone)},                         "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
-		CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", getEnderchestRecipe(),                                                   "Allows the IO block to connect across dimensions"),
-		ISIDED_AWARE("iSidedAware",           "Side Awareness",    new ItemStack[] {new ItemStack(Block.hopperBlock)},                      "Allows the IO block to determine side input/output"),
-		REDSTONE("redstone",                  "Redstone",          new ItemStack[] {new ItemStack(Item.redstoneRepeater)},                  "Allows for the toggle of the remote connection via redstone"),
-		CAMO("camo",                          "Camo",              new ItemStack[] {new ItemStack(Block.stone), new ItemStack(Block.dirt)}, "Allows the IO block to take on the texture of any other block");
+		BLANK("blank",                        "Blank Upgrade",     null),
+		ITEM("item",                          "Item",              new ItemStack[] {new ItemStack(Block.chest)},                                          "Allows for the basic transport of items"),
+		FLUID("fluid",                        "Fluid",             new ItemStack[] {new ItemStack(Item.bucketEmpty)},                                     "Allows for the basic transport of fluids"),
+		POWER_BC("powerBC",                   "Buildcraft Power",  new ItemStack[] {new ItemStack(Item.redstone)},                                        "Allows for the transfer of BC power (MJ)"),
+		RANGE("range",                        "Range",             new ItemStack[] {new ItemStack(Item.glowstone)},                                       "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
+		CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", getEnderchestRecipe(),                                                                 "Allows the IO block to connect across dimensions"),
+		ISIDED_AWARE("iSidedAware",           "Side Awareness",    new ItemStack[] {new ItemStack(Block.hopperBlock)},                                    "Allows the IO block to determine side input/output"),
+		REDSTONE("redstone",                  "Redstone",          new ItemStack[] {new ItemStack(Item.redstoneRepeater)},                                "Allows for the toggle of the remote connection via redstone"),
+		CAMO("camo",                          "Adaptive Texture",  new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 0)}, "Allows the IO block to take on the texture of any other block"),
+		LOCK("lock",                          "Lock",              new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 1)}, "Allows the IO block to be broken and replaced, while retaining all settings/links");
 		
 		public String texture;
 		public String localizedName;
@@ -92,7 +93,7 @@ public class ItemUpgrade extends Item {
 		}
 		
 		public ItemStack toItemStack() {
-			return new ItemStack(RemoteIO.instance.config.itemUpgradeID + 256, 1, this.ordinal());
+			return new ItemStack(RemoteIO.instance.config.itemUpgrade, 1, this.ordinal());
 		}
 		
 		public static ItemStack[] getEnderchestRecipe() {
