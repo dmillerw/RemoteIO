@@ -16,6 +16,11 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IAspectContainer;
+import thaumcraft.api.aspects.IAspectSource;
+import thaumcraft.api.aspects.IEssentiaTransport;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -26,7 +31,7 @@ import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.common.FMLLog;
 
-public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
+public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IAspectContainer, IAspectSource, IEssentiaTransport {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -131,13 +136,6 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		this.redstoneState = state;
 	}
 	
-	public EnumSet<Interface> getValidInterfaces() {
-		EnumSet set = EnumSet.noneOf(Interface.class);
-		if (getInventory() != null) set.add(Interface.INVENTORY);
-		if (getFluidHandler() != null) set.add(Interface.FLUID);
-		return set;
-	}
-	
 	public TileEntity getTileEntity() {
 		if (!this.worldObj.isRemote) {
 			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState) {
@@ -216,6 +214,26 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		
 		return null;
 	}	
+	
+	private IAspectContainer getEssentiaInterface() {
+		if (getTileEntity() != null && getTileEntity() instanceof IAspectContainer && hasUpgrade(Upgrade.ESSENTIA)) {
+			return (IAspectContainer)getTileEntity();
+		}
+		
+		if (getTileEntity() != null && getTileEntity() instanceof IAspectSource && hasUpgrade(Upgrade.ESSENTIA)) {
+			return (IAspectSource)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IEssentiaTransport getEssentiaTransport() {
+		if (getTileEntity() != null && getTileEntity() instanceof IEssentiaTransport && hasUpgrade(Upgrade.ESSENTIA)) {
+			return (IEssentiaTransport)getTileEntity();
+		}
+		
+		return null;
+	}
 	
 	public boolean hasUpgrade(Upgrade upgrade) {
 		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || creativeMode;
@@ -377,8 +395,100 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 		return getBCPowerReceptor() != null ? getBCPowerReceptor().getWorld() : null;
 	}
 
-	public enum Interface {
-		INVENTORY, FLUID;
+	/* IASPECTSOURCE/IASPECTCONTAINER */
+	@Override
+	public AspectList getAspects() {
+		return getEssentiaInterface() != null ? getEssentiaInterface().getAspects() : new AspectList();
 	}
 
+	@Override
+	public void setAspects(AspectList aspects) {
+		if (getEssentiaInterface() != null) getEssentiaInterface().setAspects(aspects);
+	}
+
+	@Override
+	public boolean doesContainerAccept(Aspect tag) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().doesContainerAccept(tag) : false;
+	}
+
+	@Override
+	public int addToContainer(Aspect tag, int amount) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().addToContainer(tag, amount) : 0;
+	}
+
+	@Override
+	public boolean takeFromContainer(Aspect tag, int amount) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().takeFromContainer(tag, amount) : false;
+	}
+
+	@Override
+	public boolean takeFromContainer(AspectList ot) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().takeFromContainer(ot) : false;
+	}
+
+	@Override
+	public boolean doesContainerContainAmount(Aspect tag, int amount) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().doesContainerContainAmount(tag, amount) : false;
+	}
+
+	@Override
+	public boolean doesContainerContain(AspectList ot) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().doesContainerContain(ot) : false;
+	}
+
+	@Override
+	public int containerContains(Aspect tag) {
+		return getEssentiaInterface() != null ? getEssentiaInterface().containerContains(tag) : 0;
+	}
+
+	/* IESSENTIATRANSPORT */
+	@Override
+	public boolean isConnectable(ForgeDirection face) {
+		return getEssentiaTransport() != null ? getEssentiaTransport().isConnectable(face) : false;
+	}
+
+	@Override
+	public boolean canInputFrom(ForgeDirection face) {
+		return getEssentiaTransport() != null ? getEssentiaTransport().canInputFrom(face) : false;
+	}
+
+	@Override
+	public boolean canOutputTo(ForgeDirection face) {
+		return getEssentiaTransport() != null ? getEssentiaTransport().canOutputTo(face) : false;
+	}
+
+	@Override
+	public void setSuction(AspectList suction) {
+		if (getEssentiaTransport() != null) getEssentiaTransport().setSuction(suction);
+	}
+
+	@Override
+	public void setSuction(Aspect aspect, int amount) {
+		if (getEssentiaTransport() != null) getEssentiaTransport().setSuction(aspect, amount);
+	}
+
+	@Override
+	public AspectList getSuction(ForgeDirection face) {
+		return getEssentiaTransport() != null ? getEssentiaTransport().getSuction(face) : new AspectList();
+	}
+
+	@Override
+	public int takeVis(Aspect aspect, int amount) {
+		return getEssentiaTransport() != null ? getEssentiaTransport().takeVis(aspect, amount) : 0;
+	}
+
+	@Override
+	public AspectList getEssentia(ForgeDirection face) {
+		return getEssentiaTransport() != null ? getEssentiaTransport().getEssentia(face) : new AspectList();
+	}
+
+	@Override
+	public int getMinimumSuction() {
+		return getEssentiaTransport() != null ? getEssentiaTransport().getMinimumSuction() : 0;
+	}
+
+	@Override
+	public boolean renderExtendedTube() {
+		return false;
+	}
 }

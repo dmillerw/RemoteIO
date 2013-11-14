@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.core.proxy;
 
+import thaumcraft.api.ItemApi;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -96,6 +97,19 @@ public class CommonProxy implements ISidedProxy {
 				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "D", "U", "C", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
 			} else {
 				FMLLog.warning("[Remote IO] Tried to get Ender Storage EnderChest, but failed!");
+			}
+		}
+		
+		// If Thaumcraft loaded, add Essentia upgrade recipe
+		if (Loader.isModLoaded("Thaumcraft")) {
+			ItemStack wardedJar = ItemApi.getBlock("blockJar", 0);
+			ItemStack mixedCluster = ItemApi.getBlock("blockCrystal", 6);
+			
+			if (wardedJar != null && mixedCluster != null) {
+				GameRegistry.addRecipe(Upgrade.ESSENTIA.toItemStack(), "C", "U", "D", 'C', wardedJar, 'D', mixedCluster, 'U', Upgrade.BLANK.toItemStack());
+				GameRegistry.addRecipe(Upgrade.ESSENTIA.toItemStack(), "D", "U", "C", 'C', wardedJar, 'D', mixedCluster, 'U', Upgrade.BLANK.toItemStack());
+			} else {
+				FMLLog.warning("[Remote IO] Tried to register recipe for Essentia upgrade, but failed!");
 			}
 		}
 	}
