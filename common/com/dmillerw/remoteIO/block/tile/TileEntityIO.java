@@ -70,7 +70,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	@Override
 	public void updateEntity() {
 		if (worldObj.isRemote) {
-			if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates) {
+			if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates && worldObj.provider.dimensionId == this.d) {
 				Random rand = new Random();
 				for (int i=0; i<rand.nextInt(5); i++) {
 					FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
