@@ -147,7 +147,8 @@ public class ItemUpgrade extends Item {
 				
 		POWER_EU(
 			"powerEU",
-			"IC2 Power", new ItemStack[0],
+			"IC2 Power", 
+			new ItemStack[0],
 			"Allows for the transfer of IC2 power (EU)"
 		);
 		

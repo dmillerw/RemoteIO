@@ -60,6 +60,8 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 
 	public boolean addedToEnergyNet = false; // Requirement of IC2 :(
 	
+	public boolean firstLoad = true;
+	
 	public int x;
 	public int y;
 	public int z;
@@ -93,6 +95,11 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 					MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 					addedToEnergyNet = true;
 				}
+			}
+			
+			if (firstLoad) {
+				setValid(validCoordinates);
+				firstLoad = false;
 			}
 		}
 	}
@@ -151,9 +158,9 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 			this.y = coords.getInteger("y");
 			this.z = coords.getInteger("z");
 			this.d = coords.getInteger("d");
-			setValid(true);
+			this.validCoordinates = true;
 		} else {
-			setValid(false);
+			this.validCoordinates = false;
 		}
 		
 		if (nbt.hasKey("upgrades")) {
@@ -300,7 +307,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	}
 	
 	private void setValid(boolean valid) {
-		if (!valid && !worldObj.isRemote) {
+		if (!valid && !worldObj.isRemote && addedToEnergyNet) {
 			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
 			addedToEnergyNet = false;
 		}
