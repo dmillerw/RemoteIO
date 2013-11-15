@@ -52,7 +52,7 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		// Wrench
-		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemTool), new Object[] {" BE", " IB", "R  ", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
+		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
 	
 		// IO Goggles
 		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemGoggles), new Object[] {"L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl});
