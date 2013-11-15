@@ -16,7 +16,7 @@
    <!-- Directories -->
    <property name="download.dir" value="downloads" />
    <property name="src.dir" value="common" />
-   <property name="api.dir" value="api" />
+   <property name="api.dir" value="apis" />
    <property name="build.dir" value="build/${minecraft.version}" />
    <property name="classes.dir" value="${build.dir}/packaging" />
    <property name="forge.dir" value="${build.dir}/forge" />
@@ -61,7 +61,8 @@
    <target name="copy-source">
       <delete dir="${mcpsrc.dir}/com" />
 	  <delete dir="${mcpsrc.dir}/buildcraft" />
-	  <delete dir="${mcpsrc.dir}/thaumcraft" />
+	  <delete dir="${mcpsrc.dir}/cofh" />
+	  <delete dir="${mcpsrc.dir}/ic2" />
       <copy todir="${mcpsrc.dir}/com">
          <fileset dir="${src.dir}/com" />
          <filterset>
@@ -72,10 +73,13 @@
          </filterset>
       </copy>
 	  <copy todir="${mcpsrc.dir}/buildcraft">
-         <fileset dir="${src.dir}/buildcraft" />
+         <fileset dir="${api.dir}/buildcraft" />
 	  </copy>
-	  <copy todir="${mcpsrc.dir}/thaumcraft">
-         <fileset dir="${src.dir}/thaumcraft" />
+	  <copy todir="${mcpsrc.dir}/cofh">
+         <fileset dir="${api.dir}/cofh" />
+	  </copy>
+	  <copy todir="${mcpsrc.dir}/ic2">
+         <fileset dir="${api.dir}/ic2" />
 	  </copy>
    </target>
    <target name="copy-api">
