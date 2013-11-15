@@ -24,13 +24,18 @@ import buildcraft.api.power.PowerHandler.PowerReceiver;
 
 import com.dmillerw.remoteIO.client.fx.FXParticlePath;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
 import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
-public class TileEntityIO extends TileEntityCore implements IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
+public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -44,20 +49,27 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	public boolean validCoordinates = false;
 	public boolean creativeMode = false;
 	public boolean redstoneState = false;
-	
+
 	public int x;
 	public int y;
 	public int z;
 	public int d;
 	
 	@Override
-	public void updateEntity() {
-		if (!worldObj.isRemote) {
-			if (worldObj.getTotalWorldTime() % 200 == 0) { // Force detection check every 10 seconds
-				setValid(getTileEntity() != null);
+	public void onBlockChanged(TrackedBlock tracked) {
+		if (validCoordinates) {
+			if (tracked.state == BlockState.REMOVED) {
+				setValid(false);
 			}
 		} else {
-			if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer)) {
+			tracked.destroy();
+		}
+	}
+	
+	@Override
+	public void updateEntity() {
+		if (worldObj.isRemote) {
+			if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates) {
 				Random rand = new Random();
 				for (int i=0; i<rand.nextInt(5); i++) {
 					FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
@@ -122,7 +134,9 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 			this.y = coords.getInteger("y");
 			this.z = coords.getInteger("z");
 			this.d = coords.getInteger("d");
-			this.validCoordinates = true;
+			setValid(true);
+		} else {
+			setValid(false);
 		}
 		
 		if (nbt.hasKey("upgrades")) {
@@ -247,6 +261,9 @@ public class TileEntityIO extends TileEntityCore implements IInventory, ISidedIn
 	private void setValid(boolean valid) {
 		this.validCoordinates = valid;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		if (valid && !worldObj.isRemote) {
+			BlockTracker.getInstance().track(getTileEntity(), this);
+		}
 	}
 	
 	/* IINVENTORY */

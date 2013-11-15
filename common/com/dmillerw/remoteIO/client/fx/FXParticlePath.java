@@ -1,6 +1,10 @@
 package com.dmillerw.remoteIO.client.fx;
 
+import com.dmillerw.remoteIO.item.ItemGoggles;
+
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -30,6 +34,7 @@ public class FXParticlePath extends EntityFX {
 		this(world, start.xCoord + 0.5, start.yCoord + 0.5, start.zCoord + 0.5, tx, ty, tz, speed);
 	}
 	
+	@Override
 	public void onUpdate() {
 		Vec3 start = Vec3.createVectorHelper(posX, posY, posZ);
 		Vec3 end = Vec3.createVectorHelper(tx, ty, tz);
@@ -47,6 +52,13 @@ public class FXParticlePath extends EntityFX {
 		this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
 		
 		super.onUpdate();
+	}
+
+	@Override
+	public void renderParticle(Tessellator par1Tessellator, float par2, float par3, float par4, float par5, float par6, float par7) {
+		if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer)) {
+			super.renderParticle(par1Tessellator, par2, par3, par4, par5, par6, par7);
+		}
 	}
 	
 }

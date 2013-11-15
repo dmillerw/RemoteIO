@@ -6,6 +6,7 @@ import net.minecraftforge.common.Configuration;
 import com.dmillerw.remoteIO.core.config.RIOConfiguration;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.common.Mod;
@@ -17,6 +18,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION, dependencies="after:EnderStorage")
 @NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
@@ -36,6 +39,8 @@ public class RemoteIO {
 		this.config.scanConfig();
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
+		
+		TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
 		
 		proxy.preInit(event);
 	}

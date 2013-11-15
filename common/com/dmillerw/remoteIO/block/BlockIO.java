@@ -20,6 +20,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.item.ItemTool;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
@@ -43,6 +44,9 @@ public class BlockIO extends BlockContainer {
     public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
         ItemStack stack = new ItemStack(this.blockID, 1, 0);
         TileEntityIO logic = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+        if (logic.validCoordinates) {
+        	BlockTracker.getInstance().stopTracking(logic.getTileEntity());
+        }
 
         if (logic.hasUpgrade(Upgrade.LOCK)) {
         	if (logic != null) {
