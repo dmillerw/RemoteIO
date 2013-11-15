@@ -21,6 +21,7 @@ import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
+import cofh.api.energy.IEnergyHandler;
 
 import com.dmillerw.remoteIO.client.fx.FXParticlePath;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
@@ -35,7 +36,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
-public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter {
+public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -237,6 +238,14 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		return null;
 	}	
 	
+	private IEnergyHandler getRFHandler() {
+		if (getTileEntity() != null && getTileEntity() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF)) {
+			return (IEnergyHandler)getTileEntity();
+		}
+		
+		return null;
+	}
+	
 	public boolean hasUpgrade(Upgrade upgrade) {
 		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || creativeMode;
 	}
@@ -398,6 +407,32 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	@Override
 	public World getWorld() {
 		return getBCPowerReceptor() != null ? getBCPowerReceptor().getWorld() : null;
+	}
+
+	/* IENERGYHANDLER */
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+		return getRFHandler() != null ? getRFHandler().receiveEnergy(from, maxReceive, simulate) : 0;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+		return getRFHandler() != null ? getRFHandler().extractEnergy(from, maxExtract, simulate) : 0;
+	}
+
+	@Override
+	public boolean canInterface(ForgeDirection from) {
+		return getRFHandler() != null ? getRFHandler().canInterface(from) : false;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		return getRFHandler() != null ? getRFHandler().getEnergyStored(from) : 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return getRFHandler() != null ? getRFHandler().getMaxEnergyStored(from) : 0;
 	}
 
 }
