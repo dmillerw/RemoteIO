@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.core.proxy;
 
+import ic2.api.item.Items;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -98,6 +99,54 @@ public class CommonProxy implements ISidedProxy {
 				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "D", "U", "C", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
 			} else {
 				FMLLog.warning("[Remote IO] Tried to get Ender Storage EnderChest, but failed!");
+			}
+		}
+		
+		// If Buildcraft detected, add BC Power Upgrade recipe
+		if (Loader.isModLoaded("BuildCraft|Core")) {
+			String[] pipeTypes = new String[] {"Wood", "Cobblestone", "Stone", "Quartz", "Iron", "Gold", "Diamond"};
+			ItemStack[] pipes = new ItemStack[pipeTypes.length];
+			boolean failed = false;
+			
+			try {
+				Class clazz = Class.forName("buildcraft.BuildCraftTransport");
+				
+				for (int i=0; i<pipeTypes.length; i++) {
+					pipes[i] = new ItemStack((Item)clazz.getDeclaredField("pipePower" + pipeTypes[i]).get(clazz));
+				}
+			} catch(Exception ex) {
+				FMLLog.warning("[Remote IO] Tried to get Buildcraft power pipes, but failed! Buildcraft support will not be available!");
+				FMLLog.warning("[Remote IO] Reason: " + ex.getMessage());
+				failed = true;
+			}
+			
+			if (!failed) {
+				for (ItemStack pipe : pipes) {
+					GameRegistry.addRecipe(Upgrade.POWER_MJ.toItemStack(), "C", "U", "C", 'C', pipe, 'U', Upgrade.BLANK.toItemStack());
+				}
+			}
+		}
+		
+		// If IC2 detected, add EU Power Upgrade recipe
+		if (Loader.isModLoaded("IC2")) {
+			String[] cableTypes = new String[] {"copper", "insulatedCopper", "gold", "insulatedGold", "iron", "insulatedIron", "insulatedTin", "glassFiber", "tin"};
+			ItemStack[] cables = new ItemStack[cableTypes.length];
+			boolean failed = false;
+			
+			try {
+				for (int i=0; i<cableTypes.length; i++) {
+					cables[i] = Items.getItem(cableTypes[i] + "CableItem");
+				}
+			} catch(Exception ex) {
+				FMLLog.warning("[Remote IO] Tried to get IC2 power cables, but failed! IC2 support will not be available!");
+				FMLLog.warning("[Remote IO] Reason: " + ex.getMessage());
+				failed = true;
+			}
+			
+			if (!failed) {
+				for (ItemStack cable : cables) {
+					GameRegistry.addRecipe(Upgrade.POWER_EU.toItemStack(), "C", "U", "C", 'C', cable, 'U', Upgrade.BLANK.toItemStack());
+				}
 			}
 		}
 	}

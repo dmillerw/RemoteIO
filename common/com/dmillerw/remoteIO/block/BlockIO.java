@@ -45,7 +45,7 @@ public class BlockIO extends BlockContainer {
         ItemStack stack = new ItemStack(this.blockID, 1, 0);
         TileEntityIO logic = (TileEntityIO) world.getBlockTileEntity(x, y, z);
         if (logic.validCoordinates) {
-        	BlockTracker.getInstance().stopTracking(logic.getTileEntity());
+        	BlockTracker.getInstance().stopTracking(world, logic.x, logic.y, logic.z);
         }
 
         if (logic.hasUpgrade(Upgrade.LOCK)) {

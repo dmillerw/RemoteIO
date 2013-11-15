@@ -1,5 +1,11 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
+import ic2.api.energy.tile.IEnergyTile;
+
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
@@ -13,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -36,7 +43,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
-public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler {
+public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergySource, IEnergySink {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -51,6 +58,8 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	public boolean creativeMode = false;
 	public boolean redstoneState = false;
 
+	public boolean addedToEnergyNet = false; // Requirement of IC2 :(
+	
 	public int x;
 	public int y;
 	public int z;
@@ -76,6 +85,13 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 					FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
 					path.setRBGColorF(0.35F, 0.35F, 1F);
 					Minecraft.getMinecraft().effectRenderer.addEffect(path);
+				}
+			}
+		} else {
+			if (validCoordinates) {
+				if (!addedToEnergyNet && (getEUSink() != null || getEUSource() != null)) {
+					MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+					addedToEnergyNet = true;
 				}
 			}
 		}
@@ -223,7 +239,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	}
 	
 	private IPowerReceptor getBCPowerReceptor() {
-		if (getTileEntity() != null && getTileEntity() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_BC)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ)) {
 			return (IPowerReceptor)getTileEntity();
 		}
 		
@@ -231,7 +247,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	}
 	
 	private IPowerEmitter getBCPowerEmitter() {
-		if (getTileEntity() != null && getTileEntity() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_BC)) {
+		if (getTileEntity() != null && getTileEntity() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ)) {
 			return (IPowerEmitter)getTileEntity();
 		}
 		
@@ -241,6 +257,22 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	private IEnergyHandler getRFHandler() {
 		if (getTileEntity() != null && getTileEntity() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF)) {
 			return (IEnergyHandler)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IEnergySource getEUSource() {
+		if (getTileEntity() != null && getTileEntity() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU)) {
+			return (IEnergySource)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IEnergySink getEUSink() {
+		if (getTileEntity() != null && getTileEntity() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU)) {
+			return (IEnergySink)getTileEntity();
 		}
 		
 		return null;
@@ -268,10 +300,16 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	}
 	
 	private void setValid(boolean valid) {
+		if (!valid && !worldObj.isRemote) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			addedToEnergyNet = false;
+		}
+		
 		this.validCoordinates = valid;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		
 		if (valid && !worldObj.isRemote) {
-			BlockTracker.getInstance().track(getTileEntity(), this);
+			BlockTracker.getInstance().track(worldObj, x, y, z, this);
 		}
 	}
 	
@@ -433,6 +471,43 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
 		return getRFHandler() != null ? getRFHandler().getMaxEnergyStored(from) : 0;
+	}
+
+	/* IENERGYSOURCE */
+	@Override
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+		return getEUSource() != null ? getEUSource().emitsEnergyTo(receiver, direction) : false;
+	}
+
+	@Override
+	public double getOfferedEnergy() {
+		return getEUSource() != null ? getEUSource().getOfferedEnergy() : 0;
+	}
+
+	@Override
+	public void drawEnergy(double amount) {
+		if (getEUSource() != null) getEUSource().drawEnergy(amount);
+	}
+
+	/* IENERGYSINK */
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+		return getEUSink() != null ? getEUSink().acceptsEnergyFrom(emitter, direction) : false;
+	}
+
+	@Override
+	public double demandedEnergyUnits() {
+		return getEUSink() != null ? getEUSink().demandedEnergyUnits() : 0;
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+		return getEUSink() != null ? getEUSink().injectEnergyUnits(directionFrom, amount) : 0;
+	}
+
+	@Override
+	public int getMaxSafeInput() {
+		return getEUSink() != null ? getEUSink().getMaxSafeInput() : Integer.MAX_VALUE;
 	}
 
 }

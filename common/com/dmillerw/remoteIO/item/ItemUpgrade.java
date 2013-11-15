@@ -71,14 +71,15 @@ public class ItemUpgrade extends Item {
 		BLANK("blank",                        "Blank Upgrade",     null),
 		ITEM("item",                          "Item",              new ItemStack[] {new ItemStack(Block.chest)},                                          "Allows for the basic transport of items"),
 		FLUID("fluid",                        "Fluid",             new ItemStack[] {new ItemStack(Item.bucketEmpty)},                                     "Allows for the basic transport of fluids"),
-		POWER_BC("powerBC",                   "Buildcraft Power",  new ItemStack[] {new ItemStack(Item.redstone)},                                        "Allows for the transfer of BC power (MJ)"),
+		POWER_MJ("powerBC",                   "Buildcraft Power",  new ItemStack[0],                                                                      "Allows for the transfer of BC power (MJ)"),
 		RANGE("range",                        "Range",             new ItemStack[] {new ItemStack(Item.glowstone)},                                       "Increases the range at which the IO block can connect", "Each upgrade increases the range by 8 blocks"),
-		CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", new ItemStack[] {new ItemStack(Block.obsidian),  new ItemStack(Block.enderChest)},                                                                 "Allows the IO block to connect across dimensions"),
+		CROSS_DIMENSIONAL("crossDimensional", "Cross Dimensional", new ItemStack[] {new ItemStack(Block.obsidian),  new ItemStack(Block.enderChest)},     "Allows the IO block to connect across dimensions"),
 		ISIDED_AWARE("iSidedAware",           "Side Awareness",    new ItemStack[] {new ItemStack(Block.hopperBlock)},                                    "Allows the IO block to determine side input/output"),
-		REDSTONE("redstone",                  "Redstone",          new ItemStack[] {new ItemStack(Item.redstoneRepeater)},                                "Allows for the toggle of the remote connection via redstone"),
+		REDSTONE("redstone",                  "Redstone",          new ItemStack[] {new ItemStack(Item.redstone)},                                        "Allows for the toggle of the remote connection via redstone"),
 		CAMO("camo",                          "Adaptive Texture",  new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 0)}, "Allows the IO block to take on the texture of any other block"),
 		LOCK("lock",                          "Lock",              new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 1)}, "Allows the IO block to be broken and replaced, while retaining all settings/links"),
-		POWER_RF("powerRF",                   "Redstone Flux",     null,                                                                                  "Allows for the transfer of Thermal Expansion power (RF)");
+		POWER_RF("powerRF",                   "Redstone Flux",     null,                                                                                  "Allows for the transfer of Thermal Expansion power (RF)"),
+		POWER_EU("powerEU",                   "IC2 Power",         new ItemStack[0],                                                                                  "Allows for the transfer of IC2 power (EU)");
 		
 		public String texture;
 		public String localizedName;
