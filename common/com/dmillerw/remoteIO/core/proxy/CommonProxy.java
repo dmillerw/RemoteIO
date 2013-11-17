@@ -71,7 +71,7 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		// Iron Rod component
-		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2), new Object[] {" I", "I ", 'I', Item.ingotIron});
+		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2), new Object[] {"I ", " I", 'I', Item.ingotIron});
 		OreDictionary.registerOre("rodIron", new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2));
 		
 		// Camo Component
