@@ -141,7 +141,7 @@ public class ItemUpgrade extends Item {
 		POWER_RF(
 			"powerRF", 
 			"Redstone Flux", 
-			null,
+			new ItemStack[0],
 			"Allows for the transfer of Thermal Expansion power (RF)"
 		), 
 				
