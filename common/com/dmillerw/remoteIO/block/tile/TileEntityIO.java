@@ -30,6 +30,7 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import cofh.api.energy.IEnergyHandler;
 
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.client.fx.FXParticlePath;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
@@ -40,7 +41,6 @@ import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 
 public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergySource, IEnergySink {
@@ -90,17 +90,45 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 				}
 			}
 		} else {
-			if (validCoordinates) {
-				if (!addedToEnergyNet && (getEUSink() != null || getEUSource() != null)) {
-					MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
-					addedToEnergyNet = true;
-				}
+			if (!addedToEnergyNet) {
+				MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile)this));
+				addedToEnergyNet = true;
 			}
 			
 			if (firstLoad) {
 				setValid(validCoordinates);
 				firstLoad = false;
 			}
+		}
+	}
+	
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		
+		if (!worldObj.isRemote) {
+			BlockTracker.getInstance().removeAllWithCallback(this);
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+			addedToEnergyNet = false;
+		}
+	}
+	
+	@Override
+	public void onChunkUnload() {
+		super.onChunkUnload();
+
+		if (!worldObj.isRemote) {
+			BlockTracker.getInstance().removeAllWithCallback(this);
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+			addedToEnergyNet = false;
+		}
+	}
+	
+	public void onBlockBroken() {
+		if (!worldObj.isRemote) {
+			BlockTracker.getInstance().removeAllWithCallback(this);
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+			addedToEnergyNet = false;
 		}
 	}
 	
@@ -307,13 +335,9 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	}
 	
 	private void setValid(boolean valid) {
-		if (!valid && !worldObj.isRemote && addedToEnergyNet) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-			addedToEnergyNet = false;
-		}
-		
 		this.validCoordinates = valid;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, RemoteIO.instance.config.blockRIOID);
 		
 		if (valid && !worldObj.isRemote) {
 			BlockTracker.getInstance().track(worldObj, x, y, z, this);

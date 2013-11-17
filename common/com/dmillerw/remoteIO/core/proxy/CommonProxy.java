@@ -149,6 +149,30 @@ public class CommonProxy implements ISidedProxy {
 				}
 			}
 		}
+		
+		// If ThermalExpansion detected, add RF Power Upgrade recipe
+		if (Loader.isModLoaded("ThermalExpansion")) {
+			ItemStack[] conduits = new ItemStack[2];
+			boolean failed = false;
+			
+			try {
+				Class clazz = Class.forName("thermalexpansion.block.TEBlocks");
+				Block conduit = (Block) clazz.getDeclaredField("blockConduit").get(clazz);
+				for (int i=0; i<2; i++) {
+					conduits[i] = new ItemStack(conduit, 1, i);
+				}
+			} catch(Exception ex) {
+				FMLLog.warning("[Remote IO] Tried to get Thermal Expansion power conduits, but failed! Thermal Expansion support will not be available!");
+				FMLLog.warning("[Remote IO] Reason: " + ex.getMessage());
+				failed = true;
+			}
+			
+			if (!failed) {
+				for (ItemStack conduit : conduits) {
+					GameRegistry.addRecipe(Upgrade.POWER_RF.toItemStack(), "C", "U", "C", 'C', conduit, 'U', Upgrade.BLANK.toItemStack());
+				}
+			}
+		}
 	}
 
 }

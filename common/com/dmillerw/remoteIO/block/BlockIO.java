@@ -132,10 +132,14 @@ public class BlockIO extends BlockContainer {
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
 		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
 
-		if (tile != null && !tile.hasUpgrade(Upgrade.LOCK)) {
-			this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this.blockID, 1, meta));
-			for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
-				if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
+		if (tile != null) {
+			tile.onBlockBroken();
+
+			if (!tile.hasUpgrade(Upgrade.LOCK)) {
+				this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this.blockID, 1, meta));
+				for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
+					if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
+				}
 			}
 		}
 		

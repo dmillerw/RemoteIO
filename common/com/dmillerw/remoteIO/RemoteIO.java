@@ -1,6 +1,5 @@
 package com.dmillerw.remoteIO;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 
 import com.dmillerw.remoteIO.core.config.RIOConfiguration;
@@ -39,7 +38,6 @@ public class RemoteIO {
 		this.config.scanConfig();
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
-		
 		TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
 		
 		proxy.preInit(event);

@@ -3,9 +3,11 @@ package com.dmillerw.remoteIO.core.tracker;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -25,6 +27,22 @@ public class BlockTracker implements ITickHandler {
 	}
 
 	public Map<Integer, List<TrackedBlock>> trackedBlocks = new HashMap<Integer, List<TrackedBlock>>();
+	
+	public void removeAllWithCallback(ITrackerCallback callback) {
+		Iterator<Entry<Integer, List<TrackedBlock>>> iterator = trackedBlocks.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<Integer, List<TrackedBlock>> entry = iterator.next();
+			Iterator<TrackedBlock> iterator2 = entry.getValue().iterator();
+			
+			while(iterator2.hasNext()) {
+				TrackedBlock tracked = iterator2.next();
+				
+				if (tracked.callback == callback) {
+					tracked.destroy();
+				}
+			}
+		}
+	}
 	
 	public void track(TileEntity tile, ITrackerCallback callback) {
 		track(tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord, callback);
