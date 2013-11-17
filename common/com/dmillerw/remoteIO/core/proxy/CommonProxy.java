@@ -11,6 +11,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
+import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.common.FMLLog;
@@ -98,7 +99,7 @@ public class CommonProxy implements ISidedProxy {
 				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "C", "U", "D", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
 				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "D", "U", "C", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
 			} else {
-				FMLLog.warning("[Remote IO] Tried to get Ender Storage EnderChest, but failed!");
+				IOLogger.warn("Tried to get Ender Storage EnderChest, but failed!");
 			}
 		}
 		
@@ -115,8 +116,8 @@ public class CommonProxy implements ISidedProxy {
 					pipes[i] = new ItemStack((Item)clazz.getDeclaredField("pipePower" + pipeTypes[i]).get(clazz));
 				}
 			} catch(Exception ex) {
-				FMLLog.warning("[Remote IO] Tried to get Buildcraft power pipes, but failed! Buildcraft support will not be available!");
-				FMLLog.warning("[Remote IO] Reason: " + ex.getMessage());
+				IOLogger.warn("Tried to get Buildcraft power pipes, but failed! Buildcraft support will not be available!");
+				IOLogger.warn("Reason: " + ex.getMessage());
 				failed = true;
 			}
 			
@@ -138,8 +139,8 @@ public class CommonProxy implements ISidedProxy {
 					cables[i] = Items.getItem(cableTypes[i] + "CableItem");
 				}
 			} catch(Exception ex) {
-				FMLLog.warning("[Remote IO] Tried to get IC2 power cables, but failed! IC2 support will not be available!");
-				FMLLog.warning("[Remote IO] Reason: " + ex.getMessage());
+				IOLogger.warn("Tried to get IC2 power cables, but failed! IC2 support will not be available!");
+				IOLogger.warn("Reason: " + ex.getMessage());
 				failed = true;
 			}
 			
@@ -162,8 +163,8 @@ public class CommonProxy implements ISidedProxy {
 					conduits[i] = new ItemStack(conduit, 1, i);
 				}
 			} catch(Exception ex) {
-				FMLLog.warning("[Remote IO] Tried to get Thermal Expansion power conduits, but failed! Thermal Expansion support will not be available!");
-				FMLLog.warning("[Remote IO] Reason: " + ex.getMessage());
+				IOLogger.warn("Tried to get Thermal Expansion power conduits, but failed! Thermal Expansion support will not be available!");
+				IOLogger.warn("Reason: " + ex.getMessage());
 				failed = true;
 			}
 			

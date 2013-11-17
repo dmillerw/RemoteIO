@@ -9,6 +9,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.dmillerw.remoteIO.core.helper.IOLogger;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLLog;
@@ -125,7 +127,7 @@ public class BlockTracker implements ITickHandler {
 			this.z = z;
 			
 			if (callback == null) {
-				FMLLog.warning("[Remote IO] Block tracker was registered without a callback handler. Will be deleted next tick.");
+				IOLogger.warn("Block tracker was registered without a callback handler. Will be deleted next tick.");
 				destroy();
 			} else {
 				this.callback = callback;
