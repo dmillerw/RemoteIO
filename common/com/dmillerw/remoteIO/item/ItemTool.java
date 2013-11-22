@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.core.helper.ChatHelper;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.relauncher.Side;
@@ -38,29 +39,32 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						player.addChatMessage("You must select a block to link with first!");
+						ChatHelper.warn(player, "You must select a block to link with first");
 						return false;
 					} else {
 						int[] coords = getCoordinates(stack);
-						tile.setCoordinates(coords[0], coords[1], coords[2], coords[3]);
+						if (tile.setCoordinates(coords[0], coords[1], coords[2], coords[3])) {
+							ChatHelper.info(player, "Linked");
+						} else {
+							ChatHelper.warn(player, "Check to ensure the IO block is within range and as the appropriate upgrades");
+						}
 						clearCoordinates(stack);
-						player.addChatMessage("Linked!");
 						return false;
 					}
 				} else {
 					if (tile.hasCoordinates()) {
 						tile.clearCoordinates();
-						player.addChatMessage("Cleared selected Remote IO's coordinates!");
+						ChatHelper.info(player, "Cleared selected Remote IO's coordinates");
 						return false;
 					}
 				}
 			} else {
 				if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(meta)) {
 					setCoordinates(stack, x, y, z, world.provider.dimensionId);
-					player.addChatMessage("Begun linking process!");
+					ChatHelper.info(player, "Begun linking process");
 					return false;
 				} else {
-					player.addChatMessage("You cannot link a Remote IO block to such a basic block!");
+					ChatHelper.warn(player, "You cannot link a Remote IO block to such a basic block");
 					return false;
 				}
 			}
@@ -72,7 +76,7 @@ public class ItemTool extends Item {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (!world.isRemote && player.isSneaking() && hasCoordinates(stack)) {
 			clearCoordinates(stack);
-			player.addChatMessage("Cleared link coordinates on linker tool!");
+			ChatHelper.info(player, "Cleared link coordinates on linker tool");
 		}
 		
 		return stack;

@@ -1,11 +1,16 @@
 package com.dmillerw.remoteIO.core.proxy;
 
 import ic2.api.item.Items;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import universalelectricity.prefab.block.BlockConductor;
 
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
@@ -14,7 +19,6 @@ import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -172,6 +176,19 @@ public class CommonProxy implements ISidedProxy {
 				for (ItemStack conduit : conduits) {
 					GameRegistry.addRecipe(Upgrade.POWER_RF.toItemStack(), "C", "U", "C", 'C', conduit, 'U', Upgrade.BLANK.toItemStack());
 				}
+			}
+		}
+		
+		// Universal Electricty management
+		List<Block> conductorBlocks = new ArrayList<Block>();
+
+		for (Block block : Block.blocksList) {
+			if (block instanceof BlockConductor) conductorBlocks.add(block);
+		}
+		
+		if (conductorBlocks.size() > 0) {
+			for (Block block : conductorBlocks) {
+				GameRegistry.addRecipe(Upgrade.POWER_UE.toItemStack(), "C", "U", "C", 'C', block, 'U', Upgrade.BLANK.toItemStack());
 			}
 		}
 	}

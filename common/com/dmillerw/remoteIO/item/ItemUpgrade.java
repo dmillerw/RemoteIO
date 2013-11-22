@@ -1,5 +1,7 @@
 package com.dmillerw.remoteIO.item;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -8,16 +10,12 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
-import net.minecraftforge.oredict.OreDictionary;
 
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
-
-import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ItemUpgrade extends Item {
 
@@ -51,6 +49,13 @@ public class ItemUpgrade extends Item {
 				list.add(upgrade.toItemStack());
 			}
 		}
+		
+		Collections.sort(list, new Comparator<ItemStack>() {
+			@Override
+			public int compare(ItemStack o1, ItemStack o2) {
+				return Upgrade.values()[o1.getItemDamage()].texture.compareTo(Upgrade.values()[o2.getItemDamage()].texture);
+			}
+		});
 	}
 
 	@Override
@@ -107,7 +112,8 @@ public class ItemUpgrade extends Item {
 			"crossDimensional", 
 			"Cross Dimensional", 
 			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)},
-			"Allows the IO block to connect across dimensions"
+			"Allows the IO block to connect across dimensions",
+			EnumChatFormatting.RED + "DISABLED"
 		), 
 				
 		ISIDED_AWARE(
@@ -150,6 +156,13 @@ public class ItemUpgrade extends Item {
 			"IC2 Power", 
 			new ItemStack[0],
 			"Allows for the transfer of IC2 power (EU)"
+		),
+		
+		POWER_UE(
+			"powerUE",
+			"UE Power", 
+			new ItemStack[0],
+			"Allows for the transfer of UE power (UE)"
 		);
 		
 		public String texture;

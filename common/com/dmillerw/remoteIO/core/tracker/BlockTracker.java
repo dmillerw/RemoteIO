@@ -9,11 +9,12 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.dmillerw.remoteIO.core.helper.IOLogger;
-
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLLog;
+
+import com.dmillerw.remoteIO.core.helper.IOLogger;
+
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
@@ -47,33 +48,33 @@ public class BlockTracker implements ITickHandler {
 	}
 	
 	public void track(TileEntity tile, ITrackerCallback callback) {
-		track(tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord, callback);
+		track(tile.worldObj.provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord, callback);
 	}
 	
-	public void track(World world, int x, int y, int z, ITrackerCallback callback) {
-		track(world, new TrackedBlock(x, y, z, callback));
+	public void track(int dim, int x, int y, int z, ITrackerCallback callback) {
+		track(dim, new TrackedBlock(x, y, z, callback));
 	}
 	
-	public void track(World world, TrackedBlock tracked) {
-		if (!trackedBlocks.containsKey(world.provider.dimensionId) || trackedBlocks.get(world.provider.dimensionId) == null) {
-			trackedBlocks.put(world.provider.dimensionId, new ArrayList<TrackedBlock>());
+	public void track(int dim, TrackedBlock tracked) {
+		if (!trackedBlocks.containsKey(dim) || trackedBlocks.get(dim) == null) {
+			trackedBlocks.put(dim, new ArrayList<TrackedBlock>());
 		}
-		trackedBlocks.get(world.provider.dimensionId).add(tracked);
+		trackedBlocks.get(dim).add(tracked);
 	}
 	
 	public void stopTracking(TileEntity tile) {
-		stopTracking(tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord);
+		stopTracking(tile.worldObj.provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord);
 	}
 	
-	public void stopTracking(World world, int x, int y, int z) {
-		stopTracking(world, new TrackedBlock(x, y, z, null));
+	public void stopTracking(int dim, int x, int y, int z) {
+		stopTracking(dim, new TrackedBlock(x, y, z, null));
 	}
 	
-	public void stopTracking(World world, TrackedBlock tracked) {
-		if (!trackedBlocks.containsKey(world.provider.dimensionId) || trackedBlocks.get(world.provider.dimensionId) == null) {
-			trackedBlocks.put(world.provider.dimensionId, new ArrayList<TrackedBlock>());
+	public void stopTracking(int dim, TrackedBlock tracked) {
+		if (!trackedBlocks.containsKey(dim) || trackedBlocks.get(dim) == null) {
+			trackedBlocks.put(dim, new ArrayList<TrackedBlock>());
 		}
-		trackedBlocks.get(world.provider.dimensionId).remove(tracked);
+		trackedBlocks.get(dim).remove(tracked);
 	}
 	
 	@Override
@@ -175,6 +176,11 @@ public class BlockTracker implements ITickHandler {
 				return tracked.x == this.x && tracked.y == this.y && tracked.z == this.z;
 			}
 			return false;
+		}
+		
+		@Override
+		public String toString() {
+			return ("BLOCK " + blockID + ":" + blockMeta + " [" + x + ", " + y + ", " + z + "]");
 		}
 	}
 	

@@ -1,6 +1,6 @@
 package com.dmillerw.remoteIO.block;
 
-import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -45,7 +45,7 @@ public class BlockIO extends BlockContainer {
         ItemStack stack = new ItemStack(this.blockID, 1, 0);
         TileEntityIO logic = (TileEntityIO) world.getBlockTileEntity(x, y, z);
         if (logic.validCoordinates) {
-        	BlockTracker.getInstance().stopTracking(world, logic.x, logic.y, logic.z);
+        	BlockTracker.getInstance().stopTracking(world.provider.dimensionId, logic.x, logic.y, logic.z);
         }
 
         if (logic.hasUpgrade(Upgrade.LOCK)) {
@@ -92,11 +92,6 @@ public class BlockIO extends BlockContainer {
 
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, entity, stack);
-		
-		if (entity instanceof EntityPlayer && ((EntityPlayer)entity).capabilities.isCreativeMode) {
-			TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
-			tile.creativeMode = true;
-		}
 		
 		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("logic")) {
             int meta = world.getBlockMetadata(x, y, z);
@@ -181,6 +176,48 @@ public class BlockIO extends BlockContainer {
 		
 		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIO");
 		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIOInactive");
+	}
+	
+	@Override
+	public void randomDisplayTick(World world, int x, int y, int z, Random random) {
+        TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+        
+        if (tile != null && tile.redstoneState) {
+        	double d0 = 0.0625D;
+    		for (int l = 0; l < 6; ++l) {
+    			double d1 = (double) ((float) x + random.nextFloat());
+    			double d2 = (double) ((float) y + random.nextFloat());
+    			double d3 = (double) ((float) z + random.nextFloat());
+
+    			if (l == 0 && !world.isBlockOpaqueCube(x, y + 1, z)) {
+    				d2 = (double) (y + 1) + d0;
+    			}
+
+    			if (l == 1 && !world.isBlockOpaqueCube(x, y - 1, z)) {
+    				d2 = (double) (y + 0) - d0;
+    			}
+
+    			if (l == 2 && !world.isBlockOpaqueCube(x, y, z + 1)) {
+    				d3 = (double) (z + 1) + d0;
+    			}
+
+    			if (l == 3 && !world.isBlockOpaqueCube(x, y, z - 1)) {
+    				d3 = (double) (z + 0) - d0;
+    			}
+
+    			if (l == 4 && !world.isBlockOpaqueCube(x + 1, y, z)) {
+    				d1 = (double) (x + 1) + d0;
+    			}
+
+    			if (l == 5 && !world.isBlockOpaqueCube(x - 1, y, z)) {
+    				d1 = (double) (x + 0) - d0;
+    			}
+
+    			if (d1 < (double) x || d1 > (double) (x + 1) || d2 < 0.0D || d2 > (double) (y + 1) || d3 < (double) z || d3 > (double) (z + 1)) {
+    				world.spawnParticle("reddust", d1, d2, d3, 0.0D, 0.0D, 0.0D);
+    			}
+    		}
+        }
 	}
 	
 	@Override

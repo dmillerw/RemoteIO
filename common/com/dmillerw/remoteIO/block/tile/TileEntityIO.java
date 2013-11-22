@@ -8,6 +8,9 @@ import ic2.api.energy.tile.IEnergyTile;
 
 import java.util.Random;
 
+import universalelectricity.core.block.IElectrical;
+import universalelectricity.core.block.IElectricalStorage;
+import universalelectricity.core.electricity.ElectricityPack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -18,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
@@ -41,9 +45,8 @@ import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLLog;
 
-public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergySource, IEnergySink {
+public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergySource, IEnergySink, IElectrical, IElectricalStorage {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -55,7 +58,6 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	};
 	
 	public boolean validCoordinates = false;
-	public boolean creativeMode = false;
 	public boolean redstoneState = false;
 
 	public boolean addedToEnergyNet = false; // Requirement of IC2 :(
@@ -132,13 +134,21 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		}
 	}
 	
-	public void setCoordinates(int x, int y, int z, int d) {
+	public boolean setCoordinates(int x, int y, int z, int d) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.d = d;
 		
-		setValid(true);
+		boolean valid = getTileEntity(true) != null;
+		
+		if (valid && !worldObj.isRemote) {
+			BlockTracker.getInstance().track(worldObj.provider.dimensionId, x, y, z, this);
+		}
+		
+		setValid(valid);
+		
+		return valid;
 	}
 	
 	public boolean hasCoordinates() {
@@ -156,8 +166,6 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
-		nbt.setBoolean("creative", this.creativeMode);
-		
 		if (this.validCoordinates) {
 			NBTTagCompound coords = new NBTTagCompound();
 			coords.setInteger("x", x);
@@ -166,6 +174,8 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 			coords.setInteger("d", d);
 			nbt.setCompoundTag("coords", coords);
 		}
+		
+		nbt.setBoolean("redstone", this.redstoneState);
 		
 		NBTTagCompound upgradesNBT = new NBTTagCompound();
 		InventoryHelper.writeToNBT(upgrades, upgradesNBT);
@@ -178,8 +188,6 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt) {
-		this.creativeMode = nbt.getBoolean("creative");
-		
 		if (nbt.hasKey("coords")) {
 			NBTTagCompound coords = nbt.getCompoundTag("coords");
 			this.x = coords.getInteger("x");
@@ -189,6 +197,10 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 			this.validCoordinates = true;
 		} else {
 			this.validCoordinates = false;
+		}
+		
+		if (nbt.hasKey("redstone")) {
+			this.redstoneState = nbt.getBoolean("redstone");
 		}
 		
 		if (nbt.hasKey("upgrades")) {
@@ -208,44 +220,43 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	
 	public void setRedstoneState(boolean state) {
 		this.redstoneState = state;
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	public TileEntity getTileEntity() {
+		return getTileEntity(false);
+	}
+	
+	public TileEntity getTileEntity(boolean verify) {
 		if (!this.worldObj.isRemote) {
-			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState) {
+			if (!validCoordinates && !verify) {
 				return null;
 			}
 			
-			if (validCoordinates) {
-				if (!hasUpgrade(Upgrade.CROSS_DIMENSIONAL) && this.worldObj.provider.dimensionId != this.d) {
-					return null;
-				} else {
-					try {
-						TileEntity tile = null;
-						
-						if (this.worldObj.provider.dimensionId == this.d) {
-							if (this.inRange()) {
-								tile = worldObj.getBlockTileEntity(x, y, z);
-							}
-						} else {
-							World world = MinecraftServer.getServer().worldServerForDimension(d);
-							tile = world.getBlockTileEntity(x, y, z);
-						}
-
-						if (tile != null) {
-							return tile;
-						} else {
-							setValid(false);
-							return null;
-						}
-					} catch(NullPointerException ex) {
-						FMLLog.warning("[RemoteIO] The IO block at [" + xCoord + ", " + yCoord + ", " + zCoord + "] has an invalid dimension ID set. It will be reset!");
-						this.clearCoordinates();
-					}
-				}
+			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState && !verify) {
+				return null;
 			}
+			
+			return (this.worldObj.provider.dimensionId == this.d) ? getTileEntityInDimension(verify) : getTileEntityOutDimension(verify);
 		}
 
+		return null;
+	}
+	
+	private TileEntity getTileEntityInDimension(boolean verify) {
+		if (inRange(verify)) {
+			return this.worldObj.getBlockTileEntity(x, y, z);
+		}
+		
+		return null;
+	}
+	
+	private TileEntity getTileEntityOutDimension(boolean verify) {
+//		if (hasUpgrade(Upgrade.CROSS_DIMENSIONAL) || verify) {
+//			WorldServer world = MinecraftServer.getServer().worldServerForDimension(this.d);
+//			return world.getBlockTileEntity(x, y, z);
+//		}
+		
 		return null;
 	}
 	
@@ -313,35 +324,48 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		return null;
 	}
 	
+	private IElectrical getUEElectrical() {
+		if (getTileEntity() != null && getTileEntity() instanceof IElectrical && hasUpgrade(Upgrade.POWER_UE)) {
+			return (IElectrical)getTileEntity();
+		}
+		
+		return null;
+	}
+	
+	private IElectricalStorage getUEStorage() {
+		if (getTileEntity() != null && getTileEntity() instanceof IElectricalStorage && hasUpgrade(Upgrade.POWER_UE)) {
+			return (IElectricalStorage)getTileEntity();
+		}
+		
+		return null;
+	}
+	
 	public boolean hasUpgrade(Upgrade upgrade) {
-		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || creativeMode;
+		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
 	}
 
 	private int upgradeCount(Upgrade upgrade) {
 		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
 	}
 	
-	private boolean inRange() {
-		if (this.validCoordinates) {
+	private boolean inRange(boolean verify) {
+		if (this.validCoordinates || verify) {
 			int maxRange = (upgradeCount(Upgrade.RANGE) * 8) + 8;
 			int dX = Math.abs(this.xCoord - this.x);
 			int dY = Math.abs(this.yCoord - this.y);
 			int dZ = Math.abs(this.zCoord - this.z);
 
-			return (dX <= maxRange || dY <= maxRange || dZ <= maxRange || this.creativeMode);
+			return (dX <= maxRange || dY <= maxRange || dZ <= maxRange);
 		}
 		
 		return false;
 	}
 	
+	/** Purely for the visual side of things */
 	private void setValid(boolean valid) {
 		this.validCoordinates = valid;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, RemoteIO.instance.config.blockRIOID);
-		
-		if (valid && !worldObj.isRemote) {
-			BlockTracker.getInstance().track(worldObj, x, y, z, this);
-		}
 	}
 	
 	/* IINVENTORY */
@@ -541,4 +565,50 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		return getEUSink() != null ? getEUSink().getMaxSafeInput() : Integer.MAX_VALUE;
 	}
 
+	/* IELECTRICAL */
+	@Override
+	public boolean canConnect(ForgeDirection direction) {
+		return getUEElectrical() != null ? getUEElectrical().canConnect(direction) : false;
+	}
+
+	@Override
+	public float receiveElectricity(ForgeDirection from, ElectricityPack receive, boolean doReceive) {
+		return getUEElectrical() != null ? getUEElectrical().receiveElectricity(from, receive, doReceive) : 0;
+	}
+
+	@Override
+	public ElectricityPack provideElectricity(ForgeDirection from, ElectricityPack request, boolean doProvide) {
+		return getUEElectrical() != null ? getUEElectrical().provideElectricity(from, request, doProvide) : null;
+	}
+
+	@Override
+	public float getRequest(ForgeDirection direction) {
+		return getUEElectrical() != null ? getUEElectrical().getRequest(direction) : 0;
+	}
+
+	@Override
+	public float getProvide(ForgeDirection direction) {
+		return getUEElectrical() != null ? getUEElectrical().getProvide(direction) : 0;
+	}
+
+	@Override
+	public float getVoltage() {
+		return getUEElectrical() != null ? getUEElectrical().getVoltage() : 0;
+	}
+
+	/* IELECTRICALSTORAGE */
+	@Override
+	public void setEnergyStored(float energy) {
+		if (getUEStorage() != null) getUEStorage().setEnergyStored(energy);
+	}
+	
+	@Override
+	public float getEnergyStored() {
+		return getUEStorage() != null ? getUEStorage().getEnergyStored() : 0;
+	}
+	
+	@Override
+	public float getMaxEnergyStored() {
+		return getUEStorage() != null ? getUEStorage().getMaxEnergyStored() : 0;
+	}	
 }
