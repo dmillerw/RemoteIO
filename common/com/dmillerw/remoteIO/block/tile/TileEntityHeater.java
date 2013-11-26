@@ -1,6 +1,7 @@
 package com.dmillerw.remoteIO.block.tile;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -27,7 +28,9 @@ public class TileEntityHeater extends TileEntityCore {
 				updateLavaSources();
 			}
 			
-			for (TileEntityFurnace furnaceTile : furnaceTiles) {
+			Iterator<TileEntityFurnace> iterator = furnaceTiles.iterator();
+			while (iterator.hasNext()) {
+				TileEntityFurnace furnaceTile = iterator.next();
 				if (furnaceTile != null && hasLava) {
 					furnaceTile.furnaceBurnTime = furnaceTile.currentItemBurnTime = 100;
 					
