@@ -63,6 +63,8 @@
 	  <delete dir="${mcpsrc.dir}/buildcraft" />
 	  <delete dir="${mcpsrc.dir}/cofh" />
 	  <delete dir="${mcpsrc.dir}/ic2" />
+	  <delete dir="${mcpsrc.dir}/universalelectricity" />
+	  
       <copy todir="${mcpsrc.dir}/com">
          <fileset dir="${src.dir}/com" />
          <filterset>
@@ -80,6 +82,9 @@
 	  </copy>
 	  <copy todir="${mcpsrc.dir}/ic2">
          <fileset dir="${api.dir}/ic2" />
+	  </copy>
+	  <copy todir="${mcpsrc.dir}/universalelectricity">
+		 <fileset dir="${api.dir}/universalelectricity" />
 	  </copy>
    </target>
    <target name="copy-api">
