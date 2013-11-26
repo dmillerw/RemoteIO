@@ -107,9 +107,11 @@ public class BlockIO extends BlockContainer {
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		if (!player.isSneaking() && (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof ItemTool))) {
-			player.openGui(RemoteIO.instance, 0, world, x, y, z);
-			return true;
+		if (!world.isRemote) {
+			if (!player.isSneaking() && (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof ItemTool))) {
+				player.openGui(RemoteIO.instance, 0, world, x, y, z);
+				return true;
+			}
 		}
 		
 		return false;
