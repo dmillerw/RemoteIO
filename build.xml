@@ -10,7 +10,7 @@
    <property name="mcp.version" value="811" />
    <property name="minecraft.version" value="1.6.4" />
    <property name="forgemajor.version" value="9.11.1" />
-   <property name="forgebuild" value="916" />
+   <property name="forgebuild" value="953" />
    <property name="forge.version" value="${minecraft.version}-${forgemajor.version}.${forgebuild}" />
    <property name="forgeant.version" value="${forgemajor.version}.${forgebuild}" />
    <!-- Directories -->
