@@ -1,7 +1,5 @@
 package com.dmillerw.remoteIO.item;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -15,6 +13,7 @@ import net.minecraft.util.Icon;
 
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.lib.ItemStackReference;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 public class ItemUpgrade extends Item {
@@ -49,13 +48,6 @@ public class ItemUpgrade extends Item {
 				list.add(upgrade.toItemStack());
 			}
 		}
-		
-		Collections.sort(list, new Comparator<ItemStack>() {
-			@Override
-			public int compare(ItemStack o1, ItemStack o2) {
-				return Upgrade.values()[o1.getItemDamage()].texture.compareTo(Upgrade.values()[o2.getItemDamage()].texture);
-			}
-		});
 	}
 
 	@Override
@@ -112,7 +104,7 @@ public class ItemUpgrade extends Item {
 			"crossDimensional", 
 			"Cross Dimensional", 
 			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)},
-			"Allows the IO block to connect across dimensions",
+//			"Allows the IO block to connect across dimensions",
 			EnumChatFormatting.RED + "DISABLED"
 		), 
 				
@@ -133,14 +125,14 @@ public class ItemUpgrade extends Item {
 		CAMO(
 			"camo",
 			"Adaptive Texture",
-			new ItemStack[] {new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 0)},
+			new ItemStack[] {ItemStackReference.COMPONENT_CAMO},
 			"Allows the IO block to take on the texture of any other block"
 		), 
 				
 		LOCK(
 			"lock",
 			"Lock",
-			new ItemStack[] { new ItemStack(RemoteIO.instance.config.itemComponentID + 256, 1, 1)},
+			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Block.chest)},
 			"Allows the IO block to be broken and replaced, while retaining all settings/links"
 		), 
 				
@@ -163,6 +155,13 @@ public class ItemUpgrade extends Item {
 			"UE Power", 
 			new ItemStack[0],
 			"Allows for the transfer of UE power (UE)"
+		),
+		
+		LINK_PERSIST(
+			"linkPersist",
+			"Link Persistance",
+			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)},
+			"Allows the IO block to maintain its link even after the linked block is destroyed"
 		);
 		
 		public String texture;

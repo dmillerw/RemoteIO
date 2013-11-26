@@ -72,7 +72,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {
 		if (validCoordinates) {
-			if (tracked.state == BlockState.REMOVED) {
+			if (tracked.state == BlockState.REMOVED && !hasUpgrade(Upgrade.LINK_PERSIST)) {
 				setValid(false);
 			}
 		} else {
