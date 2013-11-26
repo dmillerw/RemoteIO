@@ -8,9 +8,6 @@ import ic2.api.energy.tile.IEnergyTile;
 
 import java.util.Random;
 
-import universalelectricity.core.block.IElectrical;
-import universalelectricity.core.block.IElectricalStorage;
-import universalelectricity.core.electricity.ElectricityPack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -18,16 +15,17 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import universalelectricity.core.block.IElectrical;
+import universalelectricity.core.block.IElectricalStorage;
+import universalelectricity.core.electricity.ElectricityPack;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -46,6 +44,8 @@ import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IElectrical {
 
@@ -81,30 +81,33 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@Override
-	public void updateEntity() {
-		if (worldObj.isRemote) {
-			if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates && worldObj.provider.dimensionId == this.d) {
-				Random rand = new Random();
-				for (int i=0; i<rand.nextInt(5); i++) {
-					FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
-					path.setRBGColorF(0.35F, 0.35F, 1F);
-					Minecraft.getMinecraft().effectRenderer.addEffect(path);
-				}
-			}
-		} else {
-			if (!addedToEnergyNet) {
-				MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile)this));
-				addedToEnergyNet = true;
-			}
-			
-			if (firstLoad) {
-				setValid(validCoordinates);
-				firstLoad = false;
+	public void updateClient() {
+		if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates && worldObj.provider.dimensionId == this.d) {
+			Random rand = new Random();
+			for (int i=0; i<rand.nextInt(5); i++) {
+				FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
+				path.setRBGColorF(0.35F, 0.35F, 1F);
+				Minecraft.getMinecraft().effectRenderer.addEffect(path);
 			}
 		}
 	}
 	
+	@SideOnly(Side.SERVER)
+	@Override
+	public void updateServer() {
+		if (!addedToEnergyNet) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile)this));
+			addedToEnergyNet = true;
+		}
+		
+		if (firstLoad) {
+			setValid(validCoordinates);
+			firstLoad = false;
+		}
+	}
+		
 	@Override
 	public void invalidate() {
 		super.invalidate();
