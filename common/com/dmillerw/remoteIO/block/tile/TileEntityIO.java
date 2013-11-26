@@ -33,6 +33,7 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyStorage;
 
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.client.fx.FXParticlePath;
@@ -46,7 +47,7 @@ import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.client.FMLClientHandler;
 
-public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergySource, IEnergySink, IElectrical, IElectricalStorage {
+public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IElectrical {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -308,6 +309,14 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		return null;
 	}
 	
+	private IEnergyStorage getRFSource() {
+		if (getTileEntity() != null && getTileEntity() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF)) {
+			return (IEnergyStorage)getTileEntity();
+		}
+		
+		return null;
+	}
+	
 	private IEnergySource getEUSource() {
 		if (getTileEntity() != null && getTileEntity() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU)) {
 			return (IEnergySource)getTileEntity();
@@ -355,7 +364,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 			int dY = Math.abs(this.yCoord - this.y);
 			int dZ = Math.abs(this.zCoord - this.z);
 
-			return (dX <= maxRange || dY <= maxRange || dZ <= maxRange);
+			return (dX <= maxRange && dY <= maxRange && dZ <= maxRange);
 		}
 		
 		return false;
@@ -528,6 +537,27 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		return getRFHandler() != null ? getRFHandler().getMaxEnergyStored(from) : 0;
 	}
 
+	/* IENERGYSTORAGE */
+	@Override
+	public int receiveEnergy(int maxReceive, boolean simulate) {
+		return getRFSource() != null ? getRFSource().receiveEnergy(maxReceive, simulate) : 0;
+	}
+
+	@Override
+	public int extractEnergy(int maxExtract, boolean simulate) {
+		return getRFSource() != null ? getRFSource().extractEnergy(maxExtract, simulate) : 0;
+	}
+
+	@Override
+	public int getEnergyStored() {
+		return getRFSource() != null ? getRFSource().getEnergyStored() : 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored() {
+		return getRFSource() != null ? getRFSource().getMaxEnergyStored() : 0;
+	}
+	
 	/* IENERGYSOURCE */
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
@@ -596,19 +626,4 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 		return getUEElectrical() != null ? getUEElectrical().getVoltage() : 0;
 	}
 
-	/* IELECTRICALSTORAGE */
-	@Override
-	public void setEnergyStored(float energy) {
-		if (getUEStorage() != null) getUEStorage().setEnergyStored(energy);
-	}
-	
-	@Override
-	public float getEnergyStored() {
-		return getUEStorage() != null ? getUEStorage().getEnergyStored() : 0;
-	}
-	
-	@Override
-	public float getMaxEnergyStored() {
-		return getUEStorage() != null ? getUEStorage().getMaxEnergyStored() : 0;
-	}	
 }
