@@ -47,12 +47,10 @@ public abstract class TileEntityCore extends TileEntity {
 		}
 	}
 	
-	@SideOnly(Side.CLIENT)
 	public void updateClient() {
 		
 	}
 	
-	@SideOnly(Side.SERVER)
 	public void updateServer() {
 		
 	}
