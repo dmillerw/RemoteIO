@@ -9,9 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
+import com.dmillerw.remoteIO.block.tile.TileEntitySideProxy;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.ChatHelper;
 import com.dmillerw.remoteIO.lib.ModInfo;
@@ -58,9 +60,33 @@ public class ItemTool extends Item {
 						return false;
 					}
 				}
+			} else if (id == RemoteIO.instance.config.blockSideProxyID) {
+				TileEntitySideProxy tile = (TileEntitySideProxy) world.getBlockTileEntity(x, y, z);
+				
+				if (!player.isSneaking()) {
+					if (!hasCoordinates(stack)) {
+						ChatHelper.warn(player, "You must select a block to link with first");
+						world.markBlockForUpdate(x, y, z);
+						return false;
+					} else {
+						int[] coords = getCoordinates(stack);
+						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
+						ChatHelper.info(player, "Linked");
+						clearCoordinates(stack);
+						world.markBlockForUpdate(x, y, z);
+						return false;
+					}
+				} else {
+					if (tile.fullyValid()) {
+						tile.insertionSide = ForgeDirection.UNKNOWN;
+						ChatHelper.info(player, "Reset insertion side");
+						world.markBlockForUpdate(x, y, z);
+						return false;
+					}
+				}
 			} else {
 				if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(meta)) {
-					setCoordinates(stack, x, y, z, world.provider.dimensionId);
+					setCoordinates(stack, x, y, z, world.provider.dimensionId, side);
 					ChatHelper.info(player, "Begun linking process");
 					return false;
 				} else {
@@ -82,7 +108,7 @@ public class ItemTool extends Item {
 		return stack;
 	}
 	
-	private void setCoordinates(ItemStack stack, int x, int y, int z, int d) {
+	private void setCoordinates(ItemStack stack, int x, int y, int z, int d, int side) {
 		if (!stack.hasTagCompound()) {
 			stack.setTagCompound(new NBTTagCompound());
 		}
@@ -94,8 +120,10 @@ public class ItemTool extends Item {
 		coords.setInteger("y", y);
 		coords.setInteger("z", z);
 		coords.setInteger("d", d);
+		coords.setInteger("side", side);
 		
 		nbt.setCompoundTag("coords", coords);
+		
 		stack.setTagCompound(nbt);
 	}
 	
@@ -112,7 +140,7 @@ public class ItemTool extends Item {
 		
 		NBTTagCompound coords = nbt.getCompoundTag("coords");
 		
-		return new int[] {coords.getInteger("x"), coords.getInteger("y"), coords.getInteger("z"), coords.getInteger("d")};
+		return new int[] {coords.getInteger("x"), coords.getInteger("y"), coords.getInteger("z"), coords.getInteger("d"), coords.getInteger("side")};
 	}
 	
 	private boolean hasCoordinates(ItemStack stack) {

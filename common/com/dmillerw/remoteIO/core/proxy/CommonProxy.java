@@ -16,6 +16,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
 import com.dmillerw.remoteIO.block.tile.TileEntityIO;
 import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
+import com.dmillerw.remoteIO.block.tile.TileEntitySideProxy;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
@@ -40,6 +41,10 @@ public class CommonProxy implements ISidedProxy {
 		if (RemoteIO.instance.config.blockReservoirID != 0) {
 			GameRegistry.registerTileEntity(TileEntityReservoir.class, "blockReservoir");
 		}
+		
+		if (RemoteIO.instance.config.blockSideProxyID != 0) {
+			GameRegistry.registerTileEntity(TileEntitySideProxy.class, "blockSideProxy");
+		}
 	}
 
 	@Override
@@ -54,6 +59,11 @@ public class CommonProxy implements ISidedProxy {
 		
 		if (RemoteIO.instance.config.blockReservoirID != 0) {
 			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockReservoir), new Object[] {"SFS", "FFF", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
+		}
+		
+		if (RemoteIO.instance.config.blockSideProxyID != 0) {
+			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack()});
+			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack()});
 		}
 		
 		// Wrench

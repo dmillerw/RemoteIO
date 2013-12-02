@@ -8,6 +8,8 @@ import net.minecraftforge.common.Configuration;
 import com.dmillerw.remoteIO.block.BlockHeater;
 import com.dmillerw.remoteIO.block.BlockIO;
 import com.dmillerw.remoteIO.block.BlockReservoir;
+import com.dmillerw.remoteIO.block.BlockSideProxy;
+import com.dmillerw.remoteIO.block.item.ItemBlockSidedProxy;
 import com.dmillerw.remoteIO.item.ItemComponent;
 import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemTool;
@@ -24,6 +26,7 @@ public class RIOConfiguration {
 	public int blockRIOID;
 	public int blockHeaterID;
 	public int blockReservoirID;
+	public int blockSideProxyID;
 	
 	public int itemToolID;
 	public int itemUpgradeID;
@@ -33,6 +36,7 @@ public class RIOConfiguration {
 	public Block blockRIO;
 	public Block blockHeater;
 	public Block blockReservoir;
+	public Block blockSideProxy;
 	
 	public Item itemTool;
 	public Item itemUpgrade;
@@ -51,6 +55,7 @@ public class RIOConfiguration {
 		this.blockRIOID = config.getBlock("block_id.RIO", 600).getInt(600);
 		this.blockHeaterID = config.getBlock("block_id.heater", 601).getInt(601);
 		this.blockReservoirID = config.getBlock("block_id.reservoir", 602).getInt(602);
+		this.blockSideProxyID = config.getBlock("block_id.sideProxy", 603).getInt(603);
 		this.itemToolID = config.getItem("item_id.tool", 6000).getInt(6000);
 		this.itemUpgradeID = config.getItem("item_id.upgrade", 6001).getInt(6001);
 		this.itemComponentID = config.getItem("item_id.component", 6002).getInt(6002);
@@ -76,6 +81,12 @@ public class RIOConfiguration {
 			this.blockReservoir = new BlockReservoir(blockReservoirID).setUnlocalizedName("blockReservoir");
 			GameRegistry.registerBlock(this.blockReservoir, "blockReservoir");
 			LanguageRegistry.addName(this.blockReservoir, "Water Reservoir");
+		}
+		
+		if (this.blockSideProxyID != 0) {
+			this.blockSideProxy = new BlockSideProxy(blockSideProxyID).setUnlocalizedName("blockSideProxy");
+			GameRegistry.registerBlock(this.blockSideProxy, ItemBlockSidedProxy.class, "blockSideProxy");
+			LanguageRegistry.addName(this.blockSideProxy, "Sided Proxy");
 		}
 		
 		this.itemTool = new ItemTool(itemToolID).setUnlocalizedName("itemTool");
