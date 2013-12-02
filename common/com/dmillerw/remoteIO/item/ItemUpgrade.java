@@ -111,7 +111,7 @@ public class ItemUpgrade extends Item {
 		ISIDED_AWARE(
 			"iSidedAware", 
 			"Side Awareness",
-			new ItemStack[] {new ItemStack(Block.hopperBlock)},
+			new ItemStack[] {new ItemStack(Block.hopperBlock), Upgrade.ITEM.toItemStack()},
 			"Allows the IO block to determine side input/output"
 		), 
 				

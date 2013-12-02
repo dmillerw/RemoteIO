@@ -62,8 +62,8 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		if (RemoteIO.instance.config.blockSideProxyID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack()});
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack()});
+			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack(), 'I', Block.blockIron});
+			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack(), 'I', Block.blockIron});
 		}
 		
 		// Wrench
