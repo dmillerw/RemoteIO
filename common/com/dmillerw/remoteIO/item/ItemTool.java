@@ -70,16 +70,24 @@ public class ItemTool extends Item {
 						return false;
 					} else {
 						int[] coords = getCoordinates(stack);
+						tile.x = coords[0];
+						tile.y = coords[1];
+						tile.z = coords[2];
 						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
 						ChatHelper.info(player, "Linked");
 						clearCoordinates(stack);
+						world.notifyBlocksOfNeighborChange(x, y, z, RemoteIO.instance.config.blockSideProxyID);
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					}
 				} else {
 					if (tile.fullyValid()) {
+						tile.x = 0;
+						tile.y = -1;
+						tile.z = 0;
 						tile.insertionSide = ForgeDirection.UNKNOWN;
 						ChatHelper.info(player, "Reset insertion side");
+						world.notifyBlocksOfNeighborChange(x, y, z, RemoteIO.instance.config.blockSideProxyID);
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					}

@@ -14,27 +14,36 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 public class TileEntitySideProxy extends TileEntityCore implements ISidedInventory, IFluidHandler {
 
-	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
+	public int x = 0;
+	public int y = -1;
+	public int z = 0;
+	
 	public ForgeDirection insertionSide = ForgeDirection.UNKNOWN;
 	
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
-		nbt.setByte("orientation", (byte) this.orientation.ordinal());
+		nbt.setInteger("xCoord", this.x);
+		nbt.setInteger("yCoord", this.y);
+		nbt.setInteger("zCoord", this.z);
+		
 		nbt.setByte("insertionSide", (byte) this.insertionSide.ordinal());
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt) {
-		this.orientation = ForgeDirection.values()[nbt.getByte("orientation")];
+		this.x = nbt.getInteger("xCoord");
+		this.y = nbt.getInteger("yCoord");
+		this.z = nbt.getInteger("zCoord");
+		
 		this.insertionSide = ForgeDirection.values()[nbt.getByte("insertionSide")];
 	}
 
 	public boolean fullyValid() {
-		return this.orientation != ForgeDirection.UNKNOWN && this.insertionSide != ForgeDirection.UNKNOWN;
+		return this.y >= 0 && (Math.abs(this.x - this.xCoord) <= 1) && (Math.abs(this.y - this.yCoord) <= 1) && (Math.abs(this.z - this.zCoord) <= 1) && this.insertionSide != ForgeDirection.UNKNOWN;
 	}
 	
 	public TileEntity getTileEntity() {
-		return fullyValid() ? this.worldObj.getBlockTileEntity(xCoord + this.orientation.offsetX, yCoord + this.orientation.offsetY, zCoord + this.orientation.offsetZ) : null;
+		return fullyValid() ? this.worldObj.getBlockTileEntity(x, y, z) : null;
 	}
 	
 	private IInventory getIInventory() {

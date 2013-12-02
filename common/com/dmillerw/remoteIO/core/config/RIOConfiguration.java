@@ -9,7 +9,6 @@ import com.dmillerw.remoteIO.block.BlockHeater;
 import com.dmillerw.remoteIO.block.BlockIO;
 import com.dmillerw.remoteIO.block.BlockReservoir;
 import com.dmillerw.remoteIO.block.BlockSideProxy;
-import com.dmillerw.remoteIO.block.item.ItemBlockSidedProxy;
 import com.dmillerw.remoteIO.item.ItemComponent;
 import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemTool;
@@ -85,7 +84,7 @@ public class RIOConfiguration {
 		
 		if (this.blockSideProxyID != 0) {
 			this.blockSideProxy = new BlockSideProxy(blockSideProxyID).setUnlocalizedName("blockSideProxy");
-			GameRegistry.registerBlock(this.blockSideProxy, ItemBlockSidedProxy.class, "blockSideProxy");
+			GameRegistry.registerBlock(this.blockSideProxy, "blockSideProxy");
 			LanguageRegistry.addName(this.blockSideProxy, "Sided Proxy");
 		}
 		
