@@ -9,7 +9,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileEntityHeater extends TileEntityCore {
 
-	public TileEntity[] cachedFurnaces;
+	public TileEntity[] cachedFurnaces = new TileEntity[ForgeDirection.VALID_DIRECTIONS.length];
 	
 	public boolean hasLava = false;
 	public boolean firstLoad = true;
@@ -17,6 +17,7 @@ public class TileEntityHeater extends TileEntityCore {
 	public void updateEntity() {
 		if (!this.worldObj.isRemote) {
 			if (firstLoad) {
+				updateFurnaces();
 				firstLoad = false;
 			}
 			
@@ -42,6 +43,7 @@ public class TileEntityHeater extends TileEntityCore {
 	
 	public void onNeighborBlockUpdate() {
 		updateLavaSources();
+		updateFurnaces();
 	}
 
 	private void updateLavaSources() {
