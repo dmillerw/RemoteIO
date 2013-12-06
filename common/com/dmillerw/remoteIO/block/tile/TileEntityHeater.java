@@ -9,6 +9,8 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileEntityHeater extends TileEntityCore {
 
+	public TileEntity[] cachedFurnaces;
+	
 	public boolean hasLava = false;
 	public boolean firstLoad = true;
 	
@@ -24,7 +26,7 @@ public class TileEntityHeater extends TileEntityCore {
 			
 			if (hasLava) {
 				for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-					TileEntity tile = this.worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+					TileEntity tile = this.cachedFurnaces[dir.ordinal()];
 					
 					if (tile != null && tile instanceof TileEntityFurnace) {
 						((TileEntityFurnace)tile).currentItemBurnTime = ((TileEntityFurnace)tile).furnaceBurnTime = 100;
@@ -58,6 +60,18 @@ public class TileEntityHeater extends TileEntityCore {
 		}
 		
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
+	private void updateFurnaces() {
+		this.cachedFurnaces = new TileEntity[ForgeDirection.VALID_DIRECTIONS.length];
+		
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			int id = this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			
+			if (id == Block.furnaceBurning.blockID || id == Block.furnaceIdle.blockID) {
+				this.cachedFurnaces[dir.ordinal()] = this.worldObj.getBlockTileEntity(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);
+			}
+		}
 	}
 	
 	@Override
