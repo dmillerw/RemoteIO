@@ -35,11 +35,17 @@ public class RemoteIO {
 	public void preInit(FMLPreInitializationEvent event) {
 		Configuration config = new Configuration(event.getModConfigurationDirectory());
 		
+		config.load();
+		
 		BlockHandler.handleConfig(config);
 		BlockHandler.initializeBlocks();
 		
 		ItemHandler.handleConfig(config);
 		ItemHandler.initializeItems();
+		
+		if (config.hasChanged()) {
+			config.save();
+		}
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
 		TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
