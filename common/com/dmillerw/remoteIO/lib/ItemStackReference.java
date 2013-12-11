@@ -2,11 +2,11 @@ package com.dmillerw.remoteIO.lib;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.item.ItemHandler;
 
 public class ItemStackReference {
 
@@ -30,12 +30,12 @@ public class ItemStackReference {
 	public static final ItemStack DYE_ORANGE = getDye(14);
 	public static final ItemStack DYE_WHITE = getDye(15);
 	
-	public static final ItemStack COMPONENT_CAMO = getStack(RemoteIO.instance.config.itemComponentID + 256, 0);
-	public static final ItemStack COMPONENT_LOCK = getStack(RemoteIO.instance.config.itemComponentID + 256, 1);
-	public static final ItemStack COMPONENT_IRONROD = getStack(RemoteIO.instance.config.itemComponentID + 256, 2);
-	public static final ItemStack COMPONENT_MONITOR = getStack(RemoteIO.instance.config.itemComponentID + 256, 3);
+	public static final ItemStack COMPONENT_CAMO = getStack(ItemHandler.itemComponentID + 256, 0);
+	public static final ItemStack COMPONENT_LOCK = getStack(ItemHandler.itemComponentID + 256, 1);
+	public static final ItemStack COMPONENT_IRONROD = getStack(ItemHandler.itemComponentID + 256, 2);
+	public static final ItemStack COMPONENT_MONITOR = getStack(ItemHandler.itemComponentID + 256, 3);
 	
-	public static final ItemStack BLOCK_IO = getStack(RemoteIO.instance.config.blockRIOID, 0);
+	public static final ItemStack BLOCK_IO = getStack(BlockHandler.blockIOID, 0);
 	
 	private static ItemStack getDye(int meta) {
 		return getStack(Item.dyePowder.itemID, meta);

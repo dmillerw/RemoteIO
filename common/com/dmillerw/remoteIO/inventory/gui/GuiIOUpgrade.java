@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import com.dmillerw.remoteIO.block.tile.TileEntityIO;
+import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.inventory.ContainerIOUpgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -18,9 +18,9 @@ public class GuiIOUpgrade extends GuiContainer {
 
 	private EntityPlayer player;
 	
-	private TileEntityIO tile;
+	private TileIO tile;
 	
-	public GuiIOUpgrade(EntityPlayer player, TileEntityIO tile) {
+	public GuiIOUpgrade(EntityPlayer player, TileIO tile) {
 		super(new ContainerIOUpgrade(player, tile));
 		
 		this.player = player;

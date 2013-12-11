@@ -182,17 +182,17 @@ public class BlockRenderer {
 
 	protected static void renderAllSidesInverted(IBlockAccess world, int x, int y, int z, Block block, RenderBlocks renderer, Icon tex, boolean allsides) {
 		if ((allsides) || (!block.shouldSideBeRendered(world, x - 1, y, z, 6)))
-			renderer.renderFaceXNeg(block, x - 1, y, z, tex);
+			renderer.renderFaceXNeg(block, x + 1, y, z, tex);
 		if ((allsides) || (!block.shouldSideBeRendered(world, x + 1, y, z, 6)))
-			renderer.renderFaceXPos(block, x + 1, y, z, tex);
+			renderer.renderFaceXPos(block, x - 1, y, z, tex);
 		if ((allsides) || (!block.shouldSideBeRendered(world, x, y, z - 1, 6)))
-			renderer.renderFaceZNeg(block, x, y, z - 1, tex);
+			renderer.renderFaceZNeg(block, x, y, z + 1, tex);
 		if ((allsides) || (!block.shouldSideBeRendered(world, x, y, z + 1, 6)))
-			renderer.renderFaceZPos(block, x, y, z + 1, tex);
+			renderer.renderFaceZPos(block, x, y, z - 1, tex);
 		if ((allsides) || (!block.shouldSideBeRendered(world, x, y - 1, z, 6)))
-			renderer.renderFaceYNeg(block, x, y - 1, z, tex);
+			renderer.renderFaceYNeg(block, x, y + 1, z, tex);
 		if ((allsides) || (!block.shouldSideBeRendered(world, x, y + 1, z, 6)))
-			renderer.renderFaceYPos(block, x, y + 1, z, tex);
+			renderer.renderFaceYPos(block, x, y - 1, z, tex);
 	}
 
 	protected static void renderAllSides(int x, int y, int z, Block block, RenderBlocks renderer, Icon tex) {

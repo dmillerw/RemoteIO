@@ -8,7 +8,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import com.dmillerw.remoteIO.block.tile.TileEntitySideProxy;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -34,7 +34,7 @@ public class BlockSideProxy extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
-		TileEntitySideProxy tile = (TileEntitySideProxy) world.getBlockTileEntity(x, y, z);
+		TileSideProxy tile = (TileSideProxy) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null && tile.fullyValid()) {
 			return this.icons[1];
@@ -71,7 +71,7 @@ public class BlockSideProxy extends BlockContainer {
 	
 	@Override
 	public TileEntity createNewTileEntity(World world) {
-		return new TileEntitySideProxy();
+		return new TileSideProxy();
 	}
 	
 }

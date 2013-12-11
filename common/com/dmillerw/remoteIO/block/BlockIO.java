@@ -17,7 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.tile.TileEntityIO;
+import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
@@ -43,7 +43,7 @@ public class BlockIO extends BlockContainer {
 	@Override
     public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
         ItemStack stack = new ItemStack(this.blockID, 1, 0);
-        TileEntityIO logic = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+        TileIO logic = (TileIO) world.getBlockTileEntity(x, y, z);
         if (logic.validCoordinates) {
         	BlockTracker.getInstance().stopTracking(world.provider.dimensionId, logic.x, logic.y, logic.z);
         }
@@ -97,7 +97,7 @@ public class BlockIO extends BlockContainer {
             int meta = world.getBlockMetadata(x, y, z);
             TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-            if (tile != null && tile instanceof TileEntityIO) {
+            if (tile != null && tile instanceof TileIO) {
             	tile.readFromNBT(stack.getTagCompound().getCompoundTag("logic"));
             }
         }
@@ -118,7 +118,7 @@ public class BlockIO extends BlockContainer {
 	}
 	
 	public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
-		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+		TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null) {
 			tile.setRedstoneState(world.isBlockIndirectlyGettingPowered(x, y, z));
@@ -127,7 +127,7 @@ public class BlockIO extends BlockContainer {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, int id, int meta) {
-		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+		TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
 
 		if (tile != null) {
 			tile.onBlockBroken();
@@ -146,7 +146,7 @@ public class BlockIO extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
-		TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+		TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
 
 		ItemStack camo = tile.camo.getStackInSlot(0);
 		Block block = null;
@@ -182,7 +182,7 @@ public class BlockIO extends BlockContainer {
 	
 	@Override
 	public void randomDisplayTick(World world, int x, int y, int z, Random random) {
-        TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+        TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
         
         if (tile != null && tile.redstoneState) {
         	double d0 = 0.0625D;
@@ -224,7 +224,7 @@ public class BlockIO extends BlockContainer {
 	
 	@Override
 	public TileEntity createNewTileEntity(World world) {
-		return new TileEntityIO();
+		return new TileIO();
 	}
 	
 }

@@ -1,8 +1,7 @@
 package com.dmillerw.remoteIO.core.proxy;
 
-import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.render.RenderBlockHeater;
-import com.dmillerw.remoteIO.block.render.RenderBlockReservoir;
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.render.RenderBlockMachine;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -15,12 +14,8 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		
-		if (RemoteIO.instance.config.blockHeaterID != 0) {
-			RenderingRegistry.registerBlockHandler(new RenderBlockHeater());
-		}
-		
-		if (RemoteIO.instance.config.blockReservoirID != 0) {
-			RenderingRegistry.registerBlockHandler(new RenderBlockReservoir());
+		if (BlockHandler.blockMachineID != 0) {
+			RenderingRegistry.registerBlockHandler(new RenderBlockMachine());
 		}
 	}
 

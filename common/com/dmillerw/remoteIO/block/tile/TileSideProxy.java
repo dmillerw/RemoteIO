@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileEntitySideProxy extends TileEntityCore implements ISidedInventory, IFluidHandler {
+public class TileSideProxy extends TileCore implements ISidedInventory, IFluidHandler {
 
 	public int x = 0;
 	public int y = -1;

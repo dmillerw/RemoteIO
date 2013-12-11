@@ -12,8 +12,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.tile.TileEntityIO;
-import com.dmillerw.remoteIO.block.tile.TileEntitySideProxy;
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.ChatHelper;
 import com.dmillerw.remoteIO.lib.ModInfo;
@@ -36,8 +37,8 @@ public class ItemTool extends Item {
 			int id = world.getBlockId(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			
-			if (id == RemoteIO.instance.config.blockRIOID) {
-				TileEntityIO tile = (TileEntityIO) world.getBlockTileEntity(x, y, z);
+			if (id == BlockHandler.blockIOID && meta == 0) {
+				TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
@@ -60,8 +61,8 @@ public class ItemTool extends Item {
 						return false;
 					}
 				}
-			} else if (id == RemoteIO.instance.config.blockSideProxyID) {
-				TileEntitySideProxy tile = (TileEntitySideProxy) world.getBlockTileEntity(x, y, z);
+			} else if (id == BlockHandler.blockIOID && meta == 1) {
+				TileSideProxy tile = (TileSideProxy) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
@@ -76,7 +77,7 @@ public class ItemTool extends Item {
 						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
 						ChatHelper.info(player, "Linked");
 						clearCoordinates(stack);
-						world.notifyBlocksOfNeighborChange(x, y, z, RemoteIO.instance.config.blockSideProxyID);
+						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					}
@@ -87,7 +88,7 @@ public class ItemTool extends Item {
 						tile.z = 0;
 						tile.insertionSide = ForgeDirection.UNKNOWN;
 						ChatHelper.info(player, "Reset insertion side");
-						world.notifyBlocksOfNeighborChange(x, y, z, RemoteIO.instance.config.blockSideProxyID);
+						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					}

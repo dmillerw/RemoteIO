@@ -13,11 +13,13 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import universalelectricity.prefab.block.BlockConductor;
 
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.tile.TileEntityHeater;
-import com.dmillerw.remoteIO.block.tile.TileEntityIO;
-import com.dmillerw.remoteIO.block.tile.TileEntityReservoir;
-import com.dmillerw.remoteIO.block.tile.TileEntitySideProxy;
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.tile.TileHeater;
+import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileReservoir;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
+import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 import cpw.mods.fml.common.Loader;
@@ -30,47 +32,41 @@ public class CommonProxy implements ISidedProxy {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
-		if (RemoteIO.instance.config.blockRIOID != 0) {
-			GameRegistry.registerTileEntity(TileEntityIO.class, "blockIO");
+		if (BlockHandler.blockIOID != 0) {
+			GameRegistry.registerTileEntity(TileIO.class, "blockIO");
 		}
 		
-		if (RemoteIO.instance.config.blockHeaterID != 0) {
-			GameRegistry.registerTileEntity(TileEntityHeater.class, "blockHeater");
+		if (BlockHandler.blockMachineID != 0) {
+			GameRegistry.registerTileEntity(TileHeater.class, "blockMachine_heater");
+			GameRegistry.registerTileEntity(TileReservoir.class, "blockMachine_reservoir");
 		}
 		
-		if (RemoteIO.instance.config.blockReservoirID != 0) {
-			GameRegistry.registerTileEntity(TileEntityReservoir.class, "blockReservoir");
-		}
-		
-		if (RemoteIO.instance.config.blockSideProxyID != 0) {
-			GameRegistry.registerTileEntity(TileEntitySideProxy.class, "blockSideProxy");
+		if (BlockHandler.blockProxyID != 0) {
+			GameRegistry.registerTileEntity(TileSideProxy.class, "blockProxy");
 		}
 	}
 
 	@Override
 	public void init(FMLInitializationEvent event) {
-		if (RemoteIO.instance.config.blockRIOID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockRIO, 2, 0), new Object[] {"SIS", "ESE", "SIS", 'S', Block.stone, 'I', Block.blockIron, 'E', Item.enderPearl});
+		if (BlockHandler.blockIOID != 0) {
+			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockIO, 2, 0), new Object[] {"SIS", "ESE", "SIS", 'S', Block.stone, 'I', Block.blockIron, 'E', Item.enderPearl});
 		}
 		
-		if (RemoteIO.instance.config.blockHeaterID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockHeater), new Object[] {"SIS", "IFI", "SBS", 'S', Block.cobblestone, 'I', Block.fenceIron, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
+		if (BlockHandler.blockMachineID != 0) {
+			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockMachine, 1, 0), new Object[] {"SIS", "IFI", "SBS", 'S', Block.cobblestone, 'I', Block.fenceIron, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
+			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockMachine, 1, 1), new Object[] {"SFS", "FFF", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
 		}
 		
-		if (RemoteIO.instance.config.blockReservoirID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockReservoir), new Object[] {"SFS", "FFF", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
-		}
-		
-		if (RemoteIO.instance.config.blockSideProxyID != 0) {
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack(), 'I', Block.blockIron});
-			GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.blockSideProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack(), 'I', Block.blockIron});
+		if (BlockHandler.blockProxyID != 0) {
+			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock});
+			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock});
 		}
 		
 		// Wrench
-		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
+		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
 	
 		// IO Goggles
-		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemGoggles), new Object[] {"L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl});
+		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemGoggles), new Object[] {"L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl});
 		
 		// Blank Upgrade
 		GameRegistry.addRecipe(new ShapedOreRecipe(Upgrade.BLANK.toItemStack(), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone));
@@ -85,14 +81,14 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		// Iron Rod component
-		GameRegistry.addRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2), new Object[] {"I ", " I", 'I', Item.ingotIron});
-		OreDictionary.registerOre("rodIron", new ItemStack(RemoteIO.instance.config.itemComponent, 1, 2));
+		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemComponent, 1, 6), new Object[] {"I  ", " I ", "  I", 'I', Item.ingotIron});
+		OreDictionary.registerOre("rodIron", new ItemStack(ItemHandler.itemComponent, 1, 2));
 		
 		// Camo Component
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 0), new Object[] {"LSL", "SIS", "LSL", 'L', "logWood", 'S', "stone", 'I', Item.ingotIron}));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 0), new Object[] {"LSL", "SIS", "LSL", 'L', "logWood", 'S', "stone", 'I', Item.ingotIron}));
 		
 		// Padlock Component
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(RemoteIO.instance.config.itemComponent, 1, 1), new Object[] {"   ", " R ", " I ", 'R', "rodIron", 'I', Item.ingotIron}));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 1), new Object[] {"   ", " R ", " I ", 'R', "rodIron", 'I', Item.ingotIron}));
 	}
 
 	@Override

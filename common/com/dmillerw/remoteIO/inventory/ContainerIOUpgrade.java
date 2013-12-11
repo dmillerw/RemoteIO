@@ -7,7 +7,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-import com.dmillerw.remoteIO.block.tile.TileEntityIO;
+import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.inventory.slot.SlotLimited;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
@@ -16,9 +16,9 @@ public class ContainerIOUpgrade extends Container {
 
 	private final EntityPlayer player;
 	
-	private final TileEntityIO tile;
+	private final TileIO tile;
 	
-	public ContainerIOUpgrade(EntityPlayer player, final TileEntityIO tile) {
+	public ContainerIOUpgrade(EntityPlayer player, final TileIO tile) {
 		this.player = player;
 		this.tile = tile;
 		

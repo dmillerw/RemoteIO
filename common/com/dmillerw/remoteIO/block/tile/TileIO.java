@@ -34,6 +34,7 @@ import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
 
 import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.client.fx.FXParticlePath;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
@@ -47,7 +48,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityIO extends TileEntityCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IElectrical {
+public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IElectrical {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -377,7 +378,7 @@ public class TileEntityIO extends TileEntityCore implements ITrackerCallback, II
 	private void setValid(boolean valid) {
 		this.validCoordinates = valid;
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, RemoteIO.instance.config.blockRIOID);
+		this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockHandler.blockIOID);
 	}
 	
 	/* IINVENTORY */

@@ -2,10 +2,11 @@ package com.dmillerw.remoteIO;
 
 import net.minecraftforge.common.Configuration;
 
-import com.dmillerw.remoteIO.core.config.RIOConfiguration;
+import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
+import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.common.Mod;
@@ -30,12 +31,15 @@ public class RemoteIO {
 	@SidedProxy(serverSide=ModInfo.COMMON_PROXY, clientSide=ModInfo.CLIENT_PROXY)
 	public static ISidedProxy proxy;
 
-	public RIOConfiguration config;
-	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		this.config = new RIOConfiguration(new Configuration(event.getSuggestedConfigurationFile()));
-		this.config.scanConfig();
+		Configuration config = new Configuration(event.getModConfigurationDirectory());
+		
+		BlockHandler.handleConfig(config);
+		BlockHandler.initializeBlocks();
+		
+		ItemHandler.handleConfig(config);
+		ItemHandler.initializeItems();
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
 		TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
