@@ -37,7 +37,7 @@ public class ItemTool extends Item {
 			int id = world.getBlockId(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			
-			if (id == BlockHandler.blockIOID && meta == 0) {
+			if (id == BlockHandler.blockIOID) {
 				TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
@@ -61,7 +61,7 @@ public class ItemTool extends Item {
 						return false;
 					}
 				}
-			} else if (id == BlockHandler.blockIOID && meta == 1) {
+			} else if (id == BlockHandler.blockProxyID) {
 				TileSideProxy tile = (TileSideProxy) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
