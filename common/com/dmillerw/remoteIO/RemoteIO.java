@@ -33,7 +33,7 @@ public class RemoteIO {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		Configuration config = new Configuration(event.getModConfigurationDirectory());
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		
 		config.load();
 		
