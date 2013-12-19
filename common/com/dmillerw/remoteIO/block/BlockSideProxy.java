@@ -46,7 +46,7 @@ public class BlockSideProxy extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getIcon(int side, int meta) {
-		return this.icons[meta];
+		return this.icons[0];
 	}
 	
 	@Override
@@ -64,9 +64,9 @@ public class BlockSideProxy extends BlockContainer {
 	public void registerIcons(IconRegister register) {
 		this.icons = new Icon[3];
 		
-		this.icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIOBlank");
-		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIO");
-		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIOInactive");
+		this.icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "proxy/blank");
+		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "proxy/active");
+		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "proxy/inactive");
 	}
 	
 	@Override

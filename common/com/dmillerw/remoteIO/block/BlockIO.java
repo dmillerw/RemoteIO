@@ -176,8 +176,8 @@ public class BlockIO extends BlockContainer {
 	public void registerIcons(IconRegister register) {
 		this.icons = new Icon[2];
 		
-		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIO");
-		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "blockIOInactive");
+		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "io/active");
+		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "io/inactive");
 	}
 	
 	@Override
