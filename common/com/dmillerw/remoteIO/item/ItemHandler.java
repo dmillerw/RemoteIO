@@ -17,11 +17,13 @@ public class ItemHandler {
 	public static int itemUpgradeID;
 	public static int itemComponentID;
 	public static int itemGogglesID;
+	public static int itemTransmitterID;
 	
 	public static Item itemTool;
 	public static Item itemUpgrade;
 	public static Item itemComponent;
 	public static Item itemGoggles;
+	public static Item itemTransmitter;
 	
 	public static void handleConfig(Configuration config) {
 		config.addCustomCategoryComment(Configuration.CATEGORY_ITEM, "Set any ID to 0 to disable item");
@@ -34,6 +36,8 @@ public class ItemHandler {
 		itemComponentID = component.getInt(5002);
 		Property goggles = config.getItem("itemID_goggles", 5003);
 		itemGogglesID = goggles.getInt(5003);
+		Property transmitter = config.getItem("itemID_transmitter", 5004);
+		itemTransmitterID = transmitter.getInt(5004);
 	}
 	
 	public static void initializeItems() {
@@ -63,6 +67,12 @@ public class ItemHandler {
 			itemGoggles = new ItemGoggles(itemGogglesID).setUnlocalizedName("itemGoggles");
 			GameRegistry.registerItem(itemGoggles, "itemGoggles");
 			LanguageRegistry.addName(itemGoggles, "IO Goggles");
+		}
+		
+		if (itemTransmitterID != 0) {
+			itemTransmitter = new ItemTransmitter(itemTransmitterID).setUnlocalizedName("itemTransmitter");
+			GameRegistry.registerItem(itemTransmitter, "itemTransmitter");
+			LanguageRegistry.addName(itemTransmitter, "Wireless Transceiver");
 		}
 	}
 	

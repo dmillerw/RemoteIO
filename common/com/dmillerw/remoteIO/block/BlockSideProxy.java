@@ -64,9 +64,9 @@ public class BlockSideProxy extends BlockContainer {
 	public void registerIcons(IconRegister register) {
 		this.icons = new Icon[3];
 		
-		this.icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "proxy/blank");
-		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "proxy/active");
-		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "proxy/inactive");
+		this.icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "io/blank");
+		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "io/active");
+		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "io/inactive");
 	}
 	
 	@Override

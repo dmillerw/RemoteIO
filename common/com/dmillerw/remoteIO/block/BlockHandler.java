@@ -12,10 +12,12 @@ public class BlockHandler {
 	public static int blockMachineID;
 	public static int blockIOID;
 	public static int blockProxyID;
+	public static int blockWirelessID;
 
 	public static Block blockMachine;
 	public static Block blockIO;
 	public static Block blockProxy;
+	public static Block blockWireless;
 	
 	public static void handleConfig(Configuration config) {
 		config.addCustomCategoryComment(Configuration.CATEGORY_BLOCK, "Set any ID to 0 to disable block");
@@ -26,6 +28,8 @@ public class BlockHandler {
 		blockIOID = io.getInt(501);
 		Property proxy = config.getBlock("blockID_proxy", 502);
 		blockProxyID = proxy.getInt(503);
+		Property wireless = config.getBlock("blockID_wireless", 504);
+		blockWirelessID = wireless.getInt(504);
 	}
 	
 	public static void initializeBlocks() {
@@ -47,6 +51,12 @@ public class BlockHandler {
 			blockProxy = new BlockSideProxy(blockProxyID).setUnlocalizedName("blockProxy");
 			GameRegistry.registerBlock(blockProxy, "blockProxy");
 			LanguageRegistry.addName(blockProxy, "Side Proxy");
+		}
+		
+		if (blockWirelessID != 0) {
+			blockWireless = new BlockRemoteInventory(blockWirelessID).setUnlocalizedName("blockRemote");
+			GameRegistry.registerBlock(blockWireless, "blockRemote");
+			LanguageRegistry.addName(blockWireless, "Remote Inventory");
 		}
 	}
 	

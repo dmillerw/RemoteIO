@@ -16,6 +16,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.TileHeater;
 import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
 import com.dmillerw.remoteIO.block.tile.TileReservoir;
 import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
@@ -43,6 +44,10 @@ public class CommonProxy implements ISidedProxy {
 		
 		if (BlockHandler.blockProxyID != 0) {
 			GameRegistry.registerTileEntity(TileSideProxy.class, "blockProxy");
+		}
+		
+		if (BlockHandler.blockWirelessID != 0) {
+			GameRegistry.registerTileEntity(TileRemoteInventory.class, "blockRemote");
 		}
 	}
 
