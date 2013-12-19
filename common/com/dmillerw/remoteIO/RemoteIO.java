@@ -31,11 +31,18 @@ public class RemoteIO {
 	@SidedProxy(serverSide=ModInfo.COMMON_PROXY, clientSide=ModInfo.CLIENT_PROXY)
 	public static ISidedProxy proxy;
 
+	public int defaultRange = 8;
+	
+	public int rangeUpgradeBoost = 8;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		
 		config.load();
+		
+		defaultRange = config.get("general", "defaultRange", 8, "Default range remote blocks have, without any Range upgrades").getInt(8);
+		rangeUpgradeBoost = config.get("general", "rangeUpgradeBoost", 8, "How much each range upgrade boosts the range by").getInt(8);
 		
 		BlockHandler.handleConfig(config);
 		BlockHandler.initializeBlocks();

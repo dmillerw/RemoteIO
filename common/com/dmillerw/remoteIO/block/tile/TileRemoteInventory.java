@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemTransmitter;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
@@ -29,7 +30,7 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 		
 		if (owner != null && !(owner.isEmpty()) && server != null) {
 			EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
-			if (player != null && (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= (8 * InventoryHelper.amountContained(upgrades, Upgrade.RANGE.toItemStack(), false)) + 8)) {
+			if (player != null && (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= (RemoteIO.instance.rangeUpgradeBoost * InventoryHelper.amountContained(upgrades, Upgrade.RANGE.toItemStack(), false)) + RemoteIO.instance.defaultRange)) {
 				return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
 			}
 		}

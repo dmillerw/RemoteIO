@@ -5,6 +5,15 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class StackHelper {
 
+	public static ItemStack resize(ItemStack stack, int size) {
+		ItemStack stack2 = stack.copy();
+		stack2.stackSize = size;
+		if (stack2.stackSize > stack2.getMaxStackSize()) {
+			stack2.stackSize = stack2.getMaxStackSize();
+		}
+		return stack2;
+	}
+	
 	public static boolean areEqual(ItemStack item1, ItemStack item2, boolean compareNBT) {
 		if (item1 != null && item2 != null) {
 			boolean flag = true;

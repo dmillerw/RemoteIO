@@ -20,6 +20,7 @@ import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
 import com.dmillerw.remoteIO.block.tile.TileReservoir;
 import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
+import com.dmillerw.remoteIO.core.helper.StackHelper;
 import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
@@ -74,7 +75,7 @@ public class CommonProxy implements ISidedProxy {
 		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemGoggles), new Object[] {"L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl});
 		
 		// Blank Upgrade
-		GameRegistry.addRecipe(new ShapedOreRecipe(Upgrade.BLANK.toItemStack(), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone));
+		GameRegistry.addRecipe(new ShapedOreRecipe(StackHelper.resize(Upgrade.BLANK.toItemStack(), 16), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone));
 	
 		for (Upgrade upgrade : Upgrade.values()) {
 			if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
@@ -84,6 +85,12 @@ public class CommonProxy implements ISidedProxy {
 				GameRegistry.addRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
 			}
 		}
+		
+		// Wireless Transceiver
+		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTransmitter), new Object[] {" E ", "III", "IRI", 'E', Item.enderPearl, 'I', Item.ingotIron, 'R', Item.redstone});
+		
+		// Remote Inventory
+		GameRegistry.addRecipe(new ItemStack(BlockHandler.blockWireless), new Object[] {" U ", "III", "ITI", 'U', Upgrade.ITEM.toItemStack(), 'I', Item.ingotIron, 'T', new ItemStack(ItemHandler.itemTransmitter)});
 		
 		// Iron Rod component
 		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemComponent, 1, 6), new Object[] {"I  ", " I ", "  I", 'I', Item.ingotIron});

@@ -96,7 +96,7 @@ public class ItemUpgrade extends Item {
 			"Range", 
 			new ItemStack[] {new ItemStack(Item.glowstone)},
 			"Increases the range at which the IO block can connect",
-			"Each upgrade increases the range by 8 blocks"
+			"Each upgrade increases the range by " + RemoteIO.instance.rangeUpgradeBoost + " blocks"
 		), 
 				
 		CROSS_DIMENSIONAL(
