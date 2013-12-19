@@ -33,7 +33,7 @@ public class InventoryHelper {
 		
 		for (ItemStack item : getContents(inventory)) {
 			if (StackHelper.areEqual(item, stack, false)) {
-				count++;
+				count += item.stackSize;
 			}
 		}
 		
