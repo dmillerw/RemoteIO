@@ -181,7 +181,7 @@ public class CommonProxy implements ISidedProxy {
 			boolean failed = false;
 			
 			try {
-				Class clazz = Class.forName("thermalexpansion.block.conduit.BlockConduit");
+				Class clazz = Class.forName("thermalexpansion.part.conduit.ItemConduitPart");
 				for (int i=0; i<conduitStrings.length; i++) {
 					conduits[i] = (ItemStack) clazz.getDeclaredField(conduitPrefix + conduitStrings[i]).get(clazz);
 				}
