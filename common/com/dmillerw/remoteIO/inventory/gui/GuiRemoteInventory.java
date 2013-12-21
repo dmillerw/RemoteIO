@@ -33,7 +33,7 @@ public class GuiRemoteInventory extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		this.fontRenderer.drawString("Remote Inventory", 8, 6, 4210752);
+		this.fontRenderer.drawString(I18n.getString("gui.remoteInventory"), 8, 6, 4210752);
 		this.fontRenderer.drawString(I18n.getString("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
 	}
 	

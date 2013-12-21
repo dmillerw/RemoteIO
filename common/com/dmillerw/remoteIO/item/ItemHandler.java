@@ -42,37 +42,28 @@ public class ItemHandler {
 	
 	public static void initializeItems() {
 		if (itemToolID != 0) {
-			itemTool = new ItemTool(itemToolID).setUnlocalizedName("itemTool");
+			itemTool = new ItemTool(itemToolID).setUnlocalizedName("ioLinker");
 			GameRegistry.registerItem(itemTool, "itemTool");
-			LanguageRegistry.addName(itemTool, "IO Linker");
 		}
 		
 		if (itemUpgradeID != 0) {
-			itemUpgrade = new ItemUpgrade(itemUpgradeID).setUnlocalizedName("itemUpgrade");
+			itemUpgrade = new ItemUpgrade(itemUpgradeID).setUnlocalizedName("upgrade");
 			GameRegistry.registerItem(itemUpgrade, "itemUpgrade");
-			for (Upgrade upgrade : Upgrade.values()) {
-				LanguageRegistry.addName(upgrade.toItemStack(), upgrade.localizedName);
-			}
 		}
 		
 		if (itemComponentID != 0) {
-			itemComponent = new ItemComponent(itemComponentID).setUnlocalizedName("itemComponent");
+			itemComponent = new ItemComponent(itemComponentID).setUnlocalizedName("component");
 			GameRegistry.registerItem(itemComponent, "itemComponent");
-			for (int i=0; i<ItemComponent.names.length; i++) {
-				LanguageRegistry.addName(new ItemStack(itemComponent, 1, i), ItemComponent.names[i]);
-			}
 		}
 		
 		if (itemGogglesID != 0) {
-			itemGoggles = new ItemGoggles(itemGogglesID).setUnlocalizedName("itemGoggles");
+			itemGoggles = new ItemGoggles(itemGogglesID).setUnlocalizedName("ioGoggles");
 			GameRegistry.registerItem(itemGoggles, "itemGoggles");
-			LanguageRegistry.addName(itemGoggles, "IO Goggles");
 		}
 		
 		if (itemTransmitterID != 0) {
-			itemTransmitter = new ItemTransmitter(itemTransmitterID).setUnlocalizedName("itemTransmitter");
+			itemTransmitter = new ItemTransmitter(itemTransmitterID).setUnlocalizedName("transceiver");
 			GameRegistry.registerItem(itemTransmitter, "itemTransmitter");
-			LanguageRegistry.addName(itemTransmitter, "Wireless Transceiver");
 		}
 	}
 	

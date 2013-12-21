@@ -1,9 +1,17 @@
 package com.dmillerw.remoteIO;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import net.minecraftforge.common.Configuration;
+
+import org.apache.commons.io.IOUtils;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
+import com.dmillerw.remoteIO.core.helper.IOLogger;
+import com.dmillerw.remoteIO.core.helper.LocalizationHelper;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.item.ItemHandler;
@@ -31,13 +39,43 @@ public class RemoteIO {
 	@SidedProxy(serverSide=ModInfo.COMMON_PROXY, clientSide=ModInfo.CLIENT_PROXY)
 	public static ISidedProxy proxy;
 
-	public int defaultRange = 8;
+	public File configDir;
 	
+	public int defaultRange = 8;
 	public int rangeUpgradeBoost = 8;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		configDir = new File(event.getModConfigurationDirectory(), "RemoteIO");
+		
+		File newConfig = new File(configDir, "RemoteIO.cfg");
+		
+		if (event.getSuggestedConfigurationFile().exists() && !newConfig.exists()) {
+			IOLogger.info("Detected old config file, Attempting to autmatically migrate");
+			
+			if (!newConfig.exists()) {
+				try {
+					configDir.mkdirs();
+					newConfig.createNewFile();
+				} catch(Exception ex) {}
+			}
+			
+			int returnValue;
+			
+			try {
+				if ((returnValue = IOUtils.copy(new FileInputStream(event.getSuggestedConfigurationFile()), new FileOutputStream(newConfig))) > 0) {
+					IOLogger.info("Successfully migrated old config");
+				} else {
+					IOLogger.warn("Failed to migrate old config file! Default IDs and settings will be used!");
+					IOLogger.warn("Reason: Copy method returned bad value. Value: " + returnValue);
+				}
+			} catch(Exception ex) {
+				IOLogger.warn("Failed to migrate old config file! Default IDs and settings will be used!");
+				IOLogger.warn("Reason: " + ex.getLocalizedMessage());
+			}
+		}
+		
+		Configuration config = new Configuration(newConfig);
 		
 		config.load();
 		
@@ -62,6 +100,9 @@ public class RemoteIO {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		LocalizationHelper.initializeLocalization();
+		LocalizationHelper.initializeUserLocalization(new File(configDir, "lang"));
+		
 		proxy.init(event);
 	}
 

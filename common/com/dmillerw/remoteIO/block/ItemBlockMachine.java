@@ -18,7 +18,7 @@ public class ItemBlockMachine extends ItemBlock {
 	}
 
 	public String getUnlocalizedName(ItemStack stack) {
-		return super.getUnlocalizedName() + BlockMachine.INTERNAL_NAMES[stack.getItemDamage()];
+		return super.getUnlocalizedName() + "." + BlockMachine.INTERNAL_NAMES[stack.getItemDamage()];
 	}
 	
 }

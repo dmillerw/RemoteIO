@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -29,8 +30,16 @@ public class ItemUpgrade extends Item {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean idk) {
-		for (String string : Upgrade.values()[stack.getItemDamage()].description) {
-			list.add(string);
+		Upgrade upgrade = Upgrade.values()[stack.getItemDamage()];
+		String[] desc = I18n.getString("upgrade." + upgrade.texture + ".desc").split("\n");
+		for (String str : desc) {
+			if (upgrade == Upgrade.BLANK) {
+				return;
+			}
+			if (upgrade == Upgrade.RANGE) {
+				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeBoost);
+			}
+			list.add(str);
 		}
 	}
 	
@@ -60,120 +69,87 @@ public class ItemUpgrade extends Item {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "item.upgrade." + Upgrade.values()[stack.getItemDamage()] + ".name";
+		return "upgrade." + Upgrade.values()[stack.getItemDamage()].texture;
 	}	
 	
 	public static enum Upgrade {
 		BLANK(
 			"blank", 
-			"Blank Upgrade",
 			null
 		), 
 		
 		ITEM(
 			"item", 
-			"Item",
-			new ItemStack[] {new ItemStack(Block.chest)},
-			"Allows for the basic transport of items"
+			new ItemStack[] {new ItemStack(Block.chest)}
 		), 
 				
 		FLUID(
 			"fluid",
-			"Fluid", 
-			new ItemStack[] {new ItemStack(Item.bucketEmpty)},
-			"Allows for the basic transport of fluids"
+			new ItemStack[] {new ItemStack(Item.bucketEmpty)}
 		), 
 				
 		POWER_MJ(
 			"powerBC",
-			"Buildcraft Power", 
-			new ItemStack[0],
-			"Allows for the transfer of BC power (MJ)"
+			new ItemStack[0]
 		), 
 				
 		RANGE(
 			"range",
-			"Range", 
-			new ItemStack[] {new ItemStack(Item.glowstone)},
-			"Increases the range at which the IO block can connect",
-			"Each upgrade increases the range by " + RemoteIO.instance.rangeUpgradeBoost + " blocks"
+			new ItemStack[] {new ItemStack(Item.glowstone)}
 		), 
 				
 		CROSS_DIMENSIONAL(
-			"crossDimensional", 
-			"Cross Dimensional", 
-			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)},
-			"Allows the IO block to connect across dimensions"
+			"dimension", 
+			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)}
 		), 
 				
 		ISIDED_AWARE(
-			"iSidedAware", 
-			"Side Awareness",
-			new ItemStack[] {new ItemStack(Block.hopperBlock), Upgrade.ITEM.toItemStack()},
-			"Allows the IO block to determine side input/output"
+			"side", 
+			new ItemStack[] {new ItemStack(Block.hopperBlock), Upgrade.ITEM.toItemStack()}
 		), 
 				
 		REDSTONE(
 			"redstone",
-			"Redstone", 
-			new ItemStack[] {new ItemStack(Item.redstone)},
-			"Allows for the toggle of the remote connection via redstone"
+			new ItemStack[] {new ItemStack(Item.redstone)}
 		), 
 				
 		CAMO(
 			"camo",
-			"Adaptive Texture",
-			new ItemStack[] {ItemStackReference.COMPONENT_CAMO},
-			"Allows the IO block to take on the texture of any other block"
+			new ItemStack[] {ItemStackReference.COMPONENT_CAMO}
 		), 
 				
 		LOCK(
 			"lock",
-			"Lock",
-			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Block.chest)},
-			"Allows the IO block to be broken and replaced, while retaining all settings/links"
+			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Block.chest)}
 		), 
 				
 		POWER_RF(
 			"powerRF", 
-			"Redstone Flux", 
-			new ItemStack[0],
-			"Allows for the transfer of Thermal Expansion power (RF)"
+			new ItemStack[0]
 		), 
 				
 		POWER_EU(
 			"powerEU",
-			"IC2 Power", 
-			new ItemStack[0],
-			"Allows for the transfer of IC2 power (EU)"
+			new ItemStack[0]
 		),
 		
 		POWER_UE(
 			"powerUE",
-			"UE Power", 
-			new ItemStack[0],
-			"Allows for the transfer of UE power (UE)"
+			new ItemStack[0]
 		),
 		
 		LINK_PERSIST(
-			"linkPersist",
-			"Link Persistance",
-			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)},
-			"Allows the IO block to maintain its link even after the linked block is destroyed"
+			"persist",
+			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)}
 		);
 		
 		public String texture;
-		public String localizedName;
 		
 		public ItemStack[] recipeComponents;
 		
-		public String[] description;
-		
-		private Upgrade(String texture, String localizedName, ItemStack[] recipeComponents, String ... description) {
+		private Upgrade(String texture, ItemStack[] recipeComponents) {
 			this.texture = texture;
-			this.localizedName = "Upgrade: " + localizedName;
 			this.recipeComponents = recipeComponents;
-			this.description = description;
 		}
 		
 		public ItemStack toItemStack() {

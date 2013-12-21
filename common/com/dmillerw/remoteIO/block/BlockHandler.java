@@ -38,35 +38,28 @@ public class BlockHandler {
 	
 	public static void initializeBlocks() {
 		if (blockMachineID != 0) {
-			blockMachine = new BlockMachine(blockMachineID).setUnlocalizedName("blockMachine");
+			blockMachine = new BlockMachine(blockMachineID).setUnlocalizedName("machine");
 			GameRegistry.registerBlock(blockMachine, ItemBlockMachine.class, "blockMachine");
-			for (int i=0; i<BlockMachine.INTERNAL_NAMES.length; i++) {
-				LanguageRegistry.addName(new ItemStack(blockMachine, 1, i), BlockMachine.NAMES[i]);
-			}
 		}
 		
 		if (blockIOID != 0) {
-			blockIO = new BlockIO(blockIOID).setUnlocalizedName("blockIO");
+			blockIO = new BlockIO(blockIOID).setUnlocalizedName("io");
 			GameRegistry.registerBlock(blockIO, "blockIO");
-			LanguageRegistry.addName(blockIO, "IO Block");
 		}
 		
 		if (blockProxyID != 0) {
-			blockProxy = new BlockSideProxy(blockProxyID).setUnlocalizedName("blockProxy");
+			blockProxy = new BlockSideProxy(blockProxyID).setUnlocalizedName("sideProxy");
 			GameRegistry.registerBlock(blockProxy, "blockProxy");
-			LanguageRegistry.addName(blockProxy, "Side Proxy");
 		}
 		
 		if (blockWirelessID != 0) {
-			blockWireless = new BlockRemoteInventory(blockWirelessID).setUnlocalizedName("blockRemote");
+			blockWireless = new BlockRemoteInventory(blockWirelessID).setUnlocalizedName("remoteInventory");
 			GameRegistry.registerBlock(blockWireless, "blockRemote");
-			LanguageRegistry.addName(blockWireless, "Remote Inventory");
 		}
 		
 		if (blockSkylightID != 0) {
-			blockSkylight = new BlockSkylight(blockSkylightID).setUnlocalizedName("blockSkylight");
+			blockSkylight = new BlockSkylight(blockSkylightID).setUnlocalizedName("skylight");
 			GameRegistry.registerBlock(blockSkylight, "blockSkylight");
-			LanguageRegistry.addName(blockSkylight, "Skylight");
 		}
 	}
 	

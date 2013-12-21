@@ -11,7 +11,7 @@ public class IOLogger {
 	public static Logger logger;
 	
 	static {
-		logger = Logger.getLogger(ModInfo.ID);
+		logger = Logger.getLogger(ModInfo.NAME);
 		logger.setParent(FMLLog.getLogger());
 	}
 	

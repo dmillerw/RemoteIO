@@ -28,7 +28,7 @@ public class GuiIOUpgrade extends GuiContainer {
 	}
 
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		this.fontRenderer.drawString("IO Upgrades", 8, 6, 4210752);
+		this.fontRenderer.drawString(I18n.getString("gui.ioUpgrades"), 8, 6, 4210752);
 		this.fontRenderer.drawString(I18n.getString("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
 	}
 	

@@ -51,7 +51,7 @@ public class ItemComponent extends Item {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "item.component." + subNames[stack.getItemDamage()] + ".name";
+		return "item.component." + subNames[stack.getItemDamage()];
 	}
 	
 }

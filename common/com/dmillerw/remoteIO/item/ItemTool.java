@@ -2,6 +2,7 @@ package com.dmillerw.remoteIO.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,14 +43,14 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						ChatHelper.warn(player, "You must select a block to link with first");
+						ChatHelper.warn(player, I18n.getString("chat.selectBlock"));
 						return false;
 					} else {
 						int[] coords = getCoordinates(stack);
 						if (tile.setCoordinates(coords[0], coords[1], coords[2], coords[3])) {
-							ChatHelper.info(player, "Linked");
+							ChatHelper.info(player, I18n.getString("chat.linkSucceed"));
 						} else {
-							ChatHelper.warn(player, "Check to ensure the IO block is within range and as the appropriate upgrades");
+							ChatHelper.warn(player, I18n.getString("chat.linkFail"));
 						}
 						clearCoordinates(stack);
 						return false;
@@ -57,7 +58,7 @@ public class ItemTool extends Item {
 				} else {
 					if (tile.hasCoordinates()) {
 						tile.clearCoordinates();
-						ChatHelper.info(player, "Cleared selected Remote IO's coordinates");
+						ChatHelper.info(player, I18n.getString("chat.clearIO"));
 						return false;
 					}
 				}
@@ -66,7 +67,7 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						ChatHelper.warn(player, "You must select a block to link with first");
+						ChatHelper.warn(player, I18n.getString("chat.selectBlock"));
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					} else {
@@ -75,7 +76,7 @@ public class ItemTool extends Item {
 						tile.y = coords[1];
 						tile.z = coords[2];
 						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
-						ChatHelper.info(player, "Linked");
+						ChatHelper.info(player, I18n.getString("chat.linkSucceed"));
 						clearCoordinates(stack);
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
@@ -87,7 +88,7 @@ public class ItemTool extends Item {
 						tile.y = -1;
 						tile.z = 0;
 						tile.insertionSide = ForgeDirection.UNKNOWN;
-						ChatHelper.info(player, "Reset insertion side");
+						ChatHelper.info(player, I18n.getString("chat.clearProxy"));
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
 						return false;
@@ -96,10 +97,10 @@ public class ItemTool extends Item {
 			} else {
 				if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(meta)) {
 					setCoordinates(stack, x, y, z, world.provider.dimensionId, side);
-					ChatHelper.info(player, "Begun linking process");
+					ChatHelper.info(player, I18n.getString("chat.linkBegun"));
 					return false;
 				} else {
-					ChatHelper.warn(player, "You cannot link a Remote IO block to such a basic block");
+					ChatHelper.warn(player, I18n.getString("chat.linkFailBasic"));
 					return false;
 				}
 			}
