@@ -13,11 +13,13 @@ public class BlockHandler {
 	public static int blockIOID;
 	public static int blockProxyID;
 	public static int blockWirelessID;
+	public static int blockSkylightID;
 
 	public static Block blockMachine;
 	public static Block blockIO;
 	public static Block blockProxy;
 	public static Block blockWireless;
+	public static Block blockSkylight;
 	
 	public static void handleConfig(Configuration config) {
 		config.addCustomCategoryComment(Configuration.CATEGORY_BLOCK, "Set any ID to 0 to disable block");
@@ -30,6 +32,8 @@ public class BlockHandler {
 		blockProxyID = proxy.getInt(503);
 		Property wireless = config.getBlock("blockID_wireless", 504);
 		blockWirelessID = wireless.getInt(504);
+		Property skylight = config.getBlock("blockID_skylight", 505);
+		blockSkylightID = skylight.getInt(505);
 	}
 	
 	public static void initializeBlocks() {
@@ -57,6 +61,12 @@ public class BlockHandler {
 			blockWireless = new BlockRemoteInventory(blockWirelessID).setUnlocalizedName("blockRemote");
 			GameRegistry.registerBlock(blockWireless, "blockRemote");
 			LanguageRegistry.addName(blockWireless, "Remote Inventory");
+		}
+		
+		if (blockSkylightID != 0) {
+			blockSkylight = new BlockSkylight(blockSkylightID).setUnlocalizedName("blockSkylight");
+			GameRegistry.registerBlock(blockSkylight, "blockSkylight");
+			LanguageRegistry.addName(blockSkylight, "Skylight");
 		}
 	}
 	
