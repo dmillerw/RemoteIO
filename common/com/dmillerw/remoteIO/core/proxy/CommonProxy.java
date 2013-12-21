@@ -175,14 +175,15 @@ public class CommonProxy implements ISidedProxy {
 		
 		// If ThermalExpansion detected, add RF Power Upgrade recipe
 		if (Loader.isModLoaded("ThermalExpansion")) {
-			ItemStack[] conduits = new ItemStack[2];
+			final String conduitPrefix = "conduitEnergy";
+			String[] conduitStrings = new String[] {"Basic", "Hardened", "Reinforced"};
+			ItemStack[] conduits = new ItemStack[conduitStrings.length];
 			boolean failed = false;
 			
 			try {
-				Class clazz = Class.forName("thermalexpansion.block.TEBlocks");
-				Block conduit = (Block) clazz.getDeclaredField("blockConduit").get(clazz);
-				for (int i=0; i<2; i++) {
-					conduits[i] = new ItemStack(conduit, 1, i);
+				Class clazz = Class.forName("thermalexpansion.block.conduit.BlockConduit");
+				for (int i=0; i<conduitStrings.length; i++) {
+					conduits[i] = (ItemStack) clazz.getDeclaredField(conduitPrefix + conduitStrings[i]).get(clazz);
 				}
 			} catch(Exception ex) {
 				IOLogger.warn("Tried to get Thermal Expansion power conduits, but failed! Thermal Expansion support will not be available!");
