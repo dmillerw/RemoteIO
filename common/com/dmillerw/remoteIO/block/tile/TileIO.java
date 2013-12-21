@@ -15,8 +15,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
@@ -104,7 +106,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		}
 		
 		if (firstLoad) {
-			setValid(validCoordinates);
+			setValid(getTileEntity(false) != null);
 			firstLoad = false;
 		}
 	}
@@ -115,8 +117,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		
 		if (!worldObj.isRemote) {
 			BlockTracker.getInstance().removeAllWithCallback(this);
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
-			addedToEnergyNet = false;
+			
+			if (addedToEnergyNet) {
+				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+				addedToEnergyNet = false;
+			}
 		}
 	}
 	
@@ -126,16 +131,22 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 
 		if (!worldObj.isRemote) {
 			BlockTracker.getInstance().removeAllWithCallback(this);
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
-			addedToEnergyNet = false;
+			
+			if (addedToEnergyNet) {
+				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+				addedToEnergyNet = false;
+			}
 		}
 	}
 	
 	public void onBlockBroken() {
 		if (!worldObj.isRemote) {
 			BlockTracker.getInstance().removeAllWithCallback(this);
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
-			addedToEnergyNet = false;
+			
+			if (addedToEnergyNet) {
+				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+				addedToEnergyNet = false;
+			}
 		}
 	}
 	
@@ -229,7 +240,13 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 	
 	public TileEntity getTileEntity() {
-		return getTileEntity(false);
+		TileEntity tile = getTileEntity(false);
+		
+		if (validCoordinates != (tile != null)) {
+			setValid(tile != null);
+		}
+		
+		return tile;
 	}
 	
 	public TileEntity getTileEntity(boolean verify) {
@@ -257,10 +274,10 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 	
 	private TileEntity getTileEntityOutDimension(boolean verify) {
-//		if (hasUpgrade(Upgrade.CROSS_DIMENSIONAL) || verify) {
-//			WorldServer world = MinecraftServer.getServer().worldServerForDimension(this.d);
-//			return world.getBlockTileEntity(x, y, z);
-//		}
+		if (hasUpgrade(Upgrade.CROSS_DIMENSIONAL) || verify) {
+			WorldServer world = MinecraftServer.getServer().worldServerForDimension(this.d);
+			return world.getBlockTileEntity(x, y, z);
+		}
 		
 		return null;
 	}

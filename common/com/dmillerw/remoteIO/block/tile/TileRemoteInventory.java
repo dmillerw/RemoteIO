@@ -30,8 +30,16 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 		
 		if (owner != null && !(owner.isEmpty()) && server != null) {
 			EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
-			if (player != null && (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= (RemoteIO.instance.rangeUpgradeBoost * InventoryHelper.amountContained(upgrades, Upgrade.RANGE.toItemStack(), false)) + RemoteIO.instance.defaultRange)) {
-				return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
+			if (player != null) {
+				if ((player.worldObj.provider.dimensionId == this.worldObj.provider.dimensionId)) {
+					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= (RemoteIO.instance.rangeUpgradeBoost * InventoryHelper.amountContained(upgrades, Upgrade.RANGE.toItemStack(), false)) + RemoteIO.instance.defaultRange) {
+						return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
+					}
+				} else {
+					if (InventoryHelper.inventoryContains(upgrades, Upgrade.CROSS_DIMENSIONAL.toItemStack(), false)) {
+						return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
+					}
+				}
 			}
 		}
 		

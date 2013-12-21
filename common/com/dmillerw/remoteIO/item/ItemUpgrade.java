@@ -103,8 +103,7 @@ public class ItemUpgrade extends Item {
 			"crossDimensional", 
 			"Cross Dimensional", 
 			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)},
-//			"Allows the IO block to connect across dimensions",
-			EnumChatFormatting.RED + "DISABLED"
+			"Allows the IO block to connect across dimensions"
 		), 
 				
 		ISIDED_AWARE(
