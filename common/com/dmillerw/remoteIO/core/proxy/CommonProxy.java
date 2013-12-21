@@ -68,6 +68,10 @@ public class CommonProxy implements ISidedProxy {
 			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock});
 		}
 		
+		if (BlockHandler.blockSkylightID != 0) {
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BlockHandler.blockSkylight, 16), new Object[] {"SSS", "GGG", "SSS", 'S', "stone", 'G', "glass"}));
+		}
+		
 		// Wrench
 		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
 	
