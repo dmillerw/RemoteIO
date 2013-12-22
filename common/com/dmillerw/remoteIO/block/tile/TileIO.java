@@ -380,7 +380,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	
 	private boolean inRange(boolean verify) {
 		if (this.validCoordinates || verify) {
-			int maxRange = (upgradeCount(Upgrade.RANGE) * RemoteIO.instance.rangeUpgradeBoost) + RemoteIO.instance.defaultRange;
+			int maxRange = RemoteIO.instance.defaultRange;
+			maxRange += (upgradeCount(Upgrade.RANGE_T1) * RemoteIO.instance.rangeUpgradeT1Boost);
+			maxRange += (upgradeCount(Upgrade.RANGE_T2) * RemoteIO.instance.rangeUpgradeT2Boost);
+			maxRange += (upgradeCount(Upgrade.RANGE_T3) * RemoteIO.instance.rangeUpgradeT3Boost);
+			maxRange += (upgradeCount(Upgrade.RANGE_WITHER) * RemoteIO.instance.rangeUpgradeWitherBoost);
 			int dX = Math.abs(this.xCoord - this.x);
 			int dY = Math.abs(this.yCoord - this.y);
 			int dZ = Math.abs(this.zCoord - this.z);

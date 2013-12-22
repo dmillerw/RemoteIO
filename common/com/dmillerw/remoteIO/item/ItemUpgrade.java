@@ -36,11 +36,25 @@ public class ItemUpgrade extends Item {
 			if (upgrade == Upgrade.BLANK) {
 				return;
 			}
-			if (upgrade == Upgrade.RANGE) {
-				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeBoost);
+			if (upgrade == Upgrade.RANGE_T1) {
+				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT1Boost);
+			}
+			if (upgrade == Upgrade.RANGE_T2) {
+				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT2Boost);
+			}
+			if (upgrade == Upgrade.RANGE_T3) {
+				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT3Boost);
+			}
+			if (upgrade == Upgrade.RANGE_WITHER) {
+				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeWitherBoost);
 			}
 			list.add(str);
 		}
+	}
+	
+	@Override
+	public boolean hasEffect(ItemStack stack) {
+		return Upgrade.values()[stack.getItemDamage()] == Upgrade.RANGE_WITHER;
 	}
 	
 	@Override
@@ -93,8 +107,8 @@ public class ItemUpgrade extends Item {
 			new ItemStack[0]
 		), 
 				
-		RANGE(
-			"range",
+		RANGE_T1(
+			"rangeT1",
 			new ItemStack[] {new ItemStack(Item.glowstone)}
 		), 
 				
@@ -141,6 +155,21 @@ public class ItemUpgrade extends Item {
 		LINK_PERSIST(
 			"persist",
 			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)}
+		),
+		
+		RANGE_T2(
+			"rangeT2",
+			new ItemStack[0]
+		),
+		
+		RANGE_T3(
+			"rangeT3",
+			new ItemStack[0]
+		),
+		
+		RANGE_WITHER(
+			"rangeWither",
+			new ItemStack[0]
 		);
 		
 		public String texture;

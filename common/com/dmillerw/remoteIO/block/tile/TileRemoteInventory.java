@@ -32,7 +32,7 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
 			if (player != null) {
 				if ((player.worldObj.provider.dimensionId == this.worldObj.provider.dimensionId)) {
-					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= (RemoteIO.instance.rangeUpgradeBoost * InventoryHelper.amountContained(upgrades, Upgrade.RANGE.toItemStack(), false)) + RemoteIO.instance.defaultRange) {
+					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= getRange()) {
 						return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
 					}
 				} else {
@@ -44,6 +44,19 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 		}
 		
 		return null;
+	}
+	
+	private int getRange() {
+		int maxRange = RemoteIO.instance.defaultRange;
+		maxRange += (upgradeCount(Upgrade.RANGE_T1) * RemoteIO.instance.rangeUpgradeT1Boost);
+		maxRange += (upgradeCount(Upgrade.RANGE_T2) * RemoteIO.instance.rangeUpgradeT2Boost);
+		maxRange += (upgradeCount(Upgrade.RANGE_T3) * RemoteIO.instance.rangeUpgradeT3Boost);
+		maxRange += (upgradeCount(Upgrade.RANGE_WITHER) * RemoteIO.instance.rangeUpgradeWitherBoost);
+		return maxRange;
+	}
+	
+	private int upgradeCount(Upgrade upgrade) {
+		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
 	}
 	
 	private InventoryPlayer getInventoryAndUpdate() {

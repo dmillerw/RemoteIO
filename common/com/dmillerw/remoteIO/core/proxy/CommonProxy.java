@@ -90,6 +90,19 @@ public class CommonProxy implements ISidedProxy {
 			}
 		}
 		
+		/* RANGE UPGRADE RECIPES */
+		// T2
+		GameRegistry.addRecipe(Upgrade.RANGE_T2.toItemStack(), new Object[] {"GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack()});
+		GameRegistry.addRecipe(Upgrade.RANGE_T2.toItemStack(), new Object[] {"RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack()});
+		
+		// T3
+		GameRegistry.addRecipe(Upgrade.RANGE_T3.toItemStack(), new Object[] {"GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack()});
+		GameRegistry.addRecipe(Upgrade.RANGE_T3.toItemStack(), new Object[] {"RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack()});
+		
+		// WITHER
+		GameRegistry.addRecipe(Upgrade.RANGE_WITHER.toItemStack(), new Object[] {"E", "U", "S", 'E', Block.dragonEgg, 'U', Upgrade.RANGE_T3, 'S', Item.netherStar});
+		/* END */
+		
 		// Wireless Transceiver
 		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTransmitter), new Object[] {" E ", "III", "IRI", 'E', Item.enderPearl, 'I', Item.ingotIron, 'R', Item.redstone});
 		

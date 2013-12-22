@@ -42,7 +42,11 @@ public class RemoteIO {
 	public File configDir;
 	
 	public int defaultRange = 8;
-	public int rangeUpgradeBoost = 8;
+	
+	public int rangeUpgradeT1Boost = 8;
+	public int rangeUpgradeT2Boost = 16;
+	public int rangeUpgradeT3Boost = 64;
+	public int rangeUpgradeWitherBoost = 1024;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -80,7 +84,10 @@ public class RemoteIO {
 		config.load();
 		
 		defaultRange = config.get("general", "defaultRange", 8, "Default range remote blocks have, without any Range upgrades").getInt(8);
-		rangeUpgradeBoost = config.get("general", "rangeUpgradeBoost", 8, "How much each range upgrade boosts the range by").getInt(8);
+		rangeUpgradeT1Boost = config.get("general", "rangeUpgradeT1Boost", 8, "How much a T1 range upgrade boosts the range by").getInt(8);
+		rangeUpgradeT2Boost = config.get("general", "rangeUpgradeT2Boost", 16, "How much a T2 range upgrade boosts the range by").getInt(16);
+		rangeUpgradeT3Boost = config.get("general", "rangeUpgradeT3Boost", 64, "How much a T3 range upgrade boosts the range by").getInt(64);
+		rangeUpgradeWitherBoost = config.get("general", "rangeUpgradeWitherBoost", 1024, "How much a wither range upgrade boosts the range by").getInt(1024);
 		
 		BlockHandler.handleConfig(config);
 		BlockHandler.initializeBlocks();
