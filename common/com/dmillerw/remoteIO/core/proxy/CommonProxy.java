@@ -110,7 +110,7 @@ public class CommonProxy implements ISidedProxy {
 		GameRegistry.addRecipe(new ItemStack(BlockHandler.blockWireless), new Object[] {" U ", "III", "ITI", 'U', Upgrade.ITEM.toItemStack(), 'I', Item.ingotIron, 'T', new ItemStack(ItemHandler.itemTransmitter)});
 		
 		// Iron Rod component
-		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemComponent, 1, 6), new Object[] {"I  ", " I ", "  I", 'I', Item.ingotIron});
+		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemComponent, 6, 2), new Object[] {"I  ", " I ", "  I", 'I', Item.ingotIron});
 		OreDictionary.registerOre("rodIron", new ItemStack(ItemHandler.itemComponent, 1, 2));
 		
 		// Camo Component

@@ -43,14 +43,14 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						ChatHelper.warn(player, I18n.getString("chat.selectBlock"));
+						ChatHelper.warn(player, "chat.selectBlock");
 						return false;
 					} else {
 						int[] coords = getCoordinates(stack);
 						if (tile.setCoordinates(coords[0], coords[1], coords[2], coords[3])) {
-							ChatHelper.info(player, I18n.getString("chat.linkSucceed"));
+							ChatHelper.info(player, "chat.linkSucceed");
 						} else {
-							ChatHelper.warn(player, I18n.getString("chat.linkFail"));
+							ChatHelper.warn(player, "chat.linkFail");
 						}
 						clearCoordinates(stack);
 						return false;
@@ -58,7 +58,7 @@ public class ItemTool extends Item {
 				} else {
 					if (tile.hasCoordinates()) {
 						tile.clearCoordinates();
-						ChatHelper.info(player, I18n.getString("chat.clearIO"));
+						ChatHelper.info(player, "chat.clearIO");
 						return false;
 					}
 				}
@@ -67,7 +67,7 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						ChatHelper.warn(player, I18n.getString("chat.selectBlock"));
+						ChatHelper.warn(player, "chat.selectBlock");
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					} else {
@@ -76,7 +76,7 @@ public class ItemTool extends Item {
 						tile.y = coords[1];
 						tile.z = coords[2];
 						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
-						ChatHelper.info(player, I18n.getString("chat.linkSucceed"));
+						ChatHelper.info(player, "chat.linkSucceed");
 						clearCoordinates(stack);
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
@@ -88,7 +88,7 @@ public class ItemTool extends Item {
 						tile.y = -1;
 						tile.z = 0;
 						tile.insertionSide = ForgeDirection.UNKNOWN;
-						ChatHelper.info(player, I18n.getString("chat.clearProxy"));
+						ChatHelper.info(player, "chat.clearProxy");
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
 						return false;
@@ -97,10 +97,10 @@ public class ItemTool extends Item {
 			} else {
 				if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(meta)) {
 					setCoordinates(stack, x, y, z, world.provider.dimensionId, side);
-					ChatHelper.info(player, I18n.getString("chat.linkBegun"));
+					ChatHelper.info(player, "chat.linkBegun");
 					return false;
 				} else {
-					ChatHelper.warn(player, I18n.getString("chat.linkFailBasic"));
+					ChatHelper.warn(player, "chat.linkFailBasic");
 					return false;
 				}
 			}
