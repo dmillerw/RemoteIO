@@ -32,6 +32,9 @@ public class ItemUpgrade extends Item {
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean idk) {
 		Upgrade upgrade = Upgrade.values()[stack.getItemDamage()];
 		String[] desc = I18n.getString("upgrade." + upgrade.texture + ".desc").split("\n");
+		if (upgrade == Upgrade.RANGE_T1 || upgrade == Upgrade.RANGE_T2 || upgrade == Upgrade.RANGE_T3 || upgrade == Upgrade.RANGE_WITHER) {
+			desc = I18n.getString("upgrade.range.desc").split("\n");
+		}
 		for (String str : desc) {
 			if (upgrade == Upgrade.BLANK) {
 				return;

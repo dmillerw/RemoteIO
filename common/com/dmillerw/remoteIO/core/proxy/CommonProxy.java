@@ -100,7 +100,7 @@ public class CommonProxy implements ISidedProxy {
 		GameRegistry.addRecipe(Upgrade.RANGE_T3.toItemStack(), new Object[] {"RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack()});
 		
 		// WITHER
-		GameRegistry.addRecipe(Upgrade.RANGE_WITHER.toItemStack(), new Object[] {"E", "U", "S", 'E', Block.dragonEgg, 'U', Upgrade.RANGE_T3, 'S', Item.netherStar});
+		GameRegistry.addRecipe(Upgrade.RANGE_WITHER.toItemStack(), new Object[] {"E", "U", "S", 'E', Block.dragonEgg, 'U', Upgrade.RANGE_T3.toItemStack(), 'S', Item.netherStar});
 		/* END */
 		
 		// Wireless Transceiver
