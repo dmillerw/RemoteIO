@@ -40,6 +40,7 @@ public class TileHeater extends TileCore {
 						}
 					}
 				}
+			iterator.remove(); // avoids a ConcurrentModificationException
 			}
 		}
 	}
