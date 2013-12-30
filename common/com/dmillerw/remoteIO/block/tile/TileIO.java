@@ -50,7 +50,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IElectrical {
+public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -354,22 +354,6 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		return null;
 	}
 	
-	private IElectrical getUEElectrical() {
-		if (getTileEntity() != null && getTileEntity() instanceof IElectrical && hasUpgrade(Upgrade.POWER_UE)) {
-			return (IElectrical)getTileEntity();
-		}
-		
-		return null;
-	}
-	
-	private IElectricalStorage getUEStorage() {
-		if (getTileEntity() != null && getTileEntity() instanceof IElectricalStorage && hasUpgrade(Upgrade.POWER_UE)) {
-			return (IElectricalStorage)getTileEntity();
-		}
-		
-		return null;
-	}
-	
 	public boolean hasUpgrade(Upgrade upgrade) {
 		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
 	}
@@ -618,37 +602,6 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	@Override
 	public int getMaxSafeInput() {
 		return getEUSink() != null ? getEUSink().getMaxSafeInput() : Integer.MAX_VALUE;
-	}
-
-	/* IELECTRICAL */
-	@Override
-	public boolean canConnect(ForgeDirection direction) {
-		return getUEElectrical() != null ? getUEElectrical().canConnect(direction) : false;
-	}
-
-	@Override
-	public float receiveElectricity(ForgeDirection from, ElectricityPack receive, boolean doReceive) {
-		return getUEElectrical() != null ? getUEElectrical().receiveElectricity(from, receive, doReceive) : 0;
-	}
-
-	@Override
-	public ElectricityPack provideElectricity(ForgeDirection from, ElectricityPack request, boolean doProvide) {
-		return getUEElectrical() != null ? getUEElectrical().provideElectricity(from, request, doProvide) : null;
-	}
-
-	@Override
-	public float getRequest(ForgeDirection direction) {
-		return getUEElectrical() != null ? getUEElectrical().getRequest(direction) : 0;
-	}
-
-	@Override
-	public float getProvide(ForgeDirection direction) {
-		return getUEElectrical() != null ? getUEElectrical().getProvide(direction) : 0;
-	}
-
-	@Override
-	public float getVoltage() {
-		return getUEElectrical() != null ? getUEElectrical().getVoltage() : 0;
 	}
 
 }

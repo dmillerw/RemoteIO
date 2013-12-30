@@ -1,18 +1,17 @@
 package com.dmillerw.remoteIO.item;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileSideProxy;
@@ -33,6 +32,18 @@ public class ItemTool extends Item {
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean idk) {
+		if (hasCoordinates(stack)) {
+			list.add("Coordinates Stored:");
+			list.add("X: " + getCoordinates(stack)[0]);
+			list.add("Y: " + getCoordinates(stack)[1]);
+			list.add("Z: " + getCoordinates(stack)[2]);
+		} else {
+			list.add("No Coordinates Stored");
+		}
+	}
+	
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
 			int id = world.getBlockId(x, y, z);
@@ -44,7 +55,7 @@ public class ItemTool extends Item {
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
 						ChatHelper.warn(player, "chat.selectBlock");
-						return false;
+						return true;
 					} else {
 						int[] coords = getCoordinates(stack);
 						if (tile.setCoordinates(coords[0], coords[1], coords[2], coords[3])) {
@@ -53,13 +64,13 @@ public class ItemTool extends Item {
 							ChatHelper.warn(player, "chat.linkFail");
 						}
 						clearCoordinates(stack);
-						return false;
+						return true;
 					}
 				} else {
 					if (tile.hasCoordinates()) {
 						tile.clearCoordinates();
 						ChatHelper.info(player, "chat.clearIO");
-						return false;
+						return true;
 					}
 				}
 			} else if (id == BlockHandler.blockProxyID) {
@@ -80,7 +91,7 @@ public class ItemTool extends Item {
 						clearCoordinates(stack);
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
-						return false;
+						return true;
 					}
 				} else {
 					if (tile.fullyValid()) {
@@ -91,31 +102,22 @@ public class ItemTool extends Item {
 						ChatHelper.info(player, "chat.clearProxy");
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
-						return false;
+						return true;
 					}
 				}
 			} else {
 				if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(meta)) {
 					setCoordinates(stack, x, y, z, world.provider.dimensionId, side);
 					ChatHelper.info(player, "chat.linkBegun");
-					return false;
+					return true;
 				} else {
 					ChatHelper.warn(player, "chat.linkFailBasic");
-					return false;
+					return true;
 				}
 			}
 		}
 		
-		return true;
-	}
-	
-	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		if (!world.isRemote && player.isSneaking() && hasCoordinates(stack)) {
-			clearCoordinates(stack);
-			ChatHelper.info(player, "Cleared link coordinates on linker tool");
-		}
-		
-		return stack;
+		return false;
 	}
 	
 	private void setCoordinates(ItemStack stack, int x, int y, int z, int d, int side) {

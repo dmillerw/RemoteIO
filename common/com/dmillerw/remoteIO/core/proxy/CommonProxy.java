@@ -74,7 +74,8 @@ public class CommonProxy implements ISidedProxy {
 		
 		// Wrench
 		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
-	
+		GameRegistry.addShapelessRecipe(new ItemStack(ItemHandler.itemTool), ItemHandler.itemTool);
+		
 		// IO Goggles
 		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemGoggles), new Object[] {"L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl});
 		
@@ -212,19 +213,6 @@ public class CommonProxy implements ISidedProxy {
 				for (ItemStack conduit : conduits) {
 					GameRegistry.addRecipe(Upgrade.POWER_RF.toItemStack(), "C", "U", "C", 'C', conduit, 'U', Upgrade.BLANK.toItemStack());
 				}
-			}
-		}
-		
-		// Universal Electricty management
-		List<Block> conductorBlocks = new ArrayList<Block>();
-
-		for (Block block : Block.blocksList) {
-			if (block instanceof BlockConductor) conductorBlocks.add(block);
-		}
-		
-		if (conductorBlocks.size() > 0) {
-			for (Block block : conductorBlocks) {
-				GameRegistry.addRecipe(Upgrade.POWER_UE.toItemStack(), "C", "U", "C", 'C', block, 'U', Upgrade.BLANK.toItemStack());
 			}
 		}
 	}
