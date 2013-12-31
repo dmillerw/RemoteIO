@@ -1,8 +1,5 @@
 package com.dmillerw.remoteIO.block;
 
-import com.dmillerw.remoteIO.core.CreativeTabRIO;
-import com.dmillerw.remoteIO.core.IUpdatableBlock;
-import com.dmillerw.remoteIO.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -10,6 +7,9 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.lib.ModInfo;
 
 public class BlockSkylight extends Block implements IUpdatableBlock {
 
