@@ -18,5 +18,4 @@ ForgeModLoader*
 *.iml
 *.ipr
 *.iws
-gradlew.bat
 run/
