@@ -1,6 +1,4 @@
-
-<!-- saved from url=(0085)https://s3.amazonaws.com/uploads.hipchat.com/71388/504116/0mpAlrAOMCIcbcO/gradlew.bat -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><style type="text/css"></style></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">@if "%DEBUG%" == "" @echo off
+@echo off
 @rem ##########################################################################
 @rem
 @rem  Gradle startup script for Windows
