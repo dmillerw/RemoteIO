@@ -2,20 +2,19 @@ package com.dmillerw.remoteIO.item;
 
 import java.util.List;
 
-import net.minecraft.block.BlockHalfSlab;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.FakePlayer;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.ChatHelper;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
 public class ItemTransmitter extends Item {
@@ -42,6 +41,22 @@ public class ItemTransmitter extends Item {
 		setCreativeTab(CreativeTabRIO.tab);
 	}
 
+	public boolean onItemUse(ItemStack stack, final EntityPlayer player, World world, int x, int y, int z, int side, float fx, float fy, float fz) {
+		TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
+		
+		if (tile != null) {
+			if (tile.hasCoordinates()) {
+				if (!world.isRemote) {
+					tile.getLinkedBlock().onBlockActivated(tile.getLinkedWorld(), tile.x, tile.y, tile.z, player, side, fx, fy, fz);
+					return true;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (world.isRemote) {
 			return stack;
@@ -66,7 +81,7 @@ public class ItemTransmitter extends Item {
 	
 	@Override
 	public boolean shouldPassSneakingClickToBlock(World world, int x, int y, int z) {
-		return world.getBlockId(x, y, z) == BlockHandler.blockWirelessID;
+		return world.getBlockId(x, y, z) == BlockHandler.blockWirelessID || world.getBlockId(x, y, z) == BlockHandler.blockIOID;
 	}
 	
 	@Override

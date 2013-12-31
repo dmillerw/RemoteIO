@@ -8,6 +8,7 @@ import ic2.api.energy.tile.IEnergyTile;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -25,9 +26,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import universalelectricity.core.block.IElectrical;
-import universalelectricity.core.block.IElectricalStorage;
-import universalelectricity.core.electricity.ElectricityPack;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
@@ -74,6 +72,22 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	public int y;
 	public int z;
 	public int d;
+	
+	public World getLinkedWorld() {
+		if (validCoordinates) {
+			return MinecraftServer.getServer().worldServerForDimension(d);
+		} else {
+			return null;
+		}
+	}
+	
+	public Block getLinkedBlock() {
+		if (validCoordinates && getLinkedWorld() != null) {
+			return (Block.blocksList[getLinkedWorld().getBlockId(x, y, z)]);
+		} else {
+			return null;
+		}
+	}
 	
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {

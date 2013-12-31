@@ -22,6 +22,7 @@ import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.item.ItemTool;
+import com.dmillerw.remoteIO.item.ItemTransmitter;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -108,7 +109,7 @@ public class BlockIO extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
-			if (!player.isSneaking() && (player.getHeldItem() == null || !(player.getHeldItem().getItem() instanceof ItemTool))) {
+			if (!player.isSneaking() && (player.getHeldItem() == null || (!(player.getHeldItem().getItem() instanceof ItemTool) && !(player.getHeldItem().getItem() instanceof ItemTransmitter)))) {
 				player.openGui(RemoteIO.instance, 0, world, x, y, z);
 				return true;
 			}

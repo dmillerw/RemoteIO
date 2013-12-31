@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.commons.io.IOUtils;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.core.handler.ForgeEventHandler;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.core.helper.LocalizationHelper;
@@ -101,6 +103,8 @@ public class RemoteIO {
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
 		TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
+		
+		MinecraftForge.EVENT_BUS.register(new ForgeEventHandler());
 		
 		proxy.preInit(event);
 	}
