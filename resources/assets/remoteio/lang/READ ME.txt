@@ -1,3 +1,0 @@
-Instructions are simple. Copy the en_US lang file and make the appropriate adjustments for your language, then rename the file for your language code.
-
-Finally submit a pull request with your language file.

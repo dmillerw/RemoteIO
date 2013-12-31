@@ -1,0 +1,74 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+// Define the properties file
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+version = config.mod_version
+group = "com.dmillwerw.remoteIO"
+archivesBaseName = "RemoteIO"
+
+minecraft {
+    version = config.minecraft_version + "-" + config.forge_version
+    assetsDir = "run/assets"
+
+    replaceIn "RemoteIO.java"
+    replace "@FORGE@", config.forge_version
+    replace "@VERSION@", config.mod_Version
+}
+
+// Add the build number to the end of the version
+version = "${config.minecraft_version}-${config.mod_version}-b${System.getenv().BUILD_NUMBER}"
+
+processResources {
+    // Replace stuff
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.info'
+        include '**/*.properties'
+
+
+        expand([
+                'mod_version': project.config.mod_version,
+                'minecraft_version': project.config.minecraft_version,
+                'build_number': project.config.build_number
+        ])
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude '**/*.info'
+        exclude '**/*.properties'
+    }
+}
+
+// Name the jars
+jar {
+    appendix = 'universal'
+}
+
+// Add the source code to the jar
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    appendix = 'src'
+}
+
+artifacts {
+    archives sourceJar
+}
