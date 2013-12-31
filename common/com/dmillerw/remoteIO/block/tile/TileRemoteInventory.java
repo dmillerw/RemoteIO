@@ -17,9 +17,10 @@ import cpw.mods.fml.server.FMLServerHandler;
 
 public class TileRemoteInventory extends TileCore implements IInventory {
 
-	public IInventory upgrades = new InventoryBasic("Upgrades", false, 2);
+	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	
-	public boolean mattaMode = false;
+	public boolean unlimitedRange = false;
+	public boolean remoteRequired = false;
 	public boolean lastClientState = false;
 	
 	public int state = 0;
@@ -33,12 +34,12 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
 			if (player != null) {
 				if ((player.worldObj.provider.dimensionId == this.worldObj.provider.dimensionId)) {
-					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= getRange()) {
-						return (ItemTransmitter.hasSelfRemote(player) || mattaMode) ? player.inventory : null;
+					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= getRange() || unlimitedRange) {
+						return (ItemTransmitter.hasSelfRemote(player) || !remoteRequired) ? player.inventory : null;
 					}
 				} else {
 					if (InventoryHelper.inventoryContains(upgrades, Upgrade.CROSS_DIMENSIONAL.toItemStack(), false)) {
-						return (ItemTransmitter.hasSelfRemote(player) || mattaMode) ? player.inventory : null;
+						return (ItemTransmitter.hasSelfRemote(player) || !remoteRequired) ? player.inventory : null;
 					}
 				}
 			}
@@ -76,7 +77,8 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			nbt.setString("owner", owner);
 		}
 		
-		nbt.setBoolean("mattaMode", mattaMode);
+		nbt.setBoolean("unlimitedRange", unlimitedRange);
+		nbt.setBoolean("remoteRequired", remoteRequired);
 		nbt.setBoolean("state", lastClientState);
 		
 		if (upgrades != null) {
@@ -94,7 +96,8 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			owner = "";
 		}
 		
-		mattaMode = nbt.getBoolean("mattaMode");
+		unlimitedRange = nbt.getBoolean("unlimitedRange");
+		remoteRequired = nbt.getBoolean("remoteRequired");
 		lastClientState = nbt.getBoolean("state");
 		
 		if (nbt.hasKey("upgrades")) {

@@ -61,6 +61,8 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		}
 	};
 	
+	public boolean unlimitedRange = false;
+	
 	public boolean validCoordinates = false;
 	public boolean redstoneState = false;
 
@@ -191,6 +193,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 			nbt.setCompoundTag("coords", coords);
 		}
 		
+		nbt.setBoolean("unlimitedRange", unlimitedRange);
 		nbt.setBoolean("redstone", this.redstoneState);
 		
 		NBTTagCompound upgradesNBT = new NBTTagCompound();
@@ -215,6 +218,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 			this.validCoordinates = false;
 		}
 		
+		this.unlimitedRange = nbt.getBoolean("unlimitedRange");
 		if (nbt.hasKey("redstone")) {
 			this.redstoneState = nbt.getBoolean("redstone");
 		}
@@ -266,7 +270,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 	
 	private TileEntity getTileEntityInDimension(boolean verify) {
-		if (inRange(verify)) {
+		if (inRange(verify) || unlimitedRange) {
 			return this.worldObj.getBlockTileEntity(x, y, z);
 		}
 		
