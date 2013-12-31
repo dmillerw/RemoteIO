@@ -19,6 +19,7 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 2);
 	
+	public boolean mattaMode = false;
 	public boolean lastClientState = false;
 	
 	public int state = 0;
@@ -33,11 +34,11 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			if (player != null) {
 				if ((player.worldObj.provider.dimensionId == this.worldObj.provider.dimensionId)) {
 					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= getRange()) {
-						return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
+						return (ItemTransmitter.hasSelfRemote(player) || mattaMode) ? player.inventory : null;
 					}
 				} else {
 					if (InventoryHelper.inventoryContains(upgrades, Upgrade.CROSS_DIMENSIONAL.toItemStack(), false)) {
-						return ItemTransmitter.hasSelfRemote(player) ? player.inventory : null;
+						return (ItemTransmitter.hasSelfRemote(player) || mattaMode) ? player.inventory : null;
 					}
 				}
 			}
@@ -75,6 +76,7 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			nbt.setString("owner", owner);
 		}
 		
+		nbt.setBoolean("mattaMode", mattaMode);
 		nbt.setBoolean("state", lastClientState);
 		
 		if (upgrades != null) {
@@ -92,6 +94,7 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 			owner = "";
 		}
 		
+		mattaMode = nbt.getBoolean("mattaMode");
 		lastClientState = nbt.getBoolean("state");
 		
 		if (nbt.hasKey("upgrades")) {
