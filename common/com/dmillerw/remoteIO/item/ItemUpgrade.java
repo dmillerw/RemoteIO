@@ -24,6 +24,7 @@ public class ItemUpgrade extends Item {
 	public ItemUpgrade(int id) {
 		super(id);
 		
+		this.setMaxStackSize(1);
 		this.setHasSubtypes(true);
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}

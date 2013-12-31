@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.core.helper.ChatHelper;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
@@ -57,6 +58,9 @@ public class ItemTransmitter extends Item {
 		NBTTagCompound nbt = stack.getTagCompound();
 		nbt.setString("player", player.username);
 		stack.setTagCompound(nbt);
+		
+		ChatHelper.info(player, "chat.transceiverLink");
+		
 		return stack;
 	}
 	
