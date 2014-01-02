@@ -1,21 +1,18 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import cpw.mods.fml.common.network.PacketDispatcher;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class TileCore extends TileEntity {
 
 	public boolean onBlockActivated(EntityPlayer player) { return false; }
 	
-	public void onBlockAdded(int side) {}
+	public void onBlockAdded() {}
 	
 	public void onNeighborBlockUpdate() {}
 	
