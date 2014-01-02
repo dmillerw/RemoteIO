@@ -1,8 +1,9 @@
 package appeng.api.events;
 
+import net.minecraft.world.World;
+import net.minecraftforge.event.world.WorldEvent;
 import appeng.api.WorldCoord;
 import appeng.api.me.tiles.IGridTileEntity;
-import net.minecraft.world.World;
 
 /**
  * A Tile has been added to the world, and should be evaluated for Network Connectivity.

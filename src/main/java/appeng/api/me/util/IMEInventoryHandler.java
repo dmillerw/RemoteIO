@@ -1,14 +1,15 @@
 package appeng.api.me.util;
 
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import appeng.api.IAEItemStack;
 import appeng.api.IItemList;
 import appeng.api.config.FuzzyMode;
+import appeng.api.config.IConfigEnum;
 import appeng.api.config.ItemFlow;
 import appeng.api.config.ListMode;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-
-import java.util.List;
 
 public interface IMEInventoryHandler extends IMEInventory {
 	

@@ -1,8 +1,8 @@
 package appeng.api.me.util;
 
-import net.minecraft.item.ItemStack;
-
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
 
 public class InterfaceCraftingResponse {
 	
