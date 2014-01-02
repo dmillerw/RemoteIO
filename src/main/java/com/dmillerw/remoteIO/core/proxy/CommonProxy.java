@@ -1,34 +1,22 @@
 package com.dmillerw.remoteIO.core.proxy;
 
-import ic2.api.item.Items;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import universalelectricity.prefab.block.BlockConductor;
-
-import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.block.tile.TileHeater;
-import com.dmillerw.remoteIO.block.tile.TileIO;
-import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
-import com.dmillerw.remoteIO.block.tile.TileReservoir;
-import com.dmillerw.remoteIO.block.tile.TileSideProxy;
+import com.dmillerw.remoteIO.block.tile.*;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
+import com.dmillerw.remoteIO.core.helper.RecipeHelper;
 import com.dmillerw.remoteIO.core.helper.StackHelper;
 import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
+import ic2.api.item.Items;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class CommonProxy implements ISidedProxy {
 
@@ -55,70 +43,70 @@ public class CommonProxy implements ISidedProxy {
 	@Override
 	public void init(FMLInitializationEvent event) {
 		if (BlockHandler.blockIOID != 0) {
-			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockIO, 2, 0), new Object[] {"SIS", "ESE", "SIS", 'S', Block.stone, 'I', Block.blockIron, 'E', Item.enderPearl});
+			RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockIO, 2, 0), "SIS", "ESE", "SIS", 'S', Block.stone, 'I', Block.blockIron, 'E', Item.enderPearl);
 		}
 		
 		if (BlockHandler.blockMachineID != 0) {
-			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockMachine, 1, 0), new Object[] {"SIS", "IFI", "SBS", 'S', Block.cobblestone, 'I', Block.fenceIron, 'F', Block.furnaceIdle, 'B', Item.bucketLava});
-			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockMachine, 1, 1), new Object[] {"SFS", "FFF", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater});
+			RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockMachine, 1, 0), "SIS", "IFI", "SBS", 'S', Block.cobblestone, 'I', Block.fenceIron, 'F', Block.furnaceIdle, 'B', Item.bucketLava);
+			RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockMachine, 1, 1), "SFS", "FFF", "SBS", 'S', Block.cobblestone, 'F', Block.glass, 'B', Item.bucketWater);
 		}
 		
 		if (BlockHandler.blockProxyID != 0) {
-			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock});
-			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), new Object[] {" E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock});
+			RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), " E ", "1I2", 'E', Item.enderPearl, '1', Upgrade.ISIDED_AWARE.toItemStack(), '2', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock);
+			RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockProxy, 4, 0), " E ", "1I2", 'E', Item.enderPearl, '2', Upgrade.ISIDED_AWARE.toItemStack(), '1', Upgrade.FLUID.toItemStack(), 'I', Block.hopperBlock);
 		}
 		
 		if (BlockHandler.blockSkylightID != 0) {
-			GameRegistry.addRecipe(new ItemStack(BlockHandler.blockSkylight, 8), new Object[] {"SSS", "GGG", "SSS", 'S', Block.stone, 'G', Block.glass});
+			RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockSkylight, 8), "SSS", "GGG", "SSS", 'S', Block.stone, 'G', Block.glass);
 		}
 		
 		// Wrench
-		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTool), new Object[] {"EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone});
+		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemTool), "EB ", "BI ", "  R", 'E', Item.enderPearl, 'B', Item.dyePowder, 'I', Item.ingotIron, 'R', Item.redstone);
 		GameRegistry.addShapelessRecipe(new ItemStack(ItemHandler.itemTool), ItemHandler.itemTool);
 		
 		// IO Goggles
-		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemGoggles), new Object[] {"L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl});
+		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemGoggles), "L L", "I I", "GEG", 'L', Item.leather, 'I', Item.ingotIron, 'G', Block.thinGlass, 'E', Item.enderPearl);
 		
 		// Blank Upgrade
-		GameRegistry.addRecipe(new ShapedOreRecipe(StackHelper.resize(Upgrade.BLANK.toItemStack(), 16), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone));
+		RecipeHelper.addOreRecipe(StackHelper.resize(Upgrade.BLANK.toItemStack(), 16), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone);
 	
 		for (Upgrade upgrade : Upgrade.values()) {
 			if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
-				GameRegistry.addRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponents[0], 'U', Upgrade.BLANK.toItemStack());
+				RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponents[0], 'U', Upgrade.BLANK.toItemStack());
 			} else if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 2) {
-				GameRegistry.addRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
-				GameRegistry.addRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
+				RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
+				RecipeHelper.addOreRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
 			}
 		}
 		
 		/* RANGE UPGRADE RECIPES */
 		// T2
-		GameRegistry.addRecipe(Upgrade.RANGE_T2.toItemStack(), new Object[] {"GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack()});
-		GameRegistry.addRecipe(Upgrade.RANGE_T2.toItemStack(), new Object[] {"RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack()});
+		RecipeHelper.addOreRecipe(Upgrade.RANGE_T2.toItemStack(), "GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack());
+		RecipeHelper.addOreRecipe(Upgrade.RANGE_T2.toItemStack(), "RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack());
 		
 		// T3
-		GameRegistry.addRecipe(Upgrade.RANGE_T3.toItemStack(), new Object[] {"GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack()});
-		GameRegistry.addRecipe(Upgrade.RANGE_T3.toItemStack(), new Object[] {"RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack()});
+		RecipeHelper.addOreRecipe(Upgrade.RANGE_T3.toItemStack(), "GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack());
+		RecipeHelper.addOreRecipe(Upgrade.RANGE_T3.toItemStack(), "RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack());
 		
 		// WITHER
-		GameRegistry.addRecipe(Upgrade.RANGE_WITHER.toItemStack(), new Object[] {"E", "U", "S", 'E', Block.dragonEgg, 'U', Upgrade.RANGE_T3.toItemStack(), 'S', Item.netherStar});
+		RecipeHelper.addOreRecipe(Upgrade.RANGE_WITHER.toItemStack(), "E", "U", "S", 'E', Block.dragonEgg, 'U', Upgrade.RANGE_T3.toItemStack(), 'S', Item.netherStar);
 		/* END */
 		
 		// Wireless Transceiver
-		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemTransmitter), new Object[] {" E ", "III", "IRI", 'E', Item.enderPearl, 'I', Item.ingotIron, 'R', Item.redstone});
+		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemTransmitter), " E ", "III", "IRI", 'E', Item.enderPearl, 'I', Item.ingotIron, 'R', Item.redstone);
 		
 		// Remote Inventory
-		GameRegistry.addRecipe(new ItemStack(BlockHandler.blockWireless), new Object[] {" U ", "III", "ITI", 'U', Upgrade.ITEM.toItemStack(), 'I', Item.ingotIron, 'T', new ItemStack(ItemHandler.itemTransmitter)});
+		RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockWireless), " U ", "III", "ITI", 'U', Upgrade.ITEM.toItemStack(), 'I', Item.ingotIron, 'T', new ItemStack(ItemHandler.itemTransmitter));
 		
 		// Iron Rod component
-		GameRegistry.addRecipe(new ItemStack(ItemHandler.itemComponent, 6, 2), new Object[] {"I  ", " I ", "  I", 'I', Item.ingotIron});
+		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemComponent, 6, 2), "I  ", " I ", "  I", 'I', Item.ingotIron);
 		OreDictionary.registerOre("rodIron", new ItemStack(ItemHandler.itemComponent, 1, 2));
 		
 		// Camo Component
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 0), new Object[] {"LSL", "SIS", "LSL", 'L', "logWood", 'S', "stone", 'I', Item.ingotIron}));
+		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 0), "LSL", "SIS", "LSL", 'L', "logWood", 'S', "stone", 'I', Item.ingotIron);
 		
 		// Padlock Component
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 1), new Object[] {"   ", " R ", " I ", 'R', "rodIron", 'I', Item.ingotIron}));
+		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 1), "   ", " R ", " I ", 'R', "rodIron", 'I', Item.ingotIron);
 	}
 
 	@Override
@@ -136,8 +124,8 @@ public class CommonProxy implements ISidedProxy {
 			}
 			
 			if (enderChest != null) {
-				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "C", "U", "D", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
-				GameRegistry.addRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "D", "U", "C", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
+				RecipeHelper.addOreRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "C", "U", "D", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
+				RecipeHelper.addOreRecipe(Upgrade.CROSS_DIMENSIONAL.toItemStack(), "D", "U", "C", 'C', enderChest, 'D', obsidian, 'U', Upgrade.BLANK.toItemStack());
 			} else {
 				IOLogger.warn("Tried to get Ender Storage EnderChest, but failed!");
 			}
@@ -163,7 +151,7 @@ public class CommonProxy implements ISidedProxy {
 			
 			if (!failed) {
 				for (ItemStack pipe : pipes) {
-					GameRegistry.addRecipe(Upgrade.POWER_MJ.toItemStack(), "C", "U", "C", 'C', pipe, 'U', Upgrade.BLANK.toItemStack());
+					RecipeHelper.addOreRecipe(Upgrade.POWER_MJ.toItemStack(), "C", "U", "C", 'C', pipe, 'U', Upgrade.BLANK.toItemStack());
 				}
 			}
 		}
@@ -186,7 +174,7 @@ public class CommonProxy implements ISidedProxy {
 			
 			if (!failed) {
 				for (ItemStack cable : cables) {
-					GameRegistry.addRecipe(Upgrade.POWER_EU.toItemStack(), "C", "U", "C", 'C', cable, 'U', Upgrade.BLANK.toItemStack());
+					RecipeHelper.addOreRecipe(Upgrade.POWER_EU.toItemStack(), "C", "U", "C", 'C', cable, 'U', Upgrade.BLANK.toItemStack());
 				}
 			}
 		}
@@ -211,7 +199,7 @@ public class CommonProxy implements ISidedProxy {
 			
 			if (!failed) {
 				for (ItemStack conduit : conduits) {
-					GameRegistry.addRecipe(Upgrade.POWER_RF.toItemStack(), "C", "U", "C", 'C', conduit, 'U', Upgrade.BLANK.toItemStack());
+					RecipeHelper.addOreRecipe(Upgrade.POWER_RF.toItemStack(), "C", "U", "C", 'C', conduit, 'U', Upgrade.BLANK.toItemStack());
 				}
 			}
 		}

@@ -1,7 +1,13 @@
 package com.dmillerw.remoteIO.item;
 
-import java.util.List;
-
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.core.helper.ChatHelper;
+import com.dmillerw.remoteIO.lib.ModInfo;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,15 +18,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.block.tile.TileIO;
-import com.dmillerw.remoteIO.block.tile.TileSideProxy;
-import com.dmillerw.remoteIO.core.CreativeTabRIO;
-import com.dmillerw.remoteIO.core.helper.ChatHelper;
-import com.dmillerw.remoteIO.lib.ModInfo;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
 
 public class ItemTool extends Item {
 
@@ -28,11 +26,13 @@ public class ItemTool extends Item {
 	
 	public ItemTool(int id) {
 		super(id);
-		
+
+        setMaxStackSize(1);
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean idk) {
 		if (hasCoordinates(stack)) {
 			list.add("Coordinates Stored:");
@@ -162,11 +162,7 @@ public class ItemTool extends Item {
 		
 		NBTTagCompound nbt = stack.getTagCompound();
 		
-		if (!nbt.hasKey("coords")) {
-			return false;
-		}
-		
-		return true;
+		return nbt.hasKey("coords");
 	}
 	
 	private void clearCoordinates(ItemStack stack) {

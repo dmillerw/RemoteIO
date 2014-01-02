@@ -1,15 +1,9 @@
 package com.dmillerw.remoteIO.item;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
-
-import com.dmillerw.remoteIO.block.BlockMachine;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class ItemHandler {
 
@@ -18,12 +12,14 @@ public class ItemHandler {
 	public static int itemComponentID;
 	public static int itemGogglesID;
 	public static int itemTransmitterID;
+    public static int itemScreenID;
 	
 	public static Item itemTool;
 	public static Item itemUpgrade;
 	public static Item itemComponent;
 	public static Item itemGoggles;
 	public static Item itemTransmitter;
+    public static Item itemScreen;
 	
 	public static void handleConfig(Configuration config) {
 		config.addCustomCategoryComment(Configuration.CATEGORY_ITEM, "Set any ID to 0 to disable item");
@@ -38,6 +34,8 @@ public class ItemHandler {
 		itemGogglesID = goggles.getInt(5003);
 		Property transmitter = config.getItem("itemID_transmitter", 5004);
 		itemTransmitterID = transmitter.getInt(5004);
+        Property screen = config.getItem("itemID_screen", 5005);
+        itemScreenID = screen.getInt(5005);
 	}
 	
 	public static void initializeItems() {
@@ -65,6 +63,11 @@ public class ItemHandler {
 			itemTransmitter = new ItemTransmitter(itemTransmitterID).setUnlocalizedName("transceiver");
 			GameRegistry.registerItem(itemTransmitter, "itemTransmitter");
 		}
+
+        if (itemScreenID != 0) {
+            itemScreen = new ItemScreen(itemScreenID).setUnlocalizedName("screen");
+            GameRegistry.registerItem(itemScreen, "itemScreen");
+        }
 	}
 	
 }
