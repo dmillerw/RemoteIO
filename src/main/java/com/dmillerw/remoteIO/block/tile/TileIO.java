@@ -15,22 +15,18 @@ import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.client.fx.FXParticlePath;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
-import com.dmillerw.remoteIO.item.ItemGoggles;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
-import cpw.mods.fml.client.FMLClientHandler;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.energy.tile.IEnergyTile;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -123,13 +119,8 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
                 firstLoad = false;
             }
         } else {
-            if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates && worldObj.provider.dimensionId == this.d) {
-                Random rand = new Random();
-                for (int i=0; i<rand.nextInt(5); i++) {
-                    FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
-                    path.setRBGColorF(0.35F, 0.35F, 1F);
-                    Minecraft.getMinecraft().effectRenderer.addEffect(path);
-                }
+            if (validCoordinates && worldObj.provider.dimensionId == this.d) {
+                RemoteIO.proxy.ioPathFX(worldObj, this, x + 0.5, y + 0.5, z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
             }
         }
     }

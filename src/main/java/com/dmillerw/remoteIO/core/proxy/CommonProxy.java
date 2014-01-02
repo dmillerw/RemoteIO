@@ -18,6 +18,8 @@ import ic2.api.item.Items;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class CommonProxy implements ISidedProxy {
@@ -283,5 +285,7 @@ public class CommonProxy implements ISidedProxy {
         DocumentationRegistry.addDocumentation("SIDED_PROXY", sidedProxyDocumentation);
         DocumentationRegistry.registerKey(BlockHandler.blockProxy, "SIDED_PROXY");
 	}
+
+    public void ioPathFX(World world, TileEntity tile, double tx, double ty, double tz, float speed) {}
 
 }
