@@ -1,6 +1,5 @@
 package com.dmillerw.remoteIO.item;
 
-import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
@@ -18,7 +17,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class ItemTransmitter extends Item implements IDocumentable {
+public class ItemTransmitter extends Item {
 
 	public static boolean hasSelfRemote(EntityPlayer player) {
 		for (ItemStack stack : player.inventory.mainInventory) {
@@ -110,8 +109,4 @@ public class ItemTransmitter extends Item implements IDocumentable {
 		this.icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "itemTransmitter");
 	}
 
-    @Override
-    public String getKey(ItemStack stack) {
-        return "WIRELESS_TRANSCEIVER";
-    }
 }

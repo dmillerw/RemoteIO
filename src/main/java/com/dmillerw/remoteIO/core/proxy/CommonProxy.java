@@ -223,6 +223,7 @@ public class CommonProxy implements ISidedProxy {
                 "For more info, see the page on the IO Block"
         };
         DocumentationRegistry.addDocumentation("LINKER_TOOL", linkerDocumentation);
+        DocumentationRegistry.registerKey(ItemHandler.itemTool, "LINKER_TOOL");
 
         String[] transceiverDocumentation = new String[] {
                 "This item has one simple use, and that is to allow for the Remote Inventory block to connect to the inventory of the Player holding this.",
@@ -230,11 +231,13 @@ public class CommonProxy implements ISidedProxy {
                 "This item also has the added functionality of being able to access any block's GUI remotely. Simply right-click on any IO Block that's linked to a block, and the linked block will act as though you had simply right-clicked it."
         };
         DocumentationRegistry.addDocumentation("WIRELESS_TRANSCEIVER", transceiverDocumentation);
+        DocumentationRegistry.registerKey(ItemHandler.itemTransmitter, "WIRELESS_TRANSCEIVER");
 
         String[] goggleDocumentation = new String[] {
                 "Provided it's in the same dimension, the Player wearing these goggles will be able to see a path connecting any IO Block to the block it's linked to."
         };
         DocumentationRegistry.addDocumentation("IO_GOGGLES", goggleDocumentation);
+        DocumentationRegistry.registerKey(ItemHandler.itemGoggles, "IO_GOGGLES");
 
         String[] ioDocumentation = new String[] {
                 "The core feature of this mod.",
@@ -242,6 +245,7 @@ public class CommonProxy implements ISidedProxy {
                 "In an attempt to keep a sense of balance, this block can't do anything by itself. By installing various upgrades you can add various functionalities to this block. By default, it's unable to do anything, and has a limited connection range of 8 blocks."
         };
         DocumentationRegistry.addDocumentation("IO_BLOCK", ioDocumentation);
+        DocumentationRegistry.registerKey(BlockHandler.blockIO, "IO_BLOCK");
 
         String[] removeInvDocumentation = new String[] {
                 "This block has similar features to that of the IO block, but has a far more specific purpose.",
@@ -249,30 +253,35 @@ public class CommonProxy implements ISidedProxy {
                 "Similar to the IO Block, this block can take upgrades, and has a limited range."
         };
         DocumentationRegistry.addDocumentation("REMOTE_INVENTORY", removeInvDocumentation);
+        DocumentationRegistry.registerKey(BlockHandler.blockWireless, "REMOTE_INVENTORY");
 
         String[] heaterDocumentation = new String[] {
                 "This block allows one to power a vanilla furnace simply with two lava source blocks, but at the cost of efficiency.",
                 "Simply place this block down, along with two adjacent lava source blocks. It will then precede to power any adjacent furnaces."
         };
         DocumentationRegistry.addDocumentation("MACHINE_HEATER", heaterDocumentation);
+        DocumentationRegistry.registerKey(new ItemStack(BlockHandler.blockMachine, 1, 0), "MACHINE_HEATER");
 
         String[] reservoirDocumentation = new String[] {
                 "This block allows one to have a compact infinite source of water.",
                 "Simply place this block down, along with two adjacent water source blocks. It will then precede to fill it's internal tank with water, which can then be pumped out."
         };
         DocumentationRegistry.addDocumentation("MACHINE_RESERVOIR", reservoirDocumentation);
+        DocumentationRegistry.registerKey(new ItemStack(BlockHandler.blockMachine, 1, 1), "MACHINE_RESERVOIR");
 
         String[] skylightDocumentation = new String[] {
                 "Skylights can be used to block out light, but allow it to filter through at the change of a redstone signal.",
                 "Simply place any number of them down, and power one with a redstone signal. All those connected will then change their state to match the one being powered."
         };
         DocumentationRegistry.addDocumentation("SKYLIGHT", skylightDocumentation);
+        DocumentationRegistry.registerKey(BlockHandler.blockSkylight, "SKYLIGHT");
 
         String[] sidedProxyDocumentation = new String[] {
                 "This is a dumbed down version of the IO Block.",
                 "Simply place it down, and link it to any adjacent block using the IO Linker. It will then relay Items and Fluids through the side you linked it to, similar to Sneaky Pipes."
         };
         DocumentationRegistry.addDocumentation("SIDED_PROXY", sidedProxyDocumentation);
+        DocumentationRegistry.registerKey(BlockHandler.blockProxy, "SIDED_PROXY");
 	}
 
 }

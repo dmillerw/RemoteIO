@@ -1,23 +1,19 @@
 package com.dmillerw.remoteIO.block;
 
-import com.dmillerw.remoteIO.api.documentation.IDocumentable;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.lib.ModInfo;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import com.dmillerw.remoteIO.block.tile.TileSideProxy;
-import com.dmillerw.remoteIO.core.CreativeTabRIO;
-import com.dmillerw.remoteIO.lib.ModInfo;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-public class BlockSideProxy extends BlockContainer implements IDocumentable {
+public class BlockSideProxy extends BlockContainer {
 
 	public static float MIN = 0.1875F;
 	public static float MAX = 0.8125F;
@@ -75,8 +71,4 @@ public class BlockSideProxy extends BlockContainer implements IDocumentable {
 		return new TileSideProxy();
 	}
 
-    @Override
-    public String getKey(ItemStack stack) {
-        return "SIDED_PROXY";
-    }
 }

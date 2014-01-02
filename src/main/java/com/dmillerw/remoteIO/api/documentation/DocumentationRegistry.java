@@ -1,5 +1,7 @@
 package com.dmillerw.remoteIO.api.documentation;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
@@ -10,9 +12,42 @@ import java.util.Map;
  */
 public class DocumentationRegistry {
 
+    private static Map<ItemStack, String> stackToKeyMapping = new HashMap<ItemStack, String>();
     private static Map<String, String> documentation = new HashMap<String, String>();
 
+    private static boolean containsStack(ItemStack stack) {
+        for (Map.Entry<ItemStack, String> entry : stackToKeyMapping.entrySet()) {
+            if (entry.getKey().isItemEqual(stack)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static String getKeyForStack(ItemStack stack) {
+        for (Map.Entry<ItemStack, String> entry : stackToKeyMapping.entrySet()) {
+            if (entry.getKey().isItemEqual(stack)) {
+                return entry.getValue();
+            }
+        }
+
+        return "";
+    }
+
     //TODO Add basic formatting abilities
+
+    public static void registerKey(Item item, String key) {
+        registerKey(new ItemStack(item), key);
+    }
+
+    public static void registerKey(Block block, String key) {
+        registerKey(new ItemStack(block), key);
+    }
+
+    public static void registerKey(ItemStack stack, String key) {
+        stackToKeyMapping.put(stack, key);
+    }
 
     public static void addDocumentation(String key, String[] docu) {
         StringBuilder sb = new StringBuilder();
@@ -37,10 +72,10 @@ public class DocumentationRegistry {
 
     public static String getDocumentation(ItemStack stack) {
         if (hasDocumentation(stack)) {
-            return getDocumentation(((IDocumentable)stack.getItem()).getKey(stack));
+            return getDocumentation(getKeyForStack(stack));
         }
 
-        return null;
+        return "";
     }
 
     private static String getDocumentation(String key) {
@@ -48,8 +83,8 @@ public class DocumentationRegistry {
     }
 
     public static boolean hasDocumentation(ItemStack stack) {
-        if (stack != null && stack.getItem() instanceof IDocumentable) {
-            String returnedKey = ((IDocumentable)stack.getItem()).getKey(stack);
+        if (stack != null && containsStack(stack)) {
+            String returnedKey = getKeyForStack(stack);
 
             if (returnedKey == null || returnedKey.isEmpty()) {
                 return false;

@@ -1,7 +1,6 @@
 package com.dmillerw.remoteIO.block;
 
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
@@ -27,7 +26,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockIO extends BlockContainer implements IDocumentable {
+public class BlockIO extends BlockContainer {
 
 	public Icon[] icons;
 	
@@ -228,8 +227,4 @@ public class BlockIO extends BlockContainer implements IDocumentable {
 		return new TileIO();
 	}
 
-    @Override
-    public String getKey(ItemStack stack) {
-        return "IO_BLOCK";
-    }
 }

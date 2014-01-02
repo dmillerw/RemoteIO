@@ -1,6 +1,5 @@
 package com.dmillerw.remoteIO.item;
 
-import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +15,7 @@ import com.dmillerw.remoteIO.lib.ModInfo;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemGoggles extends ItemArmor implements IDocumentable {
+public class ItemGoggles extends ItemArmor {
 
 	public static EnumArmorMaterial GOGGLES = EnumHelper.addArmorMaterial("remoteIOGoggles", 20, new int[] { 1, 3, 2, 1 }, 15);
 
@@ -48,8 +47,4 @@ public class ItemGoggles extends ItemArmor implements IDocumentable {
 		this.icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "itemGoggles");
 	}
 
-    @Override
-    public String getKey(ItemStack stack) {
-        return "IO_GOGGLES";
-    }
 }

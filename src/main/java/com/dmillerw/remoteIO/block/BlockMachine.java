@@ -1,6 +1,5 @@
 package com.dmillerw.remoteIO.block;
 
-import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import com.dmillerw.remoteIO.block.tile.TileCore;
 import com.dmillerw.remoteIO.block.tile.TileHeater;
 import com.dmillerw.remoteIO.block.tile.TileReservoir;
@@ -15,7 +14,7 @@ import net.minecraft.world.IBlockAccess;
 
 import java.util.List;
 
-public class BlockMachine extends BlockCore implements IDocumentable {
+public class BlockMachine extends BlockCore {
 
 	public static final String[] INTERNAL_NAMES = new String[] {"heater", "reservoir"};
 	public static final String[] NAMES = new String[] {"Lava-Powered Heater", "Water Reservoir"};
@@ -75,8 +74,4 @@ public class BlockMachine extends BlockCore implements IDocumentable {
 		}
 	}
 
-    @Override
-    public String getKey(ItemStack stack) {
-        return stack.getItemDamage() == 0 ? "MACHINE_HEATER" : "MACHINE_RESERVOIR";
-    }
 }

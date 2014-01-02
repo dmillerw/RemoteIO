@@ -3,6 +3,7 @@ package com.dmillerw.remoteIO.inventory.gui;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.inventory.ContainerDocumentation;
 import com.dmillerw.remoteIO.lib.ModInfo;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
