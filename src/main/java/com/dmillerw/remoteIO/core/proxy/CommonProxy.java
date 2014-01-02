@@ -210,8 +210,10 @@ public class CommonProxy implements ISidedProxy {
 
         /* DOCUMENTATION HANDLING */
         String[] linkerDocumentation = new String[] {
-                "The IO Linker is your base tool for this entire mod, and manages most of the actions you'll have to preform on the various blocks available",
-                "And this is a second line of text, that doesn't serve much purpose other than for demonstration"
+                "The IO Linker is primarily used in conjunction with the IO Block, and is used to link various other blocks in the world to it.",
+                "Functionality is simple. Right click on any block in the world (sneaking if necessary to avoid GUIs) to link that block to this tool. Then simply come back to your IO blocks and right-click on it with the tool in hand.",
+                "Ta-da! Instantly linked!",
+                "For more info, see the page on the IO Block"
         };
         DocumentationRegistry.addDocumentation("LINKER_TOOL", linkerDocumentation);
 	}
