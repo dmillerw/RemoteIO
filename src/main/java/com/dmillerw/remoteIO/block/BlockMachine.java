@@ -1,23 +1,21 @@
 package com.dmillerw.remoteIO.block;
 
-import java.util.List;
-
+import com.dmillerw.remoteIO.api.documentation.IDocumentable;
+import com.dmillerw.remoteIO.block.tile.TileCore;
+import com.dmillerw.remoteIO.block.tile.TileHeater;
+import com.dmillerw.remoteIO.block.tile.TileReservoir;
+import com.dmillerw.remoteIO.lib.ModInfo;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 
-import com.dmillerw.remoteIO.block.tile.TileCore;
-import com.dmillerw.remoteIO.block.tile.TileHeater;
-import com.dmillerw.remoteIO.block.tile.TileReservoir;
-import com.dmillerw.remoteIO.block.tile.TileSideProxy;
-import com.dmillerw.remoteIO.lib.ModInfo;
+import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-public class BlockMachine extends BlockCore {
+public class BlockMachine extends BlockCore implements IDocumentable {
 
 	public static final String[] INTERNAL_NAMES = new String[] {"heater", "reservoir"};
 	public static final String[] NAMES = new String[] {"Lava-Powered Heater", "Water Reservoir"};
@@ -77,4 +75,8 @@ public class BlockMachine extends BlockCore {
 		}
 	}
 
+    @Override
+    public String getKey(ItemStack stack) {
+        return stack.getItemDamage() == 0 ? "MACHINE_HEATER" : "MACHINE_RESERVOIR";
+    }
 }

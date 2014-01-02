@@ -1,6 +1,7 @@
 package com.dmillerw.remoteIO.block;
 
 import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.item.ItemHandler;
@@ -17,7 +18,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockRemoteInventory extends BlockContainer {
+public class BlockRemoteInventory extends BlockContainer implements IDocumentable {
 
 	public Icon[] icons;
 	
@@ -79,5 +80,9 @@ public class BlockRemoteInventory extends BlockContainer {
 	public TileEntity createNewTileEntity(World world) {
 		return new TileRemoteInventory();
 	}
-	
+
+    @Override
+    public String getKey(ItemStack stack) {
+        return "REMOTE_INVENTORY";
+    }
 }

@@ -1,8 +1,10 @@
 package com.dmillerw.remoteIO.block;
 
+import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -11,7 +13,7 @@ import net.minecraftforge.common.ForgeDirection;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
-public class BlockSkylight extends Block implements IUpdatableBlock {
+public class BlockSkylight extends Block implements IUpdatableBlock, IDocumentable {
 
 	private Icon blank;
 	
@@ -649,4 +651,8 @@ public class BlockSkylight extends Block implements IUpdatableBlock {
         icons[15] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "skylight/glass_4");
 	}
 
+    @Override
+    public String getKey(ItemStack stack) {
+        return "SKYLIGHT";
+    }
 }
