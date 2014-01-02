@@ -20,4 +20,5 @@ ForgeModLoader*
 *.iml
 *.ipr
 *.iws
+*~
 run/

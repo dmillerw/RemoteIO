@@ -1,3 +1,5 @@
+dist/
+downloads/
 build/
 eclipse/
 LICENSE
