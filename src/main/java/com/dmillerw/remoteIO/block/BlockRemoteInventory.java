@@ -1,5 +1,12 @@
 package com.dmillerw.remoteIO.block;
 
+import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.item.ItemHandler;
+import com.dmillerw.remoteIO.lib.ModInfo;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -9,16 +16,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
-import com.dmillerw.remoteIO.core.CreativeTabRIO;
-import com.dmillerw.remoteIO.item.ItemHandler;
-import com.dmillerw.remoteIO.item.ItemTool;
-import com.dmillerw.remoteIO.lib.ModInfo;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockRemoteInventory extends BlockContainer {
 
@@ -34,27 +31,16 @@ public class BlockRemoteInventory extends BlockContainer {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		if (!world.isRemote) {
-			TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
-			
-			if (tile != null) {
-				if (player.isSneaking() && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == ItemHandler.itemTransmitter) {
-					ItemStack held = player.getCurrentEquippedItem();
-					
-					if (held.hasTagCompound() && held.getTagCompound().hasKey("player")) {
-						tile.owner = held.getTagCompound().getString("player");
-						tile.lastClientState = true;
-						world.markBlockForUpdate(x, y, z);
-						return true;
-					}
-				} else {
-					player.openGui(RemoteIO.instance, 1, world, x, y, z);
-					return true;
-				}
-			}
-		}
-		
-		return false;
+        if (!world.isRemote) {
+            ItemStack held = player.getCurrentEquippedItem();
+
+            if (held == null || held.getItem() != ItemHandler.itemTransmitter) {
+                player.openGui(RemoteIO.instance, 1, world, x, y, z);
+                return true;
+            }
+        }
+
+        return false;
 	}
 	
 	@SideOnly(Side.CLIENT)

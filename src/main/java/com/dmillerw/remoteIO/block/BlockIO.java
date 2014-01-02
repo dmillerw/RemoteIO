@@ -1,7 +1,15 @@
 package com.dmillerw.remoteIO.block;
 
-import java.util.Random;
-
+import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
+import com.dmillerw.remoteIO.item.ItemHandler;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import com.dmillerw.remoteIO.lib.ModInfo;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -16,18 +24,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.tile.TileIO;
-import com.dmillerw.remoteIO.core.CreativeTabRIO;
-import com.dmillerw.remoteIO.core.helper.InventoryHelper;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker;
-import com.dmillerw.remoteIO.item.ItemTool;
-import com.dmillerw.remoteIO.item.ItemTransmitter;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
-import com.dmillerw.remoteIO.lib.ModInfo;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Random;
 
 public class BlockIO extends BlockContainer {
 
@@ -109,10 +106,12 @@ public class BlockIO extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
-			if (!player.isSneaking() && (player.getHeldItem() == null || (!(player.getHeldItem().getItem() instanceof ItemTool) && !(player.getHeldItem().getItem() instanceof ItemTransmitter)))) {
-				player.openGui(RemoteIO.instance, 0, world, x, y, z);
-				return true;
-			}
+			ItemStack held = player.getCurrentEquippedItem();
+
+            if (held == null || (held.getItem() != ItemHandler.itemTool && held.getItem() != ItemHandler.itemTransmitter)) {
+                player.openGui(RemoteIO.instance, 0, world, x, y, z);
+                return true;
+            }
 		}
 		
 		return false;
