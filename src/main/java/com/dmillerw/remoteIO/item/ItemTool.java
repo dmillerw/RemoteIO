@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.item;
 
+import com.dmillerw.remoteIO.api.documentation.IDocumentable;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileSideProxy;
@@ -20,7 +21,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 import java.util.List;
 
-public class ItemTool extends Item {
+public class ItemTool extends Item implements IDocumentable {
 
 	public Icon icon;
 	
@@ -188,5 +189,9 @@ public class ItemTool extends Item {
 	public void registerIcons(IconRegister register) {
 		this.icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "itemTool");
 	}
-	
+
+    @Override
+    public String getKey(ItemStack stack) {
+        return "LINKER_TOOL";
+    }
 }

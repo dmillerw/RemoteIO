@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.inventory;
 
+import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryBasic;
@@ -8,23 +9,39 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerDocumentation extends Container {
 
-    private InventoryBasic holdSlot = new InventoryBasic("Hold Slot", false, 1);
+    public InventoryBasic holdSlot = new InventoryBasic("Hold Slot", false, 1) {
+        @Override
+        public void onInventoryChanged() {
+            inventoryChanged = true;
+            offsetValue = 0;
+        }
+    };
 
 	private final EntityPlayer player;
+
+    public boolean inventoryChanged = true;
+
+    public int maxOffset = 0;
+    public int offsetValue = 0;
 
 	public ContainerDocumentation(EntityPlayer player) {
 		this.player = player;
 
-        this.addSlotToContainer(new Slot(holdSlot, 0, 174, 8));
+        this.addSlotToContainer(new Slot(holdSlot, 0, 228, 8) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return DocumentationRegistry.hasDocumentation(stack);
+            }
+        });
 
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 35 + j * 18, 120 + i * 18));
 			}
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
+			this.addSlotToContainer(new Slot(player.inventory, i, 35 + i * 18, 178));
 		}
 	}
 
@@ -40,6 +57,16 @@ public class ContainerDocumentation extends Container {
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
 	}
+
+    public void offset(int wheel) {
+        this.offsetValue += wheel;
+
+        if (this.offsetValue < 0) {
+            this.offsetValue = 0;
+        } else if (this.offsetValue > maxOffset) {
+            this.offsetValue = maxOffset;
+        }
+    }
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {

@@ -23,19 +23,19 @@ public class RecipeHelper {
             if (object instanceof Block) {
                 ItemStack stack = new ItemStack((Block)object);
                 String oreName = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-                if (oreName != null && !(oreName.isEmpty())) {
+                if (oreName != null && !(oreName.isEmpty()) && (!oreName.equalsIgnoreCase("unknown"))) {
                     newArray[i] = oreName;
                 }
             } else if (object instanceof Item) {
                 ItemStack stack = new ItemStack((Item)object);
                 String oreName = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-                if (oreName != null && !(oreName.isEmpty())) {
+                if (oreName != null && !(oreName.isEmpty()) && (!oreName.equalsIgnoreCase("unknown"))) {
                     newArray[i] = oreName;
                 }
             } else if (object instanceof ItemStack) {
                 ItemStack stack = ((ItemStack)object).copy();
                 String oreName = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-                if (oreName != null && !(oreName.isEmpty())) {
+                if (oreName != null && !(oreName.isEmpty()) && (!oreName.equalsIgnoreCase("unknown"))) {
                     newArray[i] = oreName;
                 }
             }

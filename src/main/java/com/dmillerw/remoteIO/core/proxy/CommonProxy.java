@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.core.proxy;
 
+import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.*;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
@@ -107,6 +108,9 @@ public class CommonProxy implements ISidedProxy {
 		
 		// Padlock Component
 		RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemComponent, 1, 1), "   ", " R ", " I ", 'R', "rodIron", 'I', Item.ingotIron);
+
+        // Documentation Item
+        RecipeHelper.addOreRecipe(new ItemStack(ItemHandler.itemScreen), "SSS", "DDD", "GGG", 'S', Block.stone, 'D', new ItemStack(Item.dyePowder, 1, OreDictionary.WILDCARD_VALUE), 'G', Block.glass);
 	}
 
 	@Override
@@ -203,6 +207,13 @@ public class CommonProxy implements ISidedProxy {
 				}
 			}
 		}
+
+        /* DOCUMENTATION HANDLING */
+        String[] linkerDocumentation = new String[] {
+                "The IO Linker is your base tool for this entire mod, and manages most of the actions you'll have to preform on the various blocks available",
+                "And this is a second line of text, that doesn't serve much purpose other than for demonstration"
+        };
+        DocumentationRegistry.addDocumentation("LINKER_TOOL", linkerDocumentation);
 	}
 
 }
