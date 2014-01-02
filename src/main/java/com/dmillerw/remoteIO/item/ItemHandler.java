@@ -65,7 +65,7 @@ public class ItemHandler {
 		}
 
         if (itemScreenID != 0) {
-            itemScreen = new ItemScreen(itemScreenID).setUnlocalizedName("screen");
+            itemScreen = new ItemDocumentation(itemScreenID).setUnlocalizedName("screen");
             GameRegistry.registerItem(itemScreen, "itemScreen");
         }
 	}

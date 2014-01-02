@@ -2,8 +2,10 @@ package com.dmillerw.remoteIO.core.handler;
 
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
+import com.dmillerw.remoteIO.inventory.ContainerDocumentation;
 import com.dmillerw.remoteIO.inventory.ContainerIOUpgrade;
 import com.dmillerw.remoteIO.inventory.ContainerRemoteInventory;
+import com.dmillerw.remoteIO.inventory.gui.GuiDocumentation;
 import com.dmillerw.remoteIO.inventory.gui.GuiIOUpgrade;
 import com.dmillerw.remoteIO.inventory.gui.GuiRemoteInventory;
 
@@ -18,7 +20,8 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 		case 0: return new ContainerIOUpgrade(player, (TileIO) world.getBlockTileEntity(x, y, z));
 		case 1: return new ContainerRemoteInventory(player, (TileRemoteInventory)world.getBlockTileEntity(x, y, z));
-		}
+        case 2: return new ContainerDocumentation(player);
+        }
 		
 		return null;
 	}
@@ -28,7 +31,8 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 		case 0: return new GuiIOUpgrade(player, (TileIO) world.getBlockTileEntity(x, y, z));
 		case 1: return new GuiRemoteInventory(player, (TileRemoteInventory)world.getBlockTileEntity(x, y, z));
-		}
+        case 2: return new GuiDocumentation(player);
+        }
 		
 		return null;
 	}

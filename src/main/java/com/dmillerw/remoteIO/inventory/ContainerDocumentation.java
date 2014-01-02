@@ -1,27 +1,22 @@
 package com.dmillerw.remoteIO.inventory;
 
-import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
-import com.dmillerw.remoteIO.inventory.slot.SlotLimited;
-import com.dmillerw.remoteIO.item.ItemUpgrade;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerRemoteInventory extends Container {
+public class ContainerDocumentation extends Container {
+
+    private InventoryBasic holdSlot = new InventoryBasic("Hold Slot", false, 1);
 
 	private final EntityPlayer player;
-	
-	private final TileRemoteInventory tile;
-	
-	public ContainerRemoteInventory(EntityPlayer player, final TileRemoteInventory tile) {
+
+	public ContainerDocumentation(EntityPlayer player) {
 		this.player = player;
-		this.tile = tile;
-		
-		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new SlotLimited(tile.upgrades, i, 8 + i * 18, 17, ItemUpgrade.class));
-		}
-		
+
+        this.addSlotToContainer(new Slot(holdSlot, 0, 174, 8));
+
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
@@ -32,7 +27,15 @@ public class ContainerRemoteInventory extends Container {
 			this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
 		}
 	}
-	
+
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+
+        if (holdSlot.getStackInSlot(0) != null) {
+            player.dropPlayerItem(holdSlot.getStackInSlot(0));
+        }
+    }
+
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
 		return true;
@@ -47,15 +50,7 @@ public class ContainerRemoteInventory extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (itemstack1.getItem() instanceof ItemUpgrade) {
-				if (slotID >= 0 && slotID <= 1) {
-					if (!this.mergeItemStack(itemstack1, 11, 36, true)) {
-						return null;
-					}
-				} else if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
-					return null;
-				}
-			}
+			//TODO Merge handling
 
 			if (itemstack1.stackSize == 0) {
 				slot.putStack((ItemStack) null);

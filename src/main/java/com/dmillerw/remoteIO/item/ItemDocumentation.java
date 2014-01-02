@@ -1,25 +1,37 @@
 package com.dmillerw.remoteIO.item;
 
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import net.minecraft.world.World;
 
 /**
  * Created by Dylan Miller on 1/1/14
  */
-public class ItemScreen extends Item {
+public class ItemDocumentation extends Item {
 
     private Icon icon;
 
-    public ItemScreen(int id) {
+    public ItemDocumentation(int id) {
         super(id);
 
         setMaxStackSize(1);
         setCreativeTab(CreativeTabRIO.tab);
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (!player.isSneaking() && !world.isRemote) {
+            player.openGui(RemoteIO.instance, 2, world, 0, 0, 0);
+        }
+        return stack;
     }
 
     @SideOnly(Side.CLIENT)
