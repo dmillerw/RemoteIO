@@ -1,7 +1,9 @@
 package com.dmillerw.remoteIO.item;
 
-import java.util.List;
-
+import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.lib.ItemStackReference;
+import com.dmillerw.remoteIO.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.client.resources.I18n;
@@ -9,13 +11,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
 
-import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.core.CreativeTabRIO;
-import com.dmillerw.remoteIO.lib.ItemStackReference;
-import com.dmillerw.remoteIO.lib.ModInfo;
+import java.util.List;
 
 public class ItemUpgrade extends Item {
 
@@ -174,7 +172,12 @@ public class ItemUpgrade extends Item {
 		RANGE_WITHER(
 			"rangeWither",
 			new ItemStack[0]
-		);
+		),
+
+        AE(
+            "ae",
+            new ItemStack[0]
+        );
 		
 		public String texture;
 		

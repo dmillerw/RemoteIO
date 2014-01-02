@@ -13,25 +13,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class TileCore extends TileEntity {
 
-	@Override
-	public void updateEntity() {
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		
-		if (side.isClient()) {
-			updateClient();
-		} else if (side.isServer()) {
-			updateServer();
-		}
-	}
-	
-	public void updateClient() {
-		
-	}
-	
-	public void updateServer() {
-		
-	}
-	
 	public boolean onBlockActivated(EntityPlayer player) { return false; }
 	
 	public void onBlockAdded(int side) {}

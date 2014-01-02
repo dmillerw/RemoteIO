@@ -1,13 +1,34 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import appeng.api.DimentionalCoord;
+import appeng.api.WorldCoord;
+import appeng.api.events.GridTileLoadEvent;
+import appeng.api.events.GridTileUnloadEvent;
+import appeng.api.me.tiles.IGridTeleport;
+import appeng.api.me.tiles.IGridTileEntity;
+import appeng.api.me.util.IGridInterface;
+import buildcraft.api.power.IPowerEmitter;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyStorage;
+import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.client.fx.FXParticlePath;
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
+import com.dmillerw.remoteIO.item.ItemGoggles;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import cpw.mods.fml.client.FMLClientHandler;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.energy.tile.IEnergyTile;
-
-import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,29 +47,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyStorage;
 
-import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.client.fx.FXParticlePath;
-import com.dmillerw.remoteIO.core.helper.InventoryHelper;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
-import com.dmillerw.remoteIO.item.ItemGoggles;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import java.util.Random;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink {
+public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IGridTileEntity, IGridTeleport{
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 	public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -58,12 +60,15 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 			if (worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		}
 	};
-	
+
+    private IGridInterface aeGrid = null;
+
 	public boolean unlimitedRange = false;
 	
 	public boolean validCoordinates = false;
 	public boolean redstoneState = false;
 
+    public boolean addedToMENetwork = false;
 	public boolean addedToEnergyNet = false; // Requirement of IC2 :(
 	
 	public boolean firstLoad = true;
@@ -99,34 +104,36 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 			tracked.destroy();
 		}
 	}
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void updateClient() {
-		if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates && worldObj.provider.dimensionId == this.d) {
-			Random rand = new Random();
-			for (int i=0; i<rand.nextInt(5); i++) {
-				FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
-				path.setRBGColorF(0.35F, 0.35F, 1F);
-				Minecraft.getMinecraft().effectRenderer.addEffect(path);
-			}
-		}
-	}
-	
-	@SideOnly(Side.SERVER)
-	@Override
-	public void updateServer() {
-		if (!addedToEnergyNet) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile)this));
-			addedToEnergyNet = true;
-		}
-		
-		if (firstLoad) {
-			setValid(getTileEntity(false) != null);
-			firstLoad = false;
-		}
-	}
-		
+
+    @Override
+    public void updateEntity() {
+        if (!worldObj.isRemote) {
+            if (!addedToEnergyNet) {
+                MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile)this));
+                addedToEnergyNet = true;
+            }
+
+            if (!addedToMENetwork) {
+                MinecraftForge.EVENT_BUS.post(new GridTileLoadEvent(this, this.worldObj, this.getLocation()));
+                addedToMENetwork = true;
+            }
+
+            if (firstLoad) {
+                setValid(getTileEntity(false) != null);
+                firstLoad = false;
+            }
+        } else {
+            if (ItemGoggles.isPlayerWearing(FMLClientHandler.instance().getClient().thePlayer) && validCoordinates && worldObj.provider.dimensionId == this.d) {
+                Random rand = new Random();
+                for (int i=0; i<rand.nextInt(5); i++) {
+                    FXParticlePath path = new FXParticlePath(worldObj, this, x + 0.5F, y + 0.5F, z + 0.5F, 0.25F + (0.05F * rand.nextFloat()));
+                    path.setRBGColorF(0.35F, 0.35F, 1F);
+                    Minecraft.getMinecraft().effectRenderer.addEffect(path);
+                }
+            }
+        }
+    }
+
 	@Override
 	public void invalidate() {
 		super.invalidate();
@@ -138,6 +145,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
 				addedToEnergyNet = false;
 			}
+
+            if (addedToMENetwork) {
+                MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
+                addedToMENetwork = false;
+            }
 		}
 	}
 	
@@ -152,6 +164,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
 				addedToEnergyNet = false;
 			}
+
+            if (addedToMENetwork) {
+                MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
+                addedToMENetwork = false;
+            }
 		}
 	}
 	
@@ -163,6 +180,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
 				addedToEnergyNet = false;
 			}
+
+            if (addedToMENetwork) {
+                MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
+                addedToMENetwork = false;
+            }
 		}
 	}
 	
@@ -533,9 +555,38 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		if (getBCPowerReceptor() != null) getBCPowerReceptor().doWork(workProvider);
 	}
 
-	@Override
+    /* IGRIDTILEENTITY */
+    @Override
+    public WorldCoord getLocation() {
+        return new WorldCoord(xCoord, yCoord, zCoord);
+    }
+
+    @Override
+    public boolean isValid() {
+        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange(true);
+    }
+
+    @Override
+    public void setPowerStatus(boolean hasPower) {}
+
+    @Override
+    public boolean isPowered() {
+        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange(true);
+    }
+
+    @Override
+    public IGridInterface getGrid() {
+        return aeGrid;
+    }
+
+    @Override
+    public void setGrid(IGridInterface gi) {
+        aeGrid = gi;
+    }
+
+    @Override
 	public World getWorld() {
-		return getBCPowerReceptor() != null ? getBCPowerReceptor().getWorld() : null;
+		return this.worldObj;
 	}
 
 	/* IENERGYHANDLER */
@@ -622,4 +673,9 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		return getEUSink() != null ? getEUSink().getMaxSafeInput() : Integer.MAX_VALUE;
 	}
 
+    /* IGRIDTELEPORT */
+    @Override
+    public DimentionalCoord[] findRemoteSide() {
+        return new DimentionalCoord[] {new DimentionalCoord(getLinkedWorld(), x, y, z)};
+    }
 }

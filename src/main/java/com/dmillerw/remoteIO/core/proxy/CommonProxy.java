@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.core.proxy;
 
+import appeng.api.Blocks;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.*;
@@ -207,6 +208,12 @@ public class CommonProxy implements ISidedProxy {
 				}
 			}
 		}
+
+        if (Loader.isModLoaded("AppliedEnergistics")) {
+            for (ItemStack cable : Blocks.blkCable_Colored) {
+                RecipeHelper.addOreRecipe(Upgrade.AE.toItemStack(), "C", "U", "C", 'C', cable, 'U', Upgrade.BLANK.toItemStack());
+            }
+        }
 
         /* DOCUMENTATION HANDLING */
         String[] linkerDocumentation = new String[] {
