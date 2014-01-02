@@ -1,0 +1,64 @@
+# Blocks
+tile.machine.reservoir.name = Wasser-Reservoir
+tile.machine.heater.name = Lavabetriebene Heizung
+tile.io.name = IO-Block
+tile.sideProxy.name = Seitenbewusste Proxy
+tile.remoteInventory.name = Ferninventar
+tile.skylight.name = Oberlicht
+
+# Items
+item.ioLinker.name = IO-Verbinder
+item.component.camo.name = Gegenbeleuchtetes Panel
+item.component.padlock.name = Vorhängeschloss
+item.component.ironRod.name = Eisenstange
+item.ioGoggles.name = IO-Brille
+item.transceiver.name = Kabelloser Transceiver
+item.screen.name = Documentationsbildschirm
+
+# Upgrades
+upgrade.blank.name = Leeres Upgrade
+upgrade.item.name = Item-Upgrade
+upgrade.fluid.name = Flüssigkeits-Upgrade
+upgrade.rangeT1.name = Stufe-1-Reichweiten-Upgrade
+upgrade.rangeT2.name = Stufe-2-Reichweiten-Upgrade
+upgrade.rangeT3.name = Stufe-3-Reichweiten-Upgrade
+upgrade.rangeWither.name = Ultra-Reichweiten-Upgrade
+upgrade.dimension.name = Interdimensionales Upgrade
+upgrade.side.name = Seitenbewusstseins-Upgrade
+upgrade.redstone.name = Redstone-Upgrade
+upgrade.camo.name = Adaptivtexturen-Upgrade
+upgrade.lock.name = Schloss-Upgrade
+upgrade.persist.name = Verbindungs-Erhaltungs-Upgrade
+upgrade.powerBC.name = Buildcraft-Energie-Upgrade
+upgrade.powerRF.name = ThermalExpansion-Energie-Upgrade
+upgrade.powerEU.name = IndustrialCraft2-Energie-Upgrade
+upgrade.powerUE.name = UniversalElectricity-Energie-Upgrade
+upgrade.ae.name = Applied-Energistics-Upgrade
+
+upgrade.item.desc = Erlaubt gewöhnlichen Transport von Items
+upgrade.fluid.desc = Erlaubt gewöhnlichen Transport von Flüssigkeiten
+upgrade.range.desc = Erhöht die Reichweite, in der der IO-Block sich verbinden kann\nJedes Upgrade erhöht die Reichweite um %1 Blöcke
+upgrade.dimension.desc = Erlaubt es dem IO-Block, sich über Dimensionen hinaus zu verbinden
+upgrade.side.desc = Allows the IO block to determine side input/output
+upgrade.redstone.desc = Allows for the toggle of the remote connection via redstone
+upgrade.camo.desc = Allows the IO block to take on the texture of any other block
+upgrade.lock.desc = Allows the IO block to be broken and replaced, while retaining all links/upgrades
+upgrade.persist.desc = Allows the IO block to maintain its link even after the linked block is destroyed
+upgrade.powerBC.desc = Allows for the transfer of Minecraft Joules (Buildcraft)
+upgrade.powerRF.desc = Allows for the transfer of Redstone Flux (Thermal Expansion)
+upgrade.powerEU.desc = Allows for the transfer of EU (IndustrialCraft 2)
+upgrade.powerUE.desc = Allows for the transfer of UE (Universal Electricity)
+upgrade.ae.desc = Allows for remote connection to AE networks
+
+# Other
+gui.ioUpgrades = IO-Upgrades
+gui.remoteInventory = Ferninventar
+
+chat.selectBlock = Du musst zuerst einen Block zum Verbinden wählen
+chat.linkBegin = Beginne Verbindungsprozess
+chat.linkFailBasic = Du kannst keinen IO-Block mit solch einem einfachen Block verbinden
+chat.linkSucceed = Verbunden
+chat.linkFail =  Prüfe, um sicherzugehen, dass der IO-Block innerhalb der Reichweite ist und erforderliche Upgrades besitzt
+chat.clearIO = Ausgewählte IO-Block-Koordinaten entfernt
+chat.clearProxy = Eingangsseite zurückgesetzt
+chat.transceiverLink = Transceiver verbunden
