@@ -1,10 +1,13 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import cofh.api.energy.IEnergyHandler;
 import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.core.helper.EnergyHelper;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemTransmitter;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
-
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.tile.IEnergySink;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -13,12 +16,16 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.server.FMLServerHandler;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.MinecraftForge;
 
-public class TileRemoteInventory extends TileCore implements IInventory {
+public class TileRemoteInventory extends TileCore implements IInventory, IEnergySink, IEnergyHandler {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
-	
+
+    public boolean addedToIC2Net = false;
+
 	public boolean unlimitedRange = false;
 	public boolean remoteRequired = false;
 	public boolean lastClientState = false;
@@ -26,7 +33,17 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 	public int state = 0;
 	
 	public String owner;
-	
+
+    @Override
+    public void updateEntity() {
+        if (!addedToIC2Net) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+            addedToIC2Net = true;
+        }
+    }
+
+    // TODO Add unload events
+
 	private InventoryPlayer getInventory() {
 		MinecraftServer server = MinecraftServer.getServer();
 		
@@ -60,7 +77,15 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 	private int upgradeCount(Upgrade upgrade) {
 		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
 	}
-	
+
+    private boolean hasUpgrade(Upgrade upgrade) {
+        return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
+    }
+
+    private InventoryPlayer getInventory(Upgrade upgrade) {
+        return hasUpgrade(upgrade) ? getInventoryAndUpdate() : null;
+    }
+
 	private InventoryPlayer getInventoryAndUpdate() {
 		InventoryPlayer inv = getInventory();
 		boolean connection = inv != null;
@@ -110,27 +135,27 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 
 	@Override
 	public int getSizeInventory() {
-		return getInventoryAndUpdate() != null ? getInventory().getSizeInventory() : 0;
+		return getInventory(Upgrade.ITEM) != null ? getInventory().getSizeInventory() : 0;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return getInventoryAndUpdate() != null ? getInventory().getStackInSlot(i) : null;
+		return getInventory(Upgrade.ITEM) != null ? getInventory().getStackInSlot(i) : null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		return getInventoryAndUpdate() != null ? getInventory().decrStackSize(i, j) : null;
+		return getInventory(Upgrade.ITEM) != null ? getInventory().decrStackSize(i, j) : null;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int i) {
-		return getInventoryAndUpdate() != null ? getInventory().getStackInSlotOnClosing(i) : null;
+		return getInventory(Upgrade.ITEM) != null ? getInventory().getStackInSlotOnClosing(i) : null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		if (getInventoryAndUpdate() != null) getInventory().setInventorySlotContents(i, itemstack);
+		if (getInventory(Upgrade.ITEM) != null) getInventory().setInventorySlotContents(i, itemstack);
 	}
 
 	@Override
@@ -165,7 +190,56 @@ public class TileRemoteInventory extends TileCore implements IInventory {
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return getInventoryAndUpdate() != null ? getInventory().isItemValidForSlot(i, itemstack) : false;
+		return getInventory(Upgrade.ITEM) != null ? getInventory().isItemValidForSlot(i, itemstack) : false;
 	}
 
+    /* IENERGYSINK */
+    @Override
+    public double demandedEnergyUnits() {
+        IInventory inventory = getInventory(Upgrade.POWER_EU);
+        return inventory != null ? EnergyHelper.requiresCharge(inventory, EnergyHelper.EnergyType.EU) ? 32D : 0D : 0D;
+    }
+
+    @Override
+    public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+        IInventory inventory = getInventory(Upgrade.POWER_EU);
+        return inventory != null ? EnergyHelper.distributeCharge(inventory, EnergyHelper.EnergyType.EU, (int) Math.floor(amount), false) : 0D;
+    }
+
+    @Override
+    public int getMaxSafeInput() {
+        return Integer.MAX_VALUE; // May change, but for now, no max
+    }
+
+    @Override
+    public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+        return getInventory(Upgrade.POWER_EU) != null;
+    }
+
+    /* IENERGYHANDLER */
+    @Override
+    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+        IInventory inventory = getInventory(Upgrade.POWER_RF);
+        return EnergyHelper.distributeCharge(inventory, EnergyHelper.EnergyType.RF, maxReceive, simulate);
+    }
+
+    @Override
+    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public boolean canInterface(ForgeDirection from) {
+        return getInventory(Upgrade.POWER_RF) != null;
+    }
+
+    @Override
+    public int getEnergyStored(ForgeDirection from) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(ForgeDirection from) {
+        return 0;
+    }
 }
