@@ -3,6 +3,7 @@ package com.dmillerw.remoteIO.block;
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import cpw.mods.fml.relauncher.Side;
@@ -42,7 +43,23 @@ public class BlockRemoteInventory extends BlockContainer {
 
         return false;
 	}
-	
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, int id, int meta) {
+        TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
+
+        if (tile != null) {
+            tile.onBlockBroken();
+
+            this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this.blockID, 1, meta));
+            for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
+                if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
+            }
+        }
+
+        super.breakBlock(world, x, y, z, id, meta);
+    }
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {

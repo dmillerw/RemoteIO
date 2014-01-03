@@ -7,7 +7,9 @@ import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemTransmitter;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergyTile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -24,7 +26,7 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
 
-    public boolean addedToIC2Net = false;
+    public boolean addedToEnergyNet = false;
 
 	public boolean unlimitedRange = false;
 	public boolean remoteRequired = false;
@@ -36,9 +38,9 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 
     @Override
     public void updateEntity() {
-        if (!addedToIC2Net) {
+        if (!addedToEnergyNet) {
             MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
-            addedToIC2Net = true;
+            addedToEnergyNet = true;
         }
     }
 
@@ -64,7 +66,40 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 		
 		return null;
 	}
-	
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+
+        if (!worldObj.isRemote) {
+            if (addedToEnergyNet) {
+                MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+                addedToEnergyNet = false;
+            }
+        }
+    }
+
+    @Override
+    public void onChunkUnload() {
+        super.onChunkUnload();
+
+        if (!worldObj.isRemote) {
+            if (addedToEnergyNet) {
+                MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+                addedToEnergyNet = false;
+            }
+        }
+    }
+
+    public void onBlockBroken() {
+        if (!worldObj.isRemote) {
+            if (addedToEnergyNet) {
+                MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+                addedToEnergyNet = false;
+            }
+        }
+    }
+
 	private int getRange() {
 		int maxRange = RemoteIO.instance.defaultRange;
 		maxRange += (upgradeCount(Upgrade.RANGE_T1) * RemoteIO.instance.rangeUpgradeT1Boost);
@@ -220,7 +255,7 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
         IInventory inventory = getInventory(Upgrade.POWER_RF);
-        return EnergyHelper.distributeCharge(inventory, EnergyHelper.EnergyType.RF, maxReceive, simulate);
+        return inventory != null ? EnergyHelper.distributeCharge(inventory, EnergyHelper.EnergyType.RF, maxReceive, simulate) : 0;
     }
 
     @Override
@@ -242,4 +277,5 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
     public int getMaxEnergyStored(ForgeDirection from) {
         return 0;
     }
+
 }
