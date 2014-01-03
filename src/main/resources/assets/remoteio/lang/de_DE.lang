@@ -39,16 +39,16 @@ upgrade.item.desc = Erlaubt gewöhnlichen Transport von Items
 upgrade.fluid.desc = Erlaubt gewöhnlichen Transport von Flüssigkeiten
 upgrade.range.desc = Erhöht die Reichweite, in der der IO-Block sich verbinden kann\nJedes Upgrade erhöht die Reichweite um %1 Blöcke
 upgrade.dimension.desc = Erlaubt es dem IO-Block, sich über Dimensionen hinaus zu verbinden
-upgrade.side.desc = Allows the IO block to determine side input/output
-upgrade.redstone.desc = Allows for the toggle of the remote connection via redstone
-upgrade.camo.desc = Allows the IO block to take on the texture of any other block
-upgrade.lock.desc = Allows the IO block to be broken and replaced, while retaining all links/upgrades
-upgrade.persist.desc = Allows the IO block to maintain its link even after the linked block is destroyed
-upgrade.powerBC.desc = Allows for the transfer of Minecraft Joules (Buildcraft)
-upgrade.powerRF.desc = Allows for the transfer of Redstone Flux (Thermal Expansion)
-upgrade.powerEU.desc = Allows for the transfer of EU (IndustrialCraft 2)
-upgrade.powerUE.desc = Allows for the transfer of UE (Universal Electricity)
-upgrade.ae.desc = Allows for remote connection to AE networks
+upgrade.side.desc = Erlaubt dem IO-Block, die Input/Output einzelner Seiten zu ermitteln
+upgrade.redstone.desc = Erlaubt das (de)aktivieren der Fernverbindung via Redstone
+upgrade.camo.desc = Erlaubt dem IO-Block, die Textur eines anderen Blocks zu übernehmen
+upgrade.lock.desc = Erlaubt dem IO-Block, abgebaut und wieder platziert zu werden und\ndabei alle Verbindungen/Upgrades zu behalten
+upgrade.persist.desc = Erlaubt dem IO-Block, seine Verbindung sogar zu erhalten,\nwenn der verbundene Block zerstört wurde
+upgrade.powerBC.desc = Erlaubt den Transfer von Minecraft-Joules (Buildcraft)
+upgrade.powerRF.desc = Erlaubt den Transfer von Redstone Flux (Thermal Expansion)
+upgrade.powerEU.desc = Erlaubt den Transfer von EU (IndustrialCraft 2)
+upgrade.powerUE.desc = Erlaubt den Transfer von Joules (Universal Electricity)
+upgrade.ae.desc = Erlaubt eine Fernverbindung zu einem ME-Netzwerk (Applied Energistics)
 
 # Other
 gui.ioUpgrades = IO-Upgrades
