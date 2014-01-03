@@ -1,22 +1,17 @@
 package com.dmillerw.remoteIO.core.helper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Properties;
-
 import com.dmillerw.remoteIO.lib.ModInfo;
 import com.google.common.base.Charsets;
-
 import cpw.mods.fml.common.registry.LanguageRegistry;
+
+import java.io.*;
+import java.util.Properties;
 
 public class LocalizationHelper {
 
 private static final String LANG_DIR = "/assets/" + ModInfo.ID.toLowerCase() + "/lang";
 	
-	public static final String[] LANGS = new String[] {"en_US"};
+	public static final String[] LANGS = new String[] {"en_US", "de_DE"};
 	
 	public static void initializeLocalization() {
 		for (String lang : LANGS) {

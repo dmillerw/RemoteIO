@@ -55,6 +55,7 @@ public class ItemTransmitter extends Item {
                     if (stack.hasTagCompound() && stack.getTagCompound().hasKey("player")) {
                         ((TileRemoteInventory)tile).owner = stack.getTagCompound().getString("player");
                         ((TileRemoteInventory)tile).lastClientState = true;
+                        world.markBlockForUpdate(x, y, z);
                     }
                     return true;
                 }

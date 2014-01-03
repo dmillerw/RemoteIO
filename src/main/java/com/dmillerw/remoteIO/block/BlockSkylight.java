@@ -31,8 +31,12 @@ public class BlockSkylight extends Block implements IUpdatableBlock {
 	}
 
 	public void onNeighborBlockChange(World world, int x, int y, int z, int causeID) {
-		if (!world.isRemote && causeID != this.blockID) {
-			updateState(world, x, y, z);
+		if (!world.isRemote) {
+            Block block = Block.blocksList[causeID];
+
+            if (block != null && block.blockID != this.blockID && block.canProvidePower()) {
+			    updateState(world, x, y, z);
+            }
 		}
 	}
 	
@@ -66,7 +70,7 @@ public class BlockSkylight extends Block implements IUpdatableBlock {
 	@Override
 	public void onBlockUpdate(World world, int x, int y, int z, int causeID, int causeMeta) {
 		int meta = world.getBlockMetadata(x, y, z);
-		boolean powered = causeMeta == 1;
+		boolean powered = (causeMeta == 1) || world.isBlockIndirectlyGettingPowered(x, y, z);
 		
 		if (powered && meta == 0) {
 			world.setBlockMetadataWithNotify(x, y, z, 1, 3);

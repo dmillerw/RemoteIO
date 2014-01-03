@@ -54,11 +54,11 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 			if (player != null) {
 				if ((player.worldObj.provider.dimensionId == this.worldObj.provider.dimensionId)) {
 					if (Math.abs(player.getDistance(xCoord, yCoord, zCoord)) <= getRange() || unlimitedRange) {
-						return (ItemTransmitter.hasSelfRemote(player) || !remoteRequired) ? player.inventory : null;
+						return (ItemTransmitter.hasSelfRemote(player) || remoteRequired) ? player.inventory : null;
 					}
 				} else {
 					if (InventoryHelper.inventoryContains(upgrades, Upgrade.CROSS_DIMENSIONAL.toItemStack(), false)) {
-						return (ItemTransmitter.hasSelfRemote(player) || !remoteRequired) ? player.inventory : null;
+						return (ItemTransmitter.hasSelfRemote(player) || remoteRequired) ? player.inventory : null;
 					}
 				}
 			}
