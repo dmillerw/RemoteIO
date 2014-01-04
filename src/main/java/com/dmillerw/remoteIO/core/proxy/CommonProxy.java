@@ -42,6 +42,10 @@ public class CommonProxy implements ISidedProxy {
 		if (BlockHandler.blockWirelessID != 0) {
 			GameRegistry.registerTileEntity(TileRemoteInventory.class, "blockRemote");
 		}
+
+        if (BlockHandler.blockCrucibleID != 0) {
+            GameRegistry.registerTileEntity(TileCrucible.class, "blockCrucible");
+        }
 	}
 
 	@Override

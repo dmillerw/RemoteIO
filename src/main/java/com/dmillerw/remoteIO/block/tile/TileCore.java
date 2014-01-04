@@ -1,7 +1,9 @@
 package com.dmillerw.remoteIO.block.tile;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -11,7 +13,9 @@ import net.minecraft.tileentity.TileEntity;
 public abstract class TileCore extends TileEntity {
 
 	public boolean onBlockActivated(EntityPlayer player) { return false; }
-	
+
+    public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {}
+
 	public void onBlockAdded() {}
 	
 	public void onNeighborBlockUpdate() {}

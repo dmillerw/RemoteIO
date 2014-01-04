@@ -2,7 +2,9 @@ package com.dmillerw.remoteIO.block;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -40,7 +42,16 @@ public abstract class BlockCore extends BlockContainer {
 			((TileCore)tile).onNeighborBlockUpdate();
 		}
 	}
-	
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+        if (tile != null && tile instanceof TileCore) {
+            ((TileCore)tile).onBlockPlacedBy(entity, stack);
+        }
+    }
+
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int blockID) {
 		TileEntity tile = world.getBlockTileEntity(x, y, z);

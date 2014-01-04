@@ -1,11 +1,9 @@
 package com.dmillerw.remoteIO.block;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class BlockHandler {
 
@@ -14,12 +12,14 @@ public class BlockHandler {
 	public static int blockProxyID;
 	public static int blockWirelessID;
 	public static int blockSkylightID;
+    public static int blockCrucibleID;
 
 	public static Block blockMachine;
 	public static Block blockIO;
 	public static Block blockProxy;
 	public static Block blockWireless;
 	public static Block blockSkylight;
+    public static Block blockCrucible;
 	
 	public static void handleConfig(Configuration config) {
 		config.addCustomCategoryComment(Configuration.CATEGORY_BLOCK, "Set any ID to 0 to disable block");
@@ -34,6 +34,8 @@ public class BlockHandler {
 		blockWirelessID = wireless.getInt(504);
 		Property skylight = config.getBlock("blockID_skylight", 505);
 		blockSkylightID = skylight.getInt(505);
+        Property crucible = config.getBlock("blockID_crucible", 506);
+        blockCrucibleID = crucible.getInt(506);
 	}
 	
 	public static void initializeBlocks() {
@@ -61,6 +63,11 @@ public class BlockHandler {
 			blockSkylight = new BlockSkylight(blockSkylightID).setUnlocalizedName("skylight");
 			GameRegistry.registerBlock(blockSkylight, "blockSkylight");
 		}
+
+        if (blockCrucibleID != 0) {
+            blockCrucible = new BlockCrucible(blockCrucibleID).setUnlocalizedName("crucible");
+            GameRegistry.registerBlock(blockCrucible, "blockCrucible");
+        }
 	}
 	
 }
