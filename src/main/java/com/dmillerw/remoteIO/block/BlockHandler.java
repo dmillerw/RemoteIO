@@ -34,8 +34,8 @@ public class BlockHandler {
 		blockWirelessID = wireless.getInt(504);
 		Property skylight = config.getBlock("blockID_skylight", 505);
 		blockSkylightID = skylight.getInt(505);
-        Property crucible = config.getBlock("blockID_crucible", 506);
-        blockCrucibleID = crucible.getInt(506);
+//        Property crucible = config.getBlock("blockID_crucible", 506);
+//        blockCrucibleID = crucible.getInt(506);
 	}
 	
 	public static void initializeBlocks() {
@@ -65,8 +65,8 @@ public class BlockHandler {
 		}
 
         if (blockCrucibleID != 0) {
-            blockCrucible = new BlockCrucible(blockCrucibleID).setUnlocalizedName("crucible");
-            GameRegistry.registerBlock(blockCrucible, "blockCrucible");
+//            blockCrucible = new BlockCrucible(blockCrucibleID).setUnlocalizedName("crucible");
+//            GameRegistry.registerBlock(blockCrucible, "blockCrucible");
         }
 	}
 	
