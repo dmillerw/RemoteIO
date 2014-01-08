@@ -1,6 +1,7 @@
 package com.dmillerw.remoteIO.core.proxy;
 
 import appeng.api.Blocks;
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.*;
@@ -79,12 +80,14 @@ public class CommonProxy implements ISidedProxy {
 		RecipeHelper.addOreRecipe(StackHelper.resize(Upgrade.BLANK.toItemStack(), 16), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone);
 	
 		for (Upgrade upgrade : Upgrade.values()) {
-			if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
-				RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponents[0], 'U', Upgrade.BLANK.toItemStack());
-			} else if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 2) {
-				RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
-				RecipeHelper.addOreRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
-			}
+			if (upgrade.enabled) {
+                if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
+                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponents[0], 'U', Upgrade.BLANK.toItemStack());
+                } else if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 2) {
+                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
+                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
+                }
+            }
 		}
 		
 		/* RANGE UPGRADE RECIPES */
@@ -123,7 +126,7 @@ public class CommonProxy implements ISidedProxy {
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		// If EnderStorage detected, replace Dimensional Upgrade recipe
-		if (Loader.isModLoaded("EnderStorage")) {
+		if (Loader.isModLoaded("EnderStorage") && Upgrade.CROSS_DIMENSIONAL.enabled) {
 			ItemStack obsidian = new ItemStack(Block.obsidian);
 			ItemStack enderChest = null;
 			
@@ -143,7 +146,7 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		// If Buildcraft detected, add BC Power Upgrade recipe
-		if (Loader.isModLoaded("BuildCraft|Core")) {
+		if (Loader.isModLoaded("BuildCraft|Core") && Upgrade.POWER_MJ.enabled) {
 			String[] pipeTypes = new String[] {"Wood", "Cobblestone", "Stone", "Quartz", "Iron", "Gold", "Diamond"};
 			ItemStack[] pipes = new ItemStack[pipeTypes.length];
 			boolean failed = false;
@@ -168,7 +171,7 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		// If IC2 detected, add EU Power Upgrade recipe
-		if (Loader.isModLoaded("IC2")) {
+		if (Loader.isModLoaded("IC2") && Upgrade.POWER_EU.enabled) {
 			String[] cableTypes = new String[] {"copper", "insulatedCopper", "gold", "insulatedGold", "iron", "insulatedIron", "insulatedTin", "glassFiber", "tin"};
 			ItemStack[] cables = new ItemStack[cableTypes.length];
 			boolean failed = false;
@@ -191,7 +194,7 @@ public class CommonProxy implements ISidedProxy {
 		}
 		
 		// If ThermalExpansion detected, add RF Power Upgrade recipe
-		if (Loader.isModLoaded("ThermalExpansion")) {
+		if (Loader.isModLoaded("ThermalExpansion") && Upgrade.POWER_RF.enabled) {
 			final String conduitPrefix = "conduitEnergy";
 			String[] conduitStrings = new String[] {"Basic", "Hardened", "Reinforced"};
 			ItemStack[] conduits = new ItemStack[conduitStrings.length];
@@ -215,7 +218,7 @@ public class CommonProxy implements ISidedProxy {
 			}
 		}
 
-        if (Loader.isModLoaded("AppliedEnergistics")) {
+        if (Loader.isModLoaded("AppliedEnergistics") && Upgrade.AE.enabled) {
             for (ItemStack cable : Blocks.blkCable_Colored) {
                 RecipeHelper.addOreRecipe(Upgrade.AE.toItemStack(), "C", "U", "C", 'C', cable, 'U', Upgrade.BLANK.toItemStack());
             }
@@ -248,7 +251,7 @@ public class CommonProxy implements ISidedProxy {
         String[] ioDocumentation = new String[] {
                 "The core feature of this mod.",
                 "This block can be used to remotely access multiple aspects of a block placed elsewhere in the world, as though the block was right there.",
-                "In an attempt to keep a sense of balance, this block can't do anything by itself. By installing various upgrades you can add various functionalities to this block. By default, it's unable to do anything, and has a limited connection range of 8 blocks."
+                "In an attempt to keep a sense of balance, this block can't do anything by itself. By installing various upgrades you can add various functionalities to this block. By default, it's unable to do anything, and has a limited connection range of " + RemoteIO.instance.defaultRange + " blocks."
         };
         DocumentationRegistry.addDocumentation("IO_BLOCK", ioDocumentation);
         DocumentationRegistry.registerKey(BlockHandler.blockIO, "IO_BLOCK");
@@ -256,7 +259,7 @@ public class CommonProxy implements ISidedProxy {
         String[] removeInvDocumentation = new String[] {
                 "This block has similar features to that of the IO block, but has a far more specific purpose.",
                 "Instead of connecting with other blocks in the world, this connects with other Players, specifically their inventories. Simply right-click this block with a linked Wireless Transceiver to link the Player to it.",
-                "Similar to the IO Block, this block can take upgrades, and has a limited range."
+                "Similar to the IO Block, this block can take upgrades, and has a limited range of " + RemoteIO.instance.defaultRange + " blocks."
         };
         DocumentationRegistry.addDocumentation("REMOTE_INVENTORY", removeInvDocumentation);
         DocumentationRegistry.registerKey(BlockHandler.blockWireless, "REMOTE_INVENTORY");

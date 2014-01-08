@@ -386,11 +386,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 	
 	public boolean hasUpgrade(Upgrade upgrade) {
-		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
+		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) && upgrade.enabled;
 	}
 
 	private int upgradeCount(Upgrade upgrade) {
-		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
+		return upgrade.enabled ? InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false) : 0;
 	}
 	
 	private boolean inRange(boolean verify) {

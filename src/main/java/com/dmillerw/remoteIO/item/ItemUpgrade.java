@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
 
 import java.util.List;
@@ -38,6 +39,10 @@ public class ItemUpgrade extends Item {
 			if (upgrade == Upgrade.BLANK) {
 				return;
 			}
+            if (upgrade == Upgrade.POWER_UE) {
+                list.add(EnumChatFormatting.RED + "DISABLED");
+                return;
+            }
 			if (upgrade == Upgrade.RANGE_T1) {
 				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT1Boost);
 			}
@@ -68,7 +73,7 @@ public class ItemUpgrade extends Item {
 	@Override
 	public void getSubItems(int id, CreativeTabs tab, List list) {
 		for (Upgrade upgrade : Upgrade.values()) {
-			if (upgrade.recipeComponents != null || upgrade == Upgrade.BLANK) {
+			if ((upgrade.recipeComponents != null || upgrade == Upgrade.BLANK) && upgrade.enabled) {
 				list.add(upgrade.toItemStack());
 			}
 		}
@@ -182,7 +187,9 @@ public class ItemUpgrade extends Item {
 		public String texture;
 		
 		public ItemStack[] recipeComponents;
-		
+
+        public boolean enabled = true;
+
 		private Upgrade(String texture, ItemStack[] recipeComponents) {
 			this.texture = texture;
 			this.recipeComponents = recipeComponents;

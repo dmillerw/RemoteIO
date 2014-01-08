@@ -1,14 +1,5 @@
 package com.dmillerw.remoteIO;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-
-import org.apache.commons.io.IOUtils;
-
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.core.handler.ForgeEventHandler;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
@@ -17,8 +8,8 @@ import com.dmillerw.remoteIO.core.helper.LocalizationHelper;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.item.ItemHandler;
+import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -30,6 +21,13 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 @Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION, dependencies="after:EnderStorage")
 @NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
@@ -90,13 +88,17 @@ public class RemoteIO {
 		rangeUpgradeT2Boost = config.get("general", "rangeUpgradeT2Boost", 16, "How much a T2 range upgrade boosts the range by").getInt(16);
 		rangeUpgradeT3Boost = config.get("general", "rangeUpgradeT3Boost", 64, "How much a T3 range upgrade boosts the range by").getInt(64);
 		rangeUpgradeWitherBoost = config.get("general", "rangeUpgradeWitherBoost", 1024, "How much a wither range upgrade boosts the range by").getInt(1024);
-		
+
 		BlockHandler.handleConfig(config);
 		BlockHandler.initializeBlocks();
 		
 		ItemHandler.handleConfig(config);
 		ItemHandler.initializeItems();
-		
+
+        for (ItemUpgrade.Upgrade upgrade : ItemUpgrade.Upgrade.values()) {
+            upgrade.enabled = config.get("upgrade", "upgrade." + upgrade.texture.toLowerCase(), true).getBoolean(true);
+        }
+
 		if (config.hasChanged()) {
 			config.save();
 		}

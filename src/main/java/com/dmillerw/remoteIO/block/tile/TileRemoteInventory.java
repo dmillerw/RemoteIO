@@ -110,11 +110,11 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 	}
 	
 	private int upgradeCount(Upgrade upgrade) {
-		return InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false);
+		return upgrade.enabled ? InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false) : 0;
 	}
 
     private boolean hasUpgrade(Upgrade upgrade) {
-        return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false);
+        return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) && upgrade.enabled;
     }
 
     private InventoryPlayer getInventory(Upgrade upgrade) {
