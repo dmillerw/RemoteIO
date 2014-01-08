@@ -667,6 +667,6 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
     /* IGRIDTELEPORT */
     @Override
     public DimentionalCoord[] findRemoteSide() {
-        return new DimentionalCoord[] {new DimentionalCoord(getLinkedWorld(), x, y, z)};
+        return getLinkedWorld() != null ? new DimentionalCoord[] {new DimentionalCoord(getLinkedWorld(), x, y, z)} : new DimentionalCoord[0];
     }
 }
