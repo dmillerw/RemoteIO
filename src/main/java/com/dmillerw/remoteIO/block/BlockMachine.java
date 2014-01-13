@@ -25,6 +25,11 @@ public class BlockMachine extends BlockCore {
 		super(id);
 	}
 
+	@Override
+	public int damageDropped(int meta) {
+	    return meta;
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void getSubBlocks(int id, CreativeTabs tab, List list) {
