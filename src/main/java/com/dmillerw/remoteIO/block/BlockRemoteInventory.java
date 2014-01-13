@@ -1,5 +1,7 @@
 package com.dmillerw.remoteIO.block;
 
+import java.util.Random;
+
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
@@ -133,6 +135,14 @@ public class BlockRemoteInventory extends BlockContainer {
         super.breakBlock(world, x, y, z, id, meta);
     }
 
+    public void onNeighborBlockChange(World world, int x, int y, int z, int id) {
+        TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
+
+        if (tile != null) {
+            tile.setRedstoneState(world.isBlockIndirectlyGettingPowered(x, y, z));
+        }
+    }
+    
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
@@ -174,6 +184,48 @@ public class BlockRemoteInventory extends BlockContainer {
 		this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "remote/active");
 		this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "remote/inactive");
 	}
+	
+	@Override
+    public void randomDisplayTick(World world, int x, int y, int z, Random random) {
+        TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
+        
+        if (tile != null && tile.redstoneState) {
+            double d0 = 0.0625D;
+            for (int l = 0; l < 6; ++l) {
+                double d1 = (double) ((float) x + random.nextFloat());
+                double d2 = (double) ((float) y + random.nextFloat());
+                double d3 = (double) ((float) z + random.nextFloat());
+
+                if (l == 0 && !world.isBlockOpaqueCube(x, y + 1, z)) {
+                    d2 = (double) (y + 1) + d0;
+                }
+
+                if (l == 1 && !world.isBlockOpaqueCube(x, y - 1, z)) {
+                    d2 = (double) (y + 0) - d0;
+                }
+
+                if (l == 2 && !world.isBlockOpaqueCube(x, y, z + 1)) {
+                    d3 = (double) (z + 1) + d0;
+                }
+
+                if (l == 3 && !world.isBlockOpaqueCube(x, y, z - 1)) {
+                    d3 = (double) (z + 0) - d0;
+                }
+
+                if (l == 4 && !world.isBlockOpaqueCube(x + 1, y, z)) {
+                    d1 = (double) (x + 1) + d0;
+                }
+
+                if (l == 5 && !world.isBlockOpaqueCube(x - 1, y, z)) {
+                    d1 = (double) (x + 0) - d0;
+                }
+
+                if (d1 < (double) x || d1 > (double) (x + 1) || d2 < 0.0D || d2 > (double) (y + 1) || d3 < (double) z || d3 > (double) (z + 1)) {
+                    world.spawnParticle("reddust", d1, d2, d3, 0.0D, 0.0D, 0.0D);
+                }
+            }
+        }
+    }
 	
 	@Override
 	public TileEntity createNewTileEntity(World world) {

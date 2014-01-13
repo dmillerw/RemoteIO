@@ -39,7 +39,10 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 
 	public boolean unlimitedRange = false;
 	public boolean remoteRequired = false;
+	
 	public boolean lastClientState = false;
+	
+	public boolean redstoneState = false;
 	
 	public int state = 0;
 	
@@ -53,12 +56,15 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
         }
     }
 
-    // TODO Add unload events
-
+    public void setRedstoneState(boolean state) {
+        this.redstoneState = state;
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+    
 	private InventoryPlayer getInventory() {
 		MinecraftServer server = MinecraftServer.getServer();
 		
-		if (owner != null && !(owner.isEmpty()) && server != null) {
+		if (owner != null && !(owner.isEmpty()) && server != null && !redstoneState) {
 			EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
 			if (player != null) {
 				if ((player.worldObj.provider.dimensionId == this.worldObj.provider.dimensionId)) {
