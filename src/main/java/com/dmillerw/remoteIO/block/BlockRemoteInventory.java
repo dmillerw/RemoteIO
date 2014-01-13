@@ -1,18 +1,25 @@
 package com.dmillerw.remoteIO.block;
 
 import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.item.ItemHandler;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
@@ -30,6 +37,68 @@ public class BlockRemoteInventory extends BlockContainer {
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
+	@Override
+    public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
+        ItemStack stack = new ItemStack(this.blockID, 1, 0);
+        TileRemoteInventory logic = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
+
+        if (logic.hasUpgrade(Upgrade.LOCK)) {
+            if (logic != null) {
+                if (stack.getTagCompound() == null) {
+                    stack.setTagCompound(new NBTTagCompound());
+                }
+                
+                NBTTagCompound tag = new NBTTagCompound();
+                logic.writeToNBT(tag);
+                stack.getTagCompound().setCompoundTag("logic", tag);
+                
+                if (logic.lastClientState) {
+                    stack.setItemDamage(1);
+                }
+            }
+            
+            if (!player.capabilities.isCreativeMode || player.isSneaking()) {
+                dropStack(world, x, y, z, stack);
+            }
+
+            return world.setBlockToAir(x, y, z);
+        } else {
+            return super.removeBlockByPlayer(world, player, x, y, z);
+        }
+    }
+
+    protected void dropStack(World world, int x, int y, int z, ItemStack stack) {
+        if (!world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+            float f = 0.7F;
+            double d0 = (double) (world.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5D;
+            double d1 = (double) (world.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5D;
+            double d2 = (double) (world.rand.nextFloat() * f) + (double) (1.0F - f) * 0.5D;
+            EntityItem entityitem = new EntityItem(world, (double) x + d0, (double) y + d1, (double) z + d2, stack);
+            entityitem.delayBeforeCanPickup = 10;
+            world.spawnEntityInWorld(entityitem);
+        }
+    }
+
+    @Override
+    public void harvestBlock(World world, EntityPlayer player, int x, int y, int z, int fortune) {
+        
+    }
+
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
+        super.onBlockPlacedBy(world, x, y, z, entity, stack);
+        
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("logic")) {
+            int meta = world.getBlockMetadata(x, y, z);
+            TileEntity tile = world.getBlockTileEntity(x, y, z);
+
+            if (tile != null && tile instanceof TileIO) {
+                tile.readFromNBT(stack.getTagCompound().getCompoundTag("logic"));
+            }
+        }
+        
+        onNeighborBlockChange(world, x, y, z, 0);
+    }
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
         if (!world.isRemote) {
@@ -79,7 +148,7 @@ public class BlockRemoteInventory extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Icon getIcon(int side, int meta) {
-		return side == 1 ? this.icons[0] : this.icons[2];
+		return side == 1 ? this.icons[meta] : this.icons[2];
 	}
 	
 	@SideOnly(Side.CLIENT)
