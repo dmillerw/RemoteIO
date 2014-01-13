@@ -61,7 +61,9 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 
 	public boolean unlimitedRange = false;
 	
+	// Only used on the client now
 	public boolean validCoordinates = false;
+	
 	public boolean redstoneState = false;
 
     public boolean addedToMENetwork = false;
@@ -74,8 +76,12 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	public int z;
 	public int d;
 	
+	public boolean coordinatesSet() {
+	    return this.y >= 0;
+	}
+	
 	public World getLinkedWorld() {
-		if (validCoordinates) {
+		if (coordinatesSet()) {
 			return MinecraftServer.getServer().worldServerForDimension(d);
 		} else {
 			return null;
@@ -83,7 +89,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 	
 	public Block getLinkedBlock() {
-		if (validCoordinates && getLinkedWorld() != null) {
+		if (coordinatesSet() && getLinkedWorld() != null) {
 			return (Block.blocksList[getLinkedWorld().getBlockId(x, y, z)]);
 		} else {
 			return null;
@@ -92,7 +98,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {
-		if (validCoordinates) {
+		if (coordinatesSet()) {
 			if (tracked.state == BlockState.REMOVED && !hasUpgrade(Upgrade.LINK_PERSIST)) {
 				setValid(false);
 			}
@@ -115,11 +121,11 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
             }
 
             if (firstLoad) {
-                setValid(getTileEntity(false) != null);
+                setValid(getTileEntity() != null);
                 firstLoad = false;
             }
         } else {
-            if (validCoordinates && worldObj.provider.dimensionId == this.d) {
+            if (coordinatesSet() && worldObj.provider.dimensionId == this.d) {
                 RemoteIO.proxy.ioPathFX(worldObj, this, x + 0.5, y + 0.5, z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
             }
         }
@@ -185,7 +191,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		this.z = z;
 		this.d = d;
 		
-		boolean valid = getTileEntity(true) != null;
+		boolean valid = getTileEntity() != null;
 		
 		if (valid && !worldObj.isRemote) {
 			BlockTracker.getInstance().track(worldObj.provider.dimensionId, x, y, z, this);
@@ -196,13 +202,9 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		return valid;
 	}
 	
-	public boolean hasCoordinates() {
-		return this.validCoordinates;
-	}
-	
 	public void clearCoordinates() {
 		this.x = 0;
-		this.y = 0;
+		this.y = -1;
 		this.z = 0;
 		this.d = 0;
 		
@@ -271,41 +273,37 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 	
 	public TileEntity getTileEntity() {
-		TileEntity tile = getTileEntity(false);
-		
-		if (validCoordinates != (tile != null)) {
-			setValid(tile != null);
-		}
-		
-		return tile;
-	}
-	
-	public TileEntity getTileEntity(boolean verify) {
 		if (!this.worldObj.isRemote) {
-			if (!validCoordinates && !verify) {
+			if (!coordinatesSet()) {
 				return null;
 			}
 			
-			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState && !verify) {
+			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState) {
 				return null;
 			}
 			
-			return (this.worldObj.provider.dimensionId == this.d) ? getTileEntityInDimension(verify) : getTileEntityOutDimension(verify);
+			TileEntity tile = (this.worldObj.provider.dimensionId == this.d) ? getTileEntityInDimension() : getTileEntityOutDimension();
+			
+			if (validCoordinates != (tile != null)) {
+	            setValid(tile != null);
+	        }
+			
+			return tile;
 		}
 
 		return null;
 	}
 	
-	private TileEntity getTileEntityInDimension(boolean verify) {
-		if (inRange(verify) || unlimitedRange) {
+	private TileEntity getTileEntityInDimension() {
+		if (inRange() || unlimitedRange) {
 			return this.worldObj.getBlockTileEntity(x, y, z);
 		}
 		
 		return null;
 	}
 	
-	private TileEntity getTileEntityOutDimension(boolean verify) {
-		if (hasUpgrade(Upgrade.CROSS_DIMENSIONAL) || verify) {
+	private TileEntity getTileEntityOutDimension() {
+		if (hasUpgrade(Upgrade.CROSS_DIMENSIONAL) || unlimitedRange) {
 			WorldServer world = MinecraftServer.getServer().worldServerForDimension(this.d);
 			return world.getBlockTileEntity(x, y, z);
 		}
@@ -313,6 +311,39 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		return null;
 	}
 	
+	public boolean hasUpgrade(Upgrade upgrade) {
+        return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) && upgrade.enabled;
+    }
+
+    private int upgradeCount(Upgrade upgrade) {
+        return upgrade.enabled ? InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false) : 0;
+    }
+    
+    /** Purely for the visual side of things */
+    private void setValid(boolean valid) {
+        this.validCoordinates = valid;
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockHandler.blockIOID);
+    }
+	
+	private boolean inRange() {
+        if (coordinatesSet()) {
+            int maxRange = RemoteIO.instance.defaultRange;
+            maxRange += (upgradeCount(Upgrade.RANGE_T1) * RemoteIO.instance.rangeUpgradeT1Boost);
+            maxRange += (upgradeCount(Upgrade.RANGE_T2) * RemoteIO.instance.rangeUpgradeT2Boost);
+            maxRange += (upgradeCount(Upgrade.RANGE_T3) * RemoteIO.instance.rangeUpgradeT3Boost);
+            maxRange += (upgradeCount(Upgrade.RANGE_WITHER) * RemoteIO.instance.rangeUpgradeWitherBoost);
+            int dX = Math.abs(this.xCoord - this.x);
+            int dY = Math.abs(this.yCoord - this.y);
+            int dZ = Math.abs(this.zCoord - this.z);
+
+            return (dX <= maxRange && dY <= maxRange && dZ <= maxRange);
+        }
+        
+        return false;
+    }
+	
+	/* INTERACTION HANDLING */
 	private IInventory getInventory() {
 		if (getTileEntity() != null && getTileEntity() instanceof IInventory && hasUpgrade(Upgrade.ITEM)) {
 			return (IInventory)getTileEntity();
@@ -383,38 +414,6 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 		}
 		
 		return null;
-	}
-	
-	public boolean hasUpgrade(Upgrade upgrade) {
-		return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) && upgrade.enabled;
-	}
-
-	private int upgradeCount(Upgrade upgrade) {
-		return upgrade.enabled ? InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false) : 0;
-	}
-	
-	private boolean inRange(boolean verify) {
-		if (this.validCoordinates || verify) {
-			int maxRange = RemoteIO.instance.defaultRange;
-			maxRange += (upgradeCount(Upgrade.RANGE_T1) * RemoteIO.instance.rangeUpgradeT1Boost);
-			maxRange += (upgradeCount(Upgrade.RANGE_T2) * RemoteIO.instance.rangeUpgradeT2Boost);
-			maxRange += (upgradeCount(Upgrade.RANGE_T3) * RemoteIO.instance.rangeUpgradeT3Boost);
-			maxRange += (upgradeCount(Upgrade.RANGE_WITHER) * RemoteIO.instance.rangeUpgradeWitherBoost);
-			int dX = Math.abs(this.xCoord - this.x);
-			int dY = Math.abs(this.yCoord - this.y);
-			int dZ = Math.abs(this.zCoord - this.z);
-
-			return (dX <= maxRange && dY <= maxRange && dZ <= maxRange);
-		}
-		
-		return false;
-	}
-	
-	/** Purely for the visual side of things */
-	private void setValid(boolean valid) {
-		this.validCoordinates = valid;
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockHandler.blockIOID);
 	}
 	
 	/* IINVENTORY */
@@ -554,7 +553,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 
     @Override
     public boolean isValid() {
-        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange(true);
+        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange();
     }
 
     @Override
@@ -562,7 +561,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 
     @Override
     public boolean isPowered() {
-        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange(true);
+        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange();
     }
 
     @Override

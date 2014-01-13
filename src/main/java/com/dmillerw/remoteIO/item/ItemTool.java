@@ -67,7 +67,7 @@ public class ItemTool extends Item {
 						return true;
 					}
 				} else {
-					if (tile.hasCoordinates()) {
+					if (tile.coordinatesSet()) {
 						tile.clearCoordinates();
 						ChatHelper.info(player, "chat.clearIO");
 						return true;

@@ -47,7 +47,7 @@ public class ItemTransmitter extends Item {
 
             if (tile != null) {
                 if (tile instanceof TileIO) {
-                    if (((TileIO)tile).hasCoordinates()) {
+                    if (((TileIO)tile).coordinatesSet()) {
                         ((TileIO)tile).getLinkedBlock().onBlockActivated(((TileIO)tile).getLinkedWorld(), ((TileIO)tile).x, ((TileIO)tile).y, ((TileIO)tile).z, player, side, fx, fy, fz);
                         return true;
                     }
