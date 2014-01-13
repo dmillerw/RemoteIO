@@ -12,6 +12,7 @@ import com.dmillerw.remoteIO.lib.ModInfo;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -120,9 +121,12 @@ public class BlockRemoteInventory extends BlockContainer {
         if (tile != null) {
             tile.onBlockBroken();
 
-            this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this.blockID, 1, meta));
-            for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
-                if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
+            if (!tile.hasUpgrade(Upgrade.LOCK)) {
+                this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this.blockID, 1, meta));
+                for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
+                    if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
+                }
+                if (tile.camo.getStackInSlot(0) != null) this.dropBlockAsItem_do(world, x, y, z, tile.camo.getStackInSlot(0));
             }
         }
 
@@ -134,15 +138,25 @@ public class BlockRemoteInventory extends BlockContainer {
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
 		TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
 
-		if (side == 1) {
-			if (tile != null && tile.lastClientState) {
-				return this.icons[1];
-			} else {
-				return this.icons[0];
-			}
-		} else {
-			return this.icons[2];
-		}
+		ItemStack camo = tile.camo.getStackInSlot(0);
+        Block block = null;
+        if (camo != null && camo.itemID < 4096) {
+            block = Block.blocksList[camo.itemID];
+        }
+        
+        if (block != null && block.renderAsNormalBlock() && tile.hasUpgrade(Upgrade.CAMO)) {
+            return block.getIcon(side, camo.getItemDamage());
+        } else {
+            if (side == 1) {
+                if (tile != null && tile.lastClientState) {
+                    return this.icons[1];
+                } else {
+                    return this.icons[0];
+                }
+            } else {
+                return this.icons[2];
+            }
+        }
 	}
 	
 	@SideOnly(Side.CLIENT)

@@ -137,6 +137,7 @@ public class BlockIO extends BlockContainer {
 				for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
 					if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
 				}
+				if (tile.camo.getStackInSlot(0) != null) this.dropBlockAsItem_do(world, x, y, z, tile.camo.getStackInSlot(0));
 			}
 		}
 		
