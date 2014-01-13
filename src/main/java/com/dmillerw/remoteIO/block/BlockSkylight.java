@@ -32,11 +32,7 @@ public class BlockSkylight extends Block implements IUpdatableBlock {
 
 	public void onNeighborBlockChange(World world, int x, int y, int z, int causeID) {
 		if (!world.isRemote) {
-            Block block = Block.blocksList[causeID];
-
-            if (block != null && block.blockID != this.blockID && block.canProvidePower()) {
-			    updateState(world, x, y, z);
-            }
+		    updateState(world, x, y, z);
 		}
 	}
 	
@@ -44,17 +40,17 @@ public class BlockSkylight extends Block implements IUpdatableBlock {
 		int meta = world.getBlockMetadata(x, y, z);
 		boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z);
 
-		if (powered && meta == 0) {
-			world.setBlockMetadataWithNotify(x, y, z, 1, 3);
+		if (powered && (meta == 0 || meta == 1)) {
+			world.setBlockMetadataWithNotify(x, y, z, 2, 3);
 			world.updateAllLightTypes(x, y, z);
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				Block block = Block.blocksList[world.getBlockId(x + side.offsetX, y + side.offsetY, z + side.offsetZ)];
 				
 				if (block != null && block instanceof IUpdatableBlock) {
-					((IUpdatableBlock)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, this.blockID, 1);
+					((IUpdatableBlock)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, this.blockID, 2);
 				}
 			}
-		} else if (!powered && meta == 1) {
+		} else if (!powered && meta == 2) {
 			world.setBlockMetadataWithNotify(x, y, z, 0, 3);
 			world.updateAllLightTypes(x, y, z);
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -70,7 +66,7 @@ public class BlockSkylight extends Block implements IUpdatableBlock {
 	@Override
 	public void onBlockUpdate(World world, int x, int y, int z, int causeID, int causeMeta) {
 		int meta = world.getBlockMetadata(x, y, z);
-		boolean powered = (causeMeta == 1) || world.isBlockIndirectlyGettingPowered(x, y, z);
+		boolean powered = (causeMeta == 2 || causeMeta == 1);
 		
 		if (powered && meta == 0) {
 			world.setBlockMetadataWithNotify(x, y, z, 1, 3);
