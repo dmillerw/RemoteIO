@@ -96,103 +96,193 @@ public class ItemUpgrade extends Item {
 	public static enum Upgrade {
 		BLANK(
 			"blank", 
-			null
+			null,
+			new boolean[3]
 		), 
 		
 		ITEM(
 			"item", 
-			new ItemStack[] {new ItemStack(Block.chest)}
+			new ItemStack[] {new ItemStack(Block.chest)},
+			new boolean[] {
+			        true,
+			        true,
+			        true
+			}
 		), 
 				
 		FLUID(
 			"fluid",
-			new ItemStack[] {new ItemStack(Item.bucketEmpty)}
+			new ItemStack[] {new ItemStack(Item.bucketEmpty)},
+			new boolean[] {
+                    true,
+                    false,
+                    false
+            }
 		), 
 				
 		POWER_MJ(
 			"powerBC",
-			new ItemStack[0]
+			new ItemStack[0],
+			new boolean[] {
+                    true,
+                    false,
+                    true
+            }
 		), 
 				
 		RANGE_T1(
 			"rangeT1",
-			new ItemStack[] {new ItemStack(Item.glowstone)}
+			new ItemStack[] {new ItemStack(Item.glowstone)},
+			new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		), 
 				
 		CROSS_DIMENSIONAL(
 			"dimension", 
-			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)}
+			new ItemStack[] {new ItemStack(Block.obsidian), new ItemStack(Block.enderChest)},
+			new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		), 
 				
 		ISIDED_AWARE(
 			"side", 
-			new ItemStack[] {new ItemStack(Block.hopperBlock), Upgrade.ITEM.toItemStack()}
+			new ItemStack[] {new ItemStack(Block.hopperBlock), Upgrade.ITEM.toItemStack()},
+			new boolean[] {
+                    true,
+                    false,
+                    false
+            }
 		), 
 				
 		REDSTONE(
 			"redstone",
-			new ItemStack[] {new ItemStack(Item.redstone)}
+			new ItemStack[] {new ItemStack(Item.redstone)},
+			new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		), 
 				
 		CAMO(
 			"camo",
-			new ItemStack[] {ItemStackReference.COMPONENT_CAMO}
+			new ItemStack[] {ItemStackReference.COMPONENT_CAMO},
+			new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		), 
 				
 		LOCK(
 			"lock",
-			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Block.chest)}
+			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Block.chest)},
+			new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		), 
 				
 		POWER_RF(
 			"powerRF", 
-			new ItemStack[0]
+			new ItemStack[0],
+	        new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		), 
 				
 		POWER_EU(
 			"powerEU",
-			new ItemStack[0]
+			new ItemStack[0],
+	        new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		),
 		
 		POWER_UE(
 			"powerUE",
-			new ItemStack[0]
+			new ItemStack[0],
+			new boolean[] {
+                    false,
+                    false,
+                    false
+            }
 		),
 		
 		LINK_PERSIST(
 			"persist",
-			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)}
+			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)},
+			new boolean[] {
+                    true,
+                    false,
+                    true
+            }
 		),
 		
 		RANGE_T2(
 			"rangeT2",
-			new ItemStack[0]
+			new ItemStack[0],
+	        new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		),
 		
 		RANGE_T3(
 			"rangeT3",
-			new ItemStack[0]
+			new ItemStack[0],
+	        new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		),
 		
 		RANGE_WITHER(
 			"rangeWither",
-			new ItemStack[0]
+			new ItemStack[0],
+	        new boolean[] {
+                    true,
+                    true,
+                    true
+            }
 		),
 
         AE(
             "ae",
-            new ItemStack[0]
+            new ItemStack[0],
+            new boolean[] {
+                    true,
+                    false,
+                    true
+            }
         );
 		
 		public String texture;
 		
 		public ItemStack[] recipeComponents;
 
+		/** Simple boolean array.<br />Index 0: IO Block<br />Index 1: Remote Inventory<br />Index 2: Turtle Bridge */
+		public boolean[] validMachines;
+		
         public boolean enabled = true;
 
-		private Upgrade(String texture, ItemStack[] recipeComponents) {
+		private Upgrade(String texture, ItemStack[] recipeComponents, boolean[] validArray) {
 			this.texture = texture;
 			this.recipeComponents = recipeComponents;
+			this.validMachines = validArray;
 		}
 		
 		public ItemStack toItemStack() {

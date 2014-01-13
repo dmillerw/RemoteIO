@@ -1,34 +1,37 @@
 package com.dmillerw.remoteIO.inventory.gui;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import com.dmillerw.remoteIO.block.tile.TileIO;
-import com.dmillerw.remoteIO.inventory.ContainerIOUpgrade;
+import com.dmillerw.remoteIO.inventory.ContainerUpgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 
-public class GuiIOUpgrade extends GuiContainer {
+public class GuiUpgrade extends GuiContainer {
 
 	private EntityPlayer player;
 	
-	private TileIO tile;
+	private final IInventory upgrades;
+	private final IInventory camo;
+
+	private final String tag;
 	
-	public GuiIOUpgrade(EntityPlayer player, TileIO tile) {
-		super(new ContainerIOUpgrade(player, tile));
+	public GuiUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo, String tag) {
+		super(new ContainerUpgrade(player, upgrades, camo));
 		
 		this.player = player;
-		this.tile = tile;
+		this.upgrades = upgrades;
+		this.camo = camo;
+		this.tag = tag;
 	}
 
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		this.fontRenderer.drawString(I18n.getString("gui.ioUpgrades"), 8, 6, 4210752);
+		this.fontRenderer.drawString(I18n.getString(this.tag), 8, 6, 4210752);
 		this.fontRenderer.drawString(I18n.getString("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
 	}
 	

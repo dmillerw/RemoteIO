@@ -1,11 +1,13 @@
 package com.dmillerw.remoteIO.block.tile;
 
 import cofh.api.energy.IEnergyHandler;
+
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.helper.EnergyHelper;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemTransmitter;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
@@ -25,6 +27,13 @@ import net.minecraftforge.common.MinecraftForge;
 public class TileRemoteInventory extends TileCore implements IInventory, IEnergySink, IEnergyHandler {
 
 	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
+	public IInventory camo = new InventoryBasic("Camo", false, 1) {
+        @Override
+        public void onInventoryChanged() {
+            super.onInventoryChanged();
+            if (worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        }
+    };
 
     public boolean addedToEnergyNet = false;
 
@@ -146,6 +155,12 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 			InventoryHelper.writeToNBT(upgrades, upgradeNBT);
 			nbt.setCompoundTag("upgrades", upgradeNBT);
 		}
+		
+		if (camo != null) {
+		    NBTTagCompound camoNBT = new NBTTagCompound();
+	        InventoryHelper.writeToNBT(camo, camoNBT);
+	        nbt.setCompoundTag("camo", camoNBT);
+		}
 	}
 
 	@Override
@@ -166,6 +181,13 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 				this.upgrades.setInventorySlotContents(i, items[i]);
 			}
 		}
+		
+		if (nbt.hasKey("camo")) {
+            ItemStack[] items = InventoryHelper.readFromNBT(camo, nbt.getCompoundTag("camo"));
+            for (int i=0; i<items.length; i++) {
+                this.camo.setInventorySlotContents(i, items[i]);
+            }
+        }
 	}
 
 	@Override
