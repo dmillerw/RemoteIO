@@ -21,8 +21,8 @@ public class GuiUpgrade extends GuiContainer {
 
 	private final String tag;
 	
-	public GuiUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo, String tag) {
-		super(new ContainerUpgrade(player, upgrades, camo));
+	public GuiUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo, int machineType, String tag) {
+		super(new ContainerUpgrade(player, upgrades, camo, machineType));
 		
 		this.player = player;
 		this.upgrades = upgrades;

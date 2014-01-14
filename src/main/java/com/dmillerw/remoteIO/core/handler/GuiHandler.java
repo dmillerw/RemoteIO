@@ -5,6 +5,7 @@ import net.minecraft.world.World;
 
 import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
+import com.dmillerw.remoteIO.block.tile.TileTurtleBridge;
 import com.dmillerw.remoteIO.inventory.ContainerDocumentation;
 import com.dmillerw.remoteIO.inventory.ContainerUpgrade;
 import com.dmillerw.remoteIO.inventory.gui.GuiDocumentation;
@@ -19,13 +20,17 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 		case 0: {
 		    TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
-		    return new ContainerUpgrade(player, tile.upgrades, tile.camo);
+		    return new ContainerUpgrade(player, tile.upgrades, tile.camo, 0);
 		}
 		case 1: {
 		    TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
-		    return new ContainerUpgrade(player, tile.upgrades, tile.camo);
+		    return new ContainerUpgrade(player, tile.upgrades, tile.camo, 1);
 		}
         case 2: return new ContainerDocumentation(player);
+        case 3: {
+            TileTurtleBridge tile = (TileTurtleBridge) world.getBlockTileEntity(x, y, z);
+            return new ContainerUpgrade(player, tile.upgrades, tile.camo, 2);
+        }
         }
 		
 		return null;
@@ -36,13 +41,17 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 	    case 0: {
             TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
-            return new GuiUpgrade(player, tile.upgrades, tile.camo, "gui.upgrade.io");
+            return new GuiUpgrade(player, tile.upgrades, tile.camo, 0, "gui.upgrade.io");
         }
         case 1: {
             TileRemoteInventory tile = (TileRemoteInventory) world.getBlockTileEntity(x, y, z);
-            return new GuiUpgrade(player, tile.upgrades, tile.camo, "gui.upgrade.remote");
+            return new GuiUpgrade(player, tile.upgrades, tile.camo, 1, "gui.upgrade.remote");
         }
         case 2: return new GuiDocumentation(player);
+        case 3: {
+            TileTurtleBridge tile = (TileTurtleBridge) world.getBlockTileEntity(x, y, z);
+            return new GuiUpgrade(player, tile.upgrades, tile.camo, 2, "gui.upgrade.turtle");
+        }
         }
 		
 		return null;

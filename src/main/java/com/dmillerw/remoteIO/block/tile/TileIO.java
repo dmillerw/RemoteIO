@@ -1,31 +1,13 @@
 package com.dmillerw.remoteIO.block.tile;
 
-import appeng.api.DimentionalCoord;
-import appeng.api.WorldCoord;
-import appeng.api.events.GridTileLoadEvent;
-import appeng.api.events.GridTileUnloadEvent;
-import appeng.api.me.tiles.IGridTeleport;
-import appeng.api.me.tiles.IGridTileEntity;
-import appeng.api.me.util.IGridInterface;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyStorage;
-import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.core.helper.InventoryHelper;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
-import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.energy.tile.IEnergyTile;
+
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -43,8 +25,28 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import appeng.api.DimentionalCoord;
+import appeng.api.WorldCoord;
+import appeng.api.events.GridTileLoadEvent;
+import appeng.api.events.GridTileUnloadEvent;
+import appeng.api.me.tiles.IGridTeleport;
+import appeng.api.me.tiles.IGridTileEntity;
+import appeng.api.me.util.IGridInterface;
+import buildcraft.api.power.IPowerEmitter;
+import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.power.PowerHandler;
+import buildcraft.api.power.PowerHandler.PowerReceiver;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyStorage;
 
-import java.util.Random;
+import com.dmillerw.remoteIO.RemoteIO;
+import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.core.helper.InventoryHelper;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
+import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
+import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IGridTileEntity, IGridTeleport{
 
@@ -668,4 +670,5 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
     public DimentionalCoord[] findRemoteSide() {
         return getLinkedWorld() != null ? new DimentionalCoord[] {new DimentionalCoord(getLinkedWorld(), x, y, z)} : new DimentionalCoord[0];
     }
+
 }

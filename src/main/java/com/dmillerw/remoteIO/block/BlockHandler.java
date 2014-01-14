@@ -12,14 +12,14 @@ public class BlockHandler {
 	public static int blockProxyID;
 	public static int blockWirelessID;
 	public static int blockSkylightID;
-    public static int blockCrucibleID;
+    public static int blockBridgeID;
 
 	public static Block blockMachine;
 	public static Block blockIO;
 	public static Block blockProxy;
 	public static Block blockWireless;
 	public static Block blockSkylight;
-    public static Block blockCrucible;
+    public static Block blockBridge;
 	
 	public static void handleConfig(Configuration config) {
 		config.addCustomCategoryComment(Configuration.CATEGORY_BLOCK, "Set any ID to 0 to disable block");
@@ -34,6 +34,8 @@ public class BlockHandler {
 		blockWirelessID = wireless.getInt(504);
 		Property skylight = config.getBlock("blockID_skylight", 505);
 		blockSkylightID = skylight.getInt(505);
+		Property bridge = config.getBlock("blockID_bridge", 506);
+		blockBridgeID = bridge.getInt(506);
 	}
 	
 	public static void initializeBlocks() {
@@ -60,6 +62,11 @@ public class BlockHandler {
 		if (blockSkylightID != 0) {
 			blockSkylight = new BlockSkylight(blockSkylightID).setUnlocalizedName("skylight");
 			GameRegistry.registerBlock(blockSkylight, "blockSkylight");
+		}
+		
+		if (blockBridgeID != 0) {
+		    blockBridge = new BlockTurtleBridge(blockBridgeID).setUnlocalizedName("turtleBridge");
+		    GameRegistry.registerBlock(blockBridge, "blockTurtleBridge");
 		}
 	}
 	

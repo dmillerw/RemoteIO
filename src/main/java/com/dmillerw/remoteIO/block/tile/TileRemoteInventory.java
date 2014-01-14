@@ -44,8 +44,6 @@ public class TileRemoteInventory extends TileCore implements IInventory, IEnergy
 	
 	public boolean redstoneState = false;
 	
-	public int state = 0;
-	
 	public String owner;
 
     @Override

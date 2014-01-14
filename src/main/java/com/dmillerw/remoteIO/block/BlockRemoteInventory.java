@@ -94,7 +94,7 @@ public class BlockRemoteInventory extends BlockContainer {
             int meta = world.getBlockMetadata(x, y, z);
             TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-            if (tile != null && tile instanceof TileIO) {
+            if (tile != null && tile instanceof TileRemoteInventory) {
                 tile.readFromNBT(stack.getTagCompound().getCompoundTag("logic"));
             }
         }

@@ -20,13 +20,16 @@ public class ContainerUpgrade extends Container {
     private final IInventory upgrades;
     private final IInventory camo;
     
-    public ContainerUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo) {
+    private final int machineType;
+    
+    public ContainerUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo, int machineType) {
         this.player = player;
         this.upgrades = upgrades;
         this.camo = camo;
+        this.machineType = machineType;
         
         for (int i = 0; i < 9; ++i) {
-            this.addSlotToContainer(new SlotUpgrade(this.upgrades, i, 8 + i * 18, 17, 0));
+            this.addSlotToContainer(new SlotUpgrade(this.upgrades, i, 8 + i * 18, 17, this.machineType));
         }
         
         this.addSlotToContainer(new Slot(this.camo, 0, 152, 55));
