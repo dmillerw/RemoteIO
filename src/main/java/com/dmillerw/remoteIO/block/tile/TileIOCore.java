@@ -99,7 +99,7 @@ public abstract class TileIOCore extends TileCore {
             DimensionalCoords coords = DimensionalCoords.create(this);
             return (requiresUpgrades && coords.getRangeTo(connectionPosition()) <= getMaxRange()) || unlimitedRange;
         } else {
-            return hasUpgrade(ItemUpgrade.Upgrade.CROSS_DIMENSIONAL);
+            return requiresUpgrades || hasUpgrade(ItemUpgrade.Upgrade.CROSS_DIMENSIONAL);
         }
     }
 

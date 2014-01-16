@@ -1,15 +1,24 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import cofh.api.energy.IEnergyHandler;
+import com.dmillerw.remoteIO.core.helper.EnergyHelper;
+import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.lib.DimensionalCoords;
 import com.dmillerw.remoteIO.turtle.TurtleInventoryWrapper;
 import com.dmillerw.remoteIO.turtle.TurtleTracker;
 import dan200.turtle.api.ITurtleAccess;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.MinecraftForge;
 
-public class TileTurtleBridge extends TileIOCore implements IInventory {
+public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergySink, IEnergyHandler {
 
     public boolean addedToEnergyNet = false;
 
@@ -34,14 +43,14 @@ public class TileTurtleBridge extends TileIOCore implements IInventory {
     @Override
     public void cleanup() {
         if (addedToEnergyNet) {
-            // MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
             addedToEnergyNet = false;
         }
     }
 
     @Override
     public DimensionalCoords connectionPosition() {
-        ITurtleAccess turtle = getTurtle();
+        ITurtleAccess turtle = TurtleTracker.INSTANCE.getTurtleForID(this.turtleID);
 
         if (turtle == null) {
             return null;
@@ -61,7 +70,7 @@ public class TileTurtleBridge extends TileIOCore implements IInventory {
 
         if (!worldObj.isRemote) {
             if (!addedToEnergyNet) {
-//              MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+                MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
                 addedToEnergyNet = true;
             }
             
@@ -103,24 +112,38 @@ public class TileTurtleBridge extends TileIOCore implements IInventory {
         return access;
     }
 
+    private ITurtleAccess getTurtle(ItemUpgrade.Upgrade upgrade) {
+        if (!hasUpgrade(upgrade)) {
+            return null;
+        }
+
+        return getTurtle();
+    }
+
     private ITurtleAccess getTurtleWithUpdate() {
         update();
         return getTurtle();
     }
 
+    private ITurtleAccess getTurtleWithUpdate(ItemUpgrade.Upgrade upgrade) {
+        if (!hasUpgrade(upgrade)) {
+            return null;
+        }
+
+        return getTurtleWithUpdate();
+    }
+
     private IInventory getTurtleInventory() {
-        ITurtleAccess access = getTurtleWithUpdate();
+        ITurtleAccess access = getTurtleWithUpdate(ItemUpgrade.Upgrade.ITEM);
         
         if (access == null) {
             return null;
         }
         
-        // Vec3 tileCoords = Vec3.fakePool.getVecFromPool(xCoord, yCoord, zCoord);
-        
-        // if (tileCoords.distanceTo(access.getPosition()) > this.getRange()) {
-        //     return null;
-        // }
-        
+        if (!inRange()) {
+            return null;
+        }
+
         return new TurtleInventoryWrapper(access);
     }
     
@@ -190,4 +213,53 @@ public class TileTurtleBridge extends TileIOCore implements IInventory {
         return true;
     }
 
+    /* IENERGYSINK */
+    @Override
+    public double demandedEnergyUnits() {
+        ITurtleAccess turtle = getTurtleWithUpdate(ItemUpgrade.Upgrade.POWER_EU);
+        return turtle != null ? EnergyHelper.requiresCharge(turtle, EnergyHelper.EnergyType.EU) ? 32D : 0D : 0D;
+    }
+
+    @Override
+    public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+        ITurtleAccess turtle = getTurtleWithUpdate(ItemUpgrade.Upgrade.POWER_EU);
+        return turtle != null ? EnergyHelper.distributeCharge(turtle, EnergyHelper.EnergyType.EU, (int)amount, false) : amount;
+    }
+
+    @Override
+    public int getMaxSafeInput() {
+        return Integer.MAX_VALUE; // Maybe temp for now
+    }
+
+    @Override
+    public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+        return getTurtleWithUpdate(ItemUpgrade.Upgrade.POWER_EU) != null;
+    }
+
+    /* IENERGYHANDLER */
+    @Override
+    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+        ITurtleAccess turtle = getTurtleWithUpdate(ItemUpgrade.Upgrade.POWER_RF);
+        return turtle != null ? EnergyHelper.distributeCharge(turtle, EnergyHelper.EnergyType.RF, maxReceive, simulate) : 0;
+    }
+
+    @Override
+    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public boolean canInterface(ForgeDirection from) {
+        return getTurtleWithUpdate(ItemUpgrade.Upgrade.POWER_RF) != null;
+    }
+
+    @Override
+    public int getEnergyStored(ForgeDirection from) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(ForgeDirection from) {
+        return 0;
+    }
 }

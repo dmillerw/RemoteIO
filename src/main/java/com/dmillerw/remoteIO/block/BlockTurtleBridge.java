@@ -23,7 +23,7 @@ public class BlockTurtleBridge extends BlockIOCore {
 
     @Override
     public int getGuiID() {
-        return 2;
+        return 3;
     }
 
     @SideOnly(Side.CLIENT)
