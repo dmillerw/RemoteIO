@@ -1,39 +1,39 @@
 package com.dmillerw.remoteIO.inventory.gui;
 
+import com.dmillerw.remoteIO.block.tile.TileIOCore;
+import com.dmillerw.remoteIO.inventory.ContainerUpgrade;
+import com.dmillerw.remoteIO.lib.ModInfo;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
-
-import com.dmillerw.remoteIO.block.tile.TileIO;
-import com.dmillerw.remoteIO.inventory.ContainerUpgrade;
-import com.dmillerw.remoteIO.lib.ModInfo;
 
 public class GuiUpgrade extends GuiContainer {
 
 	private EntityPlayer player;
 	
-	private final IInventory upgrades;
-	private final IInventory camo;
+    private final TileIOCore tile;
 
 	private final String tag;
 	
-	public GuiUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo, int machineType, String tag) {
-		super(new ContainerUpgrade(player, upgrades, camo, machineType));
+	public GuiUpgrade(EntityPlayer player, TileIOCore tile, int machineType, String tag) {
+		super(new ContainerUpgrade(player, tile, machineType));
 		
 		this.player = player;
-		this.upgrades = upgrades;
-		this.camo = camo;
+        this.tile = tile;
 		this.tag = tag;
 	}
 
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		this.fontRenderer.drawString(I18n.getString(this.tag), 8, 6, 4210752);
-		this.fontRenderer.drawString(I18n.getString("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
-	}
+        String tag = I18n.getString(this.tag);
+        String inv = I18n.getString("container.inventory");
+
+		this.fontRenderer.drawString(I18n.getString(tag), this.xSize / 2 - (this.fontRenderer.getStringWidth(tag) / 2), 6, 4210752);
+		this.fontRenderer.drawString(I18n.getString(inv), this.xSize / 2 - (this.fontRenderer.getStringWidth(inv) / 2), this.ySize - 96 + 2, 4210752);
+
+        this.fontRenderer.drawString("Fuel: " + tile.fuelHandler.fuelLevel, 8, 55 - this.fontRenderer.FONT_HEIGHT, 4210752);
+    }
 	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {

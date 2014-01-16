@@ -58,16 +58,13 @@ public class ItemTool extends Item {
 						return true;
 					} else {
 						int[] coords = getCoordinates(stack);
-						if (tile.setCoordinates(coords[0], coords[1], coords[2], coords[3])) {
-							ChatHelper.info(player, "chat.linkSucceed");
-						} else {
-							ChatHelper.warn(player, "chat.linkFail");
-						}
+                        tile.setCoordinates(coords[0], coords[1], coords[2], coords[3]);
+                        ChatHelper.info(player, "chat.linkSucceed");
 						clearCoordinates(stack);
 						return true;
 					}
 				} else {
-					if (tile.coordinatesSet()) {
+					if (tile.connectionPosition() != null) {
 						tile.clearCoordinates();
 						ChatHelper.info(player, "chat.clearIO");
 						return true;

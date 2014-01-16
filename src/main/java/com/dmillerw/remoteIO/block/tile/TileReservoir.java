@@ -76,7 +76,7 @@ public class TileReservoir extends TileCore implements IFluidHandler {
 		updateWaterSources();
 	}
 
-	private void updateWaterSources() {
+    private void updateWaterSources() {
 		int waterSources = 0;
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			int id = this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);

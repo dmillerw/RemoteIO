@@ -1,14 +1,5 @@
 package com.dmillerw.remoteIO;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-
-import org.apache.commons.io.IOUtils;
-
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.core.handler.ForgeEventHandler;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
@@ -20,7 +11,6 @@ import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import com.dmillerw.remoteIO.turtle.TurtleBridgeUpgrade;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -34,6 +24,17 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import dan200.turtle.api.TurtleAPI;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import static com.dmillerw.remoteIO.block.tile.TileIOCore.*;
 
 @Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION, dependencies="after:EnderStorage")
 @NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
@@ -46,7 +47,7 @@ public class RemoteIO {
 	public static ISidedProxy proxy;
 
 	public File configDir;
-	
+
 	public int defaultRange = 8;
 	
 	public int rangeUpgradeT1Boost = 8;
@@ -94,6 +95,12 @@ public class RemoteIO {
 		rangeUpgradeT2Boost = config.get("general", "rangeUpgradeT2Boost", 16, "How much a T2 range upgrade boosts the range by").getInt(16);
 		rangeUpgradeT3Boost = config.get("general", "rangeUpgradeT3Boost", 64, "How much a T3 range upgrade boosts the range by").getInt(64);
 		rangeUpgradeWitherBoost = config.get("general", "rangeUpgradeWitherBoost", 1024, "How much a wither range upgrade boosts the range by").getInt(1024);
+
+        fuelPerStack = config.get("power", "fuelPerStack", 72000, "How much fuel the defined fuel item will add").getInt(72000);
+        fuelPerTick = config.get("power", "fuelPerTick", 1, "How much fuel should be consumed each tick").getInt(1);
+        int stackID = config.get("power", "fuel_itemID", Item.enderPearl.itemID, "Item ID for the fuel item").getInt(Item.enderPearl.itemID);
+        int stackMeta = config.get("power", "fuel_damageValue", 0, "Optional damage value for fuel item").getInt(0);
+        fuelStack = new ItemStack(stackID, 1, stackMeta);
 
 		BlockHandler.handleConfig(config);
 		BlockHandler.initializeBlocks();

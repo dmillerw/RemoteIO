@@ -1,21 +1,13 @@
 package com.dmillerw.remoteIO.core.tracker;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.dmillerw.remoteIO.core.helper.IOLogger;
+import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.TickType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.dmillerw.remoteIO.core.helper.IOLogger;
-
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class BlockTracker implements ITickHandler {
 
@@ -39,7 +31,7 @@ public class BlockTracker implements ITickHandler {
 			while(iterator2.hasNext()) {
 				TrackedBlock tracked = iterator2.next();
 				
-				if (tracked.callback == callback) {
+				if (tracked.callback.getTrackerHash() == callback.getTrackerHash()) {
 					tracked.destroy();
 				}
 			}
@@ -167,7 +159,7 @@ public class BlockTracker implements ITickHandler {
 		public void destroy() {
 			this.stopTracking = true;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof TrackedBlock) {
@@ -185,6 +177,7 @@ public class BlockTracker implements ITickHandler {
 	
 	public static interface ITrackerCallback {
 		public void onBlockChanged(TrackedBlock block);
+        public int getTrackerHash();
 	}
 	
 	public static enum BlockState {

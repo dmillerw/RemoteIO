@@ -48,7 +48,7 @@ public class TileHeater extends TileCore {
 		updateLavaSources();
 	}
 
-	private void updateLavaSources() {
+    private void updateLavaSources() {
 		int lavaSources = 0;
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			int id = this.worldObj.getBlockId(xCoord + dir.offsetX, yCoord + dir.offsetY, zCoord + dir.offsetZ);

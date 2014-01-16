@@ -22,7 +22,7 @@ public abstract class TileCore extends TileEntity {
 	
 	public void onBlockBreak() {}
 
-	public void onClientUpdate(NBTTagCompound tag) {}
+	public void onClientUpdate(NBTTagCompound nbt) {}
 	
 	public abstract void writeCustomNBT(NBTTagCompound nbt);
 	

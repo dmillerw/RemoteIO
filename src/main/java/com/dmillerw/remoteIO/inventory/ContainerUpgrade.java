@@ -1,38 +1,35 @@
 package com.dmillerw.remoteIO.inventory;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-
-import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileIOCore;
 import com.dmillerw.remoteIO.inventory.slot.SlotUpgrade;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
-import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public class ContainerUpgrade extends Container {
 
     private final EntityPlayer player;
-    
-    private final IInventory upgrades;
-    private final IInventory camo;
-    
+
+    private final TileIOCore tile;
+
     private final int machineType;
     
-    public ContainerUpgrade(EntityPlayer player, IInventory upgrades, IInventory camo, int machineType) {
+    public ContainerUpgrade(EntityPlayer player, TileIOCore tile, int machineType) {
         this.player = player;
-        this.upgrades = upgrades;
-        this.camo = camo;
+        this.tile = tile;
         this.machineType = machineType;
         
         for (int i = 0; i < 9; ++i) {
-            this.addSlotToContainer(new SlotUpgrade(this.upgrades, i, 8 + i * 18, 17, this.machineType));
+            this.addSlotToContainer(new SlotUpgrade(tile.upgrades, i, 8 + i * 18, 17, this.machineType));
         }
         
-        this.addSlotToContainer(new Slot(this.camo, 0, 152, 55));
+        this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55));
+        this.addSlotToContainer(new Slot(tile.fuel, 0, 8,   55));
         
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
@@ -44,7 +41,33 @@ public class ContainerUpgrade extends Container {
             this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
         }
     }
-    
+
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+
+        for (Object obj : crafters) {
+            if (obj instanceof ICrafting) {
+                ICrafting player = (ICrafting)obj;
+
+                player.sendProgressBarUpdate(this, 0, tile.fuelHandler.fuelLevel);
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void updateProgressBar(int id, int value) {
+        super.updateProgressBar(id, value);
+
+        switch(id) {
+            case 0: {
+                tile.fuelHandler.fuelLevel = value;
+                break;
+            }
+
+            default: break;
+        }
+    }
+
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
         return true;

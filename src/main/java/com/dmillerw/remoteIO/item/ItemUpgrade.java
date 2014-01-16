@@ -1,17 +1,13 @@
 package com.dmillerw.remoteIO.item;
 
-import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ItemStackReference;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
 
 import java.util.List;
@@ -28,37 +24,6 @@ public class ItemUpgrade extends Item {
 		this.setCreativeTab(CreativeTabRIO.tab);
 	}
 
-	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean idk) {
-		Upgrade upgrade = Upgrade.values()[stack.getItemDamage()];
-		String[] desc = I18n.getString("upgrade." + upgrade.texture + ".desc").split("\n");
-		if (upgrade == Upgrade.RANGE_T1 || upgrade == Upgrade.RANGE_T2 || upgrade == Upgrade.RANGE_T3 || upgrade == Upgrade.RANGE_WITHER) {
-			desc = I18n.getString("upgrade.range.desc").split("\n");
-		}
-		for (String str : desc) {
-			if (upgrade == Upgrade.BLANK) {
-				return;
-			}
-            if (upgrade == Upgrade.POWER_UE) {
-                list.add(EnumChatFormatting.RED + "DISABLED");
-                return;
-            }
-			if (upgrade == Upgrade.RANGE_T1) {
-				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT1Boost);
-			}
-			if (upgrade == Upgrade.RANGE_T2) {
-				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT2Boost);
-			}
-			if (upgrade == Upgrade.RANGE_T3) {
-				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeT3Boost);
-			}
-			if (upgrade == Upgrade.RANGE_WITHER) {
-				str = str.replace("%1", ""+RemoteIO.instance.rangeUpgradeWitherBoost);
-			}
-			list.add(str);
-		}
-	}
-	
 	@Override
 	public boolean hasEffect(ItemStack stack) {
 		return Upgrade.values()[stack.getItemDamage()] == Upgrade.RANGE_WITHER;
@@ -126,7 +91,7 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     false,
-                    true
+                    false
             }
 		), 
 				
@@ -212,7 +177,7 @@ public class ItemUpgrade extends Item {
 		
 		POWER_UE(
 			"powerUE",
-			new ItemStack[0],
+			null,
 			new boolean[] {
                     false,
                     false,
@@ -222,11 +187,11 @@ public class ItemUpgrade extends Item {
 		
 		LINK_PERSIST(
 			"persist",
-			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Item.enderPearl)},
+			null,
 			new boolean[] {
-                    true,
                     false,
-                    true
+                    false,
+                    false
             }
 		),
 		
@@ -266,7 +231,7 @@ public class ItemUpgrade extends Item {
             new boolean[] {
                     true,
                     false,
-                    true
+                    false
             }
         );
 		

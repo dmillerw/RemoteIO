@@ -1,30 +1,5 @@
 package com.dmillerw.remoteIO.block.tile;
 
-import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergySource;
-import ic2.api.energy.tile.IEnergyTile;
-
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import appeng.api.DimentionalCoord;
 import appeng.api.WorldCoord;
 import appeng.api.events.GridTileLoadEvent;
@@ -38,71 +13,48 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
-
 import com.dmillerw.remoteIO.RemoteIO;
-import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.TrackedBlock;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import com.dmillerw.remoteIO.lib.DimensionalCoords;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
+import ic2.api.energy.tile.IEnergyTile;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileIO extends TileCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IGridTileEntity, IGridTeleport{
+import java.util.Random;
 
-	public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
-	public IInventory camo = new InventoryBasic("Camo", false, 1) {
-		@Override
-		public void onInventoryChanged() {
-			super.onInventoryChanged();
-			if (worldObj != null) worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-	};
+public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IGridTileEntity, IGridTeleport{
 
     private IGridInterface aeGrid = null;
 
-	public boolean unlimitedRange = false;
-	
-	// Only used on the client now
-	public boolean validCoordinates = false;
-	
-	public boolean redstoneState = false;
+    private boolean addedToMENetwork = false;
+    private boolean addedToEnergyNet = false;
 
-    public boolean addedToMENetwork = false;
-	public boolean addedToEnergyNet = false; // Requirement of IC2 :(
-	
-	public boolean firstLoad = true;
-	
-	public int x;
-	public int y;
-	public int z;
-	public int d;
-	
-	public boolean coordinatesSet() {
-	    return this.y >= 0;
-	}
-	
-	public World getLinkedWorld() {
-		if (coordinatesSet()) {
-			return MinecraftServer.getServer().worldServerForDimension(d);
-		} else {
-			return null;
-		}
-	}
-	
-	public Block getLinkedBlock() {
-		if (coordinatesSet() && getLinkedWorld() != null) {
-			return (Block.blocksList[getLinkedWorld().getBlockId(x, y, z)]);
-		} else {
-			return null;
-		}
-	}
-	
+    public DimensionalCoords coords;
+
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {
-		if (coordinatesSet()) {
+		if (getLinkedObject() != null) {
 			if (tracked.state == BlockState.REMOVED && !hasUpgrade(Upgrade.LINK_PERSIST)) {
-				setValid(false);
+                update();
 			}
 		} else {
 			tracked.destroy();
@@ -110,7 +62,41 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 	}
 
     @Override
+    public int getTrackerHash() {
+        return this.coords != null ? this.coords.hashCode() : 0;
+    }
+
+    @Override
+    public void cleanup() {
+        if (addedToMENetwork) {
+            MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
+            addedToMENetwork = false;
+        }
+
+        if (addedToEnergyNet) {
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
+            addedToEnergyNet = false;
+        }
+
+        if (coords != null) {
+            BlockTracker.getInstance().stopTracking(coords.getWorld().provider.dimensionId, coords.x, coords.y, coords.z);
+        }
+    }
+
+    @Override
+    public DimensionalCoords connectionPosition() {
+        return this.coords;
+    }
+
+    @Override
+    public Object getLinkedObject() {
+        return getTileEntity();
+    }
+
+    @Override
     public void updateEntity() {
+        super.updateEntity();
+
         if (!worldObj.isRemote) {
             if (!addedToEnergyNet) {
                 MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile)this));
@@ -121,162 +107,47 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
                 MinecraftForge.EVENT_BUS.post(new GridTileLoadEvent(this, this.worldObj, this.getLocation()));
                 addedToMENetwork = true;
             }
-
-            if (firstLoad) {
-                setValid(getTileEntity() != null);
-                firstLoad = false;
-            }
         } else {
-            if (coordinatesSet() && worldObj.provider.dimensionId == this.d) {
-                RemoteIO.proxy.ioPathFX(worldObj, this, x + 0.5, y + 0.5, z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
+            if (getLinkedObject() != null && worldObj.provider.dimensionId == coords.dimensionID) {
+                RemoteIO.proxy.ioPathFX(worldObj, this, coords.x + 0.5, coords.y + 0.5, coords.z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
             }
         }
     }
 
-	@Override
-	public void invalidate() {
-		super.invalidate();
-		
-		if (!worldObj.isRemote) {
-			BlockTracker.getInstance().removeAllWithCallback(this);
-			
-			if (addedToEnergyNet) {
-				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
-				addedToEnergyNet = false;
-			}
-
-            if (addedToMENetwork) {
-                MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
-                addedToMENetwork = false;
-            }
-		}
-	}
-	
-	@Override
-	public void onChunkUnload() {
-		super.onChunkUnload();
-
-		if (!worldObj.isRemote) {
-			BlockTracker.getInstance().removeAllWithCallback(this);
-			
-			if (addedToEnergyNet) {
-				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
-				addedToEnergyNet = false;
-			}
-
-            if (addedToMENetwork) {
-                MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
-                addedToMENetwork = false;
-            }
-		}
-	}
-	
-	public void onBlockBroken() {
-		if (!worldObj.isRemote) {
-			BlockTracker.getInstance().removeAllWithCallback(this);
-			
-			if (addedToEnergyNet) {
-				MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile)this));
-				addedToEnergyNet = false;
-			}
-
-            if (addedToMENetwork) {
-                MinecraftForge.EVENT_BUS.post(new GridTileUnloadEvent(this, this.worldObj, this.getLocation()));
-                addedToMENetwork = false;
-            }
-		}
-	}
-	
-	public boolean setCoordinates(int x, int y, int z, int d) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.d = d;
-		
-		boolean valid = getTileEntity() != null;
-		
-		if (valid && !worldObj.isRemote) {
-			BlockTracker.getInstance().track(worldObj.provider.dimensionId, x, y, z, this);
-		}
-		
-		setValid(valid);
-		
-		return valid;
+	public void setCoordinates(int x, int y, int z, int d) {
+        this.coords = new DimensionalCoords(d, x, y, z);
+        update();
 	}
 	
 	public void clearCoordinates() {
-		this.x = 0;
-		this.y = -1;
-		this.z = 0;
-		this.d = 0;
-		
-		setValid(false);
+        this.coords = null;
+        update();
 	}
 	
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
-		if (this.validCoordinates) {
-			NBTTagCompound coords = new NBTTagCompound();
-			coords.setInteger("x", x);
-			coords.setInteger("y", y); 
-			coords.setInteger("z", z);
-			coords.setInteger("d", d);
-			nbt.setCompoundTag("coords", coords);
+        super.writeCustomNBT(nbt);
+
+		if (this.coords != null) {
+			NBTTagCompound coordsNBT = new NBTTagCompound();
+            coords.writeToNBT(coordsNBT);
+			nbt.setCompoundTag("coords", coordsNBT);
 		}
-		
-		nbt.setBoolean("unlimitedRange", unlimitedRange);
-		nbt.setBoolean("redstone", this.redstoneState);
-		
-		NBTTagCompound upgradesNBT = new NBTTagCompound();
-		InventoryHelper.writeToNBT(upgrades, upgradesNBT);
-		NBTTagCompound camoNBT = new NBTTagCompound();
-		InventoryHelper.writeToNBT(camo, camoNBT);
-		
-		nbt.setCompoundTag("upgrades", upgradesNBT);
-		nbt.setCompoundTag("camo", camoNBT);
 	}
-	
+
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt) {
+        super.readCustomNBT(nbt);
+
 		if (nbt.hasKey("coords")) {
-			NBTTagCompound coords = nbt.getCompoundTag("coords");
-			this.x = coords.getInteger("x");
-			this.y = coords.getInteger("y");
-			this.z = coords.getInteger("z");
-			this.d = coords.getInteger("d");
-			this.validCoordinates = true;
-		} else {
-			this.validCoordinates = false;
+			NBTTagCompound coordsNBT = nbt.getCompoundTag("coords");
+            this.coords = DimensionalCoords.fromNBT(coordsNBT);
 		}
-		
-		this.unlimitedRange = nbt.getBoolean("unlimitedRange");
-		if (nbt.hasKey("redstone")) {
-			this.redstoneState = nbt.getBoolean("redstone");
-		}
-		
-		if (nbt.hasKey("upgrades")) {
-			ItemStack[] items = InventoryHelper.readFromNBT(upgrades, nbt.getCompoundTag("upgrades"));
-			for (int i=0; i<items.length; i++) {
-				this.upgrades.setInventorySlotContents(i, items[i]);
-			}
-		}
-		
-		if (nbt.hasKey("camo")) {
-			ItemStack[] items = InventoryHelper.readFromNBT(camo, nbt.getCompoundTag("camo"));
-			for (int i=0; i<items.length; i++) {
-				this.camo.setInventorySlotContents(i, items[i]);
-			}
-		}
-	}
-	
-	public void setRedstoneState(boolean state) {
-		this.redstoneState = state;
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	public TileEntity getTileEntity() {
 		if (!this.worldObj.isRemote) {
-			if (!coordinatesSet()) {
+			if (coords == null) {
 				return null;
 			}
 			
@@ -284,135 +155,89 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 				return null;
 			}
 			
-			TileEntity tile = (this.worldObj.provider.dimensionId == this.d) ? getTileEntityInDimension() : getTileEntityOutDimension();
-			
-			if (validCoordinates != (tile != null)) {
-	            setValid(tile != null);
-	        }
-			
-			return tile;
+			if (!inRange()) {
+                return null;
+            }
+
+            return coords.getTileEntity();
 		}
 
 		return null;
 	}
 	
-	private TileEntity getTileEntityInDimension() {
-		if (inRange() || unlimitedRange) {
-			return this.worldObj.getBlockTileEntity(x, y, z);
-		}
-		
-		return null;
-	}
-	
-	private TileEntity getTileEntityOutDimension() {
-		if (hasUpgrade(Upgrade.CROSS_DIMENSIONAL) || unlimitedRange) {
-			WorldServer world = MinecraftServer.getServer().worldServerForDimension(this.d);
-			return world.getBlockTileEntity(x, y, z);
-		}
-		
-		return null;
-	}
-	
-	public boolean hasUpgrade(Upgrade upgrade) {
-        return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) && upgrade.enabled;
+    public TileEntity getTileWithUpdate() {
+        update();
+        return getTileEntity();
     }
 
-    private int upgradeCount(Upgrade upgrade) {
-        return upgrade.enabled ? InventoryHelper.amountContained(upgrades, upgrade.toItemStack(), false) : 0;
-    }
-    
-    /** Purely for the visual side of things */
-    private void setValid(boolean valid) {
-        this.validCoordinates = valid;
-        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        this.worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockHandler.blockIOID);
-    }
-	
-	private boolean inRange() {
-        if (coordinatesSet()) {
-            int maxRange = RemoteIO.instance.defaultRange;
-            maxRange += (upgradeCount(Upgrade.RANGE_T1) * RemoteIO.instance.rangeUpgradeT1Boost);
-            maxRange += (upgradeCount(Upgrade.RANGE_T2) * RemoteIO.instance.rangeUpgradeT2Boost);
-            maxRange += (upgradeCount(Upgrade.RANGE_T3) * RemoteIO.instance.rangeUpgradeT3Boost);
-            maxRange += (upgradeCount(Upgrade.RANGE_WITHER) * RemoteIO.instance.rangeUpgradeWitherBoost);
-            int dX = Math.abs(this.xCoord - this.x);
-            int dY = Math.abs(this.yCoord - this.y);
-            int dZ = Math.abs(this.zCoord - this.z);
-
-            return (dX <= maxRange && dY <= maxRange && dZ <= maxRange);
-        }
-        
-        return false;
-    }
-	
 	/* INTERACTION HANDLING */
 	private IInventory getInventory() {
-		if (getTileEntity() != null && getTileEntity() instanceof IInventory && hasUpgrade(Upgrade.ITEM)) {
-			return (IInventory)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IInventory && hasUpgrade(Upgrade.ITEM)) {
+			return (IInventory)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private ISidedInventory getSidedInventory() {
-		if (getTileEntity() != null && getTileEntity() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE)) {
-			return (ISidedInventory)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE)) {
+			return (ISidedInventory)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private IFluidHandler getFluidHandler() {
-		if (getTileEntity() != null && getTileEntity() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID)) {
-			return (IFluidHandler)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID)) {
+			return (IFluidHandler)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private IPowerReceptor getBCPowerReceptor() {
-		if (getTileEntity() != null && getTileEntity() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ)) {
-			return (IPowerReceptor)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ)) {
+			return (IPowerReceptor)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private IPowerEmitter getBCPowerEmitter() {
-		if (getTileEntity() != null && getTileEntity() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ)) {
-			return (IPowerEmitter)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ)) {
+			return (IPowerEmitter)getTileWithUpdate();
 		}
 		
 		return null;
 	}	
 	
 	private IEnergyHandler getRFHandler() {
-		if (getTileEntity() != null && getTileEntity() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF)) {
-			return (IEnergyHandler)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF)) {
+			return (IEnergyHandler)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private IEnergyStorage getRFSource() {
-		if (getTileEntity() != null && getTileEntity() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF)) {
-			return (IEnergyStorage)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF)) {
+			return (IEnergyStorage)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private IEnergySource getEUSource() {
-		if (getTileEntity() != null && getTileEntity() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU)) {
-			return (IEnergySource)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU)) {
+			return (IEnergySource)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
 	private IEnergySink getEUSink() {
-		if (getTileEntity() != null && getTileEntity() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU)) {
-			return (IEnergySink)getTileEntity();
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU)) {
+			return (IEnergySink)getTileWithUpdate();
 		}
 		
 		return null;
@@ -555,7 +380,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 
     @Override
     public boolean isValid() {
-        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange();
+        return coords != null && hasUpgrade(Upgrade.AE) && inRange();
     }
 
     @Override
@@ -563,7 +388,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
 
     @Override
     public boolean isPowered() {
-        return validCoordinates && hasUpgrade(Upgrade.AE) && inRange();
+        return coords != null && hasUpgrade(Upgrade.AE) && inRange();
     }
 
     @Override
@@ -668,7 +493,7 @@ public class TileIO extends TileCore implements ITrackerCallback, IInventory, IS
     /* IGRIDTELEPORT */
     @Override
     public DimentionalCoord[] findRemoteSide() {
-        return getLinkedWorld() != null ? new DimentionalCoord[] {new DimentionalCoord(getLinkedWorld(), x, y, z)} : new DimentionalCoord[0];
+        return getLinkedWorld() != null ? new DimentionalCoord[] {new DimentionalCoord(getLinkedWorld(), (int)coords.x, (int)coords.y, (int)coords.z)} : new DimentionalCoord[0];
     }
 
 }

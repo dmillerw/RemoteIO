@@ -47,15 +47,14 @@ public class ItemTransmitter extends Item {
 
             if (tile != null) {
                 if (tile instanceof TileIO) {
-                    if (((TileIO)tile).coordinatesSet()) {
-                        ((TileIO)tile).getLinkedBlock().onBlockActivated(((TileIO)tile).getLinkedWorld(), ((TileIO)tile).x, ((TileIO)tile).y, ((TileIO)tile).z, player, side, fx, fy, fz);
+                    if (((TileIO)tile).connectionPosition() != null) {
+                        //TODO ((TileIO)tile).getLinkedBlock().onBlockActivated(((TileIO)tile).getLinkedWorld(), ((TileIO)tile).x, ((TileIO)tile).y, ((TileIO)tile).z, player, side, fx, fy, fz);
                         return true;
                     }
                 } else if (tile instanceof TileRemoteInventory) {
                     if (stack.hasTagCompound() && stack.getTagCompound().hasKey("player")) {
                         ((TileRemoteInventory)tile).owner = stack.getTagCompound().getString("player");
-                        ((TileRemoteInventory)tile).lastClientState = true;
-                        world.markBlockForUpdate(x, y, z);
+                        ((TileRemoteInventory)tile).update();
                     }
                     return true;
                 }

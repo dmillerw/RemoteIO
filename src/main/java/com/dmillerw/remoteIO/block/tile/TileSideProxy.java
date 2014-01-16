@@ -19,8 +19,13 @@ public class TileSideProxy extends TileCore implements ISidedInventory, IFluidHa
 	public int z = 0;
 	
 	public ForgeDirection insertionSide = ForgeDirection.UNKNOWN;
-	
-	@Override
+
+    @Override
+    public void onClientUpdate(NBTTagCompound nbt) {
+
+    }
+
+    @Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
 		nbt.setInteger("xCoord", this.x);
 		nbt.setInteger("yCoord", this.y);
