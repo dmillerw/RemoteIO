@@ -54,19 +54,19 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						ChatHelper.warn(player, "chat.selectBlock");
+						ChatHelper.warn(player, "chat.fail.select");
 						return true;
 					} else {
 						int[] coords = getCoordinates(stack);
                         tile.setCoordinates(coords[0], coords[1], coords[2], coords[3]);
-                        ChatHelper.info(player, "chat.linkSucceed");
+                        ChatHelper.info(player, "chat.link.succeed");
 						clearCoordinates(stack);
 						return true;
 					}
 				} else {
 					if (tile.connectionPosition() != null) {
 						tile.clearCoordinates();
-						ChatHelper.info(player, "chat.clearIO");
+						ChatHelper.info(player, "chat.clear.io");
 						return true;
 					}
 				}
@@ -75,7 +75,7 @@ public class ItemTool extends Item {
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
-						ChatHelper.warn(player, "chat.selectBlock");
+						ChatHelper.warn(player, "chat.fail.select");
 						world.markBlockForUpdate(x, y, z);
 						return false;
 					} else {
@@ -84,7 +84,7 @@ public class ItemTool extends Item {
 						tile.y = coords[1];
 						tile.z = coords[2];
 						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
-						ChatHelper.info(player, "chat.linkSucceed");
+						ChatHelper.info(player, "chat.link.succeed");
 						clearCoordinates(stack);
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
@@ -96,7 +96,7 @@ public class ItemTool extends Item {
 						tile.y = -1;
 						tile.z = 0;
 						tile.insertionSide = ForgeDirection.UNKNOWN;
-						ChatHelper.info(player, "chat.clearProxy");
+						ChatHelper.info(player, "chat.clear.proxy");
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);
 						world.markBlockForUpdate(x, y, z);
 						return true;
@@ -105,10 +105,10 @@ public class ItemTool extends Item {
 			} else {
 				if (Block.blocksList[id] != null && Block.blocksList[id].hasTileEntity(meta)) {
 					setCoordinates(stack, x, y, z, world.provider.dimensionId, side);
-					ChatHelper.info(player, "chat.linkBegun");
+					ChatHelper.info(player, "chat.link.start");
 					return true;
 				} else {
-					ChatHelper.warn(player, "chat.linkFailBasic");
+					ChatHelper.warn(player, "chat.fail.basic");
 					return true;
 				}
 			}

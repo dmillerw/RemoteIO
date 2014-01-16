@@ -44,7 +44,7 @@ public class GuiHandler implements IGuiHandler {
         }
         case 2: return new GuiDocumentation(player);
         case 3: {
-            return new GuiUpgrade(player, tile, 2, "gui.upgrade.turtle");
+            return new GuiUpgrade(player, tile, 2, "gui.upgrade.bridge");
         }
         }
 		

@@ -5,6 +5,7 @@ import com.dmillerw.remoteIO.lib.ItemStackReference;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -52,6 +53,11 @@ public class ItemUpgrade extends Item {
 			this.icons[upgrade.ordinal()] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "upgrade/" + upgrade.texture);
 		}
 	}
+
+    @Override
+    public String getItemDisplayName(ItemStack stack) {
+        return super.getItemDisplayName(stack) + " " + I18n.getString("upgrade.word");
+    }
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {

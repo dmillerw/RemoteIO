@@ -28,11 +28,11 @@ public class GuiUpgrade extends GuiContainer {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
         String tag = I18n.getString(this.tag);
         String inv = I18n.getString("container.inventory");
+        String fuel = I18n.getString("gui.tag.fuel") + ": " + (tile.requiresPower ? tile.fuelHandler.fuelLevel : "Infinite");
 
-		this.fontRenderer.drawString(I18n.getString(tag), this.xSize / 2 - (this.fontRenderer.getStringWidth(tag) / 2), 6, 4210752);
-		this.fontRenderer.drawString(I18n.getString(inv), this.xSize / 2 - (this.fontRenderer.getStringWidth(inv) / 2), this.ySize - 96 + 2, 4210752);
-
-        this.fontRenderer.drawString("Fuel: " + tile.fuelHandler.fuelLevel, 8, 55 - this.fontRenderer.FONT_HEIGHT, 4210752);
+		this.fontRenderer.drawString(tag, 8, 6, 4210752);
+        this.fontRenderer.drawString(fuel, this.xSize - 8 - (this.fontRenderer.getStringWidth(fuel)), 6, 4210752);
+		this.fontRenderer.drawString(inv, this.xSize / 2 - (this.fontRenderer.getStringWidth(inv) / 2), this.ySize - 96 + 2, 4210752);
     }
 	
 	@Override

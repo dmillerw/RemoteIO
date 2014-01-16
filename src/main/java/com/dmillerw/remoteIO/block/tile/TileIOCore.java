@@ -39,7 +39,7 @@ public abstract class TileIOCore extends TileCore {
     /* NBT FLAGS */
     private boolean unlimitedRange = false;
     private boolean requiresUpgrades = true;
-    private boolean requiresPower = true;
+    public boolean requiresPower = true;
 
     /* COMMON FLAGS */
     private boolean firstLoad = true;

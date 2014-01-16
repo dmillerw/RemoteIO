@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 public class ContainerUpgrade extends Container {
@@ -19,7 +20,7 @@ public class ContainerUpgrade extends Container {
 
     private final int machineType;
     
-    public ContainerUpgrade(EntityPlayer player, TileIOCore tile, int machineType) {
+    public ContainerUpgrade(EntityPlayer player, final TileIOCore tile, int machineType) {
         this.player = player;
         this.tile = tile;
         this.machineType = machineType;
@@ -28,8 +29,18 @@ public class ContainerUpgrade extends Container {
             this.addSlotToContainer(new SlotUpgrade(tile.upgrades, i, 8 + i * 18, 17, this.machineType));
         }
         
-        this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55));
-        this.addSlotToContainer(new Slot(tile.fuel, 0, 8,   55));
+        this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return stack != null && stack.getItem() instanceof ItemBlock && tile.hasUpgrade(ItemUpgrade.Upgrade.CAMO);
+            }
+        });
+        this.addSlotToContainer(new Slot(tile.fuel, 0, 8, 55) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return stack != null && stack.isItemEqual(TileIOCore.fuelStack);
+            }
+        });
         
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
@@ -82,22 +93,16 @@ public class ContainerUpgrade extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (itemstack1.getItem() instanceof ItemUpgrade) {
-                if (slotID >= 0 && slotID <= 9) {
-                    if (!this.mergeItemStack(itemstack1, 11, 45, true)) {
-                        return null;
-                    }
-                } else if (!this.mergeItemStack(itemstack1, 0, 9, false)) {
+            if (itemstack1.getItem() instanceof ItemBlock && !tile.hasUpgrade(ItemUpgrade.Upgrade.CAMO)) {
+                return null;
+            }
+
+            if (slotID >= 0 && slotID < 11) {
+                if (!this.mergeItemStack(itemstack1, 12, 47, true)) {
                     return null;
                 }
-            } else {
-                if (slotID >= 0 && slotID <= 9) {
-                    if (!this.mergeItemStack(itemstack1, 11, 45, true)) {
-                        return null;
-                    }
-                } else if (!this.mergeItemStack(itemstack1, 9, 10, false)) {
-                    return null;
-                }
+            } else if (!this.mergeItemStack(itemstack1, 0, 11, false)) {
+                return null;
             }
 
             if (itemstack1.stackSize == 0) {

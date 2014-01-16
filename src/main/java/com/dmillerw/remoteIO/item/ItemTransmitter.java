@@ -82,7 +82,7 @@ public class ItemTransmitter extends Item {
 		nbt.setString("player", player.username);
 		stack.setTagCompound(nbt);
 		
-		ChatHelper.info(player, "chat.transceiverLink");
+		ChatHelper.info(player, "chat.link.transceiver");
 		
 		return stack;
 	}

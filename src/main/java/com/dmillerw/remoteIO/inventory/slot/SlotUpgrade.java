@@ -4,15 +4,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
 
 public class SlotUpgrade extends Slot {
 
     private final int machineType;
     
-	public SlotUpgrade(IInventory inventory, int id, int y, int z, int machineType) {
-		super(inventory, id, y, z);
+	public SlotUpgrade(IInventory inventory, int id, int x, int y, int machineType) {
+		super(inventory, id, x, y);
 		
 		this.machineType = machineType;
 	}

@@ -66,7 +66,7 @@ public class DocumentationRegistry {
         if (!documentation.containsKey(key)) {
             documentation.put(key, docu);
         } else {
-            throw new RuntimeException("[RemoteIO] Something tried to register documentation with the key " + key + " but that key is already registsered!");
+            throw new RuntimeException("[RemoteIO] Something tried to register documentation with the key " + key + " but that key is already registered!");
         }
     }
 

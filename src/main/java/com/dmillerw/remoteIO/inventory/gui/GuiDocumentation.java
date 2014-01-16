@@ -3,7 +3,6 @@ package com.dmillerw.remoteIO.inventory.gui;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.inventory.ContainerDocumentation;
 import com.dmillerw.remoteIO.lib.ModInfo;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -44,6 +43,7 @@ public class GuiDocumentation extends GuiContainer {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partial) {
+        // Mouse scrolling
         int wheel = Mouse.getDWheel();
 
         if (wheel != 0) {
@@ -87,7 +87,7 @@ public class GuiDocumentation extends GuiContainer {
         this.mc.getTextureManager().bindTexture(new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/documentation.png"));
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);		
+        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 	}
 
 }
