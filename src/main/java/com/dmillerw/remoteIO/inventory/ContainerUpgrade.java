@@ -61,6 +61,7 @@ public class ContainerUpgrade extends Container {
                 ICrafting player = (ICrafting)obj;
 
                 player.sendProgressBarUpdate(this, 0, tile.fuelHandler.fuelLevel);
+                player.sendProgressBarUpdate(this, 1, tile.requiresPower ? 0 : 1); // Just in case
             }
         }
     }
@@ -72,6 +73,11 @@ public class ContainerUpgrade extends Container {
         switch(id) {
             case 0: {
                 tile.fuelHandler.fuelLevel = value;
+                break;
+            }
+
+            case 1: {
+                tile.requiresPower = value == 0 ? false : true;
                 break;
             }
 
