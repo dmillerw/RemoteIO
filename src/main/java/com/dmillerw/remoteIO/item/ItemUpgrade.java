@@ -37,7 +37,7 @@ public class ItemUpgrade extends Item {
 	@Override
 	public void getSubItems(int id, CreativeTabs tab, List list) {
 		for (Upgrade upgrade : Upgrade.values()) {
-			if ((upgrade == Upgrade.BLANK) && upgrade.enabled) {
+			if ((upgrade == Upgrade.BLANK) || upgrade.enabled) {
 				list.add(upgrade.toItemStack());
 			}
 		}
