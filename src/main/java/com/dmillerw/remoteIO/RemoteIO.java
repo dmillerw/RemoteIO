@@ -105,6 +105,8 @@ public class RemoteIO {
         TileIOCore.rfPerFuel = config.get("power.io", "rfPerFuel", 350, "How much RF is equivalent to one fuel unit").getInt(350);
         TileIOCore.euPerFuel = config.get("power.io", "euPerFuel", 5,   "How much EU is equivalent to one fuel unit").getInt(5);
 
+        TileIOCore.consumeOnlyWhenActive = config.get("power.io", "consumeOnlyWhenActive", true, "Whether blocks should only consume fuel when actively connected to something").getBoolean(true);
+
         EnergyHelper.rfPerTurtleMove = config.get("power.turtle", "rfPerTurtleMove", 350, "How much RF is equivalent to one turtle movement operation").getInt(350);
         EnergyHelper.euPerTurtleMove = config.get("power.turtle", "euPerTurtleMove", 5,   "How much EU is equivalent to one turtle movement operation").getInt(5);
 

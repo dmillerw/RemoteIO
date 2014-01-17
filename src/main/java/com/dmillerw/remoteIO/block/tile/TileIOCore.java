@@ -23,6 +23,8 @@ public abstract class TileIOCore extends TileCore {
     /* NORMAL FUEL */
     public static ItemStack fuelStack = new ItemStack(Item.enderPearl);
 
+    public static boolean consumeOnlyWhenActive = true;
+
     public static int fuelPerStack = 3600;
     public static int fuelPerTick = 1;
 
@@ -166,7 +168,7 @@ public abstract class TileIOCore extends TileCore {
             }
 
             /* Consume fuel */
-            if (requiresPower && fuelPerTick > 0 && lastClientState && worldObj.getTotalWorldTime() % 20 == 0) {
+            if (requiresPower && fuelPerTick > 0 && (lastClientState || !consumeOnlyWhenActive) && worldObj.getTotalWorldTime() % 20 == 0) {
                 this.fuelHandler.consumeFuel(fuelPerTick);
             }
         }
