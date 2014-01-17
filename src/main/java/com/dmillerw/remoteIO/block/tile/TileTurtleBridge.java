@@ -32,10 +32,8 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
         this.turtleID = id;
         
         if (this.turtleID >= 0 && !lastClientState) {
-            lastClientState = true;
             update();
         } else if (this.turtleID == -1 && lastClientState) {
-            lastClientState = false;
             update();
         }
     }
@@ -61,7 +59,7 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
 
     @Override
     public Object getLinkedObject() {
-        return getTurtleInventory();
+        return getTurtle();
     }
 
     @Override
