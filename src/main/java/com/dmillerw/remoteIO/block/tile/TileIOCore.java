@@ -68,8 +68,6 @@ public abstract class TileIOCore extends TileCore {
             tag.setBoolean("redstone", redstoneState);
             sendClientUpdate(tag);
 
-            System.out.println("Updating client");
-
             lastClientState = isConnected;
         }
     }
