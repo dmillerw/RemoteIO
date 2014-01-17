@@ -150,11 +150,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 			if (coords == null) {
 				return null;
 			}
-			
-			if (hasUpgrade(Upgrade.REDSTONE) && redstoneState) {
-				return null;
-			}
-			
+
 			if (!inRange()) {
                 return null;
             }

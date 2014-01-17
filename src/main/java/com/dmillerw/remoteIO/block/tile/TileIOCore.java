@@ -61,10 +61,11 @@ public abstract class TileIOCore extends TileCore {
     /** Should be run whenever an aspect of this block changes.
      *  By default just sends a visual update to the client */
     public void update() {
-        boolean isConnected = getLinkedObject() != null;
+        boolean isConnected = getLinkedObject() != null && !redstoneState;
         if (isConnected != lastClientState) {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setBoolean("state", isConnected);
+            tag.setBoolean("redstone", redstoneState);
             sendClientUpdate(tag);
 
             lastClientState = isConnected;
@@ -201,11 +202,8 @@ public abstract class TileIOCore extends TileCore {
 
     @Override
     public void onNeighborBlockUpdate() {
-        redstoneState = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("redstone", redstoneState);
-        sendClientUpdate(tag);
+        redstoneState = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord) && hasUpgrade(ItemUpgrade.Upgrade.REDSTONE);
+        update();
     }
 
     @Override

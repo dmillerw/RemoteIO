@@ -67,7 +67,7 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IEner
 	private InventoryPlayer getInventory() {
 		MinecraftServer server = MinecraftServer.getServer();
 		
-		if (owner != null && !(owner.isEmpty()) && server != null && !redstoneState) {
+		if (owner != null && !(owner.isEmpty()) && server != null) {
 			EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
 			if (player != null) {
 				if (inRange()) {
