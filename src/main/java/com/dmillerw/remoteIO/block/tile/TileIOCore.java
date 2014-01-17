@@ -1,9 +1,12 @@
 package com.dmillerw.remoteIO.block.tile;
 
+import cofh.api.energy.IEnergyContainerItem;
 import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.helper.InventoryHelper;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.lib.DimensionalCoords;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
@@ -17,10 +20,15 @@ import net.minecraft.world.World;
  */
 public abstract class TileIOCore extends TileCore {
 
+    /* NORMAL FUEL */
     public static ItemStack fuelStack = new ItemStack(Item.enderPearl);
 
-    public static int fuelPerStack = 72000;
+    public static int fuelPerStack = 3600;
     public static int fuelPerTick = 1;
+
+    /* ENERGY */
+    public static int rfPerFuel = 350;
+    public static int euPerFuel = 5;
 
     public IInventory upgrades = new InventoryBasic("Upgrades", false, 9);
     public IInventory camo = new InventoryBasic("Camo", false, 1) {
@@ -135,16 +143,30 @@ public abstract class TileIOCore extends TileCore {
                 if (requiresPower) {
                     ItemStack fuel = this.fuel.getStackInSlot(0);
 
-                    if (fuel != null && fuel.isItemEqual(fuelStack)) {
-                        if (this.fuelHandler.addFuel(fuelPerStack)) {
-                            this.fuel.decrStackSize(0, 1);
+                    if (fuel != null) {
+                        if (fuel.isItemEqual(fuelStack)) {
+                            if (this.fuelHandler.addFuel(fuelPerStack)) {
+                                this.fuel.decrStackSize(0, 1);
+                            }
+                        } else if (fuel.getItem() instanceof IEnergyContainerItem) {
+                            if (((IEnergyContainerItem)fuel.getItem()).extractEnergy(fuel, rfPerFuel, true) == rfPerFuel) {
+                                if (this.fuelHandler.addFuel(1)) {
+                                    ((IEnergyContainerItem)fuel.getItem()).extractEnergy(fuel, rfPerFuel, false);
+                                }
+                            }
+                        } else if (fuel.getItem() instanceof IElectricItem) {
+                            if (ElectricItem.manager.discharge(fuel, euPerFuel, ((IElectricItem)fuel.getItem()).getTier(fuel), false, true) == euPerFuel) {
+                                if (this.fuelHandler.addFuel(1)) {
+                                    ElectricItem.manager.discharge(fuel, euPerFuel, ((IElectricItem)fuel.getItem()).getTier(fuel), false, false);
+                                }
+                            }
                         }
                     }
                 }
             }
 
             /* Consume fuel */
-            if (requiresPower) {
+            if (requiresPower && worldObj.getTotalWorldTime() % 20 == 0) {
                 this.fuelHandler.consumeFuel(fuelPerTick);
             }
         }

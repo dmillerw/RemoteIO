@@ -15,15 +15,25 @@ import java.util.List;
  */
 public class EnergyHelper {
 
+    public static int rfPerTurtleMove = 350;
+    public static int euPerTurtleMove = 5;
+
     public static int distributeCharge(ITurtleAccess turtle, EnergyType type, int amount, boolean simulate) {
         int amountUsed = 0;
 
-        while(amount - type.fuelValue > 0) {
-            amount -= type.fuelValue;
-            amountUsed += type.fuelValue;
+        int fuelValue = 0;
+        switch(type) {
+            case RF: fuelValue = rfPerTurtleMove; break;
+            case EU: fuelValue = euPerTurtleMove; break;
+            default: break;
+        }
+
+        while(amount - fuelValue > 0) {
+            amount -= fuelValue;
+            amountUsed += fuelValue;
 
             if (!simulate) {
-                turtle.consumeFuel(-type.fuelValue);
+                turtle.consumeFuel(-1);
             }
         }
 
@@ -108,16 +118,13 @@ public class EnergyHelper {
     }
 
     public static enum EnergyType {
-        EU(IElectricItem.class, 5),
-        RF(IEnergyContainerItem.class, 350);
+        EU(IElectricItem.class),
+        RF(IEnergyContainerItem.class);
 
         public Class energyClass;
 
-        public int fuelValue;
-
-        private EnergyType(Class energyClass, int fuelValue) {
+        private EnergyType(Class energyClass) {
             this.energyClass = energyClass;
-            this.fuelValue = fuelValue;
         }
     }
 

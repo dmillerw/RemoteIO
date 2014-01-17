@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.inventory.slot;
 
+import com.dmillerw.remoteIO.item.ItemUpgrade;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,10 @@ public class SlotUpgrade extends Slot {
 	    if (stack == null) {
 	        return false;
 	    }
+
+        if (!(stack.getItem() instanceof ItemUpgrade)) {
+            return false;
+        }
 
 	    Upgrade upgrade = Upgrade.values()[stack.getItemDamage()];
 	    

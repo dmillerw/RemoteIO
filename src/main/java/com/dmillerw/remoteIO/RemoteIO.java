@@ -1,8 +1,10 @@
 package com.dmillerw.remoteIO;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.tile.TileIOCore;
 import com.dmillerw.remoteIO.core.handler.ForgeEventHandler;
 import com.dmillerw.remoteIO.core.handler.GuiHandler;
+import com.dmillerw.remoteIO.core.helper.EnergyHelper;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.core.helper.LocalizationHelper;
 import com.dmillerw.remoteIO.core.proxy.ISidedProxy;
@@ -33,8 +35,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
-import static com.dmillerw.remoteIO.block.tile.TileIOCore.*;
 
 @Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION, dependencies="after:EnderStorage")
 @NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
@@ -96,11 +96,17 @@ public class RemoteIO {
 		rangeUpgradeT3Boost = config.get("general", "rangeUpgradeT3Boost", 64, "How much a T3 range upgrade boosts the range by").getInt(64);
 		rangeUpgradeWitherBoost = config.get("general", "rangeUpgradeWitherBoost", 1024, "How much a wither range upgrade boosts the range by").getInt(1024);
 
-        fuelPerStack = config.get("power", "fuelPerStack", 72000, "How much fuel the defined fuel item will add").getInt(72000);
-        fuelPerTick = config.get("power", "fuelPerTick", 1, "How much fuel should be consumed each tick").getInt(1);
-        int stackID = config.get("power", "fuel_itemID", Item.enderPearl.itemID, "Item ID for the fuel item").getInt(Item.enderPearl.itemID);
-        int stackMeta = config.get("power", "fuel_damageValue", 0, "Optional damage value for fuel item").getInt(0);
-        fuelStack = new ItemStack(stackID, 1, stackMeta);
+        TileIOCore.fuelPerStack = config.get("power.io", "fuelPerStack", 3600, "How much fuel the defined fuel item will add").getInt(72000);
+        TileIOCore.fuelPerTick = config.get("power.io", "fuelPerTick", 1, "How much fuel should be consumed every second").getInt(1);
+        int stackID = config.get("power.io", "fuel_itemID", Item.enderPearl.itemID, "Item ID for the fuel item").getInt(Item.enderPearl.itemID);
+        int stackMeta = config.get("power.io", "fuel_damageValue", 0, "Optional damage value for fuel item").getInt(0);
+        TileIOCore.fuelStack = new ItemStack(stackID, 1, stackMeta);
+
+        TileIOCore.rfPerFuel = config.get("power.io", "rfPerFuel", 350, "How much RF is equivalent to one fuel unit").getInt(350);
+        TileIOCore.euPerFuel = config.get("power.io", "euPerFuel", 5,   "How much EU is equivalent to one fuel unit").getInt(5);
+
+        EnergyHelper.rfPerTurtleMove = config.get("power.turtle", "rfPerTurtleMove", 350, "How much RF is equivalent to one turtle movement operation").getInt(350);
+        EnergyHelper.euPerTurtleMove = config.get("power.turtle", "euPerTurtleMove", 5,   "How much EU is equivalent to one turtle movement operation").getInt(5);
 
 		BlockHandler.handleConfig(config);
 		BlockHandler.initializeBlocks();

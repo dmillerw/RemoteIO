@@ -1,10 +1,13 @@
 package com.dmillerw.remoteIO.inventory;
 
+import cofh.api.energy.IEnergyContainerItem;
 import com.dmillerw.remoteIO.block.tile.TileIOCore;
 import com.dmillerw.remoteIO.inventory.slot.SlotUpgrade;
 import com.dmillerw.remoteIO.item.ItemUpgrade;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ic2.api.item.ElectricItem;
+import ic2.api.item.IElectricItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -38,7 +41,18 @@ public class ContainerUpgrade extends Container {
         this.addSlotToContainer(new Slot(tile.fuel, 0, 8, 55) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack != null && stack.isItemEqual(TileIOCore.fuelStack);
+                if (stack == null) {
+                    return false;
+                }
+
+                if (stack.getItem() instanceof IEnergyContainerItem) {
+                    return ((IEnergyContainerItem)stack.getItem()).extractEnergy(stack, TileIOCore.rfPerFuel, true) == TileIOCore.rfPerFuel;
+                } else if (stack.getItem() instanceof IElectricItem) {
+                    IElectricItem item = (IElectricItem)stack.getItem();
+                    return item.canProvideEnergy(stack) && ElectricItem.manager.discharge(stack, TileIOCore.euPerFuel, item.getTier(stack), false, true) == TileIOCore.euPerFuel;
+                } else {
+                    return stack.isItemEqual(TileIOCore.fuelStack);
+                }
             }
         });
         
