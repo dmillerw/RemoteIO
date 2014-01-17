@@ -15,14 +15,18 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
+import java.util.EnumSet;
+
 public class ContainerUpgrade extends Container {
 
     private final EntityPlayer player;
 
-    private final TileIOCore tile;
+    public final TileIOCore tile;
 
     private final int machineType;
-    
+
+    private EnumSet<TileIOCore.Warning> tempWarnings = EnumSet.noneOf(TileIOCore.Warning.class);
+
     public ContainerUpgrade(EntityPlayer player, final TileIOCore tile, int machineType) {
         this.player = player;
         this.tile = tile;
@@ -35,7 +39,7 @@ public class ContainerUpgrade extends Container {
         this.addSlotToContainer(new Slot(tile.camo, 0, 152, 55) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return stack != null && stack.getItem() instanceof ItemBlock && tile.hasUpgrade(ItemUpgrade.Upgrade.CAMO);
+                return stack != null && stack.getItem() instanceof ItemBlock && tile.hasUpgrade(ItemUpgrade.Upgrade.CAMO, true);
             }
         });
         this.addSlotToContainer(new Slot(tile.fuel, 0, 8, 55) {
@@ -76,6 +80,22 @@ public class ContainerUpgrade extends Container {
 
                 player.sendProgressBarUpdate(this, 0, tile.fuelHandler.fuelLevel);
                 player.sendProgressBarUpdate(this, 1, tile.requiresPower ? 1 : 0); // Just in case
+
+                if (tile.warningsChanged) {
+                    if (!tempWarnings.containsAll(tile.activeWarnings)) {
+                        player.sendProgressBarUpdate(this, 2, -2); // Clear warnings
+                        tempWarnings.clear();
+                        for (TileIOCore.Warning warning : tile.activeWarnings) {
+                            player.sendProgressBarUpdate(this, 2, warning.ordinal());
+                            tempWarnings.add(warning);
+                        }
+                        player.sendProgressBarUpdate(this, 2, -1); // End of updates
+                    }
+
+                    tile.warningsChanged = false;
+                } else {
+                    tile.calculateWarnings();
+                }
             }
         }
     }
@@ -93,6 +113,19 @@ public class ContainerUpgrade extends Container {
             case 1: {
                 tile.requiresPower = value == 0 ? false : true;
                 break;
+            }
+
+            case 2: {
+                if (value == -2) {
+                    tempWarnings.clear();
+                } else if (value == -1) {
+                    tile.activeWarnings.clear();
+                    tile.activeWarnings.addAll(tempWarnings);
+                    tempWarnings.clear();
+                    tile.warningsChanged = true;
+                } else {
+                    tempWarnings.add(TileIOCore.Warning.values()[value]);
+                }
             }
 
             default: break;
@@ -113,7 +146,7 @@ public class ContainerUpgrade extends Container {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (itemstack1.getItem() instanceof ItemBlock && !tile.hasUpgrade(ItemUpgrade.Upgrade.CAMO)) {
+            if (itemstack1.getItem() instanceof ItemBlock && !tile.hasUpgrade(ItemUpgrade.Upgrade.CAMO, true)) {
                 return null;
             }
 

@@ -50,6 +50,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 
     public DimensionalCoords coords;
 
+    /* ITRACKERCALLBACK */
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {
 		if (connectionPosition() != null) {
@@ -94,15 +95,12 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
             return null;
         }
 
-        if (coords == null) {
+        if (!connectionExists()) {
             return null;
         }
 
-        if (!inRange()) {
-            return null;
-        }
-
-        return coords.getTileEntity();
+        World world = getLinkedWorld();
+        return world != null ? world.getBlockTileEntity(coords.x, coords.y, coords.z) : null;
     }
 
     @Override
@@ -120,7 +118,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
                 addedToMENetwork = true;
             }
         } else {
-            if (connectionPosition() != null && worldObj.provider.dimensionId == connectionPosition().dimensionID) {
+            if (connectionExists() && worldObj.provider.dimensionId == connectionPosition().dimensionID) {
                 RemoteIO.proxy.ioPathFX(worldObj, this, coords.x + 0.5, coords.y + 0.5, coords.z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
             }
         }
@@ -158,7 +156,13 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	public TileEntity getTileEntity() {
-		return (TileEntity) getLinkedObject();
+        Object obj = getLinkedObject();
+
+        if (!canConnect()) {
+            return null;
+        }
+
+        return (TileEntity) obj;
 	}
 	
     public TileEntity getTileWithUpdate() {
@@ -168,7 +172,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 
 	/* INTERACTION HANDLING */
 	private IInventory getInventory() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IInventory && hasUpgrade(Upgrade.ITEM)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IInventory && hasUpgrade(Upgrade.ITEM, true)) {
 			return (IInventory)getTileWithUpdate();
 		}
 		
@@ -176,7 +180,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	private ISidedInventory getSidedInventory() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE, false)) {
 			return (ISidedInventory)getTileWithUpdate();
 		}
 		
@@ -184,7 +188,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	private IFluidHandler getFluidHandler() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID, true)) {
 			return (IFluidHandler)getTileWithUpdate();
 		}
 		
@@ -192,7 +196,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	private IPowerReceptor getBCPowerReceptor() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ, true)) {
 			return (IPowerReceptor)getTileWithUpdate();
 		}
 		
@@ -200,7 +204,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	private IPowerEmitter getBCPowerEmitter() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ, false)) {
 			return (IPowerEmitter)getTileWithUpdate();
 		}
 		
@@ -208,7 +212,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}	
 	
 	private IEnergyHandler getRFHandler() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF, true)) {
 			return (IEnergyHandler)getTileWithUpdate();
 		}
 		
@@ -216,23 +220,23 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	private IEnergyStorage getRFSource() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF)) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF, true)) {
 			return (IEnergyStorage)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
-	private IEnergySource getEUSource() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU)) {
+	private IEnergySource getEUSource(boolean check) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU, check)) {
 			return (IEnergySource)getTileWithUpdate();
 		}
 		
 		return null;
 	}
 	
-	private IEnergySink getEUSink() {
-		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU)) {
+	private IEnergySink getEUSink(boolean check) {
+		if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU, check)) {
 			return (IEnergySink)getTileWithUpdate();
 		}
 		
@@ -376,7 +380,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 
     @Override
     public boolean isValid() {
-        return coords != null && hasUpgrade(Upgrade.AE) && inRange();
+        return coords != null && hasUpgrade(Upgrade.AE, false) && canConnect();
     }
 
     @Override
@@ -384,7 +388,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 
     @Override
     public boolean isPowered() {
-        return coords != null && hasUpgrade(Upgrade.AE) && inRange();
+        return coords != null && hasUpgrade(Upgrade.AE, false) && canConnect();
     }
 
     @Override
@@ -452,38 +456,38 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	/* IENERGYSOURCE */
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
-		return getEUSource() != null ? getEUSource().emitsEnergyTo(receiver, direction) : false;
+		return getEUSource(false) != null ? getEUSource(false).emitsEnergyTo(receiver, direction) : false;
 	}
 
 	@Override
 	public double getOfferedEnergy() {
-		return getEUSource() != null ? getEUSource().getOfferedEnergy() : 0;
+		return getEUSource(false) != null ? getEUSource(false).getOfferedEnergy() : 0;
 	}
 
 	@Override
 	public void drawEnergy(double amount) {
-		if (getEUSource() != null) getEUSource().drawEnergy(amount);
+		if (getEUSource(true) != null) getEUSource(true).drawEnergy(amount);
 	}
 
 	/* IENERGYSINK */
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
-		return getEUSink() != null ? getEUSink().acceptsEnergyFrom(emitter, direction) : false;
+		return getEUSink(false) != null ? getEUSink(false).acceptsEnergyFrom(emitter, direction) : false;
 	}
 
 	@Override
 	public double demandedEnergyUnits() {
-		return getEUSink() != null ? getEUSink().demandedEnergyUnits() : 0;
+		return getEUSink(false) != null ? getEUSink(false).demandedEnergyUnits() : 0;
 	}
 
 	@Override
 	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
-		return getEUSink() != null ? getEUSink().injectEnergyUnits(directionFrom, amount) : 0;
+		return getEUSink(true) != null ? getEUSink(true).injectEnergyUnits(directionFrom, amount) : 0;
 	}
 
 	@Override
 	public int getMaxSafeInput() {
-		return getEUSink() != null ? getEUSink().getMaxSafeInput() : Integer.MAX_VALUE;
+		return getEUSink(false) != null ? getEUSink(false).getMaxSafeInput() : Integer.MAX_VALUE;
 	}
 
     /* IGRIDTELEPORT */

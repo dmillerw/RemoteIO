@@ -7,6 +7,7 @@ import com.dmillerw.remoteIO.item.ItemUpgrade;
 import com.dmillerw.remoteIO.lib.DimensionalCoords;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
@@ -14,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+
+import java.util.EnumSet;
 
 /**
  * Created by Dylan Miller on 1/13/14
@@ -58,10 +61,47 @@ public abstract class TileIOCore extends TileCore {
     /* CLIENT FLAGS */
     public boolean lastClientState;
 
+    /* WARNINGS */
+    public boolean warningsChanged = true;
+
+    public EnumSet<Warning> activeWarnings = EnumSet.noneOf(Warning.class);
+
+    public void resetWarnings() {
+        activeWarnings.clear();
+        warningsChanged = true;
+    }
+
+    public void addWarning(Warning warning) {
+        activeWarnings.add(warning);
+        warningsChanged = true;
+    }
+
+    public void calculateWarnings() {
+        resetWarnings();
+
+        if (connectionPosition() == null) {
+            addWarning(Warning.NO_CONNECTION);
+        } else {
+            if (!connectionExists()) {
+                addWarning(Warning.OUT_OF_RANGE);
+            } else if (!objectExists()) {
+                addWarning(Warning.NO_OBJECT);
+            }
+        }
+
+        if (!hasFuel()) {
+            addWarning(Warning.NO_FUEL);
+        }
+    }
+
     /** Should be run whenever an aspect of this block changes.
      *  By default just sends a visual update to the client */
     public void update() {
-        boolean isConnected = getLinkedObject() != null && !redstoneState;
+        if (worldObj.isRemote) {
+            return;
+        }
+
+        boolean isConnected = objectExists() && !redstoneState;
         if (isConnected != lastClientState) {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setBoolean("state", isConnected);
@@ -90,16 +130,40 @@ public abstract class TileIOCore extends TileCore {
      *  Calling this should never initiate an update, but all interaction should stem from the object returned here */
     public abstract Object getLinkedObject();
 
-    public boolean hasUpgrade(ItemUpgrade.Upgrade upgrade) {
-        return InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || !requiresUpgrades;
+    public boolean hasUpgrade(ItemUpgrade.Upgrade upgrade, boolean warn) {
+        if (InventoryHelper.inventoryContains(upgrades, upgrade.toItemStack(), false) || !requiresUpgrades) {
+            return true;
+        } else {
+            if (warn) {
+                addWarning(Warning.MISSING_UPGRADE);
+            }
+            return false;
+        }
     }
 
-    protected boolean inRange() {
+    protected boolean connectionExists() {
         if (connectionPosition() == null) {
             return false;
         }
 
-        if ((requiresPower && fuelPerTick > 0) && !fuelHandler.consumeFuel(fuelPerTick, true)) {
+        if (connectionPosition().inWorld(this.worldObj)) {
+            DimensionalCoords coords = DimensionalCoords.create(this);
+            return (requiresUpgrades && coords.withinRange(connectionPosition(), getMaxRange())) || unlimitedRange;
+        } else {
+            return (requiresUpgrades && !hasUpgrade(ItemUpgrade.Upgrade.CROSS_DIMENSIONAL, true)) || unlimitedRange;
+        }
+    }
+
+    protected boolean objectExists() {
+        return connectionExists() && getLinkedObject() != null;
+    }
+
+    protected boolean canConnect() {
+        if (!objectExists()) {
+            return false;
+        }
+
+        if (!hasFuel()) {
             return false;
         }
 
@@ -107,15 +171,18 @@ public abstract class TileIOCore extends TileCore {
             return false;
         }
 
-        if (connectionPosition().inWorld(this.worldObj)) {
-            DimensionalCoords coords = DimensionalCoords.create(this);
-            return (requiresUpgrades && coords.getRangeTo(connectionPosition()) <= getMaxRange()) || unlimitedRange;
-        } else {
-            return requiresUpgrades && hasUpgrade(ItemUpgrade.Upgrade.CROSS_DIMENSIONAL);
-        }
+        return true;
     }
 
-    private int getMaxRange() {
+    protected boolean hasFuel() {
+        if ((requiresPower && fuelPerTick > 0) && !fuelHandler.consumeFuel(fuelPerTick, true)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int getMaxRange() {
         int maxRange = RemoteIO.instance.defaultRange;
         ItemUpgrade.Upgrade[] rangeUpgrades = new ItemUpgrade.Upgrade[] {ItemUpgrade.Upgrade.RANGE_T1, ItemUpgrade.Upgrade.RANGE_T2, ItemUpgrade.Upgrade.RANGE_T3, ItemUpgrade.Upgrade.RANGE_WITHER};
 
@@ -137,6 +204,8 @@ public abstract class TileIOCore extends TileCore {
     public void updateEntity() {
         if (!worldObj.isRemote) {
             if (firstLoad) {
+                System.out.println("First load update!");
+
                 onNeighborBlockUpdate();
                 firstLoad = false;
             }
@@ -202,7 +271,7 @@ public abstract class TileIOCore extends TileCore {
 
     @Override
     public void onNeighborBlockUpdate() {
-        redstoneState = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord) && hasUpgrade(ItemUpgrade.Upgrade.REDSTONE);
+        redstoneState = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord) && hasUpgrade(ItemUpgrade.Upgrade.REDSTONE, true);
         update();
     }
 
@@ -261,6 +330,22 @@ public abstract class TileIOCore extends TileCore {
 
         if (nbt.hasKey("redstone")) {
             redstoneState = nbt.getBoolean("redstone");
+        }
+    }
+
+    public static enum Warning {
+        NO_CONNECTION,
+        NO_OBJECT,
+        NO_FUEL,
+        OUT_OF_RANGE,
+        MISSING_UPGRADE;
+
+        public String getDescription() {
+            return I18n.getString("warning." + this.toString().toLowerCase() + ".desc");
+        }
+
+        public String getTooltip() {
+            return I18n.getString("warning." + this.toString().toLowerCase() + ".tooltip");
         }
     }
 

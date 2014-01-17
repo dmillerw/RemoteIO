@@ -13,7 +13,6 @@ import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
-import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.BlockState;
 import com.dmillerw.remoteIO.core.tracker.BlockTracker.ITrackerCallback;
@@ -38,8 +37,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
-import java.util.Random;
 
 public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IPowerReceptor, IPowerEmitter, IEnergyHandler, IEnergyStorage, IEnergySource, IEnergySink, IGridTileEntity, IGridTeleport{
 
@@ -96,41 +93,17 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
             return null;
         }
 
-        if (coords == null) {
+        if (!connectionExists()) {
             return null;
         }
 
-        if (insertionSide == ForgeDirection.UNKNOWN) {
-            return null;
-        }
-
-        if (!inRange()) {
-            return null;
-        }
-
-        return coords.getTileEntity();
+        World world = getLinkedWorld();
+        return world != null ? world.getBlockTileEntity(coords.x, coords.y, coords.z) : null;
     }
 
     @Override
-    protected boolean inRange() {
-        if (connectionPosition() == null) {
-            return false;
-        }
-
-        if ((requiresPower && fuelPerTick > 0) && !fuelHandler.consumeFuel(fuelPerTick, true)) {
-            return false;
-        }
-
-        if (redstoneState) {
-            return false;
-        }
-
-        if (connectionPosition().inWorld(this.worldObj)) {
-            DimensionalCoords coords = DimensionalCoords.create(this);
-            return (coords.getRangeTo(connectionPosition()) <= 1) || unlimitedRange;
-        }
-
-        return false;
+    public int getMaxRange() {
+        return 1;
     }
 
     @Override
@@ -146,10 +119,6 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
             if (!addedToMENetwork) {
                 MinecraftForge.EVENT_BUS.post(new GridTileLoadEvent(this, this.worldObj, this.getLocation()));
                 addedToMENetwork = true;
-            }
-        } else {
-            if (connectionPosition() != null && worldObj.provider.dimensionId == connectionPosition().dimensionID) {
-                RemoteIO.proxy.ioPathFX(worldObj, this, coords.x + 0.5, coords.y + 0.5, coords.z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
             }
         }
     }
@@ -190,7 +159,13 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     public TileEntity getTileEntity() {
-        return (TileEntity) getLinkedObject();
+        Object obj = getLinkedObject();
+
+        if (!canConnect()) {
+            return null;
+        }
+
+        return (TileEntity) obj;
     }
 
     public TileEntity getTileWithUpdate() {
@@ -200,7 +175,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
 
     /* INTERACTION HANDLING */
     private IInventory getInventory() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IInventory && hasUpgrade(Upgrade.ITEM)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IInventory && hasUpgrade(Upgrade.ITEM, false)) {
             return (IInventory)getTileWithUpdate();
         }
 
@@ -208,7 +183,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private ISidedInventory getSidedInventory() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof ISidedInventory && hasUpgrade(Upgrade.ISIDED_AWARE, false)) {
             return (ISidedInventory)getTileWithUpdate();
         }
 
@@ -216,7 +191,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IFluidHandler getFluidHandler() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IFluidHandler && hasUpgrade(Upgrade.FLUID, false)) {
             return (IFluidHandler)getTileWithUpdate();
         }
 
@@ -224,7 +199,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IPowerReceptor getBCPowerReceptor() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerReceptor && hasUpgrade(Upgrade.POWER_MJ, false)) {
             return (IPowerReceptor)getTileWithUpdate();
         }
 
@@ -232,7 +207,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IPowerEmitter getBCPowerEmitter() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IPowerEmitter && hasUpgrade(Upgrade.POWER_MJ, false)) {
             return (IPowerEmitter)getTileWithUpdate();
         }
 
@@ -240,7 +215,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IEnergyHandler getRFHandler() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyHandler && hasUpgrade(Upgrade.POWER_RF, false)) {
             return (IEnergyHandler)getTileWithUpdate();
         }
 
@@ -248,7 +223,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IEnergyStorage getRFSource() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergyStorage && hasUpgrade(Upgrade.POWER_RF, false)) {
             return (IEnergyStorage)getTileWithUpdate();
         }
 
@@ -256,7 +231,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IEnergySource getEUSource() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySource && hasUpgrade(Upgrade.POWER_EU, false)) {
             return (IEnergySource)getTileWithUpdate();
         }
 
@@ -264,7 +239,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     }
 
     private IEnergySink getEUSink() {
-        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU)) {
+        if (getTileWithUpdate() != null && getTileWithUpdate() instanceof IEnergySink && hasUpgrade(Upgrade.POWER_EU, false)) {
             return (IEnergySink)getTileWithUpdate();
         }
 
@@ -334,65 +309,61 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
 
     /* ISIDEDINVENTORY */
     @Override
-    public int[] getAccessibleSlotsFromSide(int var1) {
-        int[] defaultSlots = new int[getSizeInventory()];
-        for (int i=0; i<defaultSlots.length; i++) {
-            defaultSlots[i] = i;
-        }
-        return getSidedInventory() != null ? getSidedInventory().getAccessibleSlotsFromSide(var1) : defaultSlots;
+    public int[] getAccessibleSlotsFromSide(int side) {
+        return getSidedInventory() != null ? getSidedInventory().getAccessibleSlotsFromSide(insertionSide.ordinal()) : new int[0];
     }
 
     @Override
     public boolean canInsertItem(int i, ItemStack itemstack, int j) {
-        return getSidedInventory() != null ? getSidedInventory().canInsertItem(i, itemstack, j) : true;
+        return getSidedInventory() != null ? getSidedInventory().canInsertItem(insertionSide.ordinal(), itemstack, j) : true;
     }
 
     @Override
     public boolean canExtractItem(int i, ItemStack itemstack, int j) {
-        return getSidedInventory() != null ? getSidedInventory().canExtractItem(i, itemstack, j) : true;
+        return getSidedInventory() != null ? getSidedInventory().canExtractItem(insertionSide.ordinal(), itemstack, j) : true;
     }
 
     /* IFLUIDHANDLER */
     @Override
     public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-        return getFluidHandler() != null ? getFluidHandler().fill(from, resource, doFill) : 0;
+        return getFluidHandler() != null ? getFluidHandler().fill(insertionSide, resource, doFill) : 0;
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-        return getFluidHandler() != null ? getFluidHandler().drain(from, resource, doDrain) : null;
+        return getFluidHandler() != null ? getFluidHandler().drain(insertionSide, resource, doDrain) : null;
     }
 
     @Override
     public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-        return getFluidHandler() != null ? getFluidHandler().drain(from, maxDrain, doDrain) : null;
+        return getFluidHandler() != null ? getFluidHandler().drain(insertionSide, maxDrain, doDrain) : null;
     }
 
     @Override
     public boolean canFill(ForgeDirection from, Fluid fluid) {
-        return getFluidHandler() != null ? getFluidHandler().canFill(from, fluid) : false;
+        return getFluidHandler() != null ? getFluidHandler().canFill(insertionSide, fluid) : false;
     }
 
     @Override
     public boolean canDrain(ForgeDirection from, Fluid fluid) {
-        return getFluidHandler() != null ? getFluidHandler().canDrain(from, fluid) : false;
+        return getFluidHandler() != null ? getFluidHandler().canDrain(insertionSide, fluid) : false;
     }
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return getFluidHandler() != null ? getFluidHandler().getTankInfo(from) : new FluidTankInfo[0];
+        return getFluidHandler() != null ? getFluidHandler().getTankInfo(insertionSide) : new FluidTankInfo[0];
     }
 
     /* IPOWEREMITTER */
     @Override
     public boolean canEmitPowerFrom(ForgeDirection side) {
-        return getBCPowerEmitter() != null ? getBCPowerEmitter().canEmitPowerFrom(side) : false;
+        return getBCPowerEmitter() != null ? getBCPowerEmitter().canEmitPowerFrom(insertionSide) : false;
     }
 
     /* IPOWERRECEPTOR */
     @Override
     public PowerReceiver getPowerReceiver(ForgeDirection side) {
-        return getBCPowerReceptor() != null ? getBCPowerReceptor().getPowerReceiver(side) : null;
+        return getBCPowerReceptor() != null ? getBCPowerReceptor().getPowerReceiver(insertionSide) : null;
     }
 
     @Override
@@ -408,7 +379,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
 
     @Override
     public boolean isValid() {
-        return coords != null && hasUpgrade(Upgrade.AE) && inRange();
+        return coords != null && hasUpgrade(Upgrade.AE, false) && canConnect();
     }
 
     @Override
@@ -416,7 +387,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
 
     @Override
     public boolean isPowered() {
-        return coords != null && hasUpgrade(Upgrade.AE) && inRange();
+        return coords != null && hasUpgrade(Upgrade.AE, false) && canConnect();
     }
 
     @Override
@@ -437,27 +408,27 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     /* IENERGYHANDLER */
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return getRFHandler() != null ? getRFHandler().receiveEnergy(from, maxReceive, simulate) : 0;
+        return getRFHandler() != null ? getRFHandler().receiveEnergy(insertionSide, maxReceive, simulate) : 0;
     }
 
     @Override
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        return getRFHandler() != null ? getRFHandler().extractEnergy(from, maxExtract, simulate) : 0;
+        return getRFHandler() != null ? getRFHandler().extractEnergy(insertionSide, maxExtract, simulate) : 0;
     }
 
     @Override
     public boolean canInterface(ForgeDirection from) {
-        return getRFHandler() != null ? getRFHandler().canInterface(from) : false;
+        return getRFHandler() != null ? getRFHandler().canInterface(insertionSide) : false;
     }
 
     @Override
     public int getEnergyStored(ForgeDirection from) {
-        return getRFHandler() != null ? getRFHandler().getEnergyStored(from) : 0;
+        return getRFHandler() != null ? getRFHandler().getEnergyStored(insertionSide) : 0;
     }
 
     @Override
     public int getMaxEnergyStored(ForgeDirection from) {
-        return getRFHandler() != null ? getRFHandler().getMaxEnergyStored(from) : 0;
+        return getRFHandler() != null ? getRFHandler().getMaxEnergyStored(insertionSide) : 0;
     }
 
     /* IENERGYSTORAGE */
@@ -484,7 +455,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     /* IENERGYSOURCE */
     @Override
     public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
-        return getEUSource() != null ? getEUSource().emitsEnergyTo(receiver, direction) : false;
+        return getEUSource() != null ? getEUSource().emitsEnergyTo(receiver, insertionSide) : false;
     }
 
     @Override
@@ -500,7 +471,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
     /* IENERGYSINK */
     @Override
     public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
-        return getEUSink() != null ? getEUSink().acceptsEnergyFrom(emitter, direction) : false;
+        return getEUSink() != null ? getEUSink().acceptsEnergyFrom(emitter, insertionSide) : false;
     }
 
     @Override
@@ -510,7 +481,7 @@ public class TileSideProxy extends TileIOCore implements ITrackerCallback, IInve
 
     @Override
     public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
-        return getEUSink() != null ? getEUSink().injectEnergyUnits(directionFrom, amount) : 0;
+        return getEUSink() != null ? getEUSink().injectEnergyUnits(insertionSide, amount) : 0;
     }
 
     @Override

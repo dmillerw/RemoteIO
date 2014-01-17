@@ -69,7 +69,7 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
             return null;
         }
 
-        if (!inRange()) {
+        if (!canConnect()) {
             return null;
         }
 
@@ -111,7 +111,7 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
     }
 
     private ITurtleAccess getTurtle(ItemUpgrade.Upgrade upgrade) {
-        if (!hasUpgrade(upgrade)) {
+        if (!hasUpgrade(upgrade, false)) {
             return null;
         }
 
@@ -124,7 +124,7 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
     }
 
     private ITurtleAccess getTurtleWithUpdate(ItemUpgrade.Upgrade upgrade) {
-        if (!hasUpgrade(upgrade)) {
+        if (!hasUpgrade(upgrade, false)) {
             return null;
         }
 
@@ -138,7 +138,7 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
             return null;
         }
         
-        if (!inRange()) {
+        if (!canConnect()) {
             return null;
         }
 

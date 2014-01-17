@@ -58,7 +58,7 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IEner
         if (owner != null && !(owner.isEmpty()) && server != null) {
             EntityPlayerMP player = server.getConfigurationManager().getPlayerForUsername(owner);
             if (player != null) {
-                if (inRange()) {
+                if (canConnect()) {
                     return (ItemTransmitter.hasSelfRemote(player) || remoteRequired) ? player.inventory : null;
                 }
             }
@@ -80,11 +80,11 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IEner
     }
 
 	private InventoryPlayer getInventory() {
-		return (InventoryPlayer) getInventory();
+		return (InventoryPlayer) getLinkedObject();
 	}
 
     private InventoryPlayer getInventory(Upgrade upgrade) {
-        return hasUpgrade(upgrade) ? getInventoryAndUpdate() : null;
+        return hasUpgrade(upgrade, false) ? getInventoryAndUpdate() : null;
     }
 
 	private InventoryPlayer getInventoryAndUpdate() {

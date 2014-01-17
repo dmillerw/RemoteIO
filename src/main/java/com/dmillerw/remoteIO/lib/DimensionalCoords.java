@@ -53,12 +53,12 @@ public class DimensionalCoords {
         this.z = z;
     }
 
-    public int getRangeTo(DimensionalCoords coords) {
-        int xRange = (int)Math.abs(this.x - coords.x);
-        int yRange = (int)Math.abs(this.y - coords.y);
-        int zRange = (int)Math.abs(this.z - coords.z);
+    public boolean withinRange(DimensionalCoords coords, int range) {
+        int xRange = Math.abs(this.x - coords.x);
+        int yRange = Math.abs(this.y - coords.y);
+        int zRange = Math.abs(this.z - coords.z);
 
-        return Math.max(xRange, Math.max(yRange, zRange));
+        return (xRange <= range && yRange <= range && zRange <= range);
     }
 
     /* WORLD WRAPPERS */

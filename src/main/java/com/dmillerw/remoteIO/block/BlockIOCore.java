@@ -45,7 +45,7 @@ public abstract class BlockIOCore extends BlockContainer {
         ItemStack stack = new ItemStack(this.blockID, 1, 0);
         TileIOCore logic = (TileIOCore) world.getBlockTileEntity(x, y, z);
 
-        if (logic.hasUpgrade(Upgrade.LOCK)) {
+        if (logic.hasUpgrade(Upgrade.LOCK, true)) {
             if (logic != null) {
                 if (stack.getTagCompound() == null) {
                     stack.setTagCompound(new NBTTagCompound());
@@ -131,7 +131,7 @@ public abstract class BlockIOCore extends BlockContainer {
         if (tile != null) {
             tile.onBlockBreak();
 
-            if (!tile.hasUpgrade(Upgrade.LOCK)) {
+            if (!tile.hasUpgrade(Upgrade.LOCK, true)) {
                 this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this.blockID, 1, meta));
                 for (ItemStack stack : InventoryHelper.getContents(tile.upgrades)) {
                     if (stack != null) this.dropBlockAsItem_do(world, x, y, z, stack);
@@ -154,7 +154,7 @@ public abstract class BlockIOCore extends BlockContainer {
             block = Block.blocksList[camo.itemID];
         }
 
-        if (block != null && block.renderAsNormalBlock() && tile.hasUpgrade(Upgrade.CAMO)) {
+        if (block != null && block.renderAsNormalBlock() && tile.hasUpgrade(Upgrade.CAMO, false)) {
             return block.getIcon(side, camo.getItemDamage());
         } else {
             if (tile != null && tile.lastClientState) {

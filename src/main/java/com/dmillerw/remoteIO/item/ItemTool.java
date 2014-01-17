@@ -1,6 +1,7 @@
 package com.dmillerw.remoteIO.item;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
+import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.ChatHelper;
@@ -49,7 +50,7 @@ public class ItemTool extends Item {
 			int meta = world.getBlockMetadata(x, y, z);
 			
 			if (id == BlockHandler.blockIOID) {
-				TileSideProxy tile = (TileSideProxy) world.getBlockTileEntity(x, y, z);
+				TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {

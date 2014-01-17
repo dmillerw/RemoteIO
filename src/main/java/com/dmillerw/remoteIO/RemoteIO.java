@@ -130,11 +130,13 @@ public class RemoteIO {
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
 		NetworkRegistry.instance().registerConnectionHandler(new ConnectionHandler());
+
         TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
 
         GameRegistry.registerCraftingHandler(new CraftingHandler());
 
 		MinecraftForge.EVENT_BUS.register(new ForgeEventHandler());
+        MinecraftForge.EVENT_BUS.register(IconHandler.INSTANCE);
 		
 		proxy.preInit(event);
 	}
