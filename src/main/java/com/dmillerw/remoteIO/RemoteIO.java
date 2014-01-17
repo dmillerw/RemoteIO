@@ -62,7 +62,7 @@ public class RemoteIO {
 		File newConfig = new File(configDir, "RemoteIO.cfg");
 		
 		if (event.getSuggestedConfigurationFile().exists() && !newConfig.exists()) {
-			IOLogger.info("Detected old config file, Attempting to autmatically migrate");
+			IOLogger.info("Detected old config file, Attempting to automatically migrate");
 			
 			if (!newConfig.exists()) {
 				try {

@@ -166,7 +166,7 @@ public abstract class TileIOCore extends TileCore {
             }
 
             /* Consume fuel */
-            if (requiresPower && fuelPerTick > 0 && worldObj.getTotalWorldTime() % 20 == 0) {
+            if (requiresPower && fuelPerTick > 0 && lastClientState && worldObj.getTotalWorldTime() % 20 == 0) {
                 this.fuelHandler.consumeFuel(fuelPerTick);
             }
         }
