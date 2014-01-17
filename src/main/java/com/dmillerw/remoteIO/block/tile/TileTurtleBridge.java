@@ -33,10 +33,10 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
         
         if (this.turtleID >= 0 && !lastClientState) {
             lastClientState = true;
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            update();
         } else if (this.turtleID == -1 && lastClientState) {
             lastClientState = false;
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            update();
         }
     }
 
