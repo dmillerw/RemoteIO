@@ -2,8 +2,7 @@ package com.dmillerw.remoteIO;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.TileIOCore;
-import com.dmillerw.remoteIO.core.handler.ForgeEventHandler;
-import com.dmillerw.remoteIO.core.handler.GuiHandler;
+import com.dmillerw.remoteIO.core.handler.*;
 import com.dmillerw.remoteIO.core.helper.EnergyHelper;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.core.helper.LocalizationHelper;
@@ -23,6 +22,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import dan200.turtle.api.TurtleAPI;
@@ -36,8 +36,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-@Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION, dependencies="after:EnderStorage")
-@NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false)
+@Mod(modid=ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
+@NetworkMod(channels={ModInfo.ID}, serverSideRequired=true, clientSideRequired=false, packetHandler= PacketHandler.class)
 public class RemoteIO {
 
 	@Instance(ModInfo.ID)
@@ -54,7 +54,9 @@ public class RemoteIO {
 	public int rangeUpgradeT2Boost = 16;
 	public int rangeUpgradeT3Boost = 64;
 	public int rangeUpgradeWitherBoost = 1024;
-	
+
+    public boolean witherNeedsDragonEgg = true;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		configDir = new File(event.getModConfigurationDirectory(), "RemoteIO");
@@ -96,6 +98,8 @@ public class RemoteIO {
 		rangeUpgradeT3Boost = config.get("general", "rangeUpgradeT3Boost", 64, "How much a T3 range upgrade boosts the range by").getInt(64);
 		rangeUpgradeWitherBoost = config.get("general", "rangeUpgradeWitherBoost", 1024, "How much a wither range upgrade boosts the range by").getInt(1024);
 
+        witherNeedsDragonEgg = config.get("general", "witherUpgradeRequiresEgg", true, "Whether the Uber Range Upgrade needs a dragon egg. If disabled, simply uses two nether stars").getBoolean(true);
+
         TileIOCore.fuelPerStack = config.get("power.io", "fuelPerStack", 3600, "How much fuel the defined fuel item will add").getInt(72000);
         TileIOCore.fuelPerTick = config.get("power.io", "fuelPerTick", 1, "How much fuel should be consumed every second").getInt(1);
         int stackID = config.get("power.io", "fuel_itemID", Item.enderPearl.itemID, "Item ID for the fuel item").getInt(Item.enderPearl.itemID);
@@ -125,8 +129,11 @@ public class RemoteIO {
 		}
 		
 		NetworkRegistry.instance().registerGuiHandler(RemoteIO.instance, new GuiHandler());
-		TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
-		
+		NetworkRegistry.instance().registerConnectionHandler(new ConnectionHandler());
+        TickRegistry.registerTickHandler(BlockTracker.getInstance(), Side.SERVER);
+
+        GameRegistry.registerCraftingHandler(new CraftingHandler());
+
 		MinecraftForge.EVENT_BUS.register(new ForgeEventHandler());
 		
 		proxy.preInit(event);

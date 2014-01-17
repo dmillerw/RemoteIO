@@ -10,6 +10,7 @@ import com.dmillerw.remoteIO.core.helper.RecipeHelper;
 import com.dmillerw.remoteIO.core.helper.StackHelper;
 import com.dmillerw.remoteIO.item.ItemHandler;
 import com.dmillerw.remoteIO.item.ItemUpgrade.Upgrade;
+import com.dmillerw.remoteIO.lib.ItemStackReference;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -22,6 +23,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CommonProxy implements ISidedProxy {
 
@@ -79,17 +83,30 @@ public class CommonProxy implements ISidedProxy {
 		// Blank Upgrade
 		RecipeHelper.addOreRecipe(StackHelper.resize(Upgrade.BLANK.toItemStack(), 16), "GCG", "IRI", "IRI", 'G', Item.goldNugget, 'I', Item.ingotIron, 'C', "dyeGreen", 'R', Item.redstone);
 	
-		for (Upgrade upgrade : Upgrade.values()) {
-			if (upgrade.enabled) {
-                if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 1) {
-                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', upgrade.recipeComponents[0], 'U', Upgrade.BLANK.toItemStack());
-                } else if (upgrade.recipeComponents != null && upgrade.recipeComponents.length == 2) {
-                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
-                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', upgrade.recipeComponents[0], 'D', upgrade.recipeComponents[1], 'U', Upgrade.BLANK.toItemStack());
+        /* NORMAL UPGRADE RECIPES */
+
+        Map<Upgrade, ItemStack[]> upgradeRecipes = new HashMap<Upgrade, ItemStack[]>();
+        upgradeRecipes.put(Upgrade.ITEM,         new ItemStack[] {new ItemStack(Block.chest)});
+        upgradeRecipes.put(Upgrade.FLUID,        new ItemStack[] {new ItemStack(Item.bucketEmpty)});
+        upgradeRecipes.put(Upgrade.ISIDED_AWARE, new ItemStack[] {new ItemStack(Block.hopperBlock)});
+        upgradeRecipes.put(Upgrade.REDSTONE,     new ItemStack[] {new ItemStack(Item.redstone)});
+        upgradeRecipes.put(Upgrade.CAMO,         new ItemStack[] {ItemStackReference.COMPONENT_CAMO});
+        upgradeRecipes.put(Upgrade.LOCK,         new ItemStack[] {ItemStackReference.COMPONENT_LOCK});
+
+        for (Upgrade upgrade : Upgrade.values()) {
+            if (upgrade.enabled) {
+                ItemStack[] components = upgradeRecipes.get(upgrade);
+                if (components != null && components.length == 1) {
+                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "C", 'C', components[0], 'U', Upgrade.BLANK.toItemStack());
+                } else if (components != null && components.length == 2) {
+                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "C", "U", "D", 'C', components[0], 'D', components[1], 'U', Upgrade.BLANK.toItemStack());
+                    RecipeHelper.addOreRecipe(upgrade.toItemStack(), "D", "U", "C", 'C', components[0], 'D', components[1], 'U', Upgrade.BLANK.toItemStack());
                 }
             }
-		}
-		
+        }
+
+        /* END */
+
 		/* RANGE UPGRADE RECIPES */
 		// T2
 		RecipeHelper.addOreRecipe(Upgrade.RANGE_T2.toItemStack(), "GRG", "RUR", "GRG", 'G', Item.glowstone, 'R', Item.redstone, 'U', Upgrade.RANGE_T1.toItemStack());
@@ -100,7 +117,7 @@ public class CommonProxy implements ISidedProxy {
 		RecipeHelper.addOreRecipe(Upgrade.RANGE_T3.toItemStack(), "RGR", "GUG", "RGR", 'G', Item.glowstone, 'R', Item.netherQuartz, 'U', Upgrade.RANGE_T2.toItemStack());
 		
 		// WITHER
-		RecipeHelper.addOreRecipe(Upgrade.RANGE_WITHER.toItemStack(), "E", "U", "S", 'E', Block.dragonEgg, 'U', Upgrade.RANGE_T3.toItemStack(), 'S', Item.netherStar);
+		RecipeHelper.addOreRecipe(Upgrade.RANGE_WITHER.toItemStack(), "E", "U", "S", 'E', RemoteIO.instance.witherNeedsDragonEgg ? Block.dragonEgg : Item.netherStar, 'U', Upgrade.RANGE_T3.toItemStack(), 'S', Item.netherStar);
 		/* END */
 		
 		// Wireless Transceiver
