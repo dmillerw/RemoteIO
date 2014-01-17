@@ -1,7 +1,7 @@
 package com.dmillerw.remoteIO.core.handler;
 
 import com.dmillerw.remoteIO.block.tile.TileIOCore;
-import com.dmillerw.remoteIO.inventory.ContainerDocumentation;
+import com.dmillerw.remoteIO.inventory.ContainerNull;
 import com.dmillerw.remoteIO.inventory.ContainerUpgrade;
 import com.dmillerw.remoteIO.inventory.gui.GuiDocumentation;
 import com.dmillerw.remoteIO.inventory.gui.GuiUpgrade;
@@ -22,7 +22,7 @@ public class GuiHandler implements IGuiHandler {
 		case 1: {
 		    return new ContainerUpgrade(player, tile, 1);
 		}
-        case 2: return new ContainerDocumentation(player);
+        case 2: return new ContainerNull();
         case 3: {
             return new ContainerUpgrade(player, tile, 2);
         }

@@ -12,8 +12,18 @@ import java.util.Map;
  */
 public class DocumentationRegistry {
 
+    public static class Documentation {
+        public final String category;
+        public final String documentation;
+
+        public Documentation(String cat, String doc) {
+            this.category = cat;
+            this.documentation = doc;
+        }
+    }
+
     private static Map<ItemStack, String> stackToKeyMapping = new HashMap<ItemStack, String>();
-    private static Map<String, String> documentation = new HashMap<String, String>();
+    private static Map<String, Documentation> documentation = new HashMap<String, Documentation>();
 
     private static boolean containsStack(ItemStack stack) {
         for (Map.Entry<ItemStack, String> entry : stackToKeyMapping.entrySet()) {
@@ -49,7 +59,7 @@ public class DocumentationRegistry {
         stackToKeyMapping.put(stack, key);
     }
 
-    public static void addDocumentation(String key, String[] docu) {
+    public static void addDocumentation(String key, String cat, String[] docu) {
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<docu.length; i++) {
             sb.append(docu[i]);
@@ -57,28 +67,28 @@ public class DocumentationRegistry {
                 sb.append("\n");
             }
         }
-        addDocumentation(key, sb.toString());
+        addDocumentation(key, cat, sb.toString());
     }
 
-    public static void addDocumentation(String key, String docu) {
+    public static void addDocumentation(String key, String cat, String docu) {
         docu = docu.replace("\n", "\n\n");
 
         if (!documentation.containsKey(key)) {
-            documentation.put(key, docu);
+            documentation.put(key, new Documentation(cat, docu));
         } else {
             throw new RuntimeException("[RemoteIO] Something tried to register documentation with the key " + key + " but that key is already registered!");
         }
     }
 
-    public static String getDocumentation(ItemStack stack) {
+    public static Documentation getDocumentation(ItemStack stack) {
         if (hasDocumentation(stack)) {
             return getDocumentation(getKeyForStack(stack));
         }
 
-        return "";
+        return null;
     }
 
-    private static String getDocumentation(String key) {
+    private static Documentation getDocumentation(String key) {
         return documentation.get(key);
     }
 
