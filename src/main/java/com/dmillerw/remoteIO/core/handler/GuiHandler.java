@@ -26,6 +26,9 @@ public class GuiHandler implements IGuiHandler {
         case 3: {
             return new ContainerUpgrade(player, tile, 2);
         }
+        case 4: {
+            return new ContainerUpgrade(player, tile, 3);
+        }
         }
 		
 		return null;
@@ -45,6 +48,9 @@ public class GuiHandler implements IGuiHandler {
         case 2: return new GuiDocumentation(player);
         case 3: {
             return new GuiUpgrade(player, tile, 2, "gui.upgrade.bridge");
+        }
+        case 4: {
+            return new GuiUpgrade(player, tile, 3, "gui.upgrade.proxy");
         }
         }
 		

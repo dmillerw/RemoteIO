@@ -1,7 +1,6 @@
 package com.dmillerw.remoteIO.item;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.block.tile.TileIO;
 import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.ChatHelper;
@@ -50,7 +49,7 @@ public class ItemTool extends Item {
 			int meta = world.getBlockMetadata(x, y, z);
 			
 			if (id == BlockHandler.blockIOID) {
-				TileIO tile = (TileIO) world.getBlockTileEntity(x, y, z);
+				TileSideProxy tile = (TileSideProxy) world.getBlockTileEntity(x, y, z);
 				
 				if (!player.isSneaking()) {
 					if (!hasCoordinates(stack)) {
@@ -80,9 +79,7 @@ public class ItemTool extends Item {
 						return false;
 					} else {
 						int[] coords = getCoordinates(stack);
-						tile.x = coords[0];
-						tile.y = coords[1];
-						tile.z = coords[2];
+                        tile.setCoordinates(coords[0], coords[1], coords[2], world.provider.dimensionId);
 						tile.insertionSide = ForgeDirection.getOrientation(coords[4]);
 						ChatHelper.info(player, "chat.link.succeed");
 						clearCoordinates(stack);
@@ -91,10 +88,8 @@ public class ItemTool extends Item {
 						return true;
 					}
 				} else {
-					if (tile.fullyValid()) {
-						tile.x = 0;
-						tile.y = -1;
-						tile.z = 0;
+					if (tile.connectionPosition() != null) {
+                        tile.setCoordinates(0, 0, 0, 0);
 						tile.insertionSide = ForgeDirection.UNKNOWN;
 						ChatHelper.info(player, "chat.clear.proxy");
 						world.notifyBlocksOfNeighborChange(x, y, z, BlockHandler.blockIOID);

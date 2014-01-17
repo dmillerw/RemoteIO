@@ -28,7 +28,7 @@ public class CommonProxy implements ISidedProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		if (BlockHandler.blockIOID != 0) {
-			GameRegistry.registerTileEntity(TileIO.class, "blockIO");
+			GameRegistry.registerTileEntity(TileSideProxy.class, "blockIO");
 		}
 		
 		if (BlockHandler.blockMachineID != 0) {

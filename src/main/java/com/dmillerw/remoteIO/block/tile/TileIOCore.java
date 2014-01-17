@@ -47,8 +47,8 @@ public abstract class TileIOCore extends TileCore {
     public FuelHandler fuelHandler = new FuelHandler(-1);
 
     /* NBT FLAGS */
-    private boolean unlimitedRange = false;
-    private boolean requiresUpgrades = true;
+    protected boolean unlimitedRange = false;
+    protected boolean requiresUpgrades = true;
     public boolean requiresPower = true;
 
     /* COMMON FLAGS */

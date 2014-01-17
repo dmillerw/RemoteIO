@@ -1,6 +1,6 @@
 package com.dmillerw.remoteIO.block;
 
-import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.block.tile.TileIOCore;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import cpw.mods.fml.relauncher.Side;
@@ -18,7 +18,7 @@ public class BlockIO extends BlockIOCore {
 
     @Override
     public TileIOCore getTile() {
-        return new TileIO();
+        return new TileSideProxy();
     }
 
     @Override

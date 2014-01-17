@@ -53,7 +53,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {
 		if (connectionPosition() != null) {
-			if (tracked.state == BlockState.REMOVED && !hasUpgrade(Upgrade.LINK_PERSIST)) {
+			if (tracked.state == BlockState.REMOVED) {
                 update();
 			}
 		} else {

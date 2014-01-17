@@ -1,7 +1,7 @@
 package com.dmillerw.remoteIO.item;
 
 import com.dmillerw.remoteIO.block.BlockHandler;
-import com.dmillerw.remoteIO.block.tile.TileIO;
+import com.dmillerw.remoteIO.block.tile.TileSideProxy;
 import com.dmillerw.remoteIO.block.tile.TileRemoteInventory;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.core.helper.ChatHelper;
@@ -46,8 +46,8 @@ public class ItemTransmitter extends Item {
             TileEntity tile = world.getBlockTileEntity(x, y, z);
 
             if (tile != null) {
-                if (tile instanceof TileIO) {
-                    if (((TileIO)tile).connectionPosition() != null) {
+                if (tile instanceof TileSideProxy) {
+                    if (((TileSideProxy)tile).connectionPosition() != null) {
                         //TODO ((TileIO)tile).getLinkedBlock().onBlockActivated(((TileIO)tile).getLinkedWorld(), ((TileIO)tile).x, ((TileIO)tile).y, ((TileIO)tile).z, player, side, fx, fy, fz);
                         return true;
                     }

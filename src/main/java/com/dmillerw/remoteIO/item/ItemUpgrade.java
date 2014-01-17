@@ -77,7 +77,8 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
 			        true,
 			        true,
-			        true
+			        true,
+                    true
 			}
 		), 
 				
@@ -87,7 +88,8 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     false,
-                    false
+                    false,
+                    true
             }
 		), 
 				
@@ -97,7 +99,8 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     false,
-                    false
+                    false,
+                    true
             }
 		), 
 				
@@ -107,7 +110,8 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     true,
-                    true
+                    true,
+                    false
             }
 		), 
 				
@@ -117,7 +121,8 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     true,
-                    true
+                    true,
+                    false
             }
 		), 
 				
@@ -127,6 +132,7 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     false,
+                    false,
                     false
             }
 		), 
@@ -135,6 +141,7 @@ public class ItemUpgrade extends Item {
 			"redstone",
 			new ItemStack[] {new ItemStack(Item.redstone)},
 			new boolean[] {
+                    true,
                     true,
                     true,
                     true
@@ -147,6 +154,7 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     true,
                     true,
+                    true,
                     true
             }
 		), 
@@ -155,6 +163,7 @@ public class ItemUpgrade extends Item {
 			"lock",
 			new ItemStack[] {ItemStackReference.COMPONENT_LOCK, new ItemStack(Block.chest)},
 			new boolean[] {
+                    true,
                     true,
                     true,
                     true
@@ -167,6 +176,7 @@ public class ItemUpgrade extends Item {
 	        new boolean[] {
                     true,
                     true,
+                    true,
                     true
             }
 		), 
@@ -175,6 +185,7 @@ public class ItemUpgrade extends Item {
 			"powerEU",
 			new ItemStack[0],
 	        new boolean[] {
+                    true,
                     true,
                     true,
                     true
@@ -187,6 +198,7 @@ public class ItemUpgrade extends Item {
 			new boolean[] {
                     false,
                     false,
+                    false,
                     false
             }
 		),
@@ -195,6 +207,7 @@ public class ItemUpgrade extends Item {
 			"persist",
 			null,
 			new boolean[] {
+                    false,
                     false,
                     false,
                     false
@@ -207,7 +220,8 @@ public class ItemUpgrade extends Item {
 	        new boolean[] {
                     true,
                     true,
-                    true
+                    true,
+                    false
             }
 		),
 		
@@ -217,7 +231,8 @@ public class ItemUpgrade extends Item {
 	        new boolean[] {
                     true,
                     true,
-                    true
+                    true,
+                    false
             }
 		),
 		
@@ -227,7 +242,8 @@ public class ItemUpgrade extends Item {
 	        new boolean[] {
                     true,
                     true,
-                    true
+                    true,
+                    false
             }
 		),
 
@@ -237,7 +253,8 @@ public class ItemUpgrade extends Item {
             new boolean[] {
                     true,
                     false,
-                    false
+                    false,
+                    true
             }
         );
 		
