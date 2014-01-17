@@ -68,6 +68,8 @@ public abstract class TileIOCore extends TileCore {
             tag.setBoolean("redstone", redstoneState);
             sendClientUpdate(tag);
 
+            System.out.println("Updating client");
+
             lastClientState = isConnected;
         }
     }
@@ -86,7 +88,8 @@ public abstract class TileIOCore extends TileCore {
         }
     }
 
-    /** Returns the actual object this block is connected to. Only used to verify connection status */
+    /** Returns the actual object this block is connected to. Only used to verify connection status.
+     *  Calling this should never initiate an update, but all interaction should stem from the object returned here */
     public abstract Object getLinkedObject();
 
     public boolean hasUpgrade(ItemUpgrade.Upgrade upgrade) {
@@ -98,7 +101,7 @@ public abstract class TileIOCore extends TileCore {
             return false;
         }
 
-        if (requiresPower && !fuelHandler.consumeFuel(fuelPerTick)) {
+        if ((requiresPower && fuelPerTick > 0) && !fuelHandler.consumeFuel(fuelPerTick, true)) {
             return false;
         }
 
@@ -110,7 +113,7 @@ public abstract class TileIOCore extends TileCore {
             DimensionalCoords coords = DimensionalCoords.create(this);
             return (requiresUpgrades && coords.getRangeTo(connectionPosition()) <= getMaxRange()) || unlimitedRange;
         } else {
-            return requiresUpgrades || hasUpgrade(ItemUpgrade.Upgrade.CROSS_DIMENSIONAL);
+            return requiresUpgrades && hasUpgrade(ItemUpgrade.Upgrade.CROSS_DIMENSIONAL);
         }
     }
 
@@ -136,7 +139,6 @@ public abstract class TileIOCore extends TileCore {
     public void updateEntity() {
         if (!worldObj.isRemote) {
             if (firstLoad) {
-                update();
                 onNeighborBlockUpdate();
                 firstLoad = false;
             }
@@ -148,18 +150,18 @@ public abstract class TileIOCore extends TileCore {
 
                     if (fuel != null) {
                         if (fuel.isItemEqual(fuelStack)) {
-                            if (this.fuelHandler.addFuel(fuelPerStack)) {
+                            if (this.fuelHandler.addFuel(fuelPerStack, false)) {
                                 this.fuel.decrStackSize(0, 1);
                             }
                         } else if (fuel.getItem() instanceof IEnergyContainerItem) {
                             if (((IEnergyContainerItem)fuel.getItem()).extractEnergy(fuel, rfPerFuel, true) == rfPerFuel) {
-                                if (this.fuelHandler.addFuel(1)) {
+                                if (this.fuelHandler.addFuel(1, false)) {
                                     ((IEnergyContainerItem)fuel.getItem()).extractEnergy(fuel, rfPerFuel, false);
                                 }
                             }
                         } else if (fuel.getItem() instanceof IElectricItem) {
                             if (ElectricItem.manager.discharge(fuel, euPerFuel, ((IElectricItem)fuel.getItem()).getTier(fuel), false, true) == euPerFuel) {
-                                if (this.fuelHandler.addFuel(1)) {
+                                if (this.fuelHandler.addFuel(1, false)) {
                                     ElectricItem.manager.discharge(fuel, euPerFuel, ((IElectricItem)fuel.getItem()).getTier(fuel), false, false);
                                 }
                             }
@@ -170,7 +172,7 @@ public abstract class TileIOCore extends TileCore {
 
             /* Consume fuel */
             if (requiresPower && fuelPerTick > 0 && (lastClientState || !consumeOnlyWhenActive) && worldObj.getTotalWorldTime() % 20 == 0) {
-                this.fuelHandler.consumeFuel(fuelPerTick);
+                this.fuelHandler.consumeFuel(fuelPerTick, false);
             }
         }
     }

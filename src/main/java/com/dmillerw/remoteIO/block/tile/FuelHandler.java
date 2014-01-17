@@ -24,21 +24,25 @@ public class FuelHandler {
         this.fuelLevel = fuelLevel;
     }
 
-    public boolean addFuel(int value) {
+    public boolean addFuel(int value, boolean simulate) {
         if (this.capacity > 0 && this.fuelLevel + value >= capacity) {
             return false;
         }
 
-        fuelLevel += value;
+        if (!simulate) {
+            fuelLevel += value;
+        }
         return true;
     }
 
-    public boolean consumeFuel(int value) {
+    public boolean consumeFuel(int value, boolean simulate) {
         if (this.fuelLevel - value < 0) {
             return false;
         }
 
-        fuelLevel -= value;
+        if (!simulate) {
+            fuelLevel -= value;
+        }
         return true;
     }
 

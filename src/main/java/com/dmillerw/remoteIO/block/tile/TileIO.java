@@ -52,7 +52,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 
 	@Override
 	public void onBlockChanged(TrackedBlock tracked) {
-		if (getLinkedObject() != null) {
+		if (connectionPosition() != null) {
 			if (tracked.state == BlockState.REMOVED && !hasUpgrade(Upgrade.LINK_PERSIST)) {
                 update();
 			}
@@ -90,7 +90,19 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 
     @Override
     public Object getLinkedObject() {
-        return getTileEntity();
+        if (this.worldObj.isRemote) {
+            return null;
+        }
+
+        if (coords == null) {
+            return null;
+        }
+
+        if (!inRange()) {
+            return null;
+        }
+
+        return coords.getTileEntity();
     }
 
     @Override
@@ -108,7 +120,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
                 addedToMENetwork = true;
             }
         } else {
-            if (getLinkedObject() != null && worldObj.provider.dimensionId == coords.dimensionID) {
+            if (connectionPosition() != null && worldObj.provider.dimensionId == connectionPosition().dimensionID) {
                 RemoteIO.proxy.ioPathFX(worldObj, this, coords.x + 0.5, coords.y + 0.5, coords.z + 0.5, 0.25F + (0.05F * new Random().nextFloat()));
             }
         }
@@ -146,19 +158,7 @@ public class TileIO extends TileIOCore implements ITrackerCallback, IInventory, 
 	}
 	
 	public TileEntity getTileEntity() {
-		if (!this.worldObj.isRemote) {
-			if (coords == null) {
-				return null;
-			}
-
-			if (!inRange()) {
-                return null;
-            }
-
-            return coords.getTileEntity();
-		}
-
-		return null;
+		return (TileEntity) getLinkedObject();
 	}
 	
     public TileEntity getTileWithUpdate() {
