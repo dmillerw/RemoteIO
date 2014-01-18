@@ -65,14 +65,6 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
 
         ITurtleAccess access = TurtleTracker.INSTANCE.getTurtleForID(this.turtleID);
 
-        if (access == null) {
-            return null;
-        }
-
-        if (!canConnect()) {
-            return null;
-        }
-
         return access;
     }
 
@@ -107,7 +99,13 @@ public class TileTurtleBridge extends TileIOCore implements IInventory, IEnergyS
     }
 
     private ITurtleAccess getTurtle() {
-        return (ITurtleAccess) getLinkedObject();
+        Object obj = getLinkedObject();
+
+        if (!canConnect()) {
+            return null;
+        }
+
+        return (ITurtleAccess) obj;
     }
 
     private ITurtleAccess getTurtle(ItemUpgrade.Upgrade upgrade) {
