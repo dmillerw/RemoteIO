@@ -136,8 +136,7 @@ public class RemoteIO {
         GameRegistry.registerCraftingHandler(new CraftingHandler());
 
 		MinecraftForge.EVENT_BUS.register(new ForgeEventHandler());
-        MinecraftForge.EVENT_BUS.register(IconHandler.INSTANCE);
-		
+
 		proxy.preInit(event);
 	}
 
