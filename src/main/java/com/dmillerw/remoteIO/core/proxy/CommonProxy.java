@@ -241,6 +241,20 @@ public class CommonProxy implements ISidedProxy {
             }
         }
 
+        if (Loader.isModLoaded("ComputerCraft")) {
+            Block blockPeripheral = null;
+            try {
+                Class ccBlocksClass = Class.forName("dan200.ComputerCraft").getDeclaredClasses()[1];
+                blockPeripheral = (Block) ccBlocksClass.getDeclaredField("peripheral").get(null);
+            } catch (Exception ex) {
+                IOLogger.warn("Tried to get ComputerCraft peripheral block, but failed. The Turtle Bridge will not be available!");
+            }
+
+            if (blockPeripheral != null) {
+                RecipeHelper.addOreRecipe(new ItemStack(BlockHandler.blockBridge), "P", "I", 'P', blockPeripheral, 'I', BlockHandler.blockWireless);
+            }
+        }
+
         /* DOCUMENTATION HANDLING */
         String[] linkerDocumentation = new String[] {
                 "The IO Linker is primarily used in conjunction with the IO Block, and is used to link various other blocks in the world to it.",

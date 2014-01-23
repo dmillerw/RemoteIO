@@ -3,8 +3,6 @@ package com.dmillerw.remoteIO.inventory.gui;
 import com.dmillerw.remoteIO.block.tile.TileIOCore;
 import com.dmillerw.remoteIO.inventory.ContainerUpgrade;
 import com.dmillerw.remoteIO.inventory.gui.tab.ITabbedGUI;
-import com.dmillerw.remoteIO.inventory.gui.tab.TabManager;
-import com.dmillerw.remoteIO.inventory.gui.tab.TabWarning;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
@@ -16,7 +14,7 @@ public class GuiUpgrade extends GuiContainer implements ITabbedGUI {
 
 	private EntityPlayer player;
 
-    private final TabManager manager = new TabManager(this);
+    // private final TabManager manager = new TabManager(this);
 
     private final TileIOCore tile;
 
@@ -32,13 +30,13 @@ public class GuiUpgrade extends GuiContainer implements ITabbedGUI {
 
     @Override
     public void updateScreen() {
-        if (tile.warningsChanged) {
+        /*if (tile.warningsChanged) {
             this.manager.clear();
             for (TileIOCore.Warning w : tile.activeWarnings) {
                 this.manager.add(new TabWarning(w));
             }
             tile.warningsChanged = false;
-        }
+        }*/
     }
 
     @Override
@@ -51,7 +49,7 @@ public class GuiUpgrade extends GuiContainer implements ITabbedGUI {
         this.fontRenderer.drawString(fuel, this.xSize - 8 - (this.fontRenderer.getStringWidth(fuel)), 6, 4210752);
 		this.fontRenderer.drawString(inv, this.xSize / 2 - (this.fontRenderer.getStringWidth(inv) / 2), this.ySize - 96 + 2, 4210752);
 
-        this.manager.drawTabs(par1, par2);
+        // this.manager.drawTabs(par1, par2);
     }
 	
 	@Override
@@ -66,7 +64,7 @@ public class GuiUpgrade extends GuiContainer implements ITabbedGUI {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        manager.handleMouseClicked(mouseX, mouseY, mouseButton);
+        // manager.handleMouseClicked(mouseX, mouseY, mouseButton);
     }
 
     /* ITABBEDGUI */
