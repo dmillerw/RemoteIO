@@ -256,16 +256,72 @@ public class CommonProxy implements ISidedProxy {
         }
 
         /* DOCUMENTATION HANDLING */
-        String baconIpsum = "Bacon ipsum dolor sit amet pork loin ham hock brisket, strip steak andouille prosciutto short ribs jerky ribeye frankfurter beef ribs shankle. Swine tongue capicola jowl landjaeger ground round hamburger. Shoulder boudin bacon capicola shank corned beef, strip steak swine drumstick chicken short ribs doner turkey. Shank pork loin shankle, pastrami cow spare ribs frankfurter turkey pork belly salami porchetta leberkas shoulder. Hamburger bacon ham ham hock short ribs, short loin doner capicola pork belly pork chop jerky tail. Landjaeger flank tail shankle, doner spare ribs sirloin t-bone turducken. Ribeye landjaeger pastrami pork loin kielbasa doner chicken, jowl tri-tip shankle turducken.\n" +
-                            "\n" +
-                            "Sausage shoulder shankle biltong pork chop ball tip swine bresaola jerky tail. Fatback hamburger pork belly tri-tip short loin. Bresaola venison pork belly leberkas prosciutto, biltong ribeye filet mignon cow. Porchetta jerky rump tenderloin short loin. Meatloaf beef t-bone hamburger pancetta chuck tri-tip sausage pig rump salami chicken short loin shank turducken. Doner shank chuck jowl bresaola drumstick leberkas tail pig pork chop, turducken rump ribeye.";
+        String[] linkerDocumentation = new String[] {
+                "The IO Linker is primarily used in conjunction with the IO Block, and is used to link various other blocks in the world to it.",
+                "Functionality is simple. Right click on any block in the world (sneaking if necessary to avoid GUIs) to link that block to this tool. Then simply come back to your IO blocks and right-click on it with the tool in hand.",
+                "Ta-da! Instantly linked!",
+                "For more info, see the page on the IO Block"
+        };
 
-        String veggieIpsum = "Veggies es bonus vobis, proinde vos postulo essum magis kohlrabi welsh onion daikon amaranth tatsoi tomatillo melon azuki bean garlic.\n" +
-                             "\n" +
-                             "Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.";
+        String[] transceiverDocumentation = new String[] {
+                "This item has one simple use, and that is to allow for the Remote Inventory block to connect to the inventory of the Player holding this.",
+                "To link it to yourself, simply shift right-click with it in hand, and then ensure it always remains in your inventory when the Remote Inventory block is accessed.",
+                "This item also has the added functionality of being able to access any block's GUI remotely. Simply right-click on any IO Block that's linked to a block, and the linked block will act as though you had simply right-clicked it."
+        };
 
-        DocumentationRegistry.document("Ipsum", "Baconipsum", baconIpsum);
-        DocumentationRegistry.document("Ipsum", "Veggieipsum", veggieIpsum);
+        String[] goggleDocumentation = new String[] {
+                "Provided it's in the same dimension, the Player wearing these goggles will be able to see a path connecting any IO Block to the block it's linked to."
+        };
+
+        String[] ioDocumentation = new String[] {
+                "The core feature of this mod.",
+                "This block can be used to remotely access multiple aspects of a block placed elsewhere in the world, as though the block was right there.",
+                "In an attempt to keep a sense of balance, this block can't do anything by itself. By installing various upgrades you can add various functionalities to this block. By default, it's unable to do anything, and has a limited connection range of " + RemoteIO.instance.defaultRange + " blocks."
+        };
+
+        String[] removeInvDocumentation = new String[] {
+                "This block has similar features to that of the IO block, but has a far more specific purpose.",
+                "Instead of connecting with other blocks in the world, this connects with other Players, specifically their inventories. Simply right-click this block with a linked Wireless Transceiver to link the Player to it.",
+                "Similar to the IO Block, this block can take upgrades, and has a limited range of " + RemoteIO.instance.defaultRange + " blocks."
+        };
+
+        String[] turtleBridgeDocumentation = new String[] {
+                "This block has similar features to that of the IO block, but only connects to ComputerCraft turtles.",
+                "By combining a turtle with any IO upgrade, you can get a Bridged Turtle. Wrapping the attached peripheral and calling sync() while above this bridge block will link the turtle to this bridge.",
+                "Once linked, you have access to the turtles inventory, as well as its interal power source, provided the right upgrades are used."
+        };
+
+        String[] heaterDocumentation = new String[] {
+                "This block allows one to power a vanilla furnace simply with two lava source blocks, but at the cost of efficiency.",
+                "Simply place this block down, along with two adjacent lava source blocks. It will then precede to power any adjacent furnaces."
+        };
+
+        String[] reservoirDocumentation = new String[] {
+                "This block allows one to have a compact infinite source of water.",
+                "Simply place this block down, along with two adjacent water source blocks. It will then precede to fill it's internal tank with water, which can then be pumped out."
+        };
+
+        String[] skylightDocumentation = new String[] {
+                "Skylights can be used to block out light, but allow it to filter through at the change of a redstone signal.",
+                "Simply place any number of them down, and power one with a redstone signal. All those connected will then change their state to match the one being powered."
+        };
+
+        String[] sidedProxyDocumentation = new String[] {
+                "This is a dumbed down version of the IO Block.",
+                "Simply place it down, and link it to any adjacent block using the IO Linker. It will then relay Items and Fluids through the side you linked it to, similar to Sneaky Pipes."
+        };
+
+        DocumentationRegistry.document(new ItemStack(ItemHandler.itemTool), linkerDocumentation);
+        DocumentationRegistry.document(new ItemStack(ItemHandler.itemTransmitter), transceiverDocumentation);
+        DocumentationRegistry.document(new ItemStack(ItemHandler.itemGoggles), goggleDocumentation);
+
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockIO), ioDocumentation);
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockWireless), removeInvDocumentation);
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockMachine, 0, 0), heaterDocumentation);
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockMachine, 0, 1), reservoirDocumentation);
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockSkylight), skylightDocumentation);
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockProxy), sidedProxyDocumentation);
+        DocumentationRegistry.document(new ItemStack(BlockHandler.blockBridge), turtleBridgeDocumentation);
     }
 
     public void ioPathFX(World world, TileEntity tile, double tx, double ty, double tz, float speed) {}

@@ -92,11 +92,15 @@ public class GuiDocumentation extends GuiContainer {
                         currentState = 2;
 
                         currentDocumentation.clear();
-                        currentDocumentation.add(DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getName());
-                        String[] breakSplit = DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getDescription().split("\n");
+
+                        String documentation = DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getDescription();
+
+                        String[] breakSplit = documentation.split("\n");
                         for (String split : breakSplit) {
-                            currentDocumentation.addAll(this.fontRenderer.listFormattedStringToWidth(split, SCREEN_WIDTH));
+                            currentDocumentation.addAll(this.fontRenderer.listFormattedStringToWidth(split, SCREEN_WIDTH - this.fontRenderer.getCharWidth('_')));
                         }
+
+                        currentDocumentation.add(0, DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getName());
 
                         scrollIndex = 0;
                         break;
@@ -191,7 +195,7 @@ public class GuiDocumentation extends GuiContainer {
 	}
 
     private void drawBreadcrumbs(int y) {
-        this.fontRenderer.drawSplitString(getBreadcrumbString(), 10, y, SCREEN_WIDTH, 0xFFFFFF);
+        this.fontRenderer.drawString((String)this.fontRenderer.listFormattedStringToWidth(getBreadcrumbString(), SCREEN_WIDTH).get(0), 10, y, 0xFFFFFF);
     }
 
     private void drawLine(int y) {
