@@ -1,10 +1,10 @@
 package com.dmillerw.remoteIO.api.documentation;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,98 +12,51 @@ import java.util.Map;
  */
 public class DocumentationRegistry {
 
-    public static class Documentation {
-        public final String category;
-        public final String documentation;
+    public static final String CATEGORY_BLOCK = "Blocks";
+    public static final String CATEGORY_ITEM = "Items";
 
-        public Documentation(String cat, String doc) {
-            this.category = cat;
-            this.documentation = doc;
+    private static Map<String, Category> categories = new HashMap<String, Category>();
+
+    public static void document(ItemStack stack, String ... documentation) {
+        if (stack.itemID <= 4095) {
+            document(CATEGORY_BLOCK, stack, documentation);
+        } else {
+            document(CATEGORY_ITEM, stack, documentation);
         }
     }
 
-    private static Map<ItemStack, String> stackToKeyMapping = new HashMap<ItemStack, String>();
-    private static Map<String, Documentation> documentation = new HashMap<String, Documentation>();
-
-    private static boolean containsStack(ItemStack stack) {
-        for (Map.Entry<ItemStack, String> entry : stackToKeyMapping.entrySet()) {
-            if (entry.getKey().isItemEqual(stack)) {
-                return true;
-            }
-        }
-
-        return false;
+    public static void document(String category, ItemStack stack, String ... documentation) {
+        document(category, stack.getDisplayName(), documentation);
     }
 
-    private static String getKeyForStack(ItemStack stack) {
-        for (Map.Entry<ItemStack, String> entry : stackToKeyMapping.entrySet()) {
-            if (entry.getKey().isItemEqual(stack)) {
-                return entry.getValue();
-            }
-        }
-
-        return "";
-    }
-
-    //TODO Add basic formatting abilities
-
-    public static void registerKey(Item item, String key) {
-        registerKey(new ItemStack(item), key);
-    }
-
-    public static void registerKey(Block block, String key) {
-        registerKey(new ItemStack(block), key);
-    }
-
-    public static void registerKey(ItemStack stack, String key) {
-        stackToKeyMapping.put(stack, key);
-    }
-
-    public static void addDocumentation(String key, String cat, String[] docu) {
+    public static void document(String category, String name, String ... documentation) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<docu.length; i++) {
-            sb.append(docu[i]);
-            if (i != docu.length - 1) {
+        for(int i=0; i<documentation.length; i++) {
+            sb.append(documentation[i]);
+            if (i != documentation.length - 1) {
                 sb.append("\n");
             }
         }
-        addDocumentation(key, cat, sb.toString());
+        document(category, name, sb.toString());
     }
 
-    public static void addDocumentation(String key, String cat, String docu) {
-        docu = docu.replace("\n", "\n\n");
-
-        if (!documentation.containsKey(key)) {
-            documentation.put(key, new Documentation(cat, docu));
-        } else {
-            throw new RuntimeException("[RemoteIO] Something tried to register documentation with the key " + key + " but that key is already registered!");
+    public static void document(String category, String name, String documentation) {
+        if (!categories.containsKey(category)) {
+            categories.put(category, new Category(category));
         }
+        categories.get(category).push(new Documentation(name, documentation));
     }
 
-    public static Documentation getDocumentation(ItemStack stack) {
-        if (hasDocumentation(stack)) {
-            return getDocumentation(getKeyForStack(stack));
+    public static Category getCategory(String key) {
+        return categories.get(key);
+    }
+
+    public static Category[] getCategories() {
+        List<Category> categories = new ArrayList<Category>();
+        for (Map.Entry<String, Category> cat : DocumentationRegistry.categories.entrySet()) {
+            categories.add(cat.getValue());
         }
-
-        return null;
-    }
-
-    private static Documentation getDocumentation(String key) {
-        return documentation.get(key);
-    }
-
-    public static boolean hasDocumentation(ItemStack stack) {
-        if (stack != null && containsStack(stack)) {
-            String returnedKey = getKeyForStack(stack);
-
-            if (returnedKey == null || returnedKey.isEmpty()) {
-                return false;
-            }
-
-            return documentation.containsKey(returnedKey);
-        }
-
-        return false;
+        return categories.toArray(new Category[categories.size()]);
     }
 
 }

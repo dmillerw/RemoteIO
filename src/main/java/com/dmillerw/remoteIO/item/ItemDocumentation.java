@@ -1,5 +1,6 @@
 package com.dmillerw.remoteIO.item;
 
+import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.core.CreativeTabRIO;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import cpw.mods.fml.relauncher.Side;
@@ -28,8 +29,7 @@ public class ItemDocumentation extends Item {
     @Override
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
         if (!player.isSneaking() && !world.isRemote) {
-            // player.openGui(RemoteIO.instance, 2, world, 0, 0, 0);
-            player.addChatMessage("Temporarily disabled. Sorry. :(");
+            player.openGui(RemoteIO.instance, 2, world, 0, 0, 0);
         }
         return stack;
     }
