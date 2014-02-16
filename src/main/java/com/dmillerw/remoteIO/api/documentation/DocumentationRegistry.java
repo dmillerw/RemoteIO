@@ -26,7 +26,21 @@ public class DocumentationRegistry {
     }
 
     public static void document(String category, ItemStack stack, String ... documentation) {
-        document(category, stack.getDisplayName(), documentation);
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<documentation.length; i++) {
+            sb.append(documentation[i]);
+            if (i != documentation.length - 1) {
+                sb.append("\n");
+            }
+        }
+        document(category, stack, sb.toString());
+    }
+
+    public static void document(String category, ItemStack stack, String documentation) {
+        if (!categories.containsKey(category)) {
+            categories.put(category, new Category(category));
+        }
+        categories.get(category).push(new Documentation(stack.getDisplayName(), documentation, stack));
     }
 
     public static void document(String category, String name, String ... documentation) {

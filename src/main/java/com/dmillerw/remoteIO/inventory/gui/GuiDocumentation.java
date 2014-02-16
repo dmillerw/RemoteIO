@@ -1,10 +1,19 @@
 package com.dmillerw.remoteIO.inventory.gui;
 
+import com.dmillerw.remoteIO.api.documentation.Documentation;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
+import com.dmillerw.remoteIO.core.helper.RecipeHelper;
 import com.dmillerw.remoteIO.inventory.ContainerNull;
 import com.dmillerw.remoteIO.lib.ModInfo;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -26,6 +35,9 @@ public class GuiDocumentation extends GuiContainer {
 
     public int currentState = 0;
     public int scrollIndex = 0;
+
+    public boolean showRecipe = false;
+    public ItemStack[] recipe = null;
 
     public String currentCategory = "";
 
@@ -54,6 +66,8 @@ public class GuiDocumentation extends GuiContainer {
         } else {
             if (keycode == Keyboard.KEY_ESCAPE) {
                 if (currentState == 2) {
+                    showRecipe = false;
+                    recipe = null;
                     currentDocumentation.clear();
                 }
                 if (currentState == 1) {
@@ -73,7 +87,7 @@ public class GuiDocumentation extends GuiContainer {
             if (currentState == 0) {
                 for (int i=0; i<getMinIndex(DocumentationRegistry.getCategories().length); i++) {
                     int yIndex = 10 + (this.fontRenderer.FONT_HEIGHT * (i + 2));
-                    boolean shouldHighlight = shouldHighlight(mouseX, mouseY, yIndex + (this.fontRenderer.FONT_HEIGHT * (2)));
+                    boolean shouldHighlight = shouldHighlight(mouseX, mouseY, yIndex);
 
                     if (shouldHighlight) {
                         currentState = 1;
@@ -86,25 +100,45 @@ public class GuiDocumentation extends GuiContainer {
             } else if (currentState == 1) {
                 for (int i=0; i<getMinIndex(DocumentationRegistry.getCategory(currentCategory).getChildren().length); i++) {
                     int yIndex = 10 + (this.fontRenderer.FONT_HEIGHT * (i + 2));
-                    boolean shouldHighlight = shouldHighlight(mouseX, mouseY, yIndex + (this.fontRenderer.FONT_HEIGHT * (2)));
+                    boolean shouldHighlight = shouldHighlight(mouseX, mouseY, yIndex);
 
                     if (shouldHighlight) {
                         currentState = 2;
 
                         currentDocumentation.clear();
 
-                        String documentation = DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getDescription();
+                        Documentation documentation = DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex];
 
-                        String[] breakSplit = documentation.split("\n");
+                        String[] breakSplit = documentation.getDescription().split("\n");
                         for (String split : breakSplit) {
                             currentDocumentation.addAll(this.fontRenderer.listFormattedStringToWidth(split, SCREEN_WIDTH - this.fontRenderer.getCharWidth('_')));
                         }
 
                         currentDocumentation.add(0, DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getName());
 
+                        recipe = RecipeHelper.getFirstRecipeForItem(documentation.getItem());
+                        if (recipe != null) {
+                            boolean filled = false;
+                            for (ItemStack stack : recipe) {
+                                if (stack != null) {
+                                    filled = true;
+                                }
+                            }
+
+                            if (!filled) {
+                                recipe = null;
+                            }
+                        }
+
                         scrollIndex = 0;
                         break;
                     }
+                }
+            } else if (currentState == 2 && recipe != null) {
+                int yIndex = 10 + this.fontRenderer.FONT_HEIGHT * (LINE_MAX + 1);
+
+                if (shouldHighlight(mouseX, mouseY, yIndex)) {
+                    showRecipe = !showRecipe;
                 }
             }
         }
@@ -133,11 +167,11 @@ public class GuiDocumentation extends GuiContainer {
             lineSize = currentDocumentation.size();
         }
 
-        if (lineSize > LINE_MAX) {
+        if (lineSize > getLineMax()) {
             scrollIndex += wheel;
 
-            if (scrollIndex > lineSize - LINE_MAX) {
-                scrollIndex = lineSize - LINE_MAX;
+            if (scrollIndex > lineSize - getLineMax()) {
+                scrollIndex = lineSize - getLineMax();
             } else if (scrollIndex < 0) {
                 scrollIndex = 0;
             }
@@ -153,22 +187,28 @@ public class GuiDocumentation extends GuiContainer {
         if (currentState == 0) {
             for (int i=0; i<getMinIndex(DocumentationRegistry.getCategories().length); i++) {
                 int yIndex = 10 + (this.fontRenderer.FONT_HEIGHT * (i + 2));
-                boolean shouldHighlight = shouldHighlight(par1, par2, yIndex + (this.fontRenderer.FONT_HEIGHT * (2)));
+                boolean shouldHighlight = shouldHighlight(par1, par2, yIndex);
 
                 this.fontRenderer.drawString(DocumentationRegistry.getCategories()[i + scrollIndex].getName(), 10, yIndex, shouldHighlight ? 0xFF5555 : 0xFFFFFF);
             }
         } else if (currentState == 1) {
             for (int i=0; i<getMinIndex(DocumentationRegistry.getCategory(currentCategory).getChildren().length); i++) {
                 int yIndex = 10 + (this.fontRenderer.FONT_HEIGHT * (i + 2));
-                boolean shouldHighlight = shouldHighlight(par1, par2, yIndex + (this.fontRenderer.FONT_HEIGHT * (2)));
+                boolean shouldHighlight = shouldHighlight(par1, par2, yIndex);
 
                 this.fontRenderer.drawString(DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getName(), 10, yIndex, shouldHighlight ? 0xFF5555 : 0xFFFFFF);
             }
         } else if (currentState == 2) {
-            for (int i=1; i<getMinIndex(currentDocumentation.size() - 1); i++) {
+            for (int i=1; i<getMinIndex(currentDocumentation.size()); i++) {
                 int yIndex = 10 + (this.fontRenderer.FONT_HEIGHT * (i + 1));
 
                 this.fontRenderer.drawString(currentDocumentation.get(i + scrollIndex), 10, yIndex, 0xFFFFFF);
+
+                if (recipe != null) {
+                    drawLine(10 + this.fontRenderer.FONT_HEIGHT * (LINE_MAX));
+                    int showYIndex = 10 + this.fontRenderer.FONT_HEIGHT * (LINE_MAX + 1);
+                    this.fontRenderer.drawString(showRecipe ? "Hide Recipe" : "Show Recipe", 10, showYIndex, shouldHighlight(par1, par2, showYIndex) ? 0xFF5555 : 0xFFFFFF);
+                }
             }
         }
     }
@@ -177,22 +217,98 @@ public class GuiDocumentation extends GuiContainer {
         int guiLeft = (this.width - this.xSize) / 2;
         int guiTop = (this.height - this.ySize) / 2;
 
-        return (mouseY >= elementY && mouseY <= elementY + this.fontRenderer.FONT_HEIGHT &&
-                mouseX >= guiLeft && mouseX <= guiLeft + SCREEN_WIDTH);
+        int mx = mouseX - guiLeft;
+        int my = mouseY - guiTop;
+
+        return (my >= elementY && my <= elementY + this.fontRenderer.FONT_HEIGHT &&
+                mx >= 0 && mx <= SCREEN_WIDTH);
     }
 
     private int getMinIndex(int length) {
-        return Math.min(length, LINE_MAX);
+        return Math.min(length, getLineMax());
+    }
+
+    private int getLineMax() {
+        if (currentState == 2 && recipe != null) {
+            return LINE_MAX - 2;
+        } else {
+            return LINE_MAX;
+        }
     }
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+	protected void drawGuiContainerBackgroundLayer(float f, int a, int b) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/documentation.png"));
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+
+        if (showRecipe && recipe != null) {
+            this.mc.getTextureManager().bindTexture(new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/grid.png"));
+            this.drawTexturedModalRect(k - 68, l, 0, 0, 68, 68);
+
+            int startX = -60;
+            int startY = 8;
+            int adjust = 18;
+
+            int currX = startX;
+            int currY = startY;
+
+            for (int i=0; i<9; i++) {
+                ItemStack stack = recipe[i];
+
+                if (stack != null) {
+                    drawItemStack(stack, k + currX, l + currY, "");
+
+                    int mx = a - k;
+                    int my = b - l;
+                    if (mx >= currX && mx <= currX + adjust && my >= currY && my <= currY + adjust) {
+                        drawItemStackTooltip(stack, mx + adjust, my + adjust);
+                    }
+                }
+
+                currX += adjust;
+                if (i + 1 == 3 || i + 1 == 6) {
+                    currY += adjust;
+                    currX = startX;
+                }
+            }
+        }
 	}
+
+    private void drawItemStack(ItemStack stack, int x, int y, String str) {
+        GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+        this.zLevel = 200.0F;
+        itemRenderer.zLevel = 200.0F;
+        RenderHelper.enableGUIStandardItemLighting();
+        GL11.glColor3f(1f, 1f, 1f);
+        GL11.glEnable(GL11.GL_NORMALIZE);
+        FontRenderer font = null;
+        if (stack != null) font = stack.getItem().getFontRenderer(stack);
+        if (font == null) font = Minecraft.getMinecraft().fontRenderer;
+        itemRenderer.renderItemAndEffectIntoGUI(font, Minecraft.getMinecraft().getTextureManager(), stack, x, y);
+        itemRenderer.renderItemOverlayIntoGUI(font, Minecraft.getMinecraft().getTextureManager(), stack, x, y, str);
+        this.zLevel = 0.0F;
+        itemRenderer.zLevel = 0.0F;
+    }
+
+    protected void drawItemStackTooltip(ItemStack stack, int x, int y) {
+        final Minecraft mc = Minecraft.getMinecraft();
+        FontRenderer font = Objects.firstNonNull(stack.getItem().getFontRenderer(stack), mc.fontRenderer);
+
+        @SuppressWarnings("unchecked")
+        List<String> list = stack.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
+
+        List<String> colored = Lists.newArrayListWithCapacity(1);
+        colored.add(getRarityColor(stack) + list.get(0));
+
+        drawHoveringText(colored, x, y, font);
+    }
+
+    protected EnumChatFormatting getRarityColor(ItemStack stack) {
+        return EnumChatFormatting.values()[stack.getRarity().rarityColor];
+    }
 
     private void drawBreadcrumbs(int y) {
         this.fontRenderer.drawString((String)this.fontRenderer.listFormattedStringToWidth(getBreadcrumbString(), SCREEN_WIDTH).get(0), 10, y, 0xFFFFFF);
