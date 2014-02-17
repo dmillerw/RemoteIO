@@ -3,6 +3,7 @@ package com.dmillerw.remoteIO.inventory.gui;
 import com.dmillerw.remoteIO.api.documentation.Documentation;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.core.helper.RecipeHelper;
+import com.dmillerw.remoteIO.core.helper.StringHelper;
 import com.dmillerw.remoteIO.inventory.ContainerNull;
 import com.dmillerw.remoteIO.lib.ModInfo;
 import com.google.common.base.Objects;
@@ -28,10 +29,6 @@ public class GuiDocumentation extends GuiContainer {
 
     public static final int SCREEN_WIDTH = 216;
     public static final int LINE_MAX = 18;
-
-    public static final int STATE_HOME = 0;
-    public static final int STATE_CATEGORY = 1;
-    public static final int STATE_DOC = 2;
 
     public int currentState = 0;
     public int scrollIndex = 0;
@@ -207,7 +204,8 @@ public class GuiDocumentation extends GuiContainer {
                 if (recipe != null) {
                     drawLine(10 + this.fontRenderer.FONT_HEIGHT * (LINE_MAX));
                     int showYIndex = 10 + this.fontRenderer.FONT_HEIGHT * (LINE_MAX + 1);
-                    this.fontRenderer.drawString(showRecipe ? "Hide Recipe" : "Show Recipe", 10, showYIndex, shouldHighlight(par1, par2, showYIndex) ? 0xFF5555 : 0xFFFFFF);
+                    String str = showRecipe ? "Hide Recipe" : "Show Recipe";
+                    this.fontRenderer.drawString(str, StringHelper.getCenterOffset(str, this.mc.fontRenderer, SCREEN_WIDTH), showYIndex, shouldHighlight(par1, par2, showYIndex) ? 0xFF5555 : 0xFFFFFF);
                 }
             }
         }
@@ -248,6 +246,7 @@ public class GuiDocumentation extends GuiContainer {
             this.mc.getTextureManager().bindTexture(new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/grid.png"));
             this.drawTexturedModalRect(k - 68, l, 0, 0, 68, 68);
 
+            // Variables for recipe drawing
             int startX = -60;
             int startY = 8;
             int adjust = 18;
@@ -333,7 +332,7 @@ public class GuiDocumentation extends GuiContainer {
             sb.append(currentDocumentation.get(0));
         }
 
-        return sb.toString();
+        return StringHelper.squish(sb.toString(), this.mc.fontRenderer, SCREEN_WIDTH - 10);
     }
 
     private String getLine() {
