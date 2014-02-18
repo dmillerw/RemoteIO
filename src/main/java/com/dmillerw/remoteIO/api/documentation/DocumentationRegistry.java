@@ -17,6 +17,24 @@ public class DocumentationRegistry {
 
     private static Map<String, Category> categories = new HashMap<String, Category>();
 
+    public static void documentWithRecipe(String category, String name, ItemStack stack, String ... documentation) {
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<documentation.length; i++) {
+            sb.append(documentation[i]);
+            if (i != documentation.length - 1) {
+                sb.append("\n");
+            }
+        }
+        documentWithRecipe(category, name, stack, sb.toString());
+    }
+
+    public static void documentWithRecipe(String category, String name, ItemStack stack, String documentation) {
+        if (!categories.containsKey(category)) {
+            categories.put(category, new Category(category));
+        }
+        categories.get(category).push(new Documentation(name, documentation, stack));
+    }
+
     public static void document(ItemStack stack, String ... documentation) {
         if (stack.itemID <= 4095) {
             document(CATEGORY_BLOCK, stack, documentation);

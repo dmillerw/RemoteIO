@@ -234,7 +234,7 @@ public class ItemUpgrade extends Item {
                     true,
                     false,
                     false,
-                    true
+                    false
             }
         );
 		

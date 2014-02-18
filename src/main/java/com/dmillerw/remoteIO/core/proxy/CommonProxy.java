@@ -5,6 +5,7 @@ import com.dmillerw.remoteIO.RemoteIO;
 import com.dmillerw.remoteIO.api.documentation.DocumentationRegistry;
 import com.dmillerw.remoteIO.block.BlockHandler;
 import com.dmillerw.remoteIO.block.tile.*;
+import com.dmillerw.remoteIO.core.helper.EnergyHelper;
 import com.dmillerw.remoteIO.core.helper.IOLogger;
 import com.dmillerw.remoteIO.core.helper.RecipeHelper;
 import com.dmillerw.remoteIO.core.helper.StackHelper;
@@ -320,6 +321,7 @@ public class CommonProxy implements ISidedProxy {
                 "While active, IO blocks use " + TileIOCore.fuelPerTick + " power per tick",
         };
 
+        /* UPGRADES */
         String[] itemUpgrade = new String[] {
                 "IO Block/Side Proxy:",
                 "Allows for the basic transport of items",
@@ -347,12 +349,90 @@ public class CommonProxy implements ISidedProxy {
                 "If inventory is outside of the IO block's dimension, range is NOT taken into account",
         };
 
+        String[] redstoneUpgrade = new String[] {
+                "Any:",
+                "If applied with a redstone signal, the connection to the connected inventory will be temporarily blocked",
+        };
+
+        String[] camoUpgrade = new String[] {
+                "Any:",
+                "Any block with this upgrade will take on the texture of the block in the camo slot",
+        };
+
+        String[] lockUpgrade = new String[] {
+                "Any:",
+                "Any block with this upgrade will retain all upgrades/connections when broken",
+        };
+
+        String[] aeUpgrade = new String[] {
+                "IO Block:",
+                "If connected to any AE block (controller, cable, etc), it will extend the attached AE network to any blocks connected to the IO block",
+        };
+
+        String[] mjUpgrade = new String[] {
+                "IO Block/Side Proxy:",
+                "Allows for the transfer of MJs (Buildcraft Power)",
+        };
+
+        String[] rfUpgrade = new String[] {
+                "IO Block/Side Proxy:",
+                "Allows for the transfer of RF (Thermal Expansion Power)",
+                "",
+                "Remote Inventory:",
+                "Allows for the transfer of RF into the player's inventory, charging any tools/items found within",
+                "",
+                "Turtle Bridge:",
+                "Allows for the transfer of RF through to the turtle's engine, charging it. It provides one generic fuel unit per " + EnergyHelper.rfPerTurtleMove + " RF",
+        };
+
+        String[] euUpgrade = new String[] {
+                "IO Block/Side Proxy:",
+                "Allows for the transfer of EU (IC2 Power)",
+                "",
+                "Remote Inventory:",
+                "Allows for the transfer of EU into the player's inventory, charging any tools/items found within",
+                "",
+                "Turtle Bridge:",
+                "Allows for the transfer of EU through to the turtle's engine, charging it. It provides one generic fuel unit per " + EnergyHelper.euPerTurtleMove + " RF",
+        };
+
+        String[] range1Upgrade = new String[] {
+                "All:",
+                "Boosts the block's range by " + RemoteIO.instance.rangeUpgradeT1Boost + " blocks",
+        };
+
+        String[] range2Upgrade = new String[] {
+                "All:",
+                "Boosts the block's range by " + RemoteIO.instance.rangeUpgradeT2Boost + " blocks",
+        };
+
+        String[] range3Upgrade = new String[] {
+                "All:",
+                "Boosts the block's range by " + RemoteIO.instance.rangeUpgradeT3Boost + " blocks",
+        };
+
+        String[] rangeWUpgrade = new String[] {
+                "All:",
+                "Boosts the block's range by " + RemoteIO.instance.rangeUpgradeWitherBoost + " blocks",
+        };
+
         DocumentationRegistry.document("Misc", "Power", powerDocumentation);
 
-        DocumentationRegistry.document("Upgrades", "Item", itemUpgrade);
-        DocumentationRegistry.document("Upgrades", "Side Awareness", sidedUpgrade);
-        DocumentationRegistry.document("Upgrades", "Fluid", fluidUpgrade);
-        DocumentationRegistry.document("Upgrades", "Cross Dimension", dimensionalUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Item", Upgrade.ITEM.toItemStack(), itemUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Side Awareness", Upgrade.ISIDED_AWARE.toItemStack(), sidedUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Fluid", Upgrade.FLUID.toItemStack(), fluidUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Cross Dimension", Upgrade.CROSS_DIMENSIONAL.toItemStack(), dimensionalUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Redstone", Upgrade.REDSTONE.toItemStack(), redstoneUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Camo", Upgrade.CAMO.toItemStack(), camoUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Lock", Upgrade.LOCK.toItemStack(), lockUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "AE", Upgrade.AE.toItemStack(), aeUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Buildcraft Power", Upgrade.POWER_MJ.toItemStack(), mjUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Thermal Expansion Power", Upgrade.POWER_RF.toItemStack(), rfUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "IC2 Power", Upgrade.POWER_EU.toItemStack(), euUpgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Range Boost #1", Upgrade.RANGE_T1.toItemStack(), range1Upgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Range Boost #1", Upgrade.RANGE_T2.toItemStack(), range2Upgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Range Boost #1", Upgrade.RANGE_T2.toItemStack(), range3Upgrade);
+        DocumentationRegistry.documentWithRecipe("Upgrades", "Wither Range Boost", Upgrade.RANGE_WITHER.toItemStack(), rangeWUpgrade);
 
         DocumentationRegistry.document(new ItemStack(ItemHandler.itemTool), linkerDocumentation);
         DocumentationRegistry.document(new ItemStack(ItemHandler.itemTransmitter), transceiverDocumentation);
