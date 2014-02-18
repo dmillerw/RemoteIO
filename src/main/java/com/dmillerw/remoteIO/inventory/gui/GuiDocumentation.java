@@ -113,17 +113,19 @@ public class GuiDocumentation extends GuiContainer {
 
                         currentDocumentation.add(0, DocumentationRegistry.getCategory(currentCategory).getChildren()[i + scrollIndex].getName());
 
-                        recipe = RecipeHelper.getFirstRecipeForItem(documentation.getItem());
-                        if (recipe != null) {
-                            boolean filled = false;
-                            for (ItemStack stack : recipe) {
-                                if (stack != null) {
-                                    filled = true;
+                        if (documentation.getItem() != null) {
+                            recipe = RecipeHelper.getFirstRecipeForItem(documentation.getItem());
+                            if (recipe != null) {
+                                boolean filled = false;
+                                for (ItemStack stack : recipe) {
+                                    if (stack != null) {
+                                        filled = true;
+                                    }
                                 }
-                            }
 
-                            if (!filled) {
-                                recipe = null;
+                                if (!filled) {
+                                    recipe = null;
+                                }
                             }
                         }
 

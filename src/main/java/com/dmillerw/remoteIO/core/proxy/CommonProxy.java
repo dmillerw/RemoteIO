@@ -276,7 +276,8 @@ public class CommonProxy implements ISidedProxy {
         String[] ioDocumentation = new String[] {
                 "The core feature of this mod.",
                 "This block can be used to remotely access multiple aspects of a block placed elsewhere in the world, as though the block was right there.",
-                "In an attempt to keep a sense of balance, this block can't do anything by itself. By installing various upgrades you can add various functionalities to this block. By default, it's unable to do anything, and has a limited connection range of " + RemoteIO.instance.defaultRange + " blocks."
+                "In an attempt to keep a sense of balance, this block can't do anything by itself. By installing various upgrades you can add various functionalities to this block. By default, it's unable to do anything, and has a limited connection range of " + RemoteIO.instance.defaultRange + " blocks.",
+                "This block, as well as all other IO blocks, requires power. Power information can be found under Misc -> Fuel"
         };
 
         String[] removeInvDocumentation = new String[] {
@@ -310,6 +311,48 @@ public class CommonProxy implements ISidedProxy {
                 "This is a dumbed down version of the IO Block.",
                 "Simply place it down, and link it to any adjacent block using the IO Linker. It will then relay Items and Fluids through the side you linked it to, similar to Sneaky Pipes."
         };
+
+        String[] powerDocumentation = new String[] {
+                "POWER REQUIREMENTS ARE CONFIGURABLE IN THE CONFIG!",
+                "",
+                "All IO blocks require power either in the form of the fuel item (" + TileIOCore.fuelStack.getDisplayName() + ") which provides " + TileIOCore.fuelPerStack + " fuel, or by placing an IC2 battery/crystal or RF flux capaciter in the charge slot",
+                "IC2 power provides 1 generic fuel unit per " + TileIOCore.euPerFuel + " EU, and RF power provides 1 generic fuel unit per " + TileIOCore.rfPerFuel + " RF",
+                "While active, IO blocks use " + TileIOCore.fuelPerTick + " power per tick",
+        };
+
+        String[] itemUpgrade = new String[] {
+                "IO Block/Side Proxy:",
+                "Allows for the basic transport of items",
+                "",
+                "Remote Inventory:",
+                "Allows for the transport of items to/from the connected player's inventory",
+                "",
+                "Turtle Bridge:",
+                "Allows for the transport of items to/from the synced turtle",
+        };
+
+        String[] sidedUpgrade = new String[] {
+                "IO Block/Side Proxy:",
+                "Item transfer will obey any rules placed on the side they're inserted into",
+        };
+
+        String[] fluidUpgrade = new String[] {
+                "IO Block/Side Proxy:",
+                "Allows for the basic transport of fluids",
+        };
+
+        String[] dimensionalUpgrade = new String[] {
+                "Any:",
+                "Will allow for IO block to access inventories outside of its own dimension.",
+                "If inventory is outside of the IO block's dimension, range is NOT taken into account",
+        };
+
+        DocumentationRegistry.document("Misc", "Power", powerDocumentation);
+
+        DocumentationRegistry.document("Upgrades", "Item", itemUpgrade);
+        DocumentationRegistry.document("Upgrades", "Side Awareness", sidedUpgrade);
+        DocumentationRegistry.document("Upgrades", "Fluid", fluidUpgrade);
+        DocumentationRegistry.document("Upgrades", "Cross Dimension", dimensionalUpgrade);
 
         DocumentationRegistry.document(new ItemStack(ItemHandler.itemTool), linkerDocumentation);
         DocumentationRegistry.document(new ItemStack(ItemHandler.itemTransmitter), transceiverDocumentation);
