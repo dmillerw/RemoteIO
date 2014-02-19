@@ -100,6 +100,8 @@ public class RemoteIO {
 
         witherNeedsDragonEgg = config.get("general", "witherUpgradeRequiresEgg", true, "Whether the Uber Range Upgrade needs a dragon egg. If disabled, simply uses two nether stars").getBoolean(true);
 
+        TileIOCore.requireFuel = config.get("power.io", "requireFuel", false, "Whether or not IO blocks require fuel").getBoolean(false);
+
         TileIOCore.fuelPerStack = config.get("power.io", "fuelPerStack", 3600, "How much fuel the defined fuel item will add").getInt(72000);
         TileIOCore.fuelPerTick = config.get("power.io", "fuelPerTick", 1, "How much fuel should be consumed every second").getInt(1);
         int stackID = config.get("power.io", "fuel_itemID", Item.enderPearl.itemID, "Item ID for the fuel item").getInt(Item.enderPearl.itemID);

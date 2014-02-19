@@ -27,6 +27,7 @@ public abstract class TileIOCore extends TileCore {
     public static ItemStack fuelStack = new ItemStack(Item.enderPearl);
 
     public static boolean consumeOnlyWhenActive = true;
+    public static boolean requireFuel = false;
 
     public static int fuelPerStack = 3600;
     public static int fuelPerTick = 1;
@@ -175,7 +176,7 @@ public abstract class TileIOCore extends TileCore {
     }
 
     protected boolean hasFuel() {
-        if ((requiresPower && fuelPerTick > 0) && !fuelHandler.consumeFuel(fuelPerTick, true)) {
+        if ((this.requiresPower && fuelPerTick > 0 && requireFuel) && !fuelHandler.consumeFuel(fuelPerTick, true)) {
             return false;
         }
 
@@ -204,15 +205,13 @@ public abstract class TileIOCore extends TileCore {
     public void updateEntity() {
         if (!worldObj.isRemote) {
             if (firstLoad) {
-                System.out.println("First load update!");
-
                 onNeighborBlockUpdate();
                 firstLoad = false;
             }
 
             /* Add fuel from fuel slot */
             if (worldObj.getTotalWorldTime() % 5 == 0) {
-                if (requiresPower && fuelPerTick > 0) {
+                if (this.requiresPower && fuelPerTick > 0 && requireFuel) {
                     ItemStack fuel = this.fuel.getStackInSlot(0);
 
                     if (fuel != null) {
@@ -238,7 +237,7 @@ public abstract class TileIOCore extends TileCore {
             }
 
             /* Consume fuel */
-            if (requiresPower && fuelPerTick > 0 && (lastClientState || !consumeOnlyWhenActive) && worldObj.getTotalWorldTime() % 20 == 0) {
+            if ((this.requiresPower && fuelPerTick > 0 && requireFuel) && (lastClientState || !consumeOnlyWhenActive) && worldObj.getTotalWorldTime() % 20 == 0) {
                 this.fuelHandler.consumeFuel(fuelPerTick, false);
             }
         }
