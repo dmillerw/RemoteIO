@@ -5,70 +5,55 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
     }
 }
 
 apply plugin: 'forge'
 
-// Define the properties file
-ext.configFile = file "build.properties"
+version = "0.1.5.5"
+group = "com.edxmod"
+archivesBaseName = "Electrodynamics"
+ext.modId = "EDX"
 
-configFile.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
+gradle.taskGraph.whenReady { taskGraph ->
+    if (!taskGraph.hasTask(release)) {
+        version += '-SNAPSHOT'
+    }
 }
-version = config.mod_version
-group = "com.dmillwerw.remoteIO"
-archivesBaseName = "RemoteIO"
+
+task release(dependsOn: 'build') << {
+    println 'Release deploy!'
+}
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version
-    assetsDir = "run/assets"
+    version = "1.7.2-10.12.0.1024"
 
-    replaceIn "ModInfo.java"
-    replace "@FORGE@", config.forge_version
-    replace "@VERSION@", config.mod_Version
+    replaceIn "EDXProps.java"
+    replace "@VERSION@", version
 }
 
-// Add the build number to the end of the version
-version = "${config.minecraft_version}-${config.mod_version}-b${System.getenv().BUILD_NUMBER}"
+println "Building Electrodynamics version ${project.version} for Minecraft ${project.minecraft.version}"
 
 processResources {
-    // Replace stuff
     from(sourceSets.main.resources.srcDirs) {
-        include '**/*.info'
-        include '**/*.properties'
-
+        include 'mcmod.info'
 
         expand([
-                'mod_version': project.config.mod_version,
-                'minecraft_version': project.config.minecraft_version,
-                'build_number': project.config.build_number
+                'version': project.version,
+                'mcversion': project.minecraft.version,
+                'name': project.archivesBaseName,
+                'modId': project.modId
         ])
     }
 
-    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
-        exclude '**/*.info'
-        exclude '**/*.properties'
+        exclude 'mcmod.info'
     }
-}
-
-// Name the jars
-jar {
-    appendix = 'universal'
-}
-
-// Add the source code to the jar
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    appendix = 'src'
-}
-
-artifacts {
-    archives sourceJar
 }
