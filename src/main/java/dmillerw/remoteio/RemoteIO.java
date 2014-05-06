@@ -8,8 +8,10 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.HandlerBlock;
+import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.core.proxy.CommonProxy;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.item.HandlerItem;
@@ -33,6 +35,8 @@ public class RemoteIO {
 		GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
 		FMLCommonHandler.instance().bus().register(RecipeCopyLocation.INSTANCE);
 		FMLCommonHandler.instance().bus().register(BlockTracker.INSTANCE);
+
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
 		proxy.preInit(event);
 	}

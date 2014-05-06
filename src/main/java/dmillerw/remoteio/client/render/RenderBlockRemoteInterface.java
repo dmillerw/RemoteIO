@@ -1,5 +1,6 @@
 package dmillerw.remoteio.client.render;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
@@ -50,7 +51,7 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
 		if (tile != null) {
-			if (tile.remotePosition != null && tile.visualState == TileRemoteInterface.VisualState.REMOTE_CAMO) {
+			if (tile.remotePosition != null && tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) && tile.visualState == TileRemoteInterface.VisualState.REMOTE_CAMO) {
 				DimensionalCoords there = tile.remotePosition;
 				DimensionalCoords here = DimensionalCoords.create(tile);
 				int offsetX = there.x - here.x;

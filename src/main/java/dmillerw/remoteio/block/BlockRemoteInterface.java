@@ -1,9 +1,10 @@
 package dmillerw.remoteio.block;
 
+import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
-import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -41,10 +42,12 @@ public class BlockRemoteInterface extends BlockContainer {
 				}
 				tile.forceVisualUpdate();
 			} else {
-				if (tile.remotePosition != null) {
-					DimensionalCoords coords = tile.remotePosition;
-					coords.getBlock().onBlockActivated(coords.getWorld(), coords.x, coords.y, coords.z, player, side, fx, fy, fz);
-				}
+//				if (tile.remotePosition != null) {
+//					DimensionalCoords coords = tile.remotePosition;
+//					coords.getBlock().onBlockActivated(coords.getWorld(), coords.x, coords.y, coords.z, player, side, fx, fy, fz);
+//				}
+
+				player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
 			}
 		}
 		return true;

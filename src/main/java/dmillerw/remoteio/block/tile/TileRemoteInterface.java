@@ -1,37 +1,48 @@
 package dmillerw.remoteio.block.tile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
+import dmillerw.remoteio.inventory.InventoryNBT;
+import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.transfer.TransferType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, IFluidHandler {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
 		setVisualState(calculateVisualState());
 	}
 
-	@SideOnly(Side.CLIENT)
 	public VisualState visualState = VisualState.INACTIVE;
 
 	public DimensionalCoords remotePosition;
 
+	public InventoryNBT upgrades = new InventoryNBT(18, 1);
+
 	public boolean tempUseCamo = false;
+	private boolean missingUpgrade = false;
 	private boolean visualDirty = true;
 	private boolean tracking = false;
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
+		upgrades.writeToNBT(nbt);
+
 		if (remotePosition != null) {
 			NBTTagCompound tag = new NBTTagCompound();
 			remotePosition.writeToNBT(tag);
@@ -41,6 +52,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt) {
+		upgrades.readFromNBT(nbt);
+
 		if (nbt.hasKey("position")) {
 			remotePosition = DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
 		} else {
@@ -59,7 +72,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public void updateEntity() {
 		if (!worldObj.isRemote) {
 			if (visualDirty) {
-				setVisualState(calculateVisualState());
+				updateVisualState();
 				visualDirty = false;
 			}
 
@@ -74,6 +87,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		visualDirty = true;
 	}
 
+	public void updateVisualState() {
+		setVisualState(calculateVisualState());
+	}
+
 	public VisualState calculateVisualState() {
 		if (remotePosition == null) {
 			return VisualState.INACTIVE;
@@ -82,14 +99,17 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 				return VisualState.INACTIVE_BLINK;
 			}
 
-			return tempUseCamo ? VisualState.REMOTE_CAMO : VisualState.ACTIVE;
+			return tempUseCamo ? VisualState.REMOTE_CAMO : missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
 		}
 	}
 
 	public void setVisualState(VisualState state) {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setByte("state", (byte)state.ordinal());
-		sendClientUpdate(nbt);
+		if (visualState != state) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setByte("state", (byte)state.ordinal());
+			sendClientUpdate(nbt);
+		}
+		visualState = state;
 	}
 
 	public void setRemotePosition(DimensionalCoords coords) {
@@ -112,6 +132,17 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		if (!(cls.isInstance(remote))) {
 			return null;
+		}
+
+		int type = TransferType.getTypeForInterface(cls);
+
+		if (!(InventoryHelper.containsStack(upgrades, new ItemStack(HandlerItem.transferChip, 1, type), true, false))) {
+			missingUpgrade = true;
+			updateVisualState();
+			return null;
+		} else {
+			missingUpgrade = false;
+			updateVisualState();
 		}
 
 		return cls.cast(remote);
@@ -186,6 +217,43 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		IInventory inventory = (IInventory) getImplementation(IInventory.class);
 		return inventory != null ? inventory.isItemValidForSlot(slot, stack) : false;
+	}
+
+	/* IFLUIDHANDLER */
+	@Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		return fluidHandler != null ? fluidHandler.fill(from, resource, doFill) : 0;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		return fluidHandler != null ? fluidHandler.drain(from, resource, doDrain) : null;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		return fluidHandler != null ? fluidHandler.drain(from, maxDrain, doDrain) : null;
+	}
+
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		return fluidHandler != null ? fluidHandler.canFill(from, fluid) : false;
+	}
+
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		return fluidHandler != null ? fluidHandler.canDrain(from, fluid) : false;
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		return fluidHandler != null ? fluidHandler.getTankInfo(from) : new FluidTankInfo[0];
 	}
 
 	public static enum VisualState {

@@ -1,14 +1,13 @@
 package dmillerw.remoteio.transfer;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class TransferType {
 
-	private static Map<Integer, Class> typeToInterfaceMap = new HashMap<Integer, Class>();
+	private static BiMap<Integer, Class> typeToInterfaceMap = HashBiMap.create();
 
 	// MATTER
 	public static final int MATTER_ITEM = 0;
@@ -34,6 +33,14 @@ public class TransferType {
 
 	public static Class getInterfaceForType(int type) {
 		return typeToInterfaceMap.get(type);
+	}
+
+	public static int getTypeForInterface(Class cls) {
+		if (typeToInterfaceMap.inverse().containsKey(cls)) {
+			return typeToInterfaceMap.inverse().get(cls);
+		} else {
+			return -1;
+		}
 	}
 
 }
