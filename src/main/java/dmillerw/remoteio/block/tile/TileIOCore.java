@@ -37,6 +37,10 @@ public abstract class TileIOCore extends TileEntity {
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
 	}
 
+	public void sendNBTUpdate() {
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
 	public void sendClientUpdate(NBTTagCompound tag) {
 		VanillaPacketHelper.sendToAllWatchingTile(this, new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tag));
 	}

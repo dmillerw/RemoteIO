@@ -1,11 +1,13 @@
 package dmillerw.remoteio.block;
 
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
+import dmillerw.remoteio.core.TabRemoteIO;
+import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -17,14 +19,14 @@ import net.minecraft.world.World;
  */
 public class BlockRemoteInterface extends BlockContainer {
 
-	private IIcon[] icons;
+	public IIcon[] icons;
 
 	public BlockRemoteInterface() {
 		super(Material.iron);
 
 		setHardness(5F);
 		setResistance(5F);
-		setCreativeTab(CreativeTabs.tabRedstone); // TEMP
+		setCreativeTab(TabRemoteIO.TAB);
 	}
 
 	@Override
@@ -32,8 +34,35 @@ public class BlockRemoteInterface extends BlockContainer {
 		if (!world.isRemote) {
 			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
+			if (player.isSneaking()) {
+				tile.tempUseCamo = !tile.tempUseCamo;
+				if (tile.tempUseCamo) {
+					tile.sendNBTUpdate();
+				}
+				tile.forceVisualUpdate();
+			} else {
+				if (tile.remotePosition != null) {
+					DimensionalCoords coords = tile.remotePosition;
+					coords.getBlock().onBlockActivated(coords.getWorld(), coords.x, coords.y, coords.z, player, side, fx, fy, fz);
+				}
+			}
 		}
 		return true;
+	}
+
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public int getRenderType() {
+		return RenderBlockRemoteInterface.renderID;
 	}
 
 	@Override
@@ -53,9 +82,9 @@ public class BlockRemoteInterface extends BlockContainer {
 	public void registerBlockIcons(IIconRegister register) {
 		icons = new IIcon[4];
 		icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "inactive");
-		icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "inactive_blink");
-		icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active");
-		icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active_blink");
+		icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "inactive_blink");
+		icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active");
+		icons[3] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active_blink");
 	}
 
 	@Override

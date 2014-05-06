@@ -1,9 +1,11 @@
 package dmillerw.remoteio.lib;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
@@ -67,9 +69,33 @@ public class DimensionalCoords {
         return MinecraftServer.getServer().worldServerForDimension(this.dimensionID);
     }
 
+	public Block getBlock() {
+		return getWorld().getBlock(x, y, z);
+	}
+
+	public int getMeta() {
+		return getWorld().getBlockMetadata(x, y, z);
+	}
+
+	public boolean isAir() {
+		return getWorld().isAirBlock(x, y, z);
+	}
+
     public TileEntity getTileEntity() {
         return getWorld().getTileEntity(x, y, z);
     }
+
+	public Block getBlock(IBlockAccess world) {
+		return world.getBlock(x, y, z);
+	}
+
+	public int getMeta(IBlockAccess world) {
+		return world.getBlockMetadata(x, y, z);
+	}
+
+	public TileEntity getTileEntity(IBlockAccess world) {
+		return world.getTileEntity(x, y, z);
+	}
 
     /* END */
 
