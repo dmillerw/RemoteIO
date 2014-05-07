@@ -1,11 +1,12 @@
 package dmillerw.remoteio.block.tile;
 
+import dmillerw.remoteio.core.TransferType;
+import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
-import dmillerw.remoteio.transfer.TransferType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -21,44 +22,56 @@ import net.minecraftforge.fluids.IFluidHandler;
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, IFluidHandler {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
-		setVisualState(calculateVisualState());
+		updateVisualState();
+	}
+
+	@Override
+	public void callback(IInventory inventory) {
+		updateVisualState();
 	}
 
 	public VisualState visualState = VisualState.INACTIVE;
 
 	public DimensionalCoords remotePosition;
 
-	public InventoryNBT upgrades = new InventoryNBT(18, 1);
+	public InventoryNBT transferChips = new InventoryNBT(this, 9, 1);
+	public InventoryNBT upgradeChips = new InventoryNBT(this, 9, 1);
 
-	public boolean tempUseCamo = false;
 	private boolean missingUpgrade = false;
-	private boolean visualDirty = true;
 	private boolean tracking = false;
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
-		upgrades.writeToNBT(nbt);
+		transferChips.writeToNBT("TransferItems", nbt);
+		upgradeChips.writeToNBT("UpgradeItems", nbt);
 
 		if (remotePosition != null) {
 			NBTTagCompound tag = new NBTTagCompound();
 			remotePosition.writeToNBT(tag);
 			nbt.setTag("position", tag);
 		}
+
+		// This is purely to ensure the client remains synchronized upon world load
+		nbt.setByte("state", (byte) visualState.ordinal());
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt) {
-		upgrades.readFromNBT(nbt);
+		transferChips.readFromNBT("TransferItems", nbt);
+		upgradeChips.readFromNBT("UpgradeItems", nbt);
 
 		if (nbt.hasKey("position")) {
 			remotePosition = DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
 		} else {
 			tracking = true;
 		}
+
+		// This is purely to ensure the client remains synchronized upon world load
+		visualState = VisualState.values()[nbt.getByte("state")];
 	}
 
 	@Override
@@ -66,16 +79,17 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		if (nbt.hasKey("state")) {
 			visualState = VisualState.values()[nbt.getByte("state")];
 		}
+
+		if (nbt.hasKey("position")) {
+			remotePosition = DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
+		} else {
+			remotePosition = null;
+		}
 	}
 
 	@Override
 	public void updateEntity() {
 		if (!worldObj.isRemote) {
-			if (visualDirty) {
-				updateVisualState();
-				visualDirty = false;
-			}
-
 			if (!tracking) {
 				BlockTracker.INSTANCE.startTracking(remotePosition, this);
 				tracking = true;
@@ -83,15 +97,21 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 	}
 
-	public void forceVisualUpdate() {
-		visualDirty = true;
+	public void updateRemotePosition() {
+		NBTTagCompound nbt = new NBTTagCompound();
+		if (remotePosition != null) {
+			NBTTagCompound tag = new NBTTagCompound();
+			remotePosition.writeToNBT(tag);
+			nbt.setTag("position", tag);
+		}
+		sendClientUpdate(nbt);
 	}
 
 	public void updateVisualState() {
 		setVisualState(calculateVisualState());
 	}
 
-	public VisualState calculateVisualState() {
+	private VisualState calculateVisualState() {
 		if (remotePosition == null) {
 			return VisualState.INACTIVE;
 		} else {
@@ -99,23 +119,25 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 				return VisualState.INACTIVE_BLINK;
 			}
 
-			return tempUseCamo ? VisualState.REMOTE_CAMO : missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
+			return hasUpgradeChip(UpgradeType.REMOTE_CAMO) ? VisualState.REMOTE_CAMO : missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
 		}
 	}
 
-	public void setVisualState(VisualState state) {
-		if (visualState != state) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			nbt.setByte("state", (byte)state.ordinal());
-			sendClientUpdate(nbt);
+	private void setVisualState(VisualState state) {
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setByte("state", (byte)state.ordinal());
+		sendClientUpdate(nbt);
+
+		if (state == VisualState.REMOTE_CAMO) {
+			updateRemotePosition();
 		}
+
 		visualState = state;
 	}
 
 	public void setRemotePosition(DimensionalCoords coords) {
 		BlockTracker.INSTANCE.stopTracking(remotePosition);
 		remotePosition = coords;
-		visualDirty = true;
 		BlockTracker.INSTANCE.startTracking(remotePosition, this);
 	}
 
@@ -134,9 +156,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			return null;
 		}
 
-		int type = TransferType.getTypeForInterface(cls);
-
-		if (!(InventoryHelper.containsStack(upgrades, new ItemStack(HandlerItem.transferChip, 1, type), true, false))) {
+		if (!hasTransferChip(TransferType.getTypeForInterface(cls))) {
 			missingUpgrade = true;
 			updateVisualState();
 			return null;
@@ -146,6 +166,14 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 
 		return cls.cast(remote);
+	}
+
+	public boolean hasTransferChip(int type) {
+		return InventoryHelper.containsStack(transferChips, new ItemStack(HandlerItem.transferChip, 1, type), true, false);
+	}
+
+	public boolean hasUpgradeChip(int type) {
+		return InventoryHelper.containsStack(upgradeChips, new ItemStack(HandlerItem.upgradeChip, 1, type), true, false);
 	}
 
 	/* IINVENTORY */

@@ -6,7 +6,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -17,6 +16,10 @@ import net.minecraft.world.chunk.Chunk;
 public class VanillaPacketHelper {
 
 	public static void sendToAllWatchingTile(TileEntity tile, Packet packet) {
+		if (!tile.hasWorldObj()) {
+			return;
+		}
+
 		sendToAllWatchingChunk(tile.getWorldObj().getChunkFromBlockCoords(tile.xCoord, tile.zCoord), packet);
 	}
 
@@ -33,10 +36,22 @@ public class VanillaPacketHelper {
 				EntityPlayerMP player = (EntityPlayerMP) obj;
 
 				if (playerManager.isPlayerWatchingChunk(player, chunk.xPosition, chunk.zPosition)) {
-					if (!player.loadedChunks.contains(new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition))) {
+//					if (!player.loadedChunks.contains(new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition))) {
 						player.playerNetServerHandler.sendPacket(packet);
-					}
+//					}
 				}
+			}
+		}
+	}
+
+	public static void sendToAllInDimension(int dimension, Packet packet) {
+		ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
+
+		for (Object obj : manager.playerEntityList) {
+			EntityPlayerMP player = (EntityPlayerMP) obj;
+
+			if (player.getEntityWorld().provider.dimensionId == dimension) {
+				player.playerNetServerHandler.sendPacket(packet);
 			}
 		}
 	}

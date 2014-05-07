@@ -1,4 +1,4 @@
-package dmillerw.remoteio.transfer;
+package dmillerw.remoteio.core;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

@@ -18,6 +18,9 @@ public class HandlerItem {
 
 		transferChip = new ItemTransferChip().setUnlocalizedName("chip.transfer");
 		GameRegistry.registerItem(transferChip, "remoteio:transfer_chip");
+
+		upgradeChip = new ItemUpgradeChip().setUnlocalizedName("chip.upgrade");
+		GameRegistry.registerItem(upgradeChip, "remoteio:upgrade_chip");
 	}
 
 }

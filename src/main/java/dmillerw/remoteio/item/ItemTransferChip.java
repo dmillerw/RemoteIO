@@ -1,7 +1,7 @@
 package dmillerw.remoteio.item;
 
 import dmillerw.remoteio.core.TabRemoteIO;
-import dmillerw.remoteio.transfer.TransferType;
+import dmillerw.remoteio.core.TransferType;
 
 /**
  * @author dmillerw

@@ -1,5 +1,6 @@
 package dmillerw.remoteio.inventory;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,20 +11,32 @@ import net.minecraft.nbt.NBTTagList;
  */
 public class InventoryNBT extends InventoryBasic {
 
+	private final IInventoryCallback callback;
+
 	private int maxStackSize = 64;
 
-	public InventoryNBT(int size) {
+	public InventoryNBT(IInventoryCallback callback, int size) {
 		super("", false, size);
+
+		this.callback = callback;
 	}
 
-	public InventoryNBT(int size, int maxStackSize) {
+	public InventoryNBT(IInventoryCallback callback, int size, int maxStackSize) {
 		super("", false, size);
 
+		this.callback = callback;
 		this.maxStackSize = maxStackSize;
 	}
 
-	public void readFromNBT(NBTTagCompound nbt) {
-		NBTTagList items = nbt.getTagList("Items", 10);
+	@Override
+	public void markDirty() {
+		super.markDirty();
+
+		callback.callback(this);
+	}
+
+	public void readFromNBT(String tag, NBTTagCompound nbt) {
+		NBTTagList items = nbt.getTagList(tag, 10);
 		for (int i = 0; i < items.tagCount(); ++i) {
 			NBTTagCompound item = items.getCompoundTagAt(i);
 			byte b0 = item.getByte("Slot");
@@ -34,7 +47,7 @@ public class InventoryNBT extends InventoryBasic {
 		}
 	}
 
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(String tag, NBTTagCompound nbt) {
 		NBTTagList items = new NBTTagList();
 		for (int i = 0; i < this.getSizeInventory(); ++i) {
 			if (this.getStackInSlot(i) != null) {
@@ -44,11 +57,16 @@ public class InventoryNBT extends InventoryBasic {
 				items.appendTag(item);
 			}
 		}
-		nbt.setTag("Items", items);
+		nbt.setTag(tag, items);
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
 		return maxStackSize;
 	}
+
+	public static interface IInventoryCallback {
+		public void callback(IInventory inventory);
+	}
+
 }

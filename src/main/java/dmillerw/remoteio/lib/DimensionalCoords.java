@@ -132,4 +132,9 @@ public class DimensionalCoords {
 		);
     }
 
+	@Override
+	public String toString() {
+		return "[" + dimensionID + " : " + x + ", " + y + ", " + z + "]";
+	}
+
 }

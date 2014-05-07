@@ -4,7 +4,9 @@ import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
+import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
+import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -36,18 +38,12 @@ public class BlockRemoteInterface extends BlockContainer {
 			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
 			if (player.isSneaking()) {
-				tile.tempUseCamo = !tile.tempUseCamo;
-				if (tile.tempUseCamo) {
-					tile.sendNBTUpdate();
-				}
-				tile.forceVisualUpdate();
-			} else {
-//				if (tile.remotePosition != null) {
-//					DimensionalCoords coords = tile.remotePosition;
-//					coords.getBlock().onBlockActivated(coords.getWorld(), coords.x, coords.y, coords.z, player, side, fx, fy, fz);
-//				}
-
 				player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
+			} else {
+				if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
+					DimensionalCoords coords = tile.remotePosition;
+					coords.getBlock().onBlockActivated(coords.getWorld(), coords.x, coords.y, coords.z, player, side, fx, fy, fz);
+				}
 			}
 		}
 		return true;

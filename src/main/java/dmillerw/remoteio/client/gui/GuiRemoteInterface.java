@@ -2,6 +2,7 @@ package dmillerw.remoteio.client.gui;
 
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.inventory.ContainerRemoteInterface;
+import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -12,7 +13,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class GuiRemoteInterface extends GuiContainer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/dispenser.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/upgrade.png");
 
 	private final TileRemoteInterface tile;
 

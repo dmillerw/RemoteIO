@@ -71,7 +71,7 @@ public class ItemLocationChip extends Item {
 			if (player.isSneaking()) {
 				if (tile != null) {
 					ItemLocationChip.setCoordinates(stack, DimensionalCoords.create(tile));
-					player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.set"));
+					player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.save"));
 				} else {
 					player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.fail"));
 				}
@@ -82,6 +82,7 @@ public class ItemLocationChip extends Item {
 
 						if (coords != null) {
 							((TileRemoteInterface)tile).setRemotePosition(coords);
+							player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.load"));
 						}
 					}
 				}
