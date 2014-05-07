@@ -1,17 +1,17 @@
-#Misc
+# Misc
 itemGroup.rio=RemoteIO
 
-#Chat
+# Chat
 chat.location_chip.save=Location Saved
 chat.location_chip.load=Location Loaded
 chat.location_chip.fail=Cannot store location.This block isn't advanced enough.
 
-#Item
+# Item
 item.chip.location.name=Location Chip
 item.chip.transfer.item.name=Item Transfer Chip
 item.chip.transfer.fluid.name=Fluid Transfer Chip
 item.chip.upgrade.remote_camo.name=Remote Camouflage Upgrade
 item.chip.upgrade.remote_access.name=Remote Access Upgrade
 
-#Block
+# Block
 tile.remote_interface.name=Remote Interface
