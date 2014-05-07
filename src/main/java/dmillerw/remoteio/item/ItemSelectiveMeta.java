@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class ItemSelectiveMeta extends Item {
 
-	private final int[] values;
+	protected final int[] values;
 
-	private Map<Integer, String> names;
+	protected Map<Integer, String> names;
 
 	public ItemSelectiveMeta(int[] values, String[] names) {
 		super();

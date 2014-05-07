@@ -3,12 +3,15 @@ package dmillerw.remoteio.item;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.lib.ModInfo;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -44,6 +47,8 @@ public class ItemLocationChip extends Item {
 
 		return DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
 	}
+
+	private IIcon icon;
 
 	public ItemLocationChip() {
 		super();
@@ -90,6 +95,16 @@ public class ItemLocationChip extends Item {
 		}
 
 		return !world.isRemote;
+	}
+
+	@Override
+	public IIcon getIconFromDamage(int damage) {
+		return icon;
+	}
+
+	@Override
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "location");
 	}
 
 	@Override
