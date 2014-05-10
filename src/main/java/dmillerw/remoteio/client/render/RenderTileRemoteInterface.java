@@ -22,12 +22,16 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 
 	private RenderBlocks renderBlocks;
 
+	public static boolean shouldRender(TileRemoteInterface.VisualState state) {
+		return state == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE || state == TileRemoteInterface.VisualState.CAMOUFLAGE_BOTH;
+	}
+
 	public void renderRemoteInterfaceAt(TileRemoteInterface tile, double x, double y, double z, float partial) {
 		if (tile.camoRenderLock) {
 			return;
 		}
 
-		if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj()) && tile.visualState == TileRemoteInterface.VisualState.REMOTE_CAMO) {
+		if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj()) && shouldRender(tile.visualState)) {
 			WorldClient worldClient = FMLClientHandler.instance().getWorldClient();
 			DimensionalCoords there = tile.remotePosition;
 
@@ -39,22 +43,23 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 			GL11.glTranslated(0.5, 0, 0.5);
 			GL11.glRotated(tile.thetaModifier, 0, 1, 0);
 			GL11.glTranslated(-0.5, 0, -0.5);
+			GL11.glTranslated(-0.0002, 0, 0); // To prevent ZFighting when rendering with simple camo
 
 
-			GL11.glDisable(GL11.GL_LIGHTING);
+			// Don't call the block's renderer if there's a simple camo chip
+			if (tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE) {
+				GL11.glDisable(GL11.GL_LIGHTING);
 
-			Tessellator.instance.startDrawingQuads();
-			Tessellator.instance.setColorOpaque_F(1, 1, 1);
-			Tessellator.instance.setTranslation(-tile.xCoord, -tile.yCoord, -tile.zCoord);
-			Tessellator.instance.addTranslation(-(there.x - tile.xCoord), -(there.y - tile.yCoord), -(there.z - tile.zCoord));
-			renderBlocks.renderBlockAllFaces(tile.getWorldObj().getBlock(there.x, there.y, there.z), there.x, there.y, there.z);
-//			renderBlocks.renderBlockAllFaces(Blocks.stonebrick, there.x, there.y, there.z);
-			Tessellator.instance.setTranslation(0, 0, 0);
-			Tessellator.instance.draw();
+				Tessellator.instance.startDrawingQuads();
+				Tessellator.instance.setColorOpaque_F(1, 1, 1);
+				Tessellator.instance.setTranslation(-tile.xCoord, -tile.yCoord, -tile.zCoord);
+				Tessellator.instance.addTranslation(-(there.x - tile.xCoord), -(there.y - tile.yCoord), -(there.z - tile.zCoord));
+				renderBlocks.renderBlockAllFaces(tile.getWorldObj().getBlock(there.x, there.y, there.z), there.x, there.y, there.z);
+				Tessellator.instance.setTranslation(0, 0, 0);
+				Tessellator.instance.draw();
 
-			GL11.glEnable(GL11.GL_LIGHTING);
-
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
+				GL11.glEnable(GL11.GL_LIGHTING);
+			}
 
 			try {
 				TileEntityRendererDispatcher.instance.renderTileEntityAt(tile.remotePosition.getTileEntity(worldClient), 0, 0, 0, partial);
@@ -64,8 +69,6 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 				tile.camoRenderLock = true;
 				tile.markForRenderUpdate();
 			}
-
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 			GL11.glPopMatrix();
 		}

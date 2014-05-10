@@ -50,7 +50,7 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
 		if (tile != null) {
-			if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != TileRemoteInterface.VisualState.REMOTE_CAMO || tile.camoRenderLock) {
+			if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE || tile.camoRenderLock) {
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 		}

@@ -95,8 +95,8 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 	@Override
 	public void registerIcons(IIconRegister register) {
 		icons = new IIcon[2];
-		icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "upgrade");
-		icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "upgrade_overlay");
+		icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "chip");
+		icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "plate_upgrade");
 	}
 
 }

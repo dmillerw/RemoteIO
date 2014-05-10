@@ -1,9 +1,12 @@
 package dmillerw.remoteio.block.tile;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
+import dmillerw.remoteio.inventory.InventoryItem;
 import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
@@ -34,6 +37,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public void callback(IInventory inventory) {
 		updateVisualState();
 	}
+
+	@SideOnly(Side.CLIENT)
+	public ItemStack simpleCamo;
 
 	public VisualState visualState = VisualState.INACTIVE;
 
@@ -85,8 +91,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public void onClientUpdate(NBTTagCompound nbt) {
 		if (nbt.hasKey("state")) {
 			visualState = VisualState.values()[nbt.getByte("state")];
-
-			if (visualState == VisualState.REMOTE_CAMO) {
+			if (visualState == VisualState.CAMOUFLAGE_REMOTE) {
 				camoRenderLock = false;
 			}
 		}
@@ -99,6 +104,12 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		if (nbt.hasKey("theta")) {
 			thetaModifier = nbt.getInteger("theta");
+		}
+
+		if (nbt.hasKey("simple")) {
+			simpleCamo = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("simple"));
+		} else if (nbt.hasKey("simple_null")) {
+			simpleCamo = null;
 		}
 	}
 
@@ -117,6 +128,30 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		return INFINITE_EXTENT_AABB;
 	}
 
+	/** Scans for any simple camo chips and sends the contents of the first one it finds that has a stored block to the client */
+	public void updateSimpleCamo() {
+		ItemStack stack = null;
+		for (ItemStack stack1 : InventoryHelper.toArray(upgradeChips)) {
+			if (stack1 != null && stack1.getItemDamage() == UpgradeType.SIMPLE_CAMO) {
+				stack = new InventoryItem(stack1, 1).getStackInSlot(0);
+				if (stack != null) {
+					break;
+				}
+			}
+		}
+
+		NBTTagCompound nbt = new NBTTagCompound();
+		if (stack != null) {
+			NBTTagCompound tag = new NBTTagCompound();
+			stack.writeToNBT(tag);
+			nbt.setTag("simple", tag);
+		} else {
+			nbt.setBoolean("simple_null", true);
+		}
+		sendClientUpdate(nbt);
+	}
+
+	/** Sends the remote position to the client */
 	public void updateRemotePosition() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (remotePosition != null) {
@@ -129,10 +164,12 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		sendClientUpdate(nbt);
 	}
 
+	/** Different from the other update methods, this calculates the visual state, then sends it to the client while also storing it in a local var */
 	public void updateVisualState() {
 		setVisualState(calculateVisualState());
 	}
 
+	/** Sends the passed in theta modifer to the client */
 	public void updateThetaModifier(float thetaModifier) {
 		this.thetaModifier += thetaModifier;
 
@@ -147,6 +184,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		sendClientUpdate(nbt);
 	}
 
+	/** Calculates the visual state based on various parameters */
 	private VisualState calculateVisualState() {
 		if (remotePosition == null) {
 			return VisualState.INACTIVE;
@@ -155,22 +193,39 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 				return VisualState.INACTIVE_BLINK;
 			}
 
-			return hasUpgradeChip(UpgradeType.REMOTE_CAMO) ? VisualState.REMOTE_CAMO : missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
+			boolean simple = hasUpgradeChip(UpgradeType.SIMPLE_CAMO);
+			boolean remote = hasUpgradeChip(UpgradeType.REMOTE_CAMO);
+
+			if (simple && !remote) {
+				return VisualState.CAMOUFLAGE_SIMPLE;
+			} else if (!simple && remote) {
+				return VisualState.CAMOUFLAGE_REMOTE;
+			} else if (simple && remote) {
+				return VisualState.CAMOUFLAGE_BOTH;
+			}
+
+			return missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
 		}
 	}
 
+	/** Sends the passed in visual state to the client, calling other update methods if applicable */
 	private void setVisualState(VisualState state) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setByte("state", (byte)state.ordinal());
 		sendClientUpdate(nbt);
 
-		if (state == VisualState.REMOTE_CAMO) {
+		if (state == VisualState.CAMOUFLAGE_SIMPLE || state == VisualState.CAMOUFLAGE_BOTH) {
+			updateSimpleCamo();
+		}
+
+		if (state == VisualState.CAMOUFLAGE_REMOTE || state == VisualState.CAMOUFLAGE_BOTH) {
 			updateRemotePosition();
 		}
 
 		visualState = state;
 	}
 
+	/** Sets the server-side remote position to the passed in position, and resets the tracker */
 	public void setRemotePosition(DimensionalCoords coords) {
 		BlockTracker.INSTANCE.stopTracking(remotePosition);
 		remotePosition = coords;
@@ -325,7 +380,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		INACTIVE_BLINK,
 		ACTIVE,
 		ACTIVE_BLINK,
-		REMOTE_CAMO;
+		CAMOUFLAGE_SIMPLE,
+		CAMOUFLAGE_REMOTE,
+		CAMOUFLAGE_BOTH;
+
+		public boolean isCamouflage() {
+			return this == CAMOUFLAGE_SIMPLE || this == CAMOUFLAGE_REMOTE || this == CAMOUFLAGE_BOTH;
+		}
 	}
 
 }

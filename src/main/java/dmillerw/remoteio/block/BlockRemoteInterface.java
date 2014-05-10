@@ -9,6 +9,7 @@ import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -70,8 +71,10 @@ public class BlockRemoteInterface extends BlockContainer {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
 		if (tile != null) {
-			if (tile.visualState != TileRemoteInterface.VisualState.REMOTE_CAMO) {
+			if (!tile.visualState.isCamouflage()) {
 				return icons[tile.visualState.ordinal()];
+			} else if (tile.simpleCamo != null) {
+				return Block.getBlockFromItem(tile.simpleCamo.getItem()).getIcon(side, tile.simpleCamo.getItemDamage());
 			}
 		}
 

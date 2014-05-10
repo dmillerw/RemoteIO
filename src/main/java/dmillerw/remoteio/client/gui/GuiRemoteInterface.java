@@ -84,6 +84,7 @@ public class GuiRemoteInterface extends GuiContainer {
 
 			GL11.glPushMatrix();
 
+			//TODO Properly allow for rendering even without upgrades
 			TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, -0.5, -0.5, -0.5, 0);
 
 			GL11.glPopMatrix();
