@@ -10,6 +10,12 @@ import dmillerw.remoteio.inventory.InventoryItem;
 import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import ic2.api.energy.event.EnergyTileLoadEvent;
+import ic2.api.energy.event.EnergyTileUnloadEvent;
+import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
+import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.tile.IWrenchable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -18,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,7 +35,7 @@ import thaumcraft.api.wands.IWandable;
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IWandable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IEnergySource, IEnergySink, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -54,6 +61,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	public boolean camoRenderLock = false;
 
+	private boolean registeredWithIC2 = false;
 	private boolean missingUpgrade = false;
 	private boolean tracking = false;
 
@@ -126,9 +134,31 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	@Override
+	public void onChunkUnload() {
+		if (registeredWithIC2) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			registeredWithIC2 = false;
+		}
+
+		BlockTracker.INSTANCE.stopTracking(remotePosition);
+	}
+
+	@Override
+	public void invalidate() {
+		if (registeredWithIC2) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			registeredWithIC2 = false;
+		}
+
+		BlockTracker.INSTANCE.stopTracking(remotePosition);
+	}
+
+	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return INFINITE_EXTENT_AABB;
 	}
+
+	/* BEGIN UPDATE METHODS */
 
 	/** Scans for any simple camo chips and sends the contents of the first one it finds that has a stored block to the client */
 	public void updateSimpleCamo() {
@@ -229,10 +259,22 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	/** Sets the server-side remote position to the passed in position, and resets the tracker */
 	public void setRemotePosition(DimensionalCoords coords) {
+		if (registeredWithIC2) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			registeredWithIC2 = false;
+		}
+
 		BlockTracker.INSTANCE.stopTracking(remotePosition);
 		remotePosition = coords;
 		BlockTracker.INSTANCE.startTracking(remotePosition, this);
+
+		if (!registeredWithIC2 && remotePosition.getTileEntity() instanceof IEnergyTile) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+			registeredWithIC2 = true;
+		}
 	}
+
+	/* END UPDATE METHODS */
 
 	public Object getUpgradeImplementation(Class cls) {
 		return getUpgradeImplementation(cls, -1);
@@ -302,6 +344,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public boolean hasUpgradeChip(int type) {
 		return InventoryHelper.containsStack(upgradeChips, new ItemStack(HandlerItem.upgradeChip, 1, type), true, false);
 	}
+
+	/* START IMPLEMENTATIONS */
 
 	/* IINVENTORY */
 	@Override
@@ -411,30 +455,110 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		return fluidHandler != null ? fluidHandler.getTankInfo(from) : new FluidTankInfo[0];
 	}
 
+	/* IENERGYSOURCE */
+	@Override
+	public double getOfferedEnergy() {
+		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
+		return energySource != null ? energySource.getOfferedEnergy() : 0;
+	}
+
+	@Override
+	public void drawEnergy(double amount) {
+		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
+		if (energySource != null) energySource.drawEnergy(amount);
+	}
+
+	@Override
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
+		return energySource != null ? energySource.emitsEnergyTo(receiver, direction) : false;
+	}
+
+	/* IENERGYSINK */
+	@Override
+	public double demandedEnergyUnits() {
+		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
+		return energySink != null ? energySink.demandedEnergyUnits() : 0;
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
+		return energySink != null ? energySink.injectEnergyUnits(directionFrom, amount) : 0;
+	}
+
+	@Override
+	public int getMaxSafeInput() {
+		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
+		return energySink != null ? energySink.getMaxSafeInput() : Integer.MAX_VALUE;
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
+		return energySink != null ? energySink.acceptsEnergyFrom(emitter, direction) : false;
+	}
+
 	/* IWANDABLE */
 	@Override
 	public int onWandRightClick(World world, ItemStack wandstack, EntityPlayer player, int x, int y, int z, int side, int md) {
-		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
 		return wandable != null ? wandable.onWandRightClick(world, wandstack, player, x, y, z, side, md) : -1;
 	}
 
 	@Override
 	public ItemStack onWandRightClick(World world, ItemStack wandstack, EntityPlayer player) {
-		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
 		return wandable != null ? wandable.onWandRightClick(world, wandstack, player) : wandstack;
 	}
 
 	@Override
 	public void onUsingWandTick(ItemStack wandstack, EntityPlayer player, int count) {
-		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
 		if (wandable != null) wandable.onUsingWandTick(wandstack, player, count);
 	}
 
 	@Override
 	public void onWandStoppedUsing(ItemStack wandstack, World world, EntityPlayer player, int count) {
-		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
 		if (wandable != null) wandable.onWandStoppedUsing(wandstack, world, player, count);
 	}
+
+	/* IWRENCHABLE */
+	@Override
+	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
+		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
+		return wrenchable != null ? wrenchable.wrenchCanSetFacing(entityPlayer, side) : false;
+ 	}
+
+	@Override
+	public short getFacing() {
+		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
+		return wrenchable != null ? wrenchable.getFacing() : 0;
+	}
+
+	@Override
+	public void setFacing(short facing) {
+		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
+		if (wrenchable != null) wrenchable.setFacing(facing);
+	}
+
+	@Override
+	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
+		return false;
+	}
+
+	@Override
+	public float getWrenchDropRate() {
+		return 0F;
+	}
+
+	@Override
+	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
+		return null;
+	}
+
+	/* END IMPLEMENTATIONS */
 
 	public static enum VisualState {
 		INACTIVE,

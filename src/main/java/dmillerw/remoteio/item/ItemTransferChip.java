@@ -25,12 +25,16 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 	public ItemTransferChip() {
 		super(new int[] {
 			TransferType.MATTER_ITEM,
-			TransferType.MATTER_FLUID
+			TransferType.MATTER_FLUID,
+
+			TransferType.ENERGY_IC2
 		},
 
 		new String[] {
 			"item",
-			"fluid"
+			"fluid",
+
+			"energy_ic2"
 		});
 
 		setCreativeTab(TabRemoteIO.TAB);
