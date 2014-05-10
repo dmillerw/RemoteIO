@@ -1,5 +1,8 @@
 package dmillerw.remoteio.block.tile;
 
+import buildcraft.api.mj.IBatteryObject;
+import buildcraft.api.mj.IBatteryProvider;
+import buildcraft.api.mj.MjAPI;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.core.TransferType;
@@ -35,7 +38,7 @@ import thaumcraft.api.wands.IWandable;
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IEnergySource, IEnergySink, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -45,6 +48,14 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public void callback(IInventory inventory) {
 		updateVisualState();
+
+		// Eww, hacky workarounds
+		// Recalculates BC state to account for insertion/removal of BC transfer chip
+		// Can't think of a better way to do this
+		if (hasTransferChip(TransferType.ENERGY_BC)) {
+			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
+			markForUpdate();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -56,6 +67,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	public InventoryNBT transferChips = new InventoryNBT(this, 9, 1);
 	public InventoryNBT upgradeChips = new InventoryNBT(this, 9, 1);
+
+	private IBatteryObject mjBatteryCache;
 
 	public int thetaModifier = 0;
 
@@ -141,6 +154,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 
 		BlockTracker.INSTANCE.stopTracking(remotePosition);
+
+		mjBatteryCache = null;
 	}
 
 	@Override
@@ -151,6 +166,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 
 		BlockTracker.INSTANCE.stopTracking(remotePosition);
+
+		mjBatteryCache = null;
 	}
 
 	@Override
@@ -267,6 +284,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		BlockTracker.INSTANCE.stopTracking(remotePosition);
 		remotePosition = coords;
 		BlockTracker.INSTANCE.startTracking(remotePosition, this);
+
+		if (hasTransferChip(TransferType.ENERGY_BC)) {
+			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
+		}
 
 		if (!registeredWithIC2 && remotePosition.getTileEntity() instanceof IEnergyTile) {
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
@@ -497,6 +518,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
 		return energySink != null ? energySink.acceptsEnergyFrom(emitter, direction) : false;
+	}
+
+	/* IBATTERYPROVIDER
+	 * This is a funky implementation due to how the new MJ system works */
+	@Override
+	public IBatteryObject getMjBattery(String kind) {
+		return mjBatteryCache;
 	}
 
 	/* IWANDABLE */

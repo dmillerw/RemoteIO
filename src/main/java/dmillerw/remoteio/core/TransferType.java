@@ -31,6 +31,7 @@ public class TransferType {
 		registerType(MATTER_FLUID, IFluidHandler.class);
 
 		registerType(ENERGY_IC2, IEnergySource.class, IEnergySink.class);
+		// ENERGY_BC is handled via tile
 	}
 
 	public static void registerType(int type, Class ... classes) {
