@@ -233,6 +233,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	public Object getImplementation(Class cls) {
+		return getImplementation(cls, true);
+	}
+
+	public Object getImplementation(Class cls, boolean requiresChip) {
 		if (remotePosition == null) {
 			return null;
 		}
@@ -247,13 +251,15 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			return null;
 		}
 
-		if (!hasTransferChip(TransferType.getTypeForInterface(cls))) {
-			missingUpgrade = true;
-			updateVisualState();
-			return null;
-		} else {
-			missingUpgrade = false;
-			updateVisualState();
+		if (requiresChip) {
+			if (!hasTransferChip(TransferType.getTypeForInterface(cls))) {
+				missingUpgrade = true;
+				updateVisualState();
+				return null;
+			} else {
+				missingUpgrade = false;
+				updateVisualState();
+			}
 		}
 
 		return cls.cast(remote);
