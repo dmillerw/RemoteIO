@@ -11,6 +11,7 @@ public class HandlerItem {
 	public static Item locationChip;
 	public static Item transferChip;
 	public static Item upgradeChip;
+	public static Item ioTool;
 
 	public static void initialize() {
 		locationChip = new ItemLocationChip().setUnlocalizedName("chip.location");
@@ -21,6 +22,9 @@ public class HandlerItem {
 
 		upgradeChip = new ItemUpgradeChip().setUnlocalizedName("chip.upgrade");
 		GameRegistry.registerItem(upgradeChip, "remoteio:upgrade_chip");
+
+		ioTool = new ItemIOTool().setUnlocalizedName("io_tool");
+		GameRegistry.registerItem(ioTool, "remoteio:io_tool");
 	}
 
 }

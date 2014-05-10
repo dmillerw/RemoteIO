@@ -5,7 +5,6 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
-import dmillerw.remoteio.lib.DimensionalCoords;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -51,17 +50,7 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
 		if (tile != null) {
-			if (tile.remotePosition != null && tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) && tile.visualState == TileRemoteInterface.VisualState.REMOTE_CAMO) {
-				DimensionalCoords there = tile.remotePosition;
-				DimensionalCoords here = DimensionalCoords.create(tile);
-				int offsetX = there.x - here.x;
-				int offsetY = there.y - here.y;
-				int offsetZ = there.z - here.z;
-
-				Tessellator.instance.addTranslation(-offsetX, -offsetY, -offsetZ);
-				renderer.renderBlockAllFaces(world.getBlock(there.x, there.y, there.z), there.x, there.y, there.z);
-				Tessellator.instance.addTranslation(offsetX, offsetY, offsetZ);
-			} else {
+			if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != TileRemoteInterface.VisualState.REMOTE_CAMO || tile.camoRenderLock) {
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 		}

@@ -20,27 +20,56 @@ public class ContainerRemoteInterface extends Container {
 	public ContainerRemoteInterface(InventoryPlayer inventoryPlayer, TileRemoteInterface tile) {
 		this.tile = tile;
 
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				this.addSlotToContainer(new SlotLimited(tile.transferChips, j + i * 3, 26 + j * 18, 17 + i * 18, ItemTransferChip.class));
-			}
+		if (!tile.getWorldObj().isRemote) {
+			tile.updateVisualState();
 		}
 
+		// Transfer Chip slots
 		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				this.addSlotToContainer(new SlotLimited(tile.upgradeChips, j + i * 3, 98 + j * 18, 17 + i * 18, ItemUpgradeChip.class));
+			for (int j = 0; j < 2; ++j) {
+				this.addSlotToContainer(new SlotLimited(tile.transferChips, j + i * 2, 17 + i * 18, 13 + j * 18, ItemTransferChip.class));
 			}
 		}
+		for (int i = 0; i < 2; ++i) {
+			this.addSlotToContainer(new SlotLimited(tile.transferChips, i + 6, 17 + i * 18, 49, ItemTransferChip.class));
+		}
+		this.addSlotToContainer(new SlotLimited(tile.transferChips, 8, 17, 67, ItemTransferChip.class));
 
+		// Upgrade Chip slots
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 2; ++j) {
+				this.addSlotToContainer(new SlotLimited(tile.upgradeChips, j + i * 2, 128 + i * 18, 13 + j * 18, ItemUpgradeChip.class));
+			}
+		}
+		for (int i = 0; i < 2; ++i) {
+			this.addSlotToContainer(new SlotLimited(tile.upgradeChips, i + 6, 146 + i * 18, 49, ItemUpgradeChip.class));
+		}
+		this.addSlotToContainer(new SlotLimited(tile.upgradeChips, 8, 164, 67, ItemUpgradeChip.class));
+
+		// Player inventory
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 18 + j * 18, 161 + i * 18));
 			}
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			this.addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
+			this.addSlotToContainer(new Slot(inventoryPlayer, i, 18 + i * 18, 219));
 		}
+	}
+
+	@Override
+	public boolean enchantItem(EntityPlayer player, int id) {
+		if (!player.worldObj.isRemote) {
+			switch(id) {
+				case 0: tile.updateThetaModifier(-90); break;
+				case 1: tile.updateThetaModifier( 90); break;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override

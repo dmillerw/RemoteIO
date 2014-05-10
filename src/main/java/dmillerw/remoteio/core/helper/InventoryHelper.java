@@ -1,7 +1,9 @@
 package dmillerw.remoteio.core.helper;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 /**
@@ -39,6 +41,14 @@ public class InventoryHelper {
 		}
 
 		return false;
+	}
+
+	public int[] getAccessibleSlots(IInventory inventory, ForgeDirection side) {
+		if (inventory instanceof ISidedInventory) {
+			return ((ISidedInventory)inventory).getAccessibleSlotsFromSide(side.ordinal());
+		} else {
+			return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory(), 1);
+		}
 	}
 
 }

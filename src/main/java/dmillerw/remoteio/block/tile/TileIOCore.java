@@ -37,6 +37,18 @@ public abstract class TileIOCore extends TileEntity {
 		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, tag);
 	}
 
+	public void markForUpdate() {
+		if (hasWorldObj()) {
+			getWorldObj().markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+	}
+
+	public void markForRenderUpdate() {
+		if (hasWorldObj()) {
+			getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		}
+	}
+
 	public void sendNBTUpdate() {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}

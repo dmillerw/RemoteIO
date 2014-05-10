@@ -12,6 +12,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -41,6 +42,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public InventoryNBT transferChips = new InventoryNBT(this, 9, 1);
 	public InventoryNBT upgradeChips = new InventoryNBT(this, 9, 1);
 
+	public int thetaModifier = 0;
+
+	public boolean camoRenderLock = false;
+
 	private boolean missingUpgrade = false;
 	private boolean tracking = false;
 
@@ -57,6 +62,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		// This is purely to ensure the client remains synchronized upon world load
 		nbt.setByte("state", (byte) visualState.ordinal());
+		nbt.setInteger("theta", thetaModifier);
 	}
 
 	@Override
@@ -72,18 +78,27 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		// This is purely to ensure the client remains synchronized upon world load
 		visualState = VisualState.values()[nbt.getByte("state")];
+		thetaModifier = nbt.getInteger("theta");
 	}
 
 	@Override
 	public void onClientUpdate(NBTTagCompound nbt) {
 		if (nbt.hasKey("state")) {
 			visualState = VisualState.values()[nbt.getByte("state")];
+
+			if (visualState == VisualState.REMOTE_CAMO) {
+				camoRenderLock = false;
+			}
 		}
 
 		if (nbt.hasKey("position")) {
 			remotePosition = DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
-		} else {
+		} else if (nbt.hasKey("position_null")) {
 			remotePosition = null;
+		}
+
+		if (nbt.hasKey("theta")) {
+			thetaModifier = nbt.getInteger("theta");
 		}
 	}
 
@@ -97,18 +112,39 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 	}
 
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
+	}
+
 	public void updateRemotePosition() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (remotePosition != null) {
 			NBTTagCompound tag = new NBTTagCompound();
 			remotePosition.writeToNBT(tag);
 			nbt.setTag("position", tag);
+		} else {
+			nbt.setBoolean("position_null", true);
 		}
 		sendClientUpdate(nbt);
 	}
 
 	public void updateVisualState() {
 		setVisualState(calculateVisualState());
+	}
+
+	public void updateThetaModifier(float thetaModifier) {
+		this.thetaModifier += thetaModifier;
+
+		if (this.thetaModifier < 0) {
+			this.thetaModifier = 270;
+		} else if (this.thetaModifier > 270) {
+			this.thetaModifier = 0;
+		}
+
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("theta", this.thetaModifier);
+		sendClientUpdate(nbt);
 	}
 
 	private VisualState calculateVisualState() {

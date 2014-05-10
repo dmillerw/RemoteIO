@@ -1,5 +1,10 @@
 package dmillerw.remoteio.core.helper;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author dmillerw
  */
@@ -18,6 +23,19 @@ public class ArrayHelper {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	public static int[] getIncrementalArray(int start, int end, int increment) {
+		List<Integer> array = new ArrayList<Integer>();
+		int integer = start;
+
+		array.add(integer);
+		while(integer <= end) {
+			integer += increment;
+			array.add(integer);
+		}
+
+		return ArrayUtils.toPrimitive(array.toArray(new Integer[array.size()]));
 	}
 
 }

@@ -1,6 +1,7 @@
 package dmillerw.remoteio.block;
 
 import dmillerw.remoteio.RemoteIO;
+import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
@@ -37,7 +38,7 @@ public class BlockRemoteInterface extends BlockContainer {
 		if (!world.isRemote) {
 			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-			if (player.isSneaking()) {
+			if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IIOTool) {
 				player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
 			} else {
 				if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
