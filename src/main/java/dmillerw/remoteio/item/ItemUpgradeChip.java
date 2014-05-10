@@ -15,6 +15,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.awt.*;
+
 /**
  * @author dmillerw
  */
@@ -79,7 +81,11 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 
 	@Override
 	public int getColorFromItemStack(ItemStack stack, int pass) {
-		return pass == 1 ? names.get(stack.getItemDamage()).hashCode() : 0xFFFFFF;
+		if (pass == 1) {
+			Color color = new Color(names.get(stack.getItemDamage()).hashCode()).brighter();
+			return color.getRGB();
+		}
+		return 0xFFFFFF;
 	}
 
 	@Override
