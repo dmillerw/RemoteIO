@@ -1,11 +1,17 @@
 package dmillerw.remoteio.item;
 
+import dmillerw.remoteio.block.HandlerBlock;
+import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * @author dmillerw
@@ -26,6 +32,32 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 		});
 
 		setCreativeTab(TabRemoteIO.TAB);
+	}
+
+	@Override
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if (!world.isRemote) {
+			//TODO Add support for eventual RemoteInventory
+			if (world.getBlock(x, y, z) == HandlerBlock.remoteInterface) {
+				TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+				ItemStack chip = stack.copy();
+				chip.stackSize = 1;
+
+				if (tile != null) {
+					TileEntityHopper.func_145889_a(tile.transferChips, chip, ForgeDirection.UNKNOWN.ordinal());
+
+					if (stack.stackSize == 1) {
+						player.setCurrentItemOrArmor(0, null);
+					} else {
+						ItemStack stack1 = stack.copy();
+						stack1.stackSize = stack.stackSize - 1;
+						player.setCurrentItemOrArmor(0, stack1);
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	@Override
