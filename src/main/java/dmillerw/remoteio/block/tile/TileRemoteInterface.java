@@ -17,16 +17,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import thaumcraft.api.wands.IWandable;
 
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IWandable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -232,11 +234,39 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		BlockTracker.INSTANCE.startTracking(remotePosition, this);
 	}
 
-	public Object getImplementation(Class cls) {
-		return getImplementation(cls, true);
+	public Object getUpgradeImplementation(Class cls) {
+		return getUpgradeImplementation(cls, -1);
 	}
 
-	public Object getImplementation(Class cls, boolean requiresChip) {
+	public Object getUpgradeImplementation(Class cls, int upgradeType) {
+		if (remotePosition == null) {
+			return null;
+		}
+
+		TileEntity remote = remotePosition.getTileEntity();
+
+		if (remote == null) {
+			return null;
+		}
+
+		if (!(cls.isInstance(remote))) {
+			return null;
+		}
+
+		if (upgradeType != -1) {
+			if (!hasUpgradeChip(upgradeType)) {
+				return null;
+			}
+		}
+
+		return cls.cast(remote);
+	}
+
+	public Object getTransferImplementation(Class cls) {
+		return getTransferImplementation(cls, true);
+	}
+
+	public Object getTransferImplementation(Class cls, boolean requiresChip) {
 		if (remotePosition == null) {
 			return null;
 		}
@@ -276,55 +306,55 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	/* IINVENTORY */
 	@Override
 	public int getSizeInventory() {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.getSizeInventory() : 0;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.getStackInSlot(slot) : null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amt) {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.decrStackSize(slot, amt) : null;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.getStackInSlotOnClosing(slot) : null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		if (inventory != null) inventory.setInventorySlotContents(slot, stack);
 	}
 
 	@Override
 	public String getInventoryName() {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.getInventoryName() : null;
 	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.hasCustomInventoryName() : false;
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.getInventoryStackLimit() : 0;
 	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.isUseableByPlayer(player) : false;
 	}
 
@@ -340,45 +370,70 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		IInventory inventory = (IInventory) getImplementation(IInventory.class);
+		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.isItemValidForSlot(slot, stack) : false;
 	}
 
 	/* IFLUIDHANDLER */
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.fill(from, resource, doFill) : 0;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.drain(from, resource, doDrain) : null;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.drain(from, maxDrain, doDrain) : null;
 	}
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.canFill(from, fluid) : false;
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.canDrain(from, fluid) : false;
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		IFluidHandler fluidHandler = (IFluidHandler) getImplementation(IFluidHandler.class);
+		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.getTankInfo(from) : new FluidTankInfo[0];
+	}
+
+	/* IWANDABLE */
+	@Override
+	public int onWandRightClick(World world, ItemStack wandstack, EntityPlayer player, int x, int y, int z, int side, int md) {
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		return wandable != null ? wandable.onWandRightClick(world, wandstack, player, x, y, z, side, md) : -1;
+	}
+
+	@Override
+	public ItemStack onWandRightClick(World world, ItemStack wandstack, EntityPlayer player) {
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		return wandable != null ? wandable.onWandRightClick(world, wandstack, player) : wandstack;
+	}
+
+	@Override
+	public void onUsingWandTick(ItemStack wandstack, EntityPlayer player, int count) {
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		if (wandable != null) wandable.onUsingWandTick(wandstack, player, count);
+	}
+
+	@Override
+	public void onWandStoppedUsing(ItemStack wandstack, World world, EntityPlayer player, int count) {
+		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.SIMPLE_CAMO);
+		if (wandable != null) wandable.onWandStoppedUsing(wandstack, world, player, count);
 	}
 
 	public static enum VisualState {
