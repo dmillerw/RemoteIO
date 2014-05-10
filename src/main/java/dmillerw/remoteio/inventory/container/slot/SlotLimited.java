@@ -1,4 +1,4 @@
-package dmillerw.remoteio.inventory.slot;
+package dmillerw.remoteio.inventory.container.slot;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;

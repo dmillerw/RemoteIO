@@ -4,7 +4,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.gui.button.GuiButtonCustom;
 import dmillerw.remoteio.core.helper.MatrixHelper;
-import dmillerw.remoteio.inventory.ContainerRemoteInterface;
+import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -12,6 +12,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -52,6 +53,13 @@ public class GuiRemoteInterface extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, button.id);
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int x, int y) {
+		fontRendererObj.drawString(I18n.format("container.remoteio.transfer"), 16, 4, 4210752);
+		String upgrade = I18n.format("container.remoteio.upgrade");
+		fontRendererObj.drawString(upgrade, 180 - fontRendererObj.getStringWidth(upgrade), 4, 4210752);
 	}
 
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {

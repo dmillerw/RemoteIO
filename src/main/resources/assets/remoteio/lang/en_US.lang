@@ -1,6 +1,10 @@
 # Misc
 itemGroup.rio=RemoteIO
 
+# GUI
+container.remoteio.upgrade=Upgrade
+container.remoteio.transfer=Transfer
+
 # Chat
 chat.location_chip.save=Location Saved
 chat.location_chip.load=Location Loaded

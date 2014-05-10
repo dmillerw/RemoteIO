@@ -1,9 +1,11 @@
 package dmillerw.remoteio.item;
 
+import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.HandlerBlock;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,12 +25,14 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 	public ItemUpgradeChip() {
 		super(new int[] {
 			UpgradeType.REMOTE_CAMO,
-			UpgradeType.REMOTE_ACCESS
+			UpgradeType.REMOTE_ACCESS,
+			UpgradeType.SIMPLE_CAMO
 		},
 
 		new String[] {
 			"remote_camo",
-			"remote_access"
+			"remote_access",
+			"simple_camo"
 		});
 
 		setCreativeTab(TabRemoteIO.TAB);
@@ -58,6 +62,19 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 		}
 
 		return false;
+	}
+
+	@Override
+	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+		if (!world.isRemote) {
+			if (player.isSneaking()) {
+				switch(stack.getItemDamage()) {
+					case UpgradeType.SIMPLE_CAMO: player.openGui(RemoteIO.instance, GuiHandler.GUI_SIMPLE_CAMO, world, 0, 0, 0); break;
+				}
+			}
+		}
+
+		return stack;
 	}
 
 	@Override

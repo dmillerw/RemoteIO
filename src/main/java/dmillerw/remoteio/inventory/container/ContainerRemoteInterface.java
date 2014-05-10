@@ -1,7 +1,7 @@
-package dmillerw.remoteio.inventory;
+package dmillerw.remoteio.inventory.container;
 
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
-import dmillerw.remoteio.inventory.slot.SlotLimited;
+import dmillerw.remoteio.inventory.container.slot.SlotLimited;
 import dmillerw.remoteio.item.ItemTransferChip;
 import dmillerw.remoteio.item.ItemUpgradeChip;
 import net.minecraft.entity.player.EntityPlayer;
