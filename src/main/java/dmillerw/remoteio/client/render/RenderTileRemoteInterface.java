@@ -48,6 +48,7 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 			GL11.glTranslated(-0.0002, 0, 0); // To prevent ZFighting when rendering with simple camo
 
 			Block remote = there.getBlock(worldClient);
+			TileEntity remoteTile = there.getTileEntity(worldClient);
 
 			// Don't call the block's renderer if there's a simple camo chip
 			if (tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE) {
@@ -79,13 +80,15 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 				GL11.glEnable(GL11.GL_LIGHTING);
 			}
 
-			try {
-				TileEntityRendererDispatcher.instance.renderTileEntityAt(tile.remotePosition.getTileEntity(worldClient), 0, 0, 0, partial);
-			} catch (Exception ex) {
-				FMLLog.warning("Failed to render " + tile.remotePosition.getTileEntity(worldClient).getClass().getSimpleName() + ". Reason: " + ex.getLocalizedMessage());
+			if (remoteTile != null) {
+				try {
+					TileEntityRendererDispatcher.instance.renderTileEntityAt(tile.remotePosition.getTileEntity(worldClient), 0, 0, 0, partial);
+				} catch (Exception ex) {
+					FMLLog.warning("Failed to render " + tile.remotePosition.getTileEntity(worldClient).getClass().getSimpleName() + ". Reason: " + ex.getLocalizedMessage());
 
-				tile.camoRenderLock = true;
-				tile.markForRenderUpdate();
+					tile.camoRenderLock = true;
+					tile.markForRenderUpdate();
+				}
 			}
 
 			GL11.glPopMatrix();

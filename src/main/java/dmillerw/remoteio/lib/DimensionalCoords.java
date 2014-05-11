@@ -69,16 +69,20 @@ public class DimensionalCoords {
         return MinecraftServer.getServer().worldServerForDimension(this.dimensionID);
     }
 
+	public boolean blockExists() {
+		return getBlock() != null && !getBlock().isAir(getWorld(), x, y, z);
+	}
+
+	public boolean blockExists(World world) {
+		return getBlock(world) != null && !getBlock().isAir(world, x, y, z);
+	}
+
 	public Block getBlock() {
 		return getWorld().getBlock(x, y, z);
 	}
 
 	public int getMeta() {
 		return getWorld().getBlockMetadata(x, y, z);
-	}
-
-	public boolean isAir() {
-		return getWorld().isAirBlock(x, y, z);
 	}
 
     public TileEntity getTileEntity() {

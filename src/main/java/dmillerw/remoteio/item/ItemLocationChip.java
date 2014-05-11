@@ -74,12 +74,8 @@ public class ItemLocationChip extends Item {
 			TileEntity tile = world.getTileEntity(x, y, z);
 
 			if (player.isSneaking()) {
-				if (tile != null) {
-					ItemLocationChip.setCoordinates(stack, DimensionalCoords.create(tile));
-					player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.save"));
-				} else {
-					player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.fail"));
-				}
+				ItemLocationChip.setCoordinates(stack, new DimensionalCoords(world.provider.dimensionId, x, y, z));
+				player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.save"));
 			} else {
 				if (tile != null) {
 					if (tile instanceof TileRemoteInterface) {

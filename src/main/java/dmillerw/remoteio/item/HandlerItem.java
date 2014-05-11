@@ -12,6 +12,7 @@ public class HandlerItem {
 	public static Item transferChip;
 	public static Item upgradeChip;
 	public static Item ioTool;
+	public static Item wirelessTransmitter;
 
 	public static void initialize() {
 		locationChip = new ItemLocationChip().setUnlocalizedName("chip.location");
@@ -25,6 +26,9 @@ public class HandlerItem {
 
 		ioTool = new ItemIOTool().setUnlocalizedName("io_tool");
 		GameRegistry.registerItem(ioTool, "remoteio:io_tool");
+
+		wirelessTransmitter = new ItemWirelessTransmitter().setUnlocalizedName("wireless_transmitter");
+		GameRegistry.registerItem(wirelessTransmitter, "remoteio:wireless_transmitter");
 	}
 
 }

@@ -246,7 +246,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		if (remotePosition == null) {
 			return VisualState.INACTIVE;
 		} else {
-			if (remotePosition != null && remotePosition.getTileEntity() == null) {
+			if (remotePosition != null && !remotePosition.blockExists()) {
 				return VisualState.INACTIVE_BLINK;
 			}
 
@@ -316,14 +316,20 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			return null;
 		}
 
-		TileEntity remote = remotePosition.getTileEntity();
-
-		if (remote == null) {
+		if (!remotePosition.blockExists()) {
 			return null;
 		}
 
-		if (!(cls.isInstance(remote))) {
-			return null;
+		TileEntity remote = remotePosition.getTileEntity();
+
+		if (remote != null) {
+			if (!(cls.isInstance(remote))) {
+				return null;
+			}
+		} else {
+			if (!(cls.isInstance(remotePosition.getBlock()))) {
+				return null;
+			}
 		}
 
 		if (upgradeType != -1) {
@@ -344,14 +350,20 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			return null;
 		}
 
-		TileEntity remote = remotePosition.getTileEntity();
-
-		if (remote == null) {
+		if (!remotePosition.blockExists()) {
 			return null;
 		}
 
-		if (!(cls.isInstance(remote))) {
-			return null;
+		TileEntity remote = remotePosition.getTileEntity();
+
+		if (remote != null) {
+			if (!(cls.isInstance(remote))) {
+				return null;
+			}
+		} else {
+			if (!(cls.isInstance(remotePosition.getBlock()))) {
+				return null;
+			}
 		}
 
 		if (requiresChip) {
