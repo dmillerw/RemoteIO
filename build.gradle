@@ -11,16 +11,16 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
 apply plugin: 'forge'
 
-version = "0.1.5.5"
-group = "com.edxmod"
-archivesBaseName = "Electrodynamics"
-ext.modId = "EDX"
+version = "0.1"
+group = "dmillerw.remoteio"
+archivesBaseName = "RemoteIO"
+ext.modId = "RIO"
 
 gradle.taskGraph.whenReady { taskGraph ->
     if (!taskGraph.hasTask(release)) {
@@ -33,13 +33,13 @@ task release(dependsOn: 'build') << {
 }
 
 minecraft {
-    version = "1.7.2-10.12.0.1024"
+    version = "1.7.2-10.12.1.1060"
 
-    replaceIn "EDXProps.java"
+    replaceIn "ModInfo.java"
     replace "@VERSION@", version
 }
 
-println "Building Electrodynamics version ${project.version} for Minecraft ${project.minecraft.version}"
+println "Building RemoteIO version ${project.version} for Minecraft ${project.minecraft.version}"
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
