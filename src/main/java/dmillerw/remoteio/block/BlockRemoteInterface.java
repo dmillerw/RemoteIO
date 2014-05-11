@@ -1,5 +1,6 @@
 package dmillerw.remoteio.block;
 
+import appeng.api.parts.IPart;
 import appeng.api.parts.IPartHost;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -61,8 +62,11 @@ public class BlockRemoteInterface extends BlockContainer {
 
 					if (remoteTile instanceof IPartHost) {
 						IPartHost partHost = (IPartHost) remoteTile;
+						IPart part = partHost.getPart(ForgeDirection.getOrientation(side).getOpposite());
 
-						partHost.getPart(ForgeDirection.getOrientation(side).getOpposite()).onActivate(player, Vec3.createVectorHelper(fx, fy, fz));
+						if (part != null) {
+							part.onActivate(player, Vec3.createVectorHelper(fx, fy, fz));
+						}
 					} else {
 						there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
 					}
