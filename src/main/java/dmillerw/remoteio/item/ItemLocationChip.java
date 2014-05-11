@@ -104,7 +104,7 @@ public class ItemLocationChip extends Item {
 
 	@Override
 	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "location");
+		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "chip");
 	}
 
 	@Override
