@@ -52,8 +52,6 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 			// Don't call the block's renderer if there's a simple camo chip
 			if (tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE) {
 				GL11.glDisable(GL11.GL_LIGHTING);
-				OpenGlHelper.glBlendFunc(770, 771, 0, 1);
-				GL11.glEnable(GL11.GL_BLEND);
 
 				Tessellator.instance.startDrawingQuads();
 				Tessellator.instance.setColorOpaque_F(1, 1, 1);
@@ -61,15 +59,23 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 				Tessellator.instance.addTranslation(-(there.x - tile.xCoord), -(there.y - tile.yCoord), -(there.z - tile.zCoord));
 
 				for (int i=0; i<2; i++) {
+					if (i == 1) {
+						OpenGlHelper.glBlendFunc(770, 771, 0, 1);
+						GL11.glEnable(GL11.GL_BLEND);
+					}
+
 					if (remote.canRenderInPass(i)) {
 						renderBlocks.renderBlockByRenderType(remote, there.x, there.y, there.z);
+					}
+
+					if (i == 1) {
+						GL11.glDisable(GL11.GL_BLEND);
 					}
 				}
 
 				Tessellator.instance.setTranslation(0, 0, 0);
 				Tessellator.instance.draw();
 
-				GL11.glDisable(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_LIGHTING);
 			}
 
