@@ -1,5 +1,7 @@
 package dmillerw.remoteio.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
@@ -12,12 +14,20 @@ import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author dmillerw
@@ -43,13 +53,124 @@ public class BlockRemoteInterface extends BlockContainer {
 				player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
 			} else {
 				if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
-					DimensionalCoords coords = tile.remotePosition;
-					coords.getBlock().onBlockActivated(coords.getWorld(), coords.x, coords.y, coords.z, player, side, fx, fy, fz);
+					DimensionalCoords there = tile.remotePosition;
+					Block remote = there.getBlock();
+					TileEntity remoteTile = there.getTileEntity();
+
+					there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
 				}
 			}
 		}
 		return true;
 	}
+
+	/* BEGIN COLLISION HANDLING */
+
+	@Override
+	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
+		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+
+		if (tile != null && tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+			DimensionalCoords there = tile.remotePosition;
+			Block remote = there.getBlock(world);
+
+			int offsetX = there.x - x;
+			int offsetY = there.y - y;
+			int offsetZ = there.z - z;
+
+			Vec3 offsetStart = Vec3.createVectorHelper(start.xCoord + offsetX, start.yCoord + offsetY, start.zCoord + offsetZ);
+			Vec3 offsetEnd = Vec3.createVectorHelper(end.xCoord + offsetX, end.yCoord + offsetY, end.zCoord + offsetZ);
+
+			MovingObjectPosition mob = remote.collisionRayTrace(world, there.x, there.y, there.z, offsetStart, offsetEnd);
+
+			if (mob != null) {
+				mob.blockX -= offsetX;
+				mob.blockY -= offsetY;
+				mob.blockZ -= offsetZ;
+			}
+
+			return mob;
+		}
+
+		return super.collisionRayTrace(world, x, y, z, start, end);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
+		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+
+		if (tile != null && tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+			DimensionalCoords there = tile.remotePosition;
+			Block remote = there.getBlock(world);
+
+			int offsetX = there.x - x;
+			int offsetY = there.y - y;
+			int offsetZ = there.z - z;
+
+			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+
+			// We're about to descend into madness here...
+			player.prevPosX += offsetX;
+			player.prevPosY += offsetY;
+			player.prevPosZ += offsetZ;
+			player.posX += offsetX;
+			player.posY += offsetY;
+			player.posZ += offsetZ;
+
+			AxisAlignedBB aabb = remote.getSelectedBoundingBoxFromPool(world, there.x, there.y, there.z);
+
+			// Ending the madness
+			player.prevPosX -= offsetX;
+			player.prevPosY -= offsetY;
+			player.prevPosZ -= offsetZ;
+			player.posX -= offsetX;
+			player.posY -= offsetY;
+			player.posZ -= offsetZ;
+
+			if (aabb != null) {
+				aabb.offset(-offsetX, -offsetY, -offsetZ);
+			}
+
+			return aabb;
+		}
+
+		return super.getSelectedBoundingBoxFromPool(world, x, y, z);
+	}
+
+	@Override
+	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
+		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+
+		if (tile != null && tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+			DimensionalCoords there = tile.remotePosition;
+			Block remote = there.getBlock(world);
+
+			int offsetX = there.x - x;
+			int offsetY = there.y - y;
+			int offsetZ = there.z - z;
+
+			AxisAlignedBB newAABB = AxisAlignedBB.getBoundingBox(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ).offset(offsetX, offsetY, offsetZ);
+			List newList = new ArrayList();
+
+			remote.addCollisionBoxesToList(world, there.x, there.y, there.z, newAABB, newList, entity);
+
+			for (Object o : newList) {
+				AxisAlignedBB aabb1 = (AxisAlignedBB) o;
+				aabb1.offset(-offsetX, -offsetY, -offsetZ);
+
+				if (aabb.intersectsWith(aabb1)) {
+					list.add(aabb1);
+				}
+			}
+
+			return;
+		}
+
+		super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+	}
+
+	/* END COLLISION HANDLING */
 
 	@Override
 	public boolean isOpaqueCube() {
