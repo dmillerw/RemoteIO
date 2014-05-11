@@ -8,17 +8,18 @@ container.remoteio.transfer=Transfer
 # Chat
 chat.location_chip.save=Location Saved
 chat.location_chip.load=Location Loaded
-chat.location_chip.fail=Cannot store location.This block isn't advanced enough.
 
 # Item
 item.chip.location.name=Location Chip
 item.chip.transfer.item.name=Item Transfer Chip
 item.chip.transfer.fluid.name=Fluid Transfer Chip
+item.chip.transfer.essentia.name=Essentia Transfer Chip
 item.chip.transfer.energy_ic2.name=EU Energy Transfer Chip
 item.chip.transfer.energy_mj.name=MJ Energy Transfer Chip
 item.chip.upgrade.remote_camo.name=Remote Camouflage Upgrade
 item.chip.upgrade.remote_access.name=Remote Access Upgrade
 item.chip.upgrade.simple_camo.name=Simple Camouflage Upgrade
+item.wireless_transmitter.name=Wireless Transmitter
 item.io_tool.name=IO Tool
 
 # Block
