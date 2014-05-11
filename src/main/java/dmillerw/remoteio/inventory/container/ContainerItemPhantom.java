@@ -97,4 +97,8 @@ public class ContainerItemPhantom extends ContainerItem {
 		slot.putStack(phantomStack);
 	}
 
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer player, int id) {
+		return null;
+	}
 }
