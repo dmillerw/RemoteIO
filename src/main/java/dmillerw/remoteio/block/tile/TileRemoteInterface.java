@@ -57,6 +57,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
 			markForUpdate();
 		}
+
+		// Clear missing upgrade flag
+		missingUpgrade = false;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -349,12 +352,11 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		if (requiresChip) {
 			if (!hasTransferChip(TransferType.getTypeForInterface(cls))) {
-				missingUpgrade = true;
-				updateVisualState();
+				if (missingUpgrade = false) {
+					missingUpgrade = true;
+					updateVisualState();
+				}
 				return null;
-			} else {
-				missingUpgrade = false;
-				updateVisualState();
 			}
 		}
 
