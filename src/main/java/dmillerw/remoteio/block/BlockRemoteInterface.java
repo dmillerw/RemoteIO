@@ -1,5 +1,6 @@
 package dmillerw.remoteio.block;
 
+import appeng.api.parts.IPartHost;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
@@ -25,6 +26,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +59,13 @@ public class BlockRemoteInterface extends BlockContainer {
 					Block remote = there.getBlock();
 					TileEntity remoteTile = there.getTileEntity();
 
-					there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
+					if (remoteTile instanceof IPartHost) {
+						IPartHost partHost = (IPartHost) remoteTile;
+
+						partHost.getPart(ForgeDirection.getOrientation(side).getOpposite()).onActivate(player, Vec3.createVectorHelper(fx, fy, fz));
+					} else {
+						there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
+					}
 				}
 			}
 		}
