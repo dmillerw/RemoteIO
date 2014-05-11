@@ -1,7 +1,5 @@
 package dmillerw.remoteio.block;
 
-import appeng.api.parts.IPart;
-import appeng.api.parts.IPartHost;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
@@ -27,7 +25,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,18 +55,8 @@ public class BlockRemoteInterface extends BlockContainer {
 				if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
 					DimensionalCoords there = tile.remotePosition;
 					Block remote = there.getBlock();
-					TileEntity remoteTile = there.getTileEntity();
 
-					if (remoteTile instanceof IPartHost) {
-						IPartHost partHost = (IPartHost) remoteTile;
-						IPart part = partHost.getPart(ForgeDirection.getOrientation(side).getOpposite());
-
-						if (part != null) {
-							part.onActivate(player, Vec3.createVectorHelper(fx, fy, fz));
-						}
-					} else {
-						there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
-					}
+					there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
 				}
 			}
 		}
@@ -99,6 +86,9 @@ public class BlockRemoteInterface extends BlockContainer {
 				mob.blockX -= offsetX;
 				mob.blockY -= offsetY;
 				mob.blockZ -= offsetZ;
+				mob.hitVec.xCoord -= offsetX;
+				mob.hitVec.yCoord -= offsetY;
+				mob.hitVec.zCoord -= offsetZ;
 			}
 
 			return mob;
