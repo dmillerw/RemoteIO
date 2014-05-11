@@ -51,6 +51,7 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 
 				if (tile != null) {
 					if (TileEntityHopper.func_145889_a(tile.upgradeChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
+						tile.callback(tile.upgradeChips);
 						if (stack.stackSize == 1) {
 							player.setCurrentItemOrArmor(0, null);
 						} else {

@@ -33,12 +33,16 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IAspectContainer;
+import thaumcraft.api.aspects.IAspectSource;
 import thaumcraft.api.wands.IWandable;
 
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -479,6 +483,61 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
 		return fluidHandler != null ? fluidHandler.getTankInfo(from) : new FluidTankInfo[0];
+	}
+
+	/* IASPECTCONTAINER */
+	@Override
+	public AspectList getAspects() {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.getAspects() : new AspectList();
+	}
+
+	@Override
+	public void setAspects(AspectList aspects) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		if (aspectContainer != null) aspectContainer.setAspects(aspects);
+	}
+
+	@Override
+	public boolean doesContainerAccept(Aspect tag) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.doesContainerAccept(tag) : false;
+	}
+
+	@Override
+	public int addToContainer(Aspect tag, int amount) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.addToContainer(tag, amount) : amount;
+	}
+
+	@Override
+	public boolean takeFromContainer(Aspect tag, int amount) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.takeFromContainer(tag, amount) : false;
+	}
+
+	@Override
+	public boolean takeFromContainer(AspectList ot) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.takeFromContainer(ot) : false;
+	}
+
+	@Override
+	public boolean doesContainerContainAmount(Aspect tag, int amount) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.doesContainerContainAmount(tag, amount): false;
+	}
+
+	@Override
+	public boolean doesContainerContain(AspectList ot) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.doesContainerContain(ot) : false;
+	}
+
+	@Override
+	public int containerContains(Aspect tag) {
+		IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+		return aspectContainer != null ? aspectContainer.containerContains(tag) : 0;
 	}
 
 	/* IENERGYSOURCE */

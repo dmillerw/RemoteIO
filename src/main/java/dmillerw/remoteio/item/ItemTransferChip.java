@@ -26,6 +26,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 		super(new int[] {
 			TransferType.MATTER_ITEM,
 			TransferType.MATTER_FLUID,
+			TransferType.MATTER_ESSENTIA,
 
 			TransferType.ENERGY_IC2,
 			TransferType.ENERGY_BC,
@@ -34,6 +35,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 		new String[] {
 			"item",
 			"fluid",
+			"essentia",
 
 			"energy_ic2",
 			"energy_mj"
@@ -53,6 +55,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 
 				if (tile != null) {
 					if (TileEntityHopper.func_145889_a(tile.transferChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
+						tile.callback(tile.transferChips);
 						if (stack.stackSize == 1) {
 							player.setCurrentItemOrArmor(0, null);
 						} else {

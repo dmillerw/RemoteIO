@@ -6,6 +6,8 @@ import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fluids.IFluidHandler;
+import thaumcraft.api.aspects.IAspectContainer;
+import thaumcraft.api.aspects.IAspectSource;
 
 import java.util.Map;
 
@@ -29,6 +31,7 @@ public class TransferType {
 	static {
 		registerType(MATTER_ITEM, IInventory.class);
 		registerType(MATTER_FLUID, IFluidHandler.class);
+		registerType(MATTER_ESSENTIA, IAspectContainer.class, IAspectSource.class);
 
 		registerType(ENERGY_IC2, IEnergySource.class, IEnergySink.class);
 		// ENERGY_BC is handled via tile
