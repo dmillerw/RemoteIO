@@ -47,23 +47,23 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
 		updateVisualState();
-		markForUpdate();
+		updateNeighbors();
 	}
 
 	@Override
 	public void callback(IInventory inventory) {
-		updateVisualState();
-
 		// Eww, hacky workarounds
 		// Recalculates BC state to account for insertion/removal of BC transfer chip
 		// Can't think of a better way to do this
 		if (hasTransferChip(TransferType.ENERGY_BC)) {
 			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
-			markForUpdate();
 		}
 
 		// Clear missing upgrade flag
 		missingUpgrade = false;
+
+		updateVisualState();
+		updateNeighbors();
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -49,6 +49,12 @@ public abstract class TileIOCore extends TileEntity {
 		}
 	}
 
+	public void updateNeighbors() {
+		if (hasWorldObj()) {
+			getWorldObj().notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+		}
+	}
+
 	public void sendNBTUpdate() {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}

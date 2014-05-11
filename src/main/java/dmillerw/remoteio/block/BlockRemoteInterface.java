@@ -9,6 +9,7 @@ import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
+import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.Block;
@@ -173,6 +174,19 @@ public class BlockRemoteInterface extends BlockContainer {
 	}
 
 	/* END COLLISION HANDLING */
+
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+		if (!world.isRemote) {
+			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+
+			if (tile != null) {
+				InventoryHelper.dropContents(tile.upgradeChips, world, x, y, z);
+				InventoryHelper.dropContents(tile.transferChips, world, x, y, z);
+			}
+		}
+		super.breakBlock(world, x, y, z, block, meta);
+	}
 
 	@Override
 	public boolean isOpaqueCube() {
