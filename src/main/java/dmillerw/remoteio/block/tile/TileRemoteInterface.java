@@ -43,6 +43,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
 		updateVisualState();
+		markForUpdate();
 	}
 
 	@Override
@@ -293,6 +294,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			registeredWithIC2 = true;
 		}
+
+		markForUpdate();
 	}
 
 	/* END UPDATE METHODS */

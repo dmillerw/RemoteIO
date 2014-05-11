@@ -50,15 +50,17 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 				chip.stackSize = 1;
 
 				if (tile != null) {
-					TileEntityHopper.func_145889_a(tile.upgradeChips, chip, ForgeDirection.UNKNOWN.ordinal());
-
-					if (stack.stackSize == 1) {
-						player.setCurrentItemOrArmor(0, null);
-					} else {
-						ItemStack stack1 = stack.copy();
-						stack1.stackSize = stack.stackSize - 1;
-						player.setCurrentItemOrArmor(0, stack1);
+					if (TileEntityHopper.func_145889_a(tile.upgradeChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
+						if (stack.stackSize == 1) {
+							player.setCurrentItemOrArmor(0, null);
+						} else {
+							ItemStack stack1 = stack.copy();
+							stack1.stackSize = stack.stackSize - 1;
+							player.setCurrentItemOrArmor(0, stack1);
+						}
 					}
+
+					return true;
 				}
 			}
 		}
