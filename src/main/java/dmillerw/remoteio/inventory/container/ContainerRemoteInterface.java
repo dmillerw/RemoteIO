@@ -25,9 +25,9 @@ public class ContainerRemoteInterface extends Container {
 		}
 
 		// Transfer Chip slots
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 2; ++j) {
-				this.addSlotToContainer(new SlotLimited(tile.transferChips, j + i * 2, 17 + i * 18, 13 + j * 18, ItemTransferChip.class));
+		for (int i = 0; i < 2; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				this.addSlotToContainer(new SlotLimited(tile.transferChips, i + j * 2, 17 + j * 18, 13 + i * 18, ItemTransferChip.class));
 			}
 		}
 		for (int i = 0; i < 2; ++i) {
@@ -36,9 +36,9 @@ public class ContainerRemoteInterface extends Container {
 		this.addSlotToContainer(new SlotLimited(tile.transferChips, 8, 17, 67, ItemTransferChip.class));
 
 		// Upgrade Chip slots
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 2; ++j) {
-				this.addSlotToContainer(new SlotLimited(tile.upgradeChips, j + i * 2, 128 + i * 18, 13 + j * 18, ItemUpgradeChip.class));
+		for (int i = 0; i < 2; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				this.addSlotToContainer(new SlotLimited(tile.upgradeChips, i + j * 2, 128 + j * 18, 13 + i * 18, ItemUpgradeChip.class));
 			}
 		}
 		for (int i = 0; i < 2; ++i) {
@@ -81,11 +81,11 @@ public class ContainerRemoteInterface extends Container {
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (slotID >= 0 && slotID < 18) {
-				if (!this.mergeItemStack(itemstack1, 18, 47, true)) {
+			if (slotID >= 0 && slotID <= 17) {
+				if (!this.mergeItemStack(itemstack1, 18, 54, true)) {
 					return null;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, 17, false)) {
+			} else if (!this.mergeItemStack(itemstack1, 0, 18, false)) {
 				return null;
 			}
 
