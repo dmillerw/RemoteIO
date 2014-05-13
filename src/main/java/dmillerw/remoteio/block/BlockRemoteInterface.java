@@ -45,7 +45,6 @@ public class BlockRemoteInterface extends BlockContainer {
 		setCreativeTab(TabRemoteIO.TAB);
 	}
 	
-	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
@@ -143,7 +142,6 @@ public class BlockRemoteInterface extends BlockContainer {
 		return super.getSelectedBoundingBoxFromPool(world, x, y, z);
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
