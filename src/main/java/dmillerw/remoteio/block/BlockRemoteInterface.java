@@ -44,7 +44,7 @@ public class BlockRemoteInterface extends BlockContainer {
 		setResistance(5F);
 		setCreativeTab(TabRemoteIO.TAB);
 	}
-
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
@@ -65,7 +65,8 @@ public class BlockRemoteInterface extends BlockContainer {
 	}
 
 	/* BEGIN COLLISION HANDLING */
-
+	
+	@SideOnly(Side.CLIENT)
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
@@ -192,17 +193,20 @@ public class BlockRemoteInterface extends BlockContainer {
 	public boolean isOpaqueCube() {
 		return false;
 	}
-
+	
+	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public int getRenderType() {
 		return RenderBlockRemoteInterface.renderID;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
@@ -218,6 +222,7 @@ public class BlockRemoteInterface extends BlockContainer {
 		return icons[0];
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerBlockIcons(IIconRegister register) {
 		icons = new IIcon[4];
