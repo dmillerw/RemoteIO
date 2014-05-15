@@ -3,6 +3,7 @@ package dmillerw.remoteio.client.render;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.core.helper.MatrixHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -42,10 +43,12 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 			GL11.glPushMatrix();
 
 			GL11.glTranslated(x, y, z);
-			GL11.glTranslated(0.5, 0, 0.5);
-			GL11.glRotated(tile.thetaModifier, 0, 1, 0);
-			GL11.glTranslated(-0.5, 0, -0.5);
-			GL11.glTranslated(-0.0002, 0, 0); // To prevent ZFighting when rendering with simple camo
+
+			GL11.glTranslated(0.5, 0.5, 0.5);
+
+			MatrixHelper.loadMatrix(tile.rotationMatrix);
+
+			GL11.glTranslated(-0.5, -0.5, -0.5);
 
 			Block remote = there.getBlock(worldClient);
 			TileEntity remoteTile = there.getTileEntity(worldClient);

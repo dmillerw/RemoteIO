@@ -8,6 +8,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.InventoryHelper;
+import dmillerw.remoteio.core.helper.MatrixHelper;
+import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.inventory.InventoryItem;
 import dmillerw.remoteio.inventory.InventoryNBT;
@@ -33,16 +35,20 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.aspects.IAspectContainer;
-import thaumcraft.api.aspects.IAspectSource;
+import org.lwjgl.util.vector.Matrix4f;
+import thaumcraft.api.aspects.*;
 import thaumcraft.api.wands.IWandable;
 
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+
+	private static final ForgeDirection[][] ROTATION_MATRIX = new ForgeDirection[][] {
+		{ForgeDirection.UP, ForgeDirection.EAST, ForgeDirection.DOWN, ForgeDirection.WEST},
+		{ForgeDirection.NORTH, ForgeDirection.WEST, ForgeDirection.SOUTH, ForgeDirection.EAST},
+		{ForgeDirection.NORTH, ForgeDirection.DOWN, ForgeDirection.SOUTH, ForgeDirection.UP}
+	};
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -69,6 +75,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@SideOnly(Side.CLIENT)
 	public ItemStack simpleCamo;
 
+	public Matrix4f rotationMatrix;
+
 	public VisualState visualState = VisualState.INACTIVE;
 
 	public DimensionalCoords remotePosition;
@@ -78,7 +86,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	private IBatteryObject mjBatteryCache;
 
-	public int thetaModifier = 0;
+	// THESE ARE NOT ANGLES, BUT INDEXES IN THE ROTATION_MATRIX ARRAY
+	public int rotationX = 0;
+	public int rotationY = 1;
+	public int rotationZ = 0;
 
 	public boolean camoRenderLock = false;
 
@@ -99,7 +110,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		// This is purely to ensure the client remains synchronized upon world load
 		nbt.setByte("state", (byte) visualState.ordinal());
-		nbt.setInteger("theta", thetaModifier);
+		nbt.setInteger("axisX", this.rotationX);
+		nbt.setInteger("axisY", this.rotationX);
+		nbt.setInteger("axisZ", this.rotationZ);
 	}
 
 	@Override
@@ -115,7 +128,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		// This is purely to ensure the client remains synchronized upon world load
 		visualState = VisualState.values()[nbt.getByte("state")];
-		thetaModifier = nbt.getInteger("theta");
+		rotationX = nbt.getInteger("axisX");
+		rotationY = nbt.getInteger("axisY");
+		rotationZ = nbt.getInteger("axisZ");
 	}
 
 	@Override
@@ -133,8 +148,25 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			remotePosition = null;
 		}
 
-		if (nbt.hasKey("theta")) {
-			thetaModifier = nbt.getInteger("theta");
+		boolean recomputeMatrix = false;
+
+		if (nbt.hasKey("axisX")) {
+			rotationX = nbt.getInteger("axisX");
+			recomputeMatrix = true;
+		}
+
+		if (nbt.hasKey("axisY")) {
+			rotationY = nbt.getInteger("axisY");
+			recomputeMatrix = true;
+		}
+
+		if (nbt.hasKey("axisZ")) {
+			rotationZ = nbt.getInteger("axisZ");
+			recomputeMatrix = true;
+		}
+
+		if (recomputeMatrix) {
+			rotationMatrix = MatrixHelper.getRotationMatrix(rotationX * 90, rotationY * 90, rotationZ * 90);
 		}
 
 		if (nbt.hasKey("simple")) {
@@ -227,17 +259,20 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	/** Sends the passed in theta modifer to the client */
-	public void updateThetaModifier(float thetaModifier) {
-		this.thetaModifier += thetaModifier;
-
-		if (this.thetaModifier < 0) {
-			this.thetaModifier = 270;
-		} else if (this.thetaModifier > 270) {
-			this.thetaModifier = 0;
+	public void updateRotation(int axis) {
+		switch (axis) {
+			case 0: this.rotationX = (this.rotationX + 1) % 4; break;
+			case 1: this.rotationY = (this.rotationY + 1) % 4; break;
+			case 2: this.rotationZ = (this.rotationZ + 1) % 4; break;
+			default: /* bad axis */ break;
 		}
 
+		rotationMatrix = MatrixHelper.getRotationMatrix(rotationX * 90, rotationY * 90, rotationZ * 90);
+
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("theta", this.thetaModifier);
+		nbt.setInteger("axisX", this.rotationX);
+		nbt.setInteger("axisY", this.rotationY);
+		nbt.setInteger("axisZ", this.rotationZ);
 		sendClientUpdate(nbt);
 	}
 
@@ -379,6 +414,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		return cls.cast(remote);
 	}
 
+	public ForgeDirection getAdjustedSide(ForgeDirection side) {
+		if (side == ForgeDirection.WEST || side == ForgeDirection.EAST) {
+			side = side.getOpposite();
+		}
+		return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(rotationX, rotationY, rotationZ, side.ordinal()));
+	}
+
 	public boolean hasTransferChip(int type) {
 		return InventoryHelper.containsStack(transferChips, new ItemStack(HandlerItem.transferChip, 1, type), true, false);
 	}
@@ -464,37 +506,37 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
-		return fluidHandler != null ? fluidHandler.fill(from, resource, doFill) : 0;
+		return fluidHandler != null ? fluidHandler.fill(getAdjustedSide(from), resource, doFill) : 0;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
-		return fluidHandler != null ? fluidHandler.drain(from, resource, doDrain) : null;
+		return fluidHandler != null ? fluidHandler.drain(getAdjustedSide(from), resource, doDrain) : null;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
-		return fluidHandler != null ? fluidHandler.drain(from, maxDrain, doDrain) : null;
+		return fluidHandler != null ? fluidHandler.drain(getAdjustedSide(from), maxDrain, doDrain) : null;
 	}
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
-		return fluidHandler != null ? fluidHandler.canFill(from, fluid) : false;
+		return fluidHandler != null ? fluidHandler.canFill(getAdjustedSide(from), fluid) : false;
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
-		return fluidHandler != null ? fluidHandler.canDrain(from, fluid) : false;
+		return fluidHandler != null ? fluidHandler.canDrain(getAdjustedSide(from), fluid) : false;
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		IFluidHandler fluidHandler = (IFluidHandler) getTransferImplementation(IFluidHandler.class);
-		return fluidHandler != null ? fluidHandler.getTankInfo(from) : new FluidTankInfo[0];
+		return fluidHandler != null ? fluidHandler.getTankInfo(getAdjustedSide(from)) : new FluidTankInfo[0];
 	}
 
 	/* IASPECTCONTAINER */
@@ -552,6 +594,79 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		return aspectContainer != null ? aspectContainer.containerContains(tag) : 0;
 	}
 
+	/* IESSENTIATRANSPORT */
+	@Override
+	public boolean isConnectable(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.isConnectable(getAdjustedSide(face)) : false;
+	}
+
+	@Override
+	public boolean canInputFrom(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.canInputFrom(getAdjustedSide(face)) : false;
+	}
+
+	@Override
+	public boolean canOutputTo(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.canOutputTo(getAdjustedSide(face)) : false;
+	}
+
+	@Override
+	public void setSuction(Aspect aspect, int amount) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		if (essentiaTransport != null) essentiaTransport.setSuction(aspect, amount);
+	}
+
+	@Override
+	public Aspect getSuctionType(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.getSuctionType(getAdjustedSide(face)) : null;
+	}
+
+	@Override
+	public int getSuctionAmount(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.getSuctionAmount(getAdjustedSide(face)) : 0;
+	}
+
+	@Override
+	public int takeEssentia(Aspect aspect, int amount, ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.takeEssentia(aspect, amount, getAdjustedSide(face)) : 0;
+	}
+
+	@Override
+	public int addEssentia(Aspect aspect, int amount, ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.addEssentia(aspect, amount, getAdjustedSide(face)) : 0;
+	}
+
+	@Override
+	public Aspect getEssentiaType(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.getEssentiaType(getAdjustedSide(face)) : null;
+	}
+
+	@Override
+	public int getEssentiaAmount(ForgeDirection face) {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.getEssentiaAmount(getAdjustedSide(face)) : 0;
+	}
+
+	@Override
+	public int getMinimumSuction() {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.getMinimumSuction() : 0;
+	}
+
+	@Override
+	public boolean renderExtendedTube() {
+		IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
+		return essentiaTransport != null ? essentiaTransport.renderExtendedTube() : false;
+	}
+
 	/* IENERGYSOURCE */
 	@Override
 	public double getOfferedEnergy() {
@@ -568,7 +683,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
 		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
-		return energySource != null ? energySource.emitsEnergyTo(receiver, direction) : false;
+		return energySource != null ? energySource.emitsEnergyTo(receiver, getAdjustedSide(direction)) : false;
 	}
 
 	/* IENERGYSINK */
@@ -593,7 +708,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
-		return energySink != null ? energySink.acceptsEnergyFrom(emitter, direction) : false;
+		return energySink != null ? energySink.acceptsEnergyFrom(emitter, getAdjustedSide(direction)) : false;
 	}
 
 	/* IBATTERYPROVIDER
@@ -607,7 +722,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public int onWandRightClick(World world, ItemStack wandstack, EntityPlayer player, int x, int y, int z, int side, int md) {
 		IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
-		return wandable != null ? wandable.onWandRightClick(world, wandstack, player, x, y, z, side, md) : -1;
+		return wandable != null ? wandable.onWandRightClick(world, wandstack, player, x, y, z, getAdjustedSide(ForgeDirection.getOrientation(side)).ordinal(), md) : -1;
 	}
 
 	@Override

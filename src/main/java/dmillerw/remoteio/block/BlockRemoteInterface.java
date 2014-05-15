@@ -10,6 +10,7 @@ import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.core.helper.InventoryHelper;
+import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.Block;
@@ -26,6 +27,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,15 +51,33 @@ public class BlockRemoteInterface extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
 			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+			int adjustedSide = RotationHelper.getRotatedSide(tile.rotationX, tile.rotationY, tile.rotationZ, side);
 
 			if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IIOTool) {
-				player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
+				if (!player.isSneaking()) {
+					player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
+				} else {
+					int axis = -1;
+					ForgeDirection forgeDirection = ForgeDirection.getOrientation(adjustedSide);
+
+					if (forgeDirection.offsetX != 0) {
+						axis = 0;
+					} else if (forgeDirection.offsetY != 0) {
+						axis = 1;
+					} else if (forgeDirection.offsetZ != 0) {
+						axis = 2;
+					}
+
+					if (axis != -1) {
+						tile.updateRotation(axis);
+					}
+				}
 			} else {
 				if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
 					DimensionalCoords there = tile.remotePosition;
 					Block remote = there.getBlock();
 
-					there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, side, fx, fy, fz);
+					there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
 				}
 			}
 		}
@@ -112,6 +132,8 @@ public class BlockRemoteInterface extends BlockContainer {
 			int offsetZ = there.z - z;
 
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+
+			//TODO: Rotate the player based on the block rotation to get accurate hit results
 
 			// We're about to descend into madness here...
 			player.prevPosX += offsetX;

@@ -2,7 +2,6 @@ package dmillerw.remoteio.client.gui;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import dmillerw.remoteio.block.tile.TileRemoteInterface;
-import dmillerw.remoteio.client.gui.button.GuiButtonCustom;
 import dmillerw.remoteio.core.helper.MatrixHelper;
 import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
 import dmillerw.remoteio.lib.ModInfo;
@@ -46,13 +45,13 @@ public class GuiRemoteInterface extends GuiContainer {
 	public void initGui() {
 		super.initGui();
 
-		this.buttonList.add(new GuiButtonCustom(0, 39, 106, 17, 18).setTexture(TEXTURE).setNormalUV(196, 54).setHighlightUV(196, 72).setOffset(guiLeft, guiTop));
-		this.buttonList.add(new GuiButtonCustom(1, 141, 106, 17, 18).setTexture(TEXTURE).setNormalUV(213, 54).setHighlightUV(213, 72).setOffset(guiLeft, guiTop));
+//		this.buttonList.add(new GuiButtonCustom(0, 39, 106, 17, 18).setTexture(TEXTURE).setNormalUV(196, 54).setHighlightUV(196, 72).setOffset(guiLeft, guiTop));
+//		this.buttonList.add(new GuiButtonCustom(1, 141, 106, 17, 18).setTexture(TEXTURE).setNormalUV(213, 54).setHighlightUV(213, 72).setOffset(guiLeft, guiTop));
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, button.id);
+//		this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, button.id + 2);
 	}
 
 	@Override
@@ -93,8 +92,8 @@ public class GuiRemoteInterface extends GuiContainer {
 		}
 
 		for (int i=0; i<buttonList.size(); i++) {
-			GuiButton button = (GuiButton) buttonList.get(i);
-			button.drawButton(Minecraft.getMinecraft(), x, y);
+//			GuiButton button = (GuiButton) buttonList.get(i);
+//			button.drawButton(Minecraft.getMinecraft(), x, y);
 		}
 	}
 

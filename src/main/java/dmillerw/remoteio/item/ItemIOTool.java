@@ -4,8 +4,10 @@ import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 
 /**
  * @author dmillerw
@@ -30,5 +32,10 @@ public class ItemIOTool extends Item implements IIOTool {
 	@Override
 	public void registerIcons(IIconRegister register) {
 		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "tool");
+	}
+
+	@Override
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+		return true;
 	}
 }

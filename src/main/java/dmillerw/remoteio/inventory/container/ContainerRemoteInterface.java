@@ -61,10 +61,12 @@ public class ContainerRemoteInterface extends Container {
 	@Override
 	public boolean enchantItem(EntityPlayer player, int id) {
 		if (!player.worldObj.isRemote) {
-			switch(id) {
-				case 0: tile.updateThetaModifier(-90); break;
-				case 1: tile.updateThetaModifier( 90); break;
-			}
+//			switch(id) {
+//				case 0: tile.updateThetaModifier(-90, 0); break;
+//				case 1: tile.updateThetaModifier( 90, 0); break;
+//				case 2: tile.updateThetaModifier(0, -90); break;
+//				case 3: tile.updateThetaModifier(0,  90); break;
+//			}
 
 			return true;
 		}
