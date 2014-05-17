@@ -59,7 +59,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
 		}
 
-		if (hasTransferChip(TransferType.ENERGY_IC2) && !registeredWithIC2) {
+		// I think IC2 caches tile state...
+		if (registeredWithIC2) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			registeredWithIC2 = false;
+		}
+
+		if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition.getTileEntity() instanceof IEnergyTile) {
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			registeredWithIC2 = true;
 		}
