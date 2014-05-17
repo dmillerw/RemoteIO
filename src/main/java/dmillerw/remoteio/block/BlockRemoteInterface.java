@@ -51,33 +51,18 @@ public class BlockRemoteInterface extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		if (!world.isRemote) {
 			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-			int adjustedSide = RotationHelper.getRotatedSide(tile.rotationX, tile.rotationY, tile.rotationZ, side);
+			int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
 
 			if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IIOTool) {
 				if (!player.isSneaking()) {
 					player.openGui(RemoteIO.instance, GuiHandler.GUI_REMOTE_INTERFACE, world, x, y, z);
-				} else {
-					int axis = -1;
-					ForgeDirection forgeDirection = ForgeDirection.getOrientation(adjustedSide);
-
-					if (forgeDirection.offsetX != 0) {
-						axis = 0;
-					} else if (forgeDirection.offsetY != 0) {
-						axis = 1;
-					} else if (forgeDirection.offsetZ != 0) {
-						axis = 2;
-					}
-
-					if (axis != -1) {
-						tile.updateRotation(axis);
-					}
 				}
 			} else {
 				if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
 					DimensionalCoords there = tile.remotePosition;
 					Block remote = there.getBlock();
 
-					there.getBlock().onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
+					remote.onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
 				}
 			}
 		}

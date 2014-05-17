@@ -46,7 +46,7 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 
 			GL11.glTranslated(0.5, 0.5, 0.5);
 
-			MatrixHelper.loadMatrix(tile.rotationMatrix);
+			GL11.glRotated(90 * tile.rotationY, 0, 1, 0);
 
 			GL11.glTranslated(-0.5, -0.5, -0.5);
 

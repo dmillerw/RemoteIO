@@ -65,7 +65,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			registeredWithIC2 = false;
 		}
 
-		if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition.getTileEntity() instanceof IEnergyTile) {
+		if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition != null && remotePosition.getTileEntity() != null && remotePosition.getTileEntity() instanceof IEnergyTile) {
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			registeredWithIC2 = true;
 		}
