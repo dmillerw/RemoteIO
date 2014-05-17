@@ -44,12 +44,6 @@ import thaumcraft.api.wands.IWandable;
  */
 public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
-	private static final ForgeDirection[][] ROTATION_MATRIX = new ForgeDirection[][] {
-		{ForgeDirection.UP, ForgeDirection.EAST, ForgeDirection.DOWN, ForgeDirection.WEST},
-		{ForgeDirection.NORTH, ForgeDirection.WEST, ForgeDirection.SOUTH, ForgeDirection.EAST},
-		{ForgeDirection.NORTH, ForgeDirection.DOWN, ForgeDirection.SOUTH, ForgeDirection.UP}
-	};
-
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
 		updateVisualState();
@@ -65,6 +59,11 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
 		}
 
+		if (hasTransferChip(TransferType.ENERGY_IC2) && !registeredWithIC2) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+			registeredWithIC2 = true;
+		}
+
 		// Clear missing upgrade flag
 		missingUpgrade = false;
 
@@ -75,8 +74,6 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@SideOnly(Side.CLIENT)
 	public ItemStack simpleCamo;
 
-	public Matrix4f rotationMatrix;
-
 	public VisualState visualState = VisualState.INACTIVE;
 
 	public DimensionalCoords remotePosition;
@@ -86,10 +83,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	private IBatteryObject mjBatteryCache;
 
-	// THESE ARE NOT ANGLES, BUT INDEXES IN THE ROTATION_MATRIX ARRAY
-	public int rotationX = 0;
-	public int rotationY = 1;
-	public int rotationZ = 0;
+	// THIS IS NOT AN ANGLE, BUT THE NUMBER OF LEFT-HAND ROTATIONS!
+	public int rotationY = 0;
 
 	public boolean camoRenderLock = false;
 
@@ -110,9 +105,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		// This is purely to ensure the client remains synchronized upon world load
 		nbt.setByte("state", (byte) visualState.ordinal());
-		nbt.setInteger("axisX", this.rotationX);
-		nbt.setInteger("axisY", this.rotationX);
-		nbt.setInteger("axisZ", this.rotationZ);
+		nbt.setInteger("axisY", this.rotationY);
 	}
 
 	@Override
@@ -128,9 +121,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		// This is purely to ensure the client remains synchronized upon world load
 		visualState = VisualState.values()[nbt.getByte("state")];
-		rotationX = nbt.getInteger("axisX");
 		rotationY = nbt.getInteger("axisY");
-		rotationZ = nbt.getInteger("axisZ");
 	}
 
 	@Override
@@ -148,25 +139,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			remotePosition = null;
 		}
 
-		boolean recomputeMatrix = false;
-
-		if (nbt.hasKey("axisX")) {
-			rotationX = nbt.getInteger("axisX");
-			recomputeMatrix = true;
-		}
-
 		if (nbt.hasKey("axisY")) {
 			rotationY = nbt.getInteger("axisY");
-			recomputeMatrix = true;
-		}
-
-		if (nbt.hasKey("axisZ")) {
-			rotationZ = nbt.getInteger("axisZ");
-			recomputeMatrix = true;
-		}
-
-		if (recomputeMatrix) {
-			rotationMatrix = MatrixHelper.getRotationMatrix(rotationX * 90, rotationY * 90, rotationZ * 90);
 		}
 
 		if (nbt.hasKey("simple")) {
@@ -259,20 +233,16 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	/** Sends the passed in theta modifer to the client */
-	public void updateRotation(int axis) {
-		switch (axis) {
-			case 0: this.rotationX = (this.rotationX + 1) % 4; break;
-			case 1: this.rotationY = (this.rotationY + 1) % 4; break;
-			case 2: this.rotationZ = (this.rotationZ + 1) % 4; break;
-			default: /* bad axis */ break;
+	public void updateRotation(int modification) {
+		this.rotationY += modification;
+		if (rotationY > 3) {
+			rotationY = 0;
+		} else if (rotationY < 0) {
+			rotationY = 3;
 		}
 
-		rotationMatrix = MatrixHelper.getRotationMatrix(rotationX * 90, rotationY * 90, rotationZ * 90);
-
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("axisX", this.rotationX);
-		nbt.setInteger("axisY", this.rotationY);
-		nbt.setInteger("axisZ", this.rotationZ);
+		nbt.setFloat("axisY", this.rotationY);
 		sendClientUpdate(nbt);
 	}
 
@@ -332,7 +302,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
 		}
 
-		if (!registeredWithIC2 && remotePosition.getTileEntity() instanceof IEnergyTile) {
+		if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition.getTileEntity() instanceof IEnergyTile) {
 			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
 			registeredWithIC2 = true;
 		}
@@ -418,7 +388,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		if (side == ForgeDirection.WEST || side == ForgeDirection.EAST) {
 			side = side.getOpposite();
 		}
-		return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(rotationX, rotationY, rotationZ, side.ordinal()));
+		return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
 	}
 
 	public boolean hasTransferChip(int type) {

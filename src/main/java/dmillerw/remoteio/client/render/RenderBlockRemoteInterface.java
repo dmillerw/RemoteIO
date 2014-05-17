@@ -28,20 +28,18 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 		Tessellator tessellator = Tessellator.instance;
 
 		tessellator.startDrawingQuads();
-		tessellator.addTranslation(0, -0.0625F * 2, 0);
 		tessellator.setNormal(0, 1, 0);
-		renderer.renderFaceYPos(block, 0, 0, 0, inactive);
+		renderer.renderFaceYPos(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.setNormal(0, -1, 0);
-		renderer.renderFaceYNeg(block, 0, 0, 0, inactive);
+		renderer.renderFaceYNeg(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.setNormal(1, 0, 0);
-		renderer.renderFaceXPos(block, 0, 0, 0, inactive);
+		renderer.renderFaceXPos(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.setNormal(-1, 0, 0);
-		renderer.renderFaceXNeg(block, 0, 0, 0, inactive);
+		renderer.renderFaceXNeg(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.setNormal(0, 0, 1);
-		renderer.renderFaceZPos(block, 0, 0, 0, inactive);
+		renderer.renderFaceZPos(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.setNormal(0, 0, -1);
-		renderer.renderFaceZNeg(block, 0, 0, 0, inactive);
-		tessellator.addTranslation(0, 0.0625F * 2, 0);
+		renderer.renderFaceZNeg(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.draw();
 	}
 
