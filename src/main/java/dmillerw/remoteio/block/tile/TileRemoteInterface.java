@@ -81,7 +81,6 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		updateNeighbors();
 	}
 
-	@SideOnly(Side.CLIENT)
 	public ItemStack simpleCamo;
 
 	public VisualState visualState = VisualState.INACTIVE;
@@ -114,6 +113,11 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 
 		// This is purely to ensure the client remains synchronized upon world load
+		if (simpleCamo != null) {
+			NBTTagCompound tag = new NBTTagCompound();
+			simpleCamo.writeToNBT(tag);
+			nbt.setTag("simple", tag);
+		}
 		nbt.setByte("state", (byte) visualState.ordinal());
 		nbt.setInteger("axisY", this.rotationY);
 	}
@@ -130,6 +134,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 
 		// This is purely to ensure the client remains synchronized upon world load
+		if (nbt.hasKey("simple")) {
+			simpleCamo = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("simple"));
+		}
 		visualState = VisualState.values()[nbt.getByte("state")];
 		rotationY = nbt.getInteger("axisY");
 	}
@@ -212,6 +219,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 				}
 			}
 		}
+
+		simpleCamo = stack;
 
 		NBTTagCompound nbt = new NBTTagCompound();
 		if (stack != null) {
