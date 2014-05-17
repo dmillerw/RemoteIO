@@ -52,7 +52,7 @@ public class GuiRemoteInterface extends GuiContainer {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-		this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, button.id + 2);
+		this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, button.id);
 	}
 
 	@Override

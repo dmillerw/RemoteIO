@@ -52,6 +52,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	@Override
 	public void callback(IInventory inventory) {
+		if (!hasWorldObj() || getWorldObj().isRemote) {
+			return;
+		}
+
 		// Eww, hacky workarounds
 		// Recalculates BC state to account for insertion/removal of BC transfer chip
 		// Can't think of a better way to do this
@@ -248,7 +252,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setFloat("axisY", this.rotationY);
+		nbt.setInteger("axisY", this.rotationY);
 		sendClientUpdate(nbt);
 	}
 
@@ -391,9 +395,6 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	public ForgeDirection getAdjustedSide(ForgeDirection side) {
-		if (side == ForgeDirection.WEST || side == ForgeDirection.EAST) {
-			side = side.getOpposite();
-		}
 		return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
 	}
 
