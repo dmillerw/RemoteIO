@@ -1,7 +1,7 @@
 package dmillerw.remoteio.core.handler;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.gui.GuiRemoteInterface;
 import dmillerw.remoteio.client.gui.GuiSimpleCamo;
 import dmillerw.remoteio.inventory.InventoryItem;

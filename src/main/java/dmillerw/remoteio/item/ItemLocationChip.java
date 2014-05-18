@@ -1,6 +1,6 @@
 package dmillerw.remoteio.item;
 
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;

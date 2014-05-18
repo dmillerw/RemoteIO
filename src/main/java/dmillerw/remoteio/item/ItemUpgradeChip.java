@@ -2,7 +2,7 @@ package dmillerw.remoteio.item;
 
 import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.HandlerBlock;
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;

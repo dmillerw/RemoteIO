@@ -1,7 +1,7 @@
 package dmillerw.remoteio.client.gui;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.gui.button.GuiButtonCustom;
 import dmillerw.remoteio.core.helper.MatrixHelper;
 import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;

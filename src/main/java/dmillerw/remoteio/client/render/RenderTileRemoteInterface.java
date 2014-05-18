@@ -2,8 +2,7 @@ package dmillerw.remoteio.client.render;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
-import dmillerw.remoteio.core.helper.MatrixHelper;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package dmillerw.remoteio.block.tile;
+package dmillerw.remoteio.tile;
 
 import dmillerw.remoteio.network.VanillaPacketHelper;
 import net.minecraft.nbt.NBTTagCompound;

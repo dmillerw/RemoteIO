@@ -1,6 +1,6 @@
 package dmillerw.remoteio.inventory.container;
 
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.inventory.container.slot.SlotLimited;
 import dmillerw.remoteio.item.ItemTransferChip;
 import dmillerw.remoteio.item.ItemUpgradeChip;

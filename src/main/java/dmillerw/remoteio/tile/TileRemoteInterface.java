@@ -1,14 +1,11 @@
-package dmillerw.remoteio.block.tile;
+package dmillerw.remoteio.tile;
 
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.InventoryHelper;
-import dmillerw.remoteio.core.helper.MatrixHelper;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.inventory.InventoryItem;
@@ -35,7 +32,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import org.lwjgl.util.vector.Matrix4f;
 import thaumcraft.api.aspects.*;
 import thaumcraft.api.wands.IWandable;
 

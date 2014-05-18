@@ -1,7 +1,7 @@
 package dmillerw.remoteio.item;
 
 import dmillerw.remoteio.block.HandlerBlock;
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.lib.ModInfo;

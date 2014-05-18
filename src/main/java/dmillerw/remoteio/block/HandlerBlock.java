@@ -1,7 +1,7 @@
 package dmillerw.remoteio.block;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import dmillerw.remoteio.block.tile.TileRemoteInterface;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 
 /**
