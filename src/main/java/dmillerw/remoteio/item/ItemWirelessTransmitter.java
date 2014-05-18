@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
@@ -20,6 +21,66 @@ import java.util.List;
  * @author dmillerw
  */
 public class ItemWirelessTransmitter extends Item {
+
+	public static void setHitSide(ItemStack stack, int side) {
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+
+		NBTTagCompound nbt = stack.getTagCompound();
+
+		nbt.setInteger("side", side);
+
+		stack.setTagCompound(nbt);
+	}
+
+	public static void setHitCoordinates(ItemStack stack, float fx, float fy, float fz) {
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+
+		NBTTagCompound nbt = stack.getTagCompound();
+
+		NBTTagCompound tag = new NBTTagCompound();
+
+		tag.setFloat("x", fx);
+		tag.setFloat("y", fy);
+		tag.setFloat("z", fz);
+
+		nbt.setTag("hit", tag);
+
+		stack.setTagCompound(nbt);
+	}
+
+	public static int getHitSide(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			return -1;
+		}
+
+		NBTTagCompound nbt = stack.getTagCompound();
+
+		if (!nbt.hasKey("side")) {
+			return -1;
+		}
+
+		return nbt.getInteger("side");
+	}
+
+	public static float[] getHitCoordinates(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			return new float[] {0, 0, 0};
+		}
+
+		NBTTagCompound nbt = stack.getTagCompound();
+
+		if (!nbt.hasKey("hit")) {
+			return new float[] {0, 0, 0};
+		}
+
+		NBTTagCompound hit = nbt.getCompoundTag("hit");
+
+		return new float[] {hit.getFloat("x"), hit.getFloat("y"), hit.getFloat("z")};
+	}
 
 	private IIcon icon;
 
@@ -48,6 +109,8 @@ public class ItemWirelessTransmitter extends Item {
 
 			if (tile != null && tile instanceof TileRemoteInterface) {
 				ItemLocationChip.setCoordinates(stack, DimensionalCoords.create(tile));
+				setHitSide(stack, side);
+				setHitCoordinates(stack, hitX, hitY, hitZ);
 				player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.save"));
 				return true;
 			}
@@ -61,7 +124,10 @@ public class ItemWirelessTransmitter extends Item {
 		if (!world.isRemote) {
 			if (stack.hasTagCompound() && stack.getTagCompound().hasKey("position")) {
 				DimensionalCoords coord = ItemLocationChip.getCoordinates(stack);
-				coord.getBlock().onBlockActivated(world, coord.x, coord.y, coord.z, player, -1, 0, 0, 0);
+				int side = getHitSide(stack);
+				float[] hit = getHitCoordinates(stack);
+
+				coord.getBlock().onBlockActivated(world, coord.x, coord.y, coord.z, player, side, hit[0], hit[1], hit[2]);
 			}
 		}
 
