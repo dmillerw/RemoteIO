@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.api.IIOTool;
-import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
@@ -13,6 +12,8 @@ import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
+import dmillerw.remoteio.lib.VisualState;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -74,7 +75,7 @@ public class BlockRemoteInterface extends BlockContainer {
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null && tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+		if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
 			DimensionalCoords there = tile.remotePosition;
 			Block remote = there.getBlock(world);
 
@@ -107,7 +108,7 @@ public class BlockRemoteInterface extends BlockContainer {
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null && tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+		if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
 			DimensionalCoords there = tile.remotePosition;
 			Block remote = there.getBlock(world);
 
@@ -151,7 +152,7 @@ public class BlockRemoteInterface extends BlockContainer {
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null && tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+		if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
 			DimensionalCoords there = tile.remotePosition;
 			Block remote = there.getBlock(world);
 

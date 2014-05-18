@@ -24,6 +24,17 @@ import java.util.List;
  */
 public class ItemWirelessTransmitter extends Item {
 
+	public static boolean hasValidRemote(EntityPlayer player) {
+		for (ItemStack stack : player.inventory.mainInventory) {
+			if (stack != null && stack.getItem() == HandlerItem.wirelessTransmitter) {
+				if (player.getCommandSenderName().equalsIgnoreCase(getPlayer(stack).getCommandSenderName())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static void setHitSide(ItemStack stack, int side) {
 		if (!stack.hasTagCompound()) {
 			stack.setTagCompound(new NBTTagCompound());

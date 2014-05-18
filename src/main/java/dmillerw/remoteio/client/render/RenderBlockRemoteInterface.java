@@ -4,6 +4,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
+import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -48,7 +49,7 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
 		if (tile != null) {
-			if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE || tile.camoRenderLock) {
+			if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != VisualState.CAMOUFLAGE_REMOTE || tile.camoRenderLock) {
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 		}

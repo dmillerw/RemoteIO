@@ -2,8 +2,9 @@ package dmillerw.remoteio.client.render;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
-import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.lib.VisualState;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -24,8 +25,8 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 
 	private RenderBlocks renderBlocks;
 
-	public static boolean shouldRender(TileRemoteInterface.VisualState state) {
-		return state == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE || state == TileRemoteInterface.VisualState.CAMOUFLAGE_BOTH;
+	public static boolean shouldRender(VisualState state) {
+		return state == VisualState.CAMOUFLAGE_REMOTE || state == VisualState.CAMOUFLAGE_BOTH;
 	}
 
 	public void renderRemoteInterfaceAt(TileRemoteInterface tile, double x, double y, double z, float partial) {
@@ -53,7 +54,7 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 			TileEntity remoteTile = there.getTileEntity(worldClient);
 
 			// Don't call the block's renderer if there's a simple camo chip
-			if (tile.visualState == TileRemoteInterface.VisualState.CAMOUFLAGE_REMOTE) {
+			if (tile.visualState == VisualState.CAMOUFLAGE_REMOTE) {
 				GL11.glDisable(GL11.GL_LIGHTING);
 
 				Tessellator.instance.startDrawingQuads();

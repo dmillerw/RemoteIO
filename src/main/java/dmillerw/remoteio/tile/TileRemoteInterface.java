@@ -12,6 +12,7 @@ import dmillerw.remoteio.inventory.InventoryItem;
 import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.lib.VisualState;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
@@ -760,19 +761,5 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	/* END IMPLEMENTATIONS */
-
-	public static enum VisualState {
-		INACTIVE,
-		INACTIVE_BLINK,
-		ACTIVE,
-		ACTIVE_BLINK,
-		CAMOUFLAGE_SIMPLE,
-		CAMOUFLAGE_REMOTE,
-		CAMOUFLAGE_BOTH;
-
-		public boolean isCamouflage() {
-			return this == CAMOUFLAGE_SIMPLE || this == CAMOUFLAGE_REMOTE || this == CAMOUFLAGE_BOTH;
-		}
-	}
 
 }
