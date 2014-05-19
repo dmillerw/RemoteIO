@@ -1,24 +1,20 @@
 package dmillerw.remoteio.tile;
 
-import buildcraft.api.mj.MjAPI;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
 import dmillerw.remoteio.core.helper.InventoryHelper;
-import dmillerw.remoteio.core.helper.RotationHelper;
-import dmillerw.remoteio.core.tracker.BlockTracker;
+import dmillerw.remoteio.core.helper.transfer.IC2TransferHelper;
 import dmillerw.remoteio.inventory.InventoryItem;
 import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.inventory.wrapper.InventoryArray;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.item.ItemWirelessTransmitter;
-import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.IEnergyTile;
-import net.minecraft.client.Minecraft;
+import ic2.api.energy.tile.IEnergySink;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,11 +23,15 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 /**
  * @author dmillerw
  */
-public class TileRemoteInventory extends TileIOCore implements InventoryNBT.IInventoryCallback, IInventory, IEnergyTile {
+public class TileRemoteInventory extends TileIOCore implements InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IEnergySink {
 
 	@Override
 	public void callback(IInventory inventory) {
@@ -152,14 +152,15 @@ public class TileRemoteInventory extends TileIOCore implements InventoryNBT.IInv
 
 		return player;
 	}
-	public InventoryArray getPlayerInventory() {
+	public InventoryArray getPlayerInventory(int transferType) {
 		EntityPlayer player = getPlayer();
-		if (player != null) return new InventoryArray(player.inventory.mainInventory);
+		if (player != null && hasTransferChip(transferType)) return new InventoryArray(player.inventory.mainInventory); //TODO Armor support
 		return null;
 	}
 
 	public boolean hasTransferChip(int type) {
-		return InventoryHelper.containsStack(transferChips, new ItemStack(HandlerItem.transferChip, 1, type), true, false);
+//		return InventoryHelper.containsStack(transferChips, new ItemStack(HandlerItem.transferChip, 1, type), true, false);
+		return true;
 	}
 
 	public boolean hasUpgradeChip(int type) {
@@ -255,31 +256,31 @@ public class TileRemoteInventory extends TileIOCore implements InventoryNBT.IInv
 	/* IINVENTORY */
 	@Override
 	public int getSizeInventory() {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null ? inventoryPlayer.getSizeInventory() : 0;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null ? inventoryPlayer.getStackInSlot(slot) : null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null ? inventoryPlayer.decrStackSize(slot, amount) : null;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null ? inventoryPlayer.getStackInSlotOnClosing(slot) : null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		if (inventoryPlayer != null) inventoryPlayer.setInventorySlotContents(slot, stack);
 	}
 
@@ -295,7 +296,7 @@ public class TileRemoteInventory extends TileIOCore implements InventoryNBT.IInv
 
 	@Override
 	public int getInventoryStackLimit() {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null ? inventoryPlayer.getInventoryStackLimit() : 0;
 	}
 
@@ -316,8 +317,68 @@ public class TileRemoteInventory extends TileIOCore implements InventoryNBT.IInv
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		InventoryArray inventoryPlayer = getPlayerInventory();
+		InventoryArray inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null ? inventoryPlayer.isItemValidForSlot(slot, stack) : false;
+	}
+
+	/* IFLUIDHANDLER */
+	@Override
+	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.MATTER_FLUID);
+		return inventoryArray != null ? FluidTransferHelper.fill(inventoryArray, resource, doFill) : 0;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.MATTER_FLUID);
+		return inventoryArray != null ? FluidTransferHelper.drain(inventoryArray, resource, doDrain) : null;
+	}
+
+	@Override
+	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.MATTER_FLUID);
+		return inventoryArray != null ? FluidTransferHelper.drain(inventoryArray, maxDrain, doDrain) : null;
+	}
+
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.MATTER_FLUID);
+		return inventoryArray != null ? FluidTransferHelper.canFill(inventoryArray, fluid) : false;
+	}
+
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.MATTER_FLUID);
+		return inventoryArray != null ? FluidTransferHelper.canDrain(inventoryArray, fluid) : false;
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.MATTER_FLUID);
+		return inventoryArray != null ? FluidTransferHelper.getTankInfo(inventoryArray) : new FluidTankInfo[0];
+	}
+
+	/* IENERGYSINK */
+	@Override
+	public double demandedEnergyUnits() {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.ENERGY_IC2);
+		return inventoryArray != null ? IC2TransferHelper.requiresCharge(inventoryArray) ? 32D : 0D : 0D;
+	}
+
+	@Override
+	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
+		InventoryArray inventoryArray = getPlayerInventory(TransferType.ENERGY_IC2);
+		return inventoryArray != null ? IC2TransferHelper.fill(inventoryArray, amount) : 0D;
+	}
+
+	@Override
+	public int getMaxSafeInput() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+		return getPlayerInventory(TransferType.ENERGY_IC2) != null;
 	}
 
 }
