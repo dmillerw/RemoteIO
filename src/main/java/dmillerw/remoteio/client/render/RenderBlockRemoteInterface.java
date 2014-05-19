@@ -18,9 +18,6 @@ import net.minecraft.world.IBlockAccess;
 public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler {
 
 	public static int renderID;
-	static {
-		renderID = RenderingRegistry.getNextAvailableRenderId();
-	}
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
