@@ -2,10 +2,7 @@ package dmillerw.remoteio.core.helper.transfer;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,20 +17,23 @@ public class FluidTransferHelper {
 		for (int i=0; i<inventory.getSizeInventory(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
-			if (stack != null && FluidContainerRegistry.isEmptyContainer(stack)) {
-				FluidStack copied = resource.copy();
+			if (stack != null)
+				if (stack.getItem() instanceof IFluidContainerItem) {
+					return ((IFluidContainerItem)stack.getItem()).fill(stack, resource, doFill);
+				} else if (FluidContainerRegistry.isEmptyContainer(stack)) {
+					FluidStack copied = resource.copy();
 
-				ItemStack filledStack = FluidContainerRegistry.fillFluidContainer(copied, stack);
+					ItemStack filledStack = FluidContainerRegistry.fillFluidContainer(copied, stack);
 
-				if (filledStack != null) {
-					resource.amount -= copied.amount;
-					filled += copied.amount;
+					if (filledStack != null) {
+						resource.amount -= copied.amount;
+						filled += copied.amount;
 
-					if (doFill) {
-						inventory.setInventorySlotContents(i, filledStack);
+						if (doFill) {
+							inventory.setInventorySlotContents(i, filledStack);
+						}
 					}
 				}
-			}
 		}
 		return filled;
 	}
@@ -42,24 +42,27 @@ public class FluidTransferHelper {
 		for (int i=0; i<inventory.getSizeInventory(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
-			if (stack != null && FluidContainerRegistry.isFilledContainer(stack)) {
-				FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(stack);
+			if (stack != null)
+				if (stack.getItem() instanceof IFluidContainerItem) {
+					return ((IFluidContainerItem)stack.getItem()).drain(stack, resource.amount, doDrain);
+				} else if (FluidContainerRegistry.isFilledContainer(stack)) {
+					FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(stack);
 
-				if (fluidStack.isFluidEqual(resource) && fluidStack.amount <= resource.amount) {
-					if (doDrain) {
-						if (stack.stackSize == 1) {
-							if (stack.getItem().hasContainerItem(stack)) {
-								inventory.setInventorySlotContents(i, stack.getItem().getContainerItem(stack));
+					if (fluidStack.isFluidEqual(resource) && fluidStack.amount <= resource.amount) {
+						if (doDrain) {
+							if (stack.stackSize == 1) {
+								if (stack.getItem().hasContainerItem(stack)) {
+									inventory.setInventorySlotContents(i, stack.getItem().getContainerItem(stack));
+								} else {
+									inventory.setInventorySlotContents(i, null);
+								}
 							} else {
-								inventory.setInventorySlotContents(i, null);
+								stack.splitStack(1);
 							}
-						} else {
-							stack.splitStack(1);
 						}
+						return fluidStack;
 					}
-					return fluidStack;
 				}
-			}
 		}
 		return null;
 	}
@@ -68,24 +71,27 @@ public class FluidTransferHelper {
 		for (int i=0; i<inventory.getSizeInventory(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
-			if (stack != null && FluidContainerRegistry.isFilledContainer(stack)) {
-				FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(stack);
+			if (stack != null)
+				if (stack.getItem() instanceof IFluidContainerItem) {
+					return ((IFluidContainerItem)stack.getItem()).drain(stack, maxDrain, doDrain);
+				} else if (FluidContainerRegistry.isFilledContainer(stack)) {
+					FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(stack);
 
-				if (fluidStack.amount <= maxDrain) {
-					if (doDrain) {
-						if (stack.stackSize == 1) {
-							if (stack.getItem().hasContainerItem(stack)) {
-								inventory.setInventorySlotContents(i, stack.getItem().getContainerItem(stack));
+					if (fluidStack.amount <= maxDrain) {
+						if (doDrain) {
+							if (stack.stackSize == 1) {
+								if (stack.getItem().hasContainerItem(stack)) {
+									inventory.setInventorySlotContents(i, stack.getItem().getContainerItem(stack));
+								} else {
+									inventory.setInventorySlotContents(i, null);
+								}
 							} else {
-								inventory.setInventorySlotContents(i, null);
+								stack.splitStack(1);
 							}
-						} else {
-							stack.splitStack(1);
 						}
+						return fluidStack;
 					}
-					return fluidStack;
 				}
-			}
 		}
 		return null;
 	}
