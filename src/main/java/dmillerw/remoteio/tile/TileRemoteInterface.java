@@ -5,14 +5,11 @@ import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
-import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
-import dmillerw.remoteio.inventory.InventoryItem;
-import dmillerw.remoteio.inventory.InventoryNBT;
-import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
+import dmillerw.remoteio.tile.core.TileIOCore;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
@@ -39,7 +36,7 @@ import thaumcraft.api.wands.IWandable;
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, InventoryNBT.IInventoryCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -78,21 +75,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		updateNeighbors();
 	}
 
-	public ItemStack simpleCamo;
-
-	public VisualState visualState = VisualState.INACTIVE;
-
 	public DimensionalCoords remotePosition;
 
-	public InventoryNBT transferChips = new InventoryNBT(this, 9, 1);
-	public InventoryNBT upgradeChips = new InventoryNBT(this, 9, 1);
-
+	// BuildCraft battery cache (because reflection, ew)
 	private IBatteryObject mjBatteryCache;
 
 	// THIS IS NOT AN ANGLE, BUT THE NUMBER OF LEFT-HAND ROTATIONS!
 	public int rotationY = 0;
-
-	public boolean camoRenderLock = false;
 
 	private boolean registeredWithIC2 = false;
 	private boolean missingUpgrade = false;
@@ -100,52 +89,29 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound nbt) {
-		transferChips.writeToNBT("TransferItems", nbt);
-		upgradeChips.writeToNBT("UpgradeItems", nbt);
-
 		if (remotePosition != null) {
 			NBTTagCompound tag = new NBTTagCompound();
 			remotePosition.writeToNBT(tag);
 			nbt.setTag("position", tag);
 		}
 
-		// This is purely to ensure the client remains synchronized upon world load
-		if (simpleCamo != null) {
-			NBTTagCompound tag = new NBTTagCompound();
-			simpleCamo.writeToNBT(tag);
-			nbt.setTag("simple", tag);
-		}
-		nbt.setByte("state", (byte) visualState.ordinal());
 		nbt.setInteger("axisY", this.rotationY);
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound nbt) {
-		transferChips.readFromNBT("TransferItems", nbt);
-		upgradeChips.readFromNBT("UpgradeItems", nbt);
-
 		if (nbt.hasKey("position")) {
 			remotePosition = DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
 		} else {
 			tracking = true;
 		}
 
-		// This is purely to ensure the client remains synchronized upon world load
-		if (nbt.hasKey("simple")) {
-			simpleCamo = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("simple"));
-		}
-		visualState = VisualState.values()[nbt.getByte("state")];
 		rotationY = nbt.getInteger("axisY");
 	}
 
 	@Override
 	public void onClientUpdate(NBTTagCompound nbt) {
-		if (nbt.hasKey("state")) {
-			visualState = VisualState.values()[nbt.getByte("state")];
-			if (visualState == VisualState.CAMOUFLAGE_REMOTE) {
-				camoRenderLock = false;
-			}
-		}
+		super.onClientUpdate(nbt);
 
 		if (nbt.hasKey("position")) {
 			remotePosition = DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
@@ -155,12 +121,6 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 		if (nbt.hasKey("axisY")) {
 			rotationY = nbt.getInteger("axisY");
-		}
-
-		if (nbt.hasKey("simple")) {
-			simpleCamo = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("simple"));
-		} else if (nbt.hasKey("simple_null")) {
-			simpleCamo = null;
 		}
 	}
 
@@ -203,39 +163,23 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		return INFINITE_EXTENT_AABB;
 	}
 
-	/* BEGIN UPDATE METHODS */
-
-	/** Scans for any simple camo chips and sends the contents of the first one it finds that has a stored block to the client */
-	public void updateSimpleCamo() {
-		ItemStack stack = null;
-		for (ItemStack stack1 : InventoryHelper.toArray(upgradeChips)) {
-			if (stack1 != null && stack1.getItemDamage() == UpgradeType.SIMPLE_CAMO) {
-				stack = new InventoryItem(stack1, 1).getStackInSlot(0);
-				if (stack != null) {
-					break;
-				}
-			}
-		}
-
-		simpleCamo = stack;
-
-		NBTTagCompound nbt = new NBTTagCompound();
-		if (stack != null) {
-			NBTTagCompound tag = new NBTTagCompound();
-			stack.writeToNBT(tag);
-			nbt.setTag("simple", tag);
-		} else {
-			nbt.setBoolean("simple_null", true);
-		}
-		sendClientUpdate(nbt);
-	}
+	/* BEGIN CLIENT UPDATE METHODS
+	 * 'update' methods are used to calculate what should be sent to the client
+	 * 'send' methods actually send the data to the client, and take a single parameter
+	 *  that is the data to be sent
+	 *
+	 *  Methods pertaining to the same data are lumped together */
 
 	/** Sends the remote position to the client */
 	public void updateRemotePosition() {
+		sendRemotePosition(this.remotePosition);
+	}
+
+	public void sendRemotePosition(DimensionalCoords coords) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		if (remotePosition != null) {
+		if (coords != null) {
 			NBTTagCompound tag = new NBTTagCompound();
-			remotePosition.writeToNBT(tag);
+			coords.writeToNBT(tag);
 			nbt.setTag("position", tag);
 		} else {
 			nbt.setBoolean("position_null", true);
@@ -243,12 +187,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		sendClientUpdate(nbt);
 	}
 
-	/** Different from the other update methods, this calculates the visual state, then sends it to the client while also storing it in a local var */
-	public void updateVisualState() {
-		setVisualState(calculateVisualState());
-	}
-
-	/** Sends the passed in theta modifer to the client */
+	/** Sends the passed in theta modifer to the client
+	 *  Different than normal update methods due to how it's calculated */
 	public void updateRotation(int modification) {
 		this.rotationY += modification;
 		if (rotationY > 3) {
@@ -262,8 +202,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		sendClientUpdate(nbt);
 	}
 
-	/** Calculates the visual state based on various parameters */
-	private VisualState calculateVisualState() {
+	public VisualState calculateVisualState() {
 		if (remotePosition == null) {
 			return VisualState.INACTIVE;
 		} else {
@@ -286,21 +225,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		}
 	}
 
-	/** Sends the passed in visual state to the client, calling other update methods if applicable */
-	private void setVisualState(VisualState state) {
-		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setByte("state", (byte)state.ordinal());
-		sendClientUpdate(nbt);
+	@Override
+	public void sendVisualState(VisualState visualState) {
+		super.sendVisualState(visualState);
 
-		if (state == VisualState.CAMOUFLAGE_SIMPLE || state == VisualState.CAMOUFLAGE_BOTH) {
-			updateSimpleCamo();
-		}
-
-		if (state == VisualState.CAMOUFLAGE_REMOTE || state == VisualState.CAMOUFLAGE_BOTH) {
+		if (visualState == VisualState.CAMOUFLAGE_REMOTE || visualState == VisualState.CAMOUFLAGE_BOTH) {
 			updateRemotePosition();
 		}
-
-		visualState = state;
 	}
 
 	/** Sets the server-side remote position to the passed in position, and resets the tracker */
@@ -326,7 +257,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		markForUpdate();
 	}
 
-	/* END UPDATE METHODS */
+	/* END CLIENT UPDATE METHODS */
 
 	public Object getUpgradeImplementation(Class cls) {
 		return getUpgradeImplementation(cls, -1);
@@ -402,14 +333,6 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
 	public ForgeDirection getAdjustedSide(ForgeDirection side) {
 		return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
-	}
-
-	public boolean hasTransferChip(int type) {
-		return InventoryHelper.containsStack(transferChips, new ItemStack(HandlerItem.transferChip, 1, type), true, false);
-	}
-
-	public boolean hasUpgradeChip(int type) {
-		return InventoryHelper.containsStack(upgradeChips, new ItemStack(HandlerItem.upgradeChip, 1, type), true, false);
 	}
 
 	/* START IMPLEMENTATIONS */

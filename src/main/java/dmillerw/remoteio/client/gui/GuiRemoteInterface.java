@@ -1,10 +1,11 @@
 package dmillerw.remoteio.client.gui;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
+import dmillerw.remoteio.inventory.container.core.ContainerIO;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.client.gui.button.GuiButtonCustom;
 import dmillerw.remoteio.core.helper.MatrixHelper;
-import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -23,13 +24,13 @@ import org.lwjgl.util.vector.Matrix4f;
  */
 public class GuiRemoteInterface extends GuiContainer {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/upgrade.png");
-
-	private Matrix4f initialMatrix;
-
-	private final RenderBlocks renderBlocks;
+	public static final ResourceLocation TEXTURE = new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/upgrade_display.png");
 
 	private final TileRemoteInterface tile;
+
+	private RenderBlocks renderBlocks;
+
+	private Matrix4f initialMatrix;
 
 	public GuiRemoteInterface(InventoryPlayer inventoryPlayer, TileRemoteInterface tile) {
 		super(new ContainerRemoteInterface(inventoryPlayer, tile));
@@ -37,9 +38,9 @@ public class GuiRemoteInterface extends GuiContainer {
 		this.xSize = 196;
 		this.ySize = 243;
 
-		this.initialMatrix = MatrixHelper.getRotationMatrix(Minecraft.getMinecraft().renderViewEntity);
-		this.renderBlocks = new RenderBlocks(FMLClientHandler.instance().getWorldClient());
 		this.tile = tile;
+		this.renderBlocks = new RenderBlocks(tile.getWorldObj());
+		this.initialMatrix = MatrixHelper.getRotationMatrix(Minecraft.getMinecraft().renderViewEntity);
 	}
 
 	@Override

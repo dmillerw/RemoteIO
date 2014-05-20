@@ -1,5 +1,6 @@
-package dmillerw.remoteio.tile;
+package dmillerw.remoteio.tile.core;
 
+import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.network.VanillaPacketHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -10,7 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 /**
  * @author dmillerw
  */
-public abstract class TileIOCore extends TileEntity {
+public abstract class TileCore extends TileEntity {
 
 	public abstract void writeCustomNBT(NBTTagCompound nbt);
 

@@ -1,6 +1,7 @@
 package dmillerw.remoteio.inventory.container;
 
 import dmillerw.remoteio.inventory.InventoryItem;
+import dmillerw.remoteio.inventory.container.core.ContainerItemPhantom;
 import dmillerw.remoteio.inventory.container.slot.SlotPhantom;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;

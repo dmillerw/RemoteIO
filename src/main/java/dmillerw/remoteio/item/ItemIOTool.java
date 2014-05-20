@@ -20,7 +20,7 @@ public class ItemIOTool extends Item implements IIOTool {
 		super();
 
 		setMaxDamage(0);
-		setMaxStackSize(0);
+		setMaxStackSize(1);
 		setCreativeTab(TabRemoteIO.TAB);
 	}
 

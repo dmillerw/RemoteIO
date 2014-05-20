@@ -30,10 +30,6 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 	}
 
 	public void renderRemoteInterfaceAt(TileRemoteInterface tile, double x, double y, double z, float partial) {
-		if (tile.camoRenderLock) {
-			return;
-		}
-
 		if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj()) && shouldRender(tile.visualState)) {
 			WorldClient worldClient = FMLClientHandler.instance().getWorldClient();
 			DimensionalCoords there = tile.remotePosition;
@@ -89,7 +85,8 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 				} catch (Exception ex) {
 					FMLLog.warning("Failed to render " + tile.remotePosition.getTileEntity(worldClient).getClass().getSimpleName() + ". Reason: " + ex.getLocalizedMessage());
 
-					tile.camoRenderLock = true;
+					// Maybe bring this back if becomes an issue
+//					tile.camoRenderLock = true;
 					tile.markForRenderUpdate();
 				}
 			}

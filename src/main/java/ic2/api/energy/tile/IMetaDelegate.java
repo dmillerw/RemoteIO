@@ -1,8 +1,8 @@
 package ic2.api.energy.tile;
 
-import net.minecraft.tileentity.TileEntity;
-
 import java.util.List;
+
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * Interface for grouping multi-block structures to a single energy net delegate.

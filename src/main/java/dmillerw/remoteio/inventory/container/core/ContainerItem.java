@@ -1,4 +1,4 @@
-package dmillerw.remoteio.inventory.container;
+package dmillerw.remoteio.inventory.container.core;
 
 import dmillerw.remoteio.inventory.InventoryItem;
 import net.minecraft.entity.player.EntityPlayer;
