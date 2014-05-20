@@ -5,6 +5,7 @@ import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.core.helper.ArrayHelper;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.lib.DimensionalCoords;
@@ -18,6 +19,7 @@ import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.tile.IWrenchable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -36,7 +38,7 @@ import thaumcraft.api.wands.IWandable;
 /**
  * @author dmillerw
  */
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -335,6 +337,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
 	}
 
+	public int getAdjustedSide(int side) {
+		return RotationHelper.getRotatedSide(0, rotationY, 0, side);
+	}
+
 	/* START IMPLEMENTATIONS */
 
 	/* IINVENTORY */
@@ -406,6 +412,52 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 		return inventory != null ? inventory.isItemValidForSlot(slot, stack) : false;
+	}
+
+	/* ISIDEDINVENTORY */
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		ISidedInventory sidedInventory = (ISidedInventory) getTransferImplementation(ISidedInventory.class);
+		if (sidedInventory != null) {
+			return sidedInventory.getAccessibleSlotsFromSide(getAdjustedSide(side));
+		} else {
+			IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
+
+			if (inventory != null) {
+				return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory(), 1);
+			}
+		}
+		return new int[0];
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		ISidedInventory sidedInventory = (ISidedInventory) getTransferImplementation(ISidedInventory.class);
+		if (sidedInventory != null) {
+			return sidedInventory.canInsertItem(slot, stack, getAdjustedSide(side));
+		} else {
+			IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
+
+			if (inventory != null) {
+				return inventory.isItemValidForSlot(slot, stack);
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		ISidedInventory sidedInventory = (ISidedInventory) getTransferImplementation(ISidedInventory.class);
+		if (sidedInventory != null) {
+			return sidedInventory.canExtractItem(slot, stack, getAdjustedSide(side));
+		} else {
+			IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
+
+			if (inventory != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* IFLUIDHANDLER */

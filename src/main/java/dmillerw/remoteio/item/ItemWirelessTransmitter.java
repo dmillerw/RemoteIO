@@ -157,7 +157,6 @@ public class ItemWirelessTransmitter extends Item {
 				ItemLocationChip.setCoordinates(stack, DimensionalCoords.create(tile));
 				setHitSide(stack, side);
 				setHitCoordinates(stack, hitX, hitY, hitZ);
-				player.addChatComponentMessage(new ChatComponentTranslation("chat.location_chip.save"));
 				return true;
 			}
 		}
@@ -170,6 +169,7 @@ public class ItemWirelessTransmitter extends Item {
 		if (!world.isRemote) {
 			if (player.isSneaking()) {
 				setPlayer(stack, player);
+				player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
 			} else if (stack.hasTagCompound() && stack.getTagCompound().hasKey("position")) {
 				DimensionalCoords coord = ItemLocationChip.getCoordinates(stack);
 				int side = getHitSide(stack);

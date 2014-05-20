@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraftforge.fluids.IFluidHandler;
 import thaumcraft.api.aspects.IAspectContainer;
 import thaumcraft.api.aspects.IAspectSource;
@@ -30,7 +31,7 @@ public class TransferType {
 	public static final int NETWORK_AE = 20;
 
 	static {
-		registerType(MATTER_ITEM, IInventory.class);
+		registerType(MATTER_ITEM, IInventory.class, ISidedInventory.class);
 		registerType(MATTER_FLUID, IFluidHandler.class);
 		registerType(MATTER_ESSENTIA, IAspectContainer.class, IAspectSource.class, IEssentiaTransport.class);
 

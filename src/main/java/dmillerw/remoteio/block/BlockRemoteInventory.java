@@ -22,6 +22,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -43,6 +44,7 @@ public class BlockRemoteInventory extends BlockIOCore {
 
 				if (player1 != null) {
 					tile.setPlayer(player1);
+					player.addChatComponentMessage(new ChatComponentTranslation("chat.target.load"));
 					return true;
 				}
 			}

@@ -6,8 +6,8 @@ container.remoteio.upgrade=Upgrade
 container.remoteio.transfer=Transfer
 
 # Chat
-chat.location_chip.save=Location Saved
-chat.location_chip.load=Location Loaded
+chat.target.save=Target Saved
+chat.target.load=Target Loaded
 
 # Item
 item.chip.location.name=Location Chip
@@ -24,3 +24,4 @@ item.io_tool.name=IO Tool
 
 # Block
 tile.remote_interface.name=Remote Interface
+tile.remote_inventory.name=Remote Inventory
