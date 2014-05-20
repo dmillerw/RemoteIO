@@ -25,6 +25,9 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 
 		Tessellator tessellator = Tessellator.instance;
 
+		int oldUV = renderer.uvRotateTop;
+		renderer.uvRotateTop = 3;
+
 		tessellator.startDrawingQuads();
 		tessellator.setNormal(0, 1, 0);
 		renderer.renderFaceYPos(block, -0.5, -0.5, -0.5, inactive);
@@ -39,6 +42,8 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 		tessellator.setNormal(0, 0, -1);
 		renderer.renderFaceZNeg(block, -0.5, -0.5, -0.5, inactive);
 		tessellator.draw();
+
+		renderer.uvRotateTop =  oldUV;
 	}
 
 	@Override
