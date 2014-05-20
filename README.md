@@ -1,3 +1,3 @@
 RemoteIO
 ========
-*put important stuff here*
+[![Build Status](https://drone.io/github.com/dmillerw/RemoteIO/status.png)](https://drone.io/github.com/dmillerw/RemoteIO/latest)
