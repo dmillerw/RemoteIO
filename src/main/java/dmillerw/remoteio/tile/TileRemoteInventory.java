@@ -80,7 +80,6 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 
 		if (nbt.hasKey("access")) {
 			accessType = nbt.getByte("access");
-			System.out.println("Received " + accessType);
 		}
 	}
 
@@ -252,7 +251,6 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		IInventory inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
-		System.out.println(stack.getDisplayName() + " : " + slot + " : " + inventoryPlayer.isItemValidForSlot(slot, stack));
 		return inventoryPlayer != null ? inventoryPlayer.isItemValidForSlot(slot, stack) : false;
 	}
 
