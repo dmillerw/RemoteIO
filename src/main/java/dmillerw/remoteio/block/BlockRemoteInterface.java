@@ -36,12 +36,15 @@ public class BlockRemoteInterface extends BlockIOCore {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+		boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+		if (result) {
+			return result;
+		}
 
 		if (!world.isRemote) {
 			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-			if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
+			if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
 				int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
 				DimensionalCoords there = tile.remotePosition;
 				Block remote = there.getBlock();
@@ -52,7 +55,7 @@ public class BlockRemoteInterface extends BlockIOCore {
 			}
 		}
 
-		return false;
+		return result;
 	}
 
 	@Override

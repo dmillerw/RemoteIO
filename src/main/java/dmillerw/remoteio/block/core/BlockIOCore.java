@@ -47,12 +47,10 @@ public abstract class BlockIOCore extends BlockContainer {
 			ItemStack stack = player.getCurrentEquippedItem();
 
 			if (stack.getItem() instanceof IIOTool) {
-				if (!player.isSneaking()) {
-					if (!world.isRemote) {
-						player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
-					}
-					return true;
+				if (!world.isRemote) {
+					player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
 				}
+				return true;
 			}
 		}
 

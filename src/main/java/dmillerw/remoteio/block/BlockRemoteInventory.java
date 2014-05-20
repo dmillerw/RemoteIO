@@ -34,7 +34,10 @@ public class BlockRemoteInventory extends BlockIOCore {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+		boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+		if (result) {
+			return result;
+		}
 
 		TileRemoteInventory tile = (TileRemoteInventory) world.getTileEntity(x, y, z);
 
@@ -49,7 +52,7 @@ public class BlockRemoteInventory extends BlockIOCore {
 				}
 			}
 		}
-		return false;
+		return result;
 	}
 
 	@Override

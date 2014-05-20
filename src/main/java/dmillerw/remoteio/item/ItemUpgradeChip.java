@@ -51,7 +51,7 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 				ItemStack chip = stack.copy();
 				chip.stackSize = 1;
 
-				if (TileEntityHopper.func_145889_a(io.transferChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
+				if (TileEntityHopper.func_145889_a(io.upgradeChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
 					io.callback(io.transferChips);
 					if (stack.stackSize == 1) {
 						player.setCurrentItemOrArmor(0, null);
