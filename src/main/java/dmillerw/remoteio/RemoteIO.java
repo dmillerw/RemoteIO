@@ -16,6 +16,7 @@ import dmillerw.remoteio.core.proxy.CommonProxy;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.ModInfo;
+import dmillerw.remoteio.recipe.HandlerRecipe;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
 
 @Mod(modid= ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
@@ -48,6 +49,8 @@ public class RemoteIO {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		HandlerRecipe.initialize(); // We do recipe setup in post-init as some recipes rely on other mods
+
 		proxy.postInit(event);
 	}
 	
