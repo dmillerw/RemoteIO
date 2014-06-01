@@ -3,6 +3,7 @@ package dmillerw.remoteio.recipe;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
+import dmillerw.remoteio.block.HandlerBlock;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.item.HandlerItem;
@@ -20,6 +21,35 @@ import thaumcraft.api.ItemApi;
 public class HandlerRecipe {
 
 	public static void initialize() {
+		// REMOTE INTERFACE
+		GameRegistry.addRecipe(
+				new ItemStack(HandlerBlock.remoteInterface),
+				" E ",
+				"RGR",
+				"RRR",
+				'E', Items.ender_pearl,
+				'R', Items.redstone,
+				'G', Blocks.gold_block
+		);
+
+		// REMOTE INVENTORY
+		GameRegistry.addShapelessRecipe(
+				new ItemStack(HandlerBlock.remoteInventory),
+				new ItemStack(HandlerBlock.remoteInterface),
+				new ItemStack(HandlerItem.wirelessTransmitter)
+		);
+
+		// IO TOOL
+		GameRegistry.addRecipe(
+				new ItemStack(HandlerItem.ioTool),
+				" I ",
+				"RSI",
+				"IR ",
+				'I', Items.iron_ingot,
+				'R', Items.redstone,
+				'S', Items.stick
+		);
+
 		// LOCATION CHIP
 		GameRegistry.addRecipe(
 				new ItemStack(HandlerItem.locationChip),

@@ -18,6 +18,7 @@ import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.recipe.HandlerRecipe;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
+import dmillerw.remoteio.recipe.RecipeKeepTransmitter;
 
 @Mod(modid= ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
 public class RemoteIO {
@@ -35,6 +36,7 @@ public class RemoteIO {
 
 		GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
 		FMLCommonHandler.instance().bus().register(RecipeCopyLocation.INSTANCE);
+		FMLCommonHandler.instance().bus().register(new RecipeKeepTransmitter());
 		FMLCommonHandler.instance().bus().register(BlockTracker.INSTANCE);
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
