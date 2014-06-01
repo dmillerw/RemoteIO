@@ -34,6 +34,8 @@ import java.util.List;
  */
 public class BlockRemoteInterface extends BlockIOCore {
 
+	public static int renderID;
+
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
 		boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
@@ -178,7 +180,7 @@ public class BlockRemoteInterface extends BlockIOCore {
 
 	@Override
 	public int getRenderType() {
-		return RenderBlockRemoteInterface.renderID;
+		return BlockRemoteInterface.renderID;
 	}
 
 	@Override

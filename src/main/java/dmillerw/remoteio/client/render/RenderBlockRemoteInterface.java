@@ -17,8 +17,6 @@ import net.minecraft.world.IBlockAccess;
  */
 public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler {
 
-	public static int renderID;
-
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
 		IIcon inactive = ((BlockRemoteInterface)block).icons[0];
@@ -65,7 +63,7 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 
 	@Override
 	public int getRenderId() {
-		return renderID;
+		return BlockRemoteInterface.renderID;
 	}
 
 }

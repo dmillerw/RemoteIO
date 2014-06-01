@@ -1,5 +1,6 @@
 package dmillerw.remoteio;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -10,6 +11,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.block.HandlerBlock;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.core.proxy.CommonProxy;
@@ -33,6 +35,8 @@ public class RemoteIO {
 	public void preInit(FMLPreInitializationEvent event) {
 		HandlerBlock.initialize();
 		HandlerItem.initialize();
+
+		BlockRemoteInterface.renderID = RenderingRegistry.getNextAvailableRenderId();
 
 		GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
 		FMLCommonHandler.instance().bus().register(RecipeCopyLocation.INSTANCE);
