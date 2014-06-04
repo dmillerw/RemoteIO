@@ -34,7 +34,9 @@ minecraft {
 }
 
 version = "${config.minecraft_version}-${config.mod_version}"
-version = version + "-b" + System.getenv("BUILD_NUMBER");
+if (System.getenv("BUILD_NUMBER") != null) {
+    version += "-b" + System.getenv("BUILD_NUMBER");
+}
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
@@ -57,19 +59,4 @@ processResources {
 
 jar {
     classifier = 'universal'
-}
-
-task sourceZip(type: Zip) {
-    from sourceSets.main.allSource
-    classifier = 'src'
-}
-
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
-}
-
-artifacts {
-    archives sourceZip
-    archives deobfJar
 }
