@@ -3,6 +3,7 @@ package dmillerw.remoteio.tile;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
+import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.ArrayHelper;
@@ -38,6 +39,16 @@ import thaumcraft.api.wands.IWandable;
 /**
  * @author dmillerw
  */
+@Optional.InterfaceList({
+		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectContainer", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectSource", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "thaumcraft.api.aspects.IEssentiaTransport", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "thaumcraft.api.wands.IWandable", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
+		@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
+})
 public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
 	@Override
