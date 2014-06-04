@@ -1,5 +1,6 @@
 package dmillerw.remoteio.tile;
 
+import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
@@ -29,6 +30,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 /**
  * @author dmillerw
  */
+@Optional.InterfaceList(
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
+)
 public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink {
 
 	public static final byte ACCESS_INVENTORY = 0;

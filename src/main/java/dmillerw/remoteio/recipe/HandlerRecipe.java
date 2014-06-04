@@ -100,15 +100,17 @@ public class HandlerRecipe {
 				'C', HandlerItem.locationChip
 		);
 
-		// TRANSFER TYPE - ESSENTIA
-		GameRegistry.addRecipe(
-				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', ItemApi.getItem("itemEssence", OreDictionary.WILDCARD_VALUE),
-				'C', HandlerItem.locationChip
-		);
+		if (Loader.isModLoaded("Thaumcraft")) {
+			// TRANSFER TYPE - ESSENTIA
+			GameRegistry.addRecipe(
+					new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
+					" B ",
+					"ICI",
+					'B', HandlerItem.blankPlate,
+					'I', ItemApi.getItem("itemEssence", OreDictionary.WILDCARD_VALUE),
+					'C', HandlerItem.locationChip
+			);
+		}
 
 		// TRANSFER TYPE - IC2
 		for (ItemStack cable : getIC2Cables()) {
