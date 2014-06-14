@@ -22,13 +22,13 @@ import dmillerw.remoteio.recipe.HandlerRecipe;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
 import dmillerw.remoteio.recipe.RecipeKeepTransmitter;
 
-@Mod(modid= ModInfo.ID, name=ModInfo.NAME, version=ModInfo.VERSION)
+@Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
 public class RemoteIO {
 
 	@Instance(ModInfo.ID)
 	public static RemoteIO instance;
-	
-	@SidedProxy(serverSide=ModInfo.SERVER, clientSide=ModInfo.CLIENT)
+
+	@SidedProxy(serverSide = ModInfo.SERVER, clientSide = ModInfo.CLIENT)
 	public static CommonProxy proxy;
 
 	@EventHandler
@@ -55,9 +55,9 @@ public class RemoteIO {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		HandlerRecipe.initialize(); // We do recipe setup in post-init as some recipes rely on other mods
+		// We do recipe setup in post-init as some recipes rely on other mods
+		HandlerRecipe.initialize();
 
 		proxy.postInit(event);
 	}
-	
 }

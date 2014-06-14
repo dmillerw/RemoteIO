@@ -5,7 +5,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * @author dmillerw
@@ -14,16 +13,18 @@ public class RecipeHelper {
 
 	public static void addOreRecipe(ItemStack output, Object ... inputs) {
 		for (int i=0; i<inputs.length; i++) {
+			ItemStack stack = null;
 			if (inputs[i] instanceof Block) {
-				ItemStack stack = new ItemStack((Block)inputs[i]);
-				String tag = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-				inputs[i] = tag;
+				stack = new ItemStack((Block)inputs[i]);
 			} else if (inputs[i] instanceof Item) {
-				ItemStack stack = new ItemStack((Item)inputs[i]);
-				String tag = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-				inputs[i] = tag;
+				stack = new ItemStack((Item)inputs[i]);
 			} else if (inputs[i] instanceof ItemStack) {
-				String tag = OreDictionary.getOreName(OreDictionary.getOreID((ItemStack)inputs[i]));
+				stack = (ItemStack) inputs[i];
+			}
+
+			String tag = OreHelper.getOreTag(stack);
+
+			if (!tag.isEmpty()) {
 				inputs[i] = tag;
 			}
 		}
@@ -33,16 +34,18 @@ public class RecipeHelper {
 
 	public static void addDependentOreRecipe(String modId, ItemStack output, Object ... inputs) {
 		for (int i=0; i<inputs.length; i++) {
+			ItemStack stack = null;
 			if (inputs[i] instanceof Block) {
-				ItemStack stack = new ItemStack((Block)inputs[i]);
-				String tag = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-				inputs[i] = tag;
+				stack = new ItemStack((Block)inputs[i]);
 			} else if (inputs[i] instanceof Item) {
-				ItemStack stack = new ItemStack((Item)inputs[i]);
-				String tag = OreDictionary.getOreName(OreDictionary.getOreID(stack));
-				inputs[i] = tag;
+				stack = new ItemStack((Item)inputs[i]);
 			} else if (inputs[i] instanceof ItemStack) {
-				String tag = OreDictionary.getOreName(OreDictionary.getOreID((ItemStack)inputs[i]));
+				stack = (ItemStack) inputs[i];
+			}
+
+			String tag = OreHelper.getOreTag(stack);
+
+			if (!tag.isEmpty()) {
 				inputs[i] = tag;
 			}
 		}
