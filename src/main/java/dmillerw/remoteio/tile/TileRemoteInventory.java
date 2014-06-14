@@ -1,6 +1,7 @@
 package dmillerw.remoteio.tile;
 
 import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.registry.GameData;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;

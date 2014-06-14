@@ -6,6 +6,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.HandlerBlock;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.core.helper.ModHelper;
+import dmillerw.remoteio.core.helper.RecipeHelper;
 import dmillerw.remoteio.item.HandlerItem;
 import ic2.api.item.IC2Items;
 import net.minecraft.init.Blocks;
@@ -13,7 +15,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import thaumcraft.api.ItemApi;
 
 /**
  * @author dmillerw
@@ -22,7 +23,7 @@ public class HandlerRecipe {
 
 	public static void initialize() {
 		// REMOTE INTERFACE
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerBlock.remoteInterface),
 				" E ",
 				"RGR",
@@ -40,7 +41,7 @@ public class HandlerRecipe {
 		);
 
 		// IO TOOL
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.ioTool),
 				" I ",
 				"RSI",
@@ -51,7 +52,7 @@ public class HandlerRecipe {
 		);
 
 		// LOCATION CHIP
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.locationChip),
 				"R",
 				"P",
@@ -62,14 +63,14 @@ public class HandlerRecipe {
 		);
 
 		// BLANK PLATE
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.blankPlate),
 				"III",
 				'I', Items.iron_ingot
 		);
 
 		// WIRELESS TRANSMITTER
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.wirelessTransmitter),
 				" E ",
 				"S  ",
@@ -81,7 +82,7 @@ public class HandlerRecipe {
 		);
 
 		// TRANSFER TYPE - ITEM
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ITEM),
 				" B ",
 				"ICI",
@@ -91,7 +92,7 @@ public class HandlerRecipe {
 		);
 
 		// TRANSFER TYPE - WATER
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_FLUID),
 				" B ",
 				"ICI",
@@ -100,21 +101,21 @@ public class HandlerRecipe {
 				'C', HandlerItem.locationChip
 		);
 
-		if (Loader.isModLoaded("Thaumcraft")) {
-			// TRANSFER TYPE - ESSENTIA
-			GameRegistry.addRecipe(
-					new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
-					" B ",
-					"ICI",
-					'B', HandlerItem.blankPlate,
-					'I', ItemApi.getItem("itemEssence", OreDictionary.WILDCARD_VALUE),
-					'C', HandlerItem.locationChip
-			);
-		}
+		// TRANSFER TYPE - ESSENTIA
+		RecipeHelper.addDependentOreRecipe(
+				"Thaumcraft",
+				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
+				" B ",
+				"ICI",
+				'B', HandlerItem.blankPlate,
+				'I', ModHelper.getThaumcraftItem("itemEssence", OreDictionary.WILDCARD_VALUE),
+				'C', HandlerItem.locationChip
+		);
 
 		// TRANSFER TYPE - IC2
 		for (ItemStack cable : getIC2Cables()) {
-			GameRegistry.addRecipe(
+			RecipeHelper.addDependentOreRecipe(
+					"IC2",
 					new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_IC2),
 					" B ",
 					"ICI",
@@ -126,7 +127,8 @@ public class HandlerRecipe {
 
 		// TRANSFER TYPE - BC
 		for (ItemStack pipe : getBCPipes()) {
-			GameRegistry.addRecipe(
+			RecipeHelper.addDependentOreRecipe(
+					"BuildCraft|Core",
 					new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_BC),
 					" B ",
 					"ICI",
@@ -137,7 +139,7 @@ public class HandlerRecipe {
 		}
 
 		// UPGRADE TYPE - REMOTE CAMOUFLAGE
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
 				" B ",
 				"ICI",
@@ -147,7 +149,7 @@ public class HandlerRecipe {
 		);
 
 		// UPGRADE TYPE - SIMPLE CAMOUFLAGE
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
 				" B ",
 				"ICI",
@@ -157,7 +159,7 @@ public class HandlerRecipe {
 		);
 
 		// UPGRADE TYPE - REMOTE ACCESS
-		GameRegistry.addRecipe(
+		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_ACCESS),
 				"B",
 				"C",
