@@ -5,6 +5,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 /**
  * @author dmillerw
@@ -29,7 +30,7 @@ public class RecipeHelper {
 			}
 		}
 
-		GameRegistry.addRecipe(output, inputs);
+		GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
 	}
 
 	public static void addDependentOreRecipe(String modId, ItemStack output, Object ... inputs) {
@@ -50,7 +51,9 @@ public class RecipeHelper {
 			}
 		}
 
-		addDependentRecipe(modId, output, inputs);
+		if (Loader.isModLoaded(modId)) {
+			GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
+		}
 	}
 
 	public static void addDependentRecipe(String modId, ItemStack output, Object ... inputs) {

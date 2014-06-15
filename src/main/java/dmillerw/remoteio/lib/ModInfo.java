@@ -4,7 +4,7 @@ public class ModInfo {
 
 	public static final String ID = "RIO";
 	public static final String NAME = "RemoteIO";
-	public static final String VERSION = "1.0.3"; //TODO Make this reflect build.properties
+	public static final String VERSION = "1.0.4"; //TODO Make this reflect build.properties
 	public static final String DEPENDENCIES = "required-after:Forge@[10.12.2.1121,)"; //TODO Make this reflect build.properties
 
 	public static final String CLIENT = "dmillerw.remoteio.core.proxy.ClientProxy";
