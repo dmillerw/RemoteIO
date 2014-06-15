@@ -31,6 +31,9 @@ archivesBaseName = "RemoteIO"
 
 minecraft {
     version = config.minecraft_version + "-" + config.forge_version
+    replaceIn "src/main/java/dmillerw/remoteio/lib/ModInfo.java"
+    replace "%MOD_VERSION%", config.mod_version
+    replace "%FORGE_VERSION%", config.forge_version
 }
 
 version = "${config.minecraft_version}-${config.mod_version}"
