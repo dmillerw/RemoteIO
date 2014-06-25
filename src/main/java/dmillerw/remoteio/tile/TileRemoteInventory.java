@@ -123,7 +123,7 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 		}
 
 		ServerConfigurationManager configurationManager = MinecraftServer.getServer().getConfigurationManager();
-		EntityPlayer player = configurationManager.func_152612_a(target);
+		EntityPlayer player = configurationManager.getPlayerForUsername(target);
 
 		if (player != null) {
 			if (!ItemWirelessTransmitter.hasValidRemote(player)) {
