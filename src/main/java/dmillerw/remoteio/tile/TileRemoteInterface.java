@@ -3,6 +3,7 @@ package dmillerw.remoteio.tile;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
+import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
@@ -50,7 +51,7 @@ import thaumcraft.api.wands.IWandable;
 		@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
 		@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
 })
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IEnergyHandler, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -715,6 +716,37 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	@Override
 	public IBatteryObject getMjBattery(String kind) {
 		return mjBatteryCache;
+	}
+
+	/* IENERGYHANDLER */
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.receiveEnergy(from, maxReceive, simulate) : 0;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.extractEnergy(from, maxExtract, simulate) : 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.getEnergyStored(from) : 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.getMaxEnergyStored(from) : 0;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.canConnectEnergy(from) : false;
 	}
 
 	/* IWANDABLE */

@@ -1,5 +1,6 @@
 package dmillerw.remoteio.core;
 
+import cofh.api.energy.IEnergyHandler;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import ic2.api.energy.tile.IEnergySink;
@@ -37,6 +38,7 @@ public class TransferType {
 
 		registerType(ENERGY_IC2, IEnergySource.class, IEnergySink.class);
 		// ENERGY_BC is handled via tile
+		registerType(ENERGY_RF, IEnergyHandler.class);
 	}
 
 	public static void registerType(int type, Class ... classes) {
