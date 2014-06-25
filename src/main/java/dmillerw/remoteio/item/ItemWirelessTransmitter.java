@@ -175,7 +175,7 @@ public class ItemWirelessTransmitter extends Item {
 				int side = getHitSide(stack);
 				float[] hit = getHitCoordinates(stack);
 
-				coord.getBlock().onBlockActivated(world, coord.x, coord.y, coord.z, player, side, hit[0], hit[1], hit[2]);
+				coord.getBlock().onBlockActivated(coord.getWorld(), coord.x, coord.y, coord.z, player, side, hit[0], hit[1], hit[2]);
 			}
 		}
 
