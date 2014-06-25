@@ -1,10 +1,8 @@
 package dmillerw.remoteio.item;
 
-import dmillerw.remoteio.block.HandlerBlock;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.lib.ModInfo;
-import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +30,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 
 			TransferType.ENERGY_IC2,
 			TransferType.ENERGY_BC,
+			TransferType.ENERGY_RF,
 		},
 
 		new String[] {
@@ -40,7 +39,8 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 			"essentia",
 
 			"energy_ic2",
-			"energy_mj"
+			"energy_mj",
+			"energy_rf",
 		});
 
 		setCreativeTab(TabRemoteIO.TAB);

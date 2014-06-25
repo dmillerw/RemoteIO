@@ -17,5 +17,4 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerBlockHandler(new RenderBlockRemoteInterface());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileRemoteInterface.class, new RenderTileRemoteInterface());
 	}
-
 }

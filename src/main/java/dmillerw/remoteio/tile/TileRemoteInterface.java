@@ -3,6 +3,7 @@ package dmillerw.remoteio.tile;
 import buildcraft.api.mj.IBatteryObject;
 import buildcraft.api.mj.IBatteryProvider;
 import buildcraft.api.mj.MjAPI;
+import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
@@ -40,17 +41,17 @@ import thaumcraft.api.wands.IWandable;
  * @author dmillerw
  */
 @Optional.InterfaceList({
-	@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectContainer", modid = "Thaumcraft"),
-	@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectSource", modid = "Thaumcraft"),
-	@Optional.Interface(iface = "thaumcraft.api.aspects.IEssentiaTransport", modid = "Thaumcraft"),
-	@Optional.Interface(iface = "thaumcraft.api.wands.IWandable", modid = "Thaumcraft"),
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2"),
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2"),
-	@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
-	@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
+		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectContainer", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectSource", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "thaumcraft.api.aspects.IEssentiaTransport", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "thaumcraft.api.wands.IWandable", modid = "Thaumcraft"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
+		@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
 })
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IEnergyHandler, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -712,9 +713,40 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	/* IBATTERYPROVIDER
 	 * This is a funky implementation due to how the new MJ system works */
 	@Optional.Method(modid = "BuildCraft|Core")
- 	@Override
+	@Override
 	public IBatteryObject getMjBattery(String kind) {
 		return mjBatteryCache;
+	}
+
+	/* IENERGYHANDLER */
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.receiveEnergy(from, maxReceive, simulate) : 0;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.extractEnergy(from, maxExtract, simulate) : 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.getEnergyStored(from) : 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.getMaxEnergyStored(from) : 0;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
+		return energyHandler != null ? energyHandler.canConnectEnergy(from) : false;
 	}
 
 	/* IWANDABLE */
@@ -752,7 +784,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
 		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
 		return wrenchable != null ? wrenchable.wrenchCanSetFacing(entityPlayer, side) : false;
- 	}
+	}
 
 	@Optional.Method(modid = "IC2")
 	@Override

@@ -1,7 +1,6 @@
 package dmillerw.remoteio.tile;
 
 import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.registry.GameData;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
@@ -32,8 +31,8 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author dmillerw
  */
 @Optional.InterfaceList({
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
 })
 public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink {
 
@@ -124,7 +123,7 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 		}
 
 		ServerConfigurationManager configurationManager = MinecraftServer.getServer().getConfigurationManager();
-		EntityPlayer player = configurationManager.getPlayerForUsername(target);
+		EntityPlayer player = configurationManager.func_152612_a(target);
 
 		if (player != null) {
 			if (!ItemWirelessTransmitter.hasValidRemote(player)) {
