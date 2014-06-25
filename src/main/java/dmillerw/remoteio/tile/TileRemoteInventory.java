@@ -31,8 +31,8 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author dmillerw
  */
 @Optional.InterfaceList({
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
 })
 public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink {
 
@@ -297,26 +297,29 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 	}
 
 	/* IENERGYSINK */
+	@Optional.Method(modid = "IC2")
 	@Override
 	public double demandedEnergyUnits() {
 		IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
 		return IInventory != null ? IC2TransferHelper.requiresCharge(IInventory) ? 32D : 0D : 0D;
 	}
 
+	@Optional.Method(modid = "IC2")
 	@Override
 	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
 		IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
 		return IInventory != null ? IC2TransferHelper.fill(IInventory, amount) : 0D;
 	}
 
+	@Optional.Method(modid = "IC2")
 	@Override
 	public int getMaxSafeInput() {
 		return Integer.MAX_VALUE;
 	}
 
+	@Optional.Method(modid = "IC2")
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		return getPlayerInventory(TransferType.ENERGY_IC2) != null;
 	}
-
 }
