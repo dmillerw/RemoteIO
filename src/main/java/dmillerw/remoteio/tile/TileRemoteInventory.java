@@ -31,9 +31,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 /**
  * @author dmillerw
  */
-@Optional.InterfaceList(
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
-)
+@Optional.InterfaceList({
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
+})
 public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink {
 
 	public static final byte ACCESS_INVENTORY = 0;
