@@ -40,14 +40,15 @@ import thaumcraft.api.wands.IWandable;
  * @author dmillerw
  */
 @Optional.InterfaceList({
-		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectContainer", modid = "Thaumcraft"),
-		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectSource", modid = "Thaumcraft"),
-		@Optional.Interface(iface = "thaumcraft.api.aspects.IEssentiaTransport", modid = "Thaumcraft"),
-		@Optional.Interface(iface = "thaumcraft.api.wands.IWandable", modid = "Thaumcraft"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2"),
-		@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
-		@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
+	@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectContainer", modid = "Thaumcraft"),
+	@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectSource", modid = "Thaumcraft"),
+	@Optional.Interface(iface = "thaumcraft.api.aspects.IEssentiaTransport", modid = "Thaumcraft"),
+	@Optional.Interface(iface = "thaumcraft.api.wands.IWandable", modid = "Thaumcraft"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2"),
+	@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
+	@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
 })
 public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IWandable, IWrenchable {
 
@@ -66,7 +67,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 		// Eww, hacky workarounds
 		// Recalculates BC state to account for insertion/removal of BC transfer chip
 		// Can't think of a better way to do this
-		if (hasTransferChip(TransferType.ENERGY_BC)) {
+		if (remotePosition != null && hasTransferChip(TransferType.ENERGY_BC)) {
 			mjBatteryCache = MjAPI.getMjBattery(remotePosition.getTileEntity());
 		}
 

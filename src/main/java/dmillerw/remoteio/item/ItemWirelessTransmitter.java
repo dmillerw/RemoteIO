@@ -119,7 +119,7 @@ public class ItemWirelessTransmitter extends Item {
 		}
 
 		ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
-		return manager.getPlayerForUsername(nbt.getString("player"));
+		return manager.func_152612_a(nbt.getString("player"));
 	}
 
 	private IIcon icon;
