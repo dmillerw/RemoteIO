@@ -138,6 +138,16 @@ public class HandlerRecipe {
 			);
 		}
 
+		// TRANSFER TYPE - RF
+		RecipeHelper.addOreRecipe(
+				new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_RF),
+				" B ",
+				"ICI",
+				'B', HandlerItem.blankPlate,
+				'I', Items.redstone,
+				'C', HandlerItem.locationChip
+		);
+
 		// UPGRADE TYPE - REMOTE CAMOUFLAGE
 		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
