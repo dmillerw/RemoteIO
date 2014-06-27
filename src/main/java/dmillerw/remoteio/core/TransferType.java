@@ -5,6 +5,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
+import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.tile.IEnergyStorage;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -36,7 +38,7 @@ public class TransferType {
 		registerType(MATTER_FLUID, IFluidHandler.class);
 		registerType(MATTER_ESSENTIA, IAspectContainer.class, IAspectSource.class, IEssentiaTransport.class);
 
-		registerType(ENERGY_IC2, IEnergySource.class, IEnergySink.class);
+		registerType(ENERGY_IC2, IEnergyTile.class, IEnergySource.class, IEnergySink.class, IEnergyStorage.class);
 		// ENERGY_BC is handled via tile
 		registerType(ENERGY_RF, IEnergyHandler.class);
 	}

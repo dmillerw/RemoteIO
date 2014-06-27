@@ -13,6 +13,7 @@ import dmillerw.remoteio.tile.core.TileIOCore;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
+import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -31,10 +32,11 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author dmillerw
  */
 @Optional.InterfaceList({
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2")
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2API"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2API"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2API")
 })
-public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink {
+public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink, IEnergySource {
 
 	public static final byte ACCESS_INVENTORY = 0;
 	public static final byte ACCESS_ARMOR = 1;
@@ -297,29 +299,50 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 	}
 
 	/* IENERGYSINK */
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public double demandedEnergyUnits() {
 		IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
 		return IInventory != null ? IC2TransferHelper.requiresCharge(IInventory) ? 32D : 0D : 0D;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
 		IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
-		return IInventory != null ? IC2TransferHelper.fill(IInventory, amount) : 0D;
+		return IInventory != null ? IC2TransferHelper.fill(IInventory, (int)Math.floor(amount)) : 0D;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public int getMaxSafeInput() {
 		return Integer.MAX_VALUE;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		return getPlayerInventory(TransferType.ENERGY_IC2) != null;
+	}
+
+	/* IENERGYSOURCE */
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public double getOfferedEnergy() {
+		IInventory inventory = getPlayerInventory(TransferType.ENERGY_IC2);
+		return inventory != null ? IC2TransferHelper.getCharge(inventory) : 0;
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public void drawEnergy(double amount) {
+		IInventory inventory = getPlayerInventory(TransferType.ENERGY_IC2);
+		if (inventory != null) IC2TransferHelper.drain(inventory, (int) amount);
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
+		return true;
 	}
 }

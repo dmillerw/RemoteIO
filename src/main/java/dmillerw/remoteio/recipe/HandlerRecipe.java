@@ -139,7 +139,8 @@ public class HandlerRecipe {
 		}
 
 		// TRANSFER TYPE - RF
-		RecipeHelper.addOreRecipe(
+		RecipeHelper.addDependentOreRecipe(
+				"CoFHAPI|energy",
 				new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_RF),
 				" B ",
 				"ICI",

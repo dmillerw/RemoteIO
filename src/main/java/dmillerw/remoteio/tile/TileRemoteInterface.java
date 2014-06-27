@@ -18,6 +18,7 @@ import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import ic2.api.energy.tile.IEnergyTile;
+import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -45,13 +46,15 @@ import thaumcraft.api.wands.IWandable;
 		@Optional.Interface(iface = "thaumcraft.api.aspects.IAspectSource", modid = "Thaumcraft"),
 		@Optional.Interface(iface = "thaumcraft.api.aspects.IEssentiaTransport", modid = "Thaumcraft"),
 		@Optional.Interface(iface = "thaumcraft.api.wands.IWandable", modid = "Thaumcraft"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2"),
-		@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2"),
-		@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraft|Core"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2API"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2API"),
+		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2API"),
+		@Optional.Interface(iface = "ic2.api.tile.IEnergyStorage", modid = "IC2API"),
+		@Optional.Interface(iface = "ic2.api.tile.IWrenchable", modid = "IC2API"),
+		@Optional.Interface(iface = "buildcraft.api.mj.IBatteryProvider", modid = "BuildCraftAPI|mj"),
+		@Optional.Interface(iface = "cofh.api.energy.IEnergyHandler", modid = "CoFHAPI|energy")
 })
-public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IBatteryProvider, IEnergyHandler, IWandable, IWrenchable {
+public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITrackerCallback, IInventory, ISidedInventory, IFluidHandler, IAspectContainer, IAspectSource, IEssentiaTransport, IEnergySource, IEnergySink, IEnergyStorage, IBatteryProvider, IEnergyHandler, IWandable, IWrenchable {
 
 	@Override
 	public void callback(IBlockAccess world, int x, int y, int z) {
@@ -660,21 +663,21 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	/* IENERGYSOURCE */
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public double getOfferedEnergy() {
 		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
 		return energySource != null ? energySource.getOfferedEnergy() : 0;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public void drawEnergy(double amount) {
 		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
 		if (energySource != null) energySource.drawEnergy(amount);
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
 		IEnergySource energySource = (IEnergySource) getTransferImplementation(IEnergySource.class);
@@ -682,67 +685,122 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	/* IENERGYSINK */
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public double demandedEnergyUnits() {
 		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
 		return energySink != null ? energySink.demandedEnergyUnits() : 0;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
 		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
 		return energySink != null ? energySink.injectEnergyUnits(directionFrom, amount) : 0;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public int getMaxSafeInput() {
 		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
 		return energySink != null ? energySink.getMaxSafeInput() : Integer.MAX_VALUE;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
 		return energySink != null ? energySink.acceptsEnergyFrom(emitter, getAdjustedSide(direction)) : false;
 	}
 
+	/* IENERGYSTORAGE */
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public int getStored() {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		return energyStorage != null ? energyStorage.getStored() : 0;
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public void setStored(int energy) {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		if (energyStorage != null) energyStorage.setStored(energy);
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public int addEnergy(int amount) {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		return energyStorage != null ? energyStorage.addEnergy(amount) : getStored();
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public int getCapacity() {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		return energyStorage != null ? energyStorage.getCapacity() : 0;
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public int getOutput() {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		return energyStorage != null ? energyStorage.getOutput() : 0;
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public double getOutputEnergyUnitsPerTick() {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		return energyStorage != null ? energyStorage.getOutputEnergyUnitsPerTick() : 0;
+	}
+
+	@Optional.Method(modid = "IC2API")
+	@Override
+	public boolean isTeleporterCompatible(ForgeDirection side) {
+		IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
+		return energyStorage != null ? energyStorage.isTeleporterCompatible(side) : false;
+	}
+
 	/* IBATTERYPROVIDER
-	 * This is a funky implementation due to how the new MJ system works */
-	@Optional.Method(modid = "BuildCraft|Core")
+		 * This is a funky implementation due to how the new MJ system works */
+	@Optional.Method(modid = "BuildCraftAPI|mj")
 	@Override
 	public IBatteryObject getMjBattery(String kind) {
 		return mjBatteryCache;
 	}
 
 	/* IENERGYHANDLER */
+	@Optional.Method(modid = "CoFHAPI|energy")
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
 		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
 		return energyHandler != null ? energyHandler.receiveEnergy(from, maxReceive, simulate) : 0;
 	}
 
+	@Optional.Method(modid = "CoFHAPI|energy")
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
 		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
 		return energyHandler != null ? energyHandler.extractEnergy(from, maxExtract, simulate) : 0;
 	}
 
+	@Optional.Method(modid = "CoFHAPI|energy")
 	@Override
 	public int getEnergyStored(ForgeDirection from) {
 		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
 		return energyHandler != null ? energyHandler.getEnergyStored(from) : 0;
 	}
 
+	@Optional.Method(modid = "CoFHAPI|energy")
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
 		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
 		return energyHandler != null ? energyHandler.getMaxEnergyStored(from) : 0;
 	}
 
+	@Optional.Method(modid = "CoFHAPI|energy")
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
 		IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
@@ -779,44 +837,43 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 	}
 
 	/* IWRENCHABLE */
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
 		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
 		return wrenchable != null ? wrenchable.wrenchCanSetFacing(entityPlayer, side) : false;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public short getFacing() {
 		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
 		return wrenchable != null ? wrenchable.getFacing() : 0;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public void setFacing(short facing) {
 		IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
 		if (wrenchable != null) wrenchable.setFacing(facing);
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public boolean wrenchCanRemove(EntityPlayer entityPlayer) {
 		return false;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public float getWrenchDropRate() {
 		return 0F;
 	}
 
-	@Optional.Method(modid = "IC2")
+	@Optional.Method(modid = "IC2API")
 	@Override
 	public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
 		return null;
 	}
-
 	/* END IMPLEMENTATIONS */
 }

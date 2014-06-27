@@ -21,16 +21,49 @@ public class IC2TransferHelper {
 		return false;
 	}
 
-	/** Returns amount NOT used */
-	public static double fill(IInventory inventory, double amount) {
+	public static int getCharge(IInventory inventory) {
+		int charge = 0;
 		for (int i=0; i<inventory.getSizeInventory(); i++) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
 			if (stack != null && stack.getItem() instanceof IElectricItem) {
-				amount -= ElectricItem.manager.charge(stack, (int) Math.floor(amount), ((IElectricItem)stack.getItem()).getTier(stack), false, false);
+				charge += ElectricItem.manager.getCharge(stack);
+			}
+		}
+		return charge;
+	}
+
+	/** Returns amount NOT used */
+	public static int fill(IInventory inventory, int amount) {
+		for (int i=0; i<inventory.getSizeInventory(); i++) {
+			ItemStack stack = inventory.getStackInSlot(i);
+
+			if (stack != null && stack.getItem() instanceof IElectricItem) {
+				int chargeAmount = ElectricItem.manager.charge(stack, amount, ((IElectricItem)stack.getItem()).getTier(stack), false, true);
+				if (amount - chargeAmount >= 0) {
+					amount -= ElectricItem.manager.charge(stack, (int) amount, ((IElectricItem)stack.getItem()).getTier(stack), false, false);
+				} else {
+					break;
+				}
 			}
 		}
 		return amount;
 	}
 
+	public static int drain(IInventory inventory, int amount) {
+		for (int i=0; i<inventory.getSizeInventory(); i++) {
+			ItemStack stack = inventory.getStackInSlot(i);
+
+			if (stack != null && stack.getItem() instanceof IElectricItem) {
+				int dischargeAmount = ElectricItem.manager.discharge(stack, amount, ((IElectricItem)stack.getItem()).getTier(stack), false, true);
+				if (amount - dischargeAmount >= 0) {
+					amount -= ElectricItem.manager.discharge(stack, amount, ((IElectricItem)stack.getItem()).getTier(stack), false, false);
+				} else {
+					break;
+				}
+			}
+		}
+
+		return getCharge(inventory);
+	}
 }

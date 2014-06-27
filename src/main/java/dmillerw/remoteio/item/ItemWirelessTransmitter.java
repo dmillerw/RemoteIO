@@ -1,16 +1,15 @@
 package dmillerw.remoteio.item;
 
-import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
@@ -27,7 +26,7 @@ public class ItemWirelessTransmitter extends Item {
 	public static boolean hasValidRemote(EntityPlayer player) {
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (stack != null && stack.getItem() == HandlerItem.wirelessTransmitter) {
-				if (player.getCommandSenderName().equalsIgnoreCase(getPlayer(stack).getCommandSenderName())) {
+				if (player.getCommandSenderName().equalsIgnoreCase(getPlayerName(stack))) {
 					return true;
 				}
 			}
@@ -107,7 +106,7 @@ public class ItemWirelessTransmitter extends Item {
 		return new float[] {hit.getFloat("x"), hit.getFloat("y"), hit.getFloat("z")};
 	}
 
-	public static EntityPlayer getPlayer(ItemStack stack) {
+	public static String getPlayerName(ItemStack stack) {
 		if (!stack.hasTagCompound()) {
 			return null;
 		}
@@ -118,8 +117,17 @@ public class ItemWirelessTransmitter extends Item {
 			return null;
 		}
 
-		ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
-		return manager.getPlayerForUsername(nbt.getString("player"));
+		return nbt.getString("player");
+	}
+
+	public static EntityPlayer getPlayer(ItemStack stack) {
+		String player = getPlayerName(stack);
+
+		if (player != null && !player.isEmpty()) {
+			return MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(player);
+		} else {
+			return null;
+		}
 	}
 
 	private IIcon icon;
