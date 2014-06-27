@@ -1,5 +1,6 @@
 package dmillerw.remoteio.core.helper;
 
+import cpw.mods.fml.common.Loader;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -9,7 +10,11 @@ import net.minecraft.item.ItemStack;
 public class ModHelper {
 
 	public static ItemStack getThaumcraftItem(String id, int meta) {
-		return getItemFromStaticClass("thaumcraft.common.config.ConfigItems", id, meta);
+		if (Loader.isModLoaded("Thaumcraft")) {
+			return getItemFromStaticClass("thaumcraft.common.config.ConfigItems", id, meta);
+		} else {
+			return null;
+		}
 	}
 
 	public static ItemStack getItemFromStaticClass(String cls, String item, int meta) {
