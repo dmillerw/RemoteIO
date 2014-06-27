@@ -124,7 +124,7 @@ public class ItemWirelessTransmitter extends Item {
 		String player = getPlayerName(stack);
 
 		if (player != null && !player.isEmpty()) {
-			return MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(player);
+			return MinecraftServer.getServer().getConfigurationManager().func_152612_a(player);
 		} else {
 			return null;
 		}

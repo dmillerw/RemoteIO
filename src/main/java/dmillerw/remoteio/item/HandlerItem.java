@@ -17,22 +17,25 @@ public class HandlerItem {
 
 	public static void initialize() {
 		locationChip = new ItemLocationChip().setUnlocalizedName("chip.location");
-		GameRegistry.registerItem(locationChip, "remoteio:location_chip");
+		register(locationChip);
 
 		transferChip = new ItemTransferChip().setUnlocalizedName("chip.transfer");
-		GameRegistry.registerItem(transferChip, "remoteio:transfer_chip");
+		register(transferChip);
 
 		upgradeChip = new ItemUpgradeChip().setUnlocalizedName("chip.upgrade");
-		GameRegistry.registerItem(upgradeChip, "remoteio:upgrade_chip");
+		register(upgradeChip);
 
 		blankPlate = new ItemBlankPlate().setUnlocalizedName("blank_plate");
-		GameRegistry.registerItem(blankPlate, "remoteio:blank_plate");
+		register(blankPlate);
 
 		ioTool = new ItemIOTool().setUnlocalizedName("io_tool");
-		GameRegistry.registerItem(ioTool, "remoteio:io_tool");
+		register(ioTool);
 
 		wirelessTransmitter = new ItemWirelessTransmitter().setUnlocalizedName("wireless_transmitter");
-		GameRegistry.registerItem(wirelessTransmitter, "remoteio:wireless_transmitter");
+		register(wirelessTransmitter);
 	}
 
+	private static void register(Item item) {
+		GameRegistry.registerItem(item, item.getUnlocalizedName());
+	}
 }

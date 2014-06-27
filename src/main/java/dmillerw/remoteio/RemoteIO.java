@@ -8,6 +8,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -22,6 +23,7 @@ import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.recipe.HandlerRecipe;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
 import dmillerw.remoteio.recipe.RecipeKeepTransmitter;
+import net.minecraft.item.Item;
 
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
 public class RemoteIO {
@@ -63,5 +65,23 @@ public class RemoteIO {
 		HandlerRecipe.initialize();
 
 		proxy.postInit(event);
+	}
+
+	@EventHandler
+	public void checkMappings(FMLMissingMappingsEvent event) {
+		for (FMLMissingMappingsEvent.MissingMapping map : event.getAll()) {
+			if (map.name.startsWith("remoteio:")) {
+				String name = map.name.substring(map.name.indexOf(":") + 1);
+				if (map.type == GameRegistry.Type.BLOCK) {
+					map.remap(GameRegistry.findBlock(ModInfo.ID, name));
+				} else if (map.type == GameRegistry.Type.ITEM) {
+					if (name.equalsIgnoreCase("remote_interface") || name.equalsIgnoreCase("remote_inventory")) {
+						map.remap(Item.getItemFromBlock(GameRegistry.findBlock(ModInfo.ID, name)));
+					} else {
+						map.remap(GameRegistry.findItem(ModInfo.ID, name));
+					}
+				}
+			}
+		}
 	}
 }

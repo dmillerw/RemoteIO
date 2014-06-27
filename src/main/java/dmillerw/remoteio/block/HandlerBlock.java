@@ -15,12 +15,11 @@ public class HandlerBlock {
 
 	public static void initialize() {
 		remoteInterface = new BlockRemoteInterface().setBlockName("remote_interface");
-		GameRegistry.registerBlock(remoteInterface, "remoteio:remote_interface");
-		GameRegistry.registerTileEntity(TileRemoteInterface.class, "remoteio:remote_interface");
+		GameRegistry.registerBlock(remoteInterface, remoteInterface.getUnlocalizedName());
+		GameRegistry.registerTileEntity(TileRemoteInterface.class, remoteInterface.getUnlocalizedName());
 
 		remoteInventory = new BlockRemoteInventory().setBlockName("remote_inventory");
-		GameRegistry.registerBlock(remoteInventory, "remoteio:remote_inventory");
-		GameRegistry.registerTileEntity(TileRemoteInventory.class, "remoteio:remote_inventory");
+		GameRegistry.registerBlock(remoteInventory, remoteInventory.getUnlocalizedName());
+		GameRegistry.registerTileEntity(TileRemoteInventory.class, remoteInventory.getUnlocalizedName());
 	}
-
 }
