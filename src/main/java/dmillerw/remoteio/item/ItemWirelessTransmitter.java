@@ -143,7 +143,7 @@ public class ItemWirelessTransmitter extends Item {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
 		DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
-		EntityPlayer bound = getPlayer(stack);
+		String bound = getPlayerName(stack);
 
 		if (coords != null) {
 			list.add("Dimension: " + DimensionManager.getProvider(coords.dimensionID).getDimensionName());
@@ -152,7 +152,7 @@ public class ItemWirelessTransmitter extends Item {
 		}
 
 		if (bound != null) {
-			list.add("Bound to: " + bound.getDisplayName());
+			list.add("Bound to: " + bound);
 		}
 	}
 
