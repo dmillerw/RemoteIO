@@ -1,1 +1,1 @@
-apply from "https://raw.githubusercontent.com/dmillerw/MainGradle/master/main.gradle"
+apply from: "https://raw.githubusercontent.com/dmillerw/MainGradle/master/main.gradle"
