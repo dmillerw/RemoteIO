@@ -5,6 +5,7 @@ import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
 import dmillerw.remoteio.core.helper.transfer.IC2TransferHelper;
+import dmillerw.remoteio.core.helper.transfer.RFTransferHelper;
 import dmillerw.remoteio.inventory.wrapper.InventoryArmor;
 import dmillerw.remoteio.inventory.wrapper.InventoryArray;
 import dmillerw.remoteio.item.ItemWirelessTransmitter;
@@ -36,7 +37,8 @@ public class TileRemoteInventory extends TileIOCore implements
         IFluidHandler,
         IEnergySource, // IC2
         IEnergySink, // IC2
-        IEnergyHandler {
+        IEnergyHandler // COFH
+{
 
 	public static final byte ACCESS_INVENTORY = 0;
 	public static final byte ACCESS_ARMOR = 1;
@@ -350,26 +352,30 @@ public class TileRemoteInventory extends TileIOCore implements
     /* IENERGYHANDLER */
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        return 0;
+        IInventory inventory = getPlayerInventory(TransferType.ENERGY_RF);
+        return inventory != null ? RFTransferHelper.fill(inventory, maxReceive, simulate) : 0;
     }
 
     @Override
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
-        return 0;
+        IInventory inventory = getPlayerInventory(TransferType.ENERGY_RF);
+        return inventory != null ? RFTransferHelper.drain(inventory, maxExtract, simulate) : 0;
     }
 
     @Override
     public int getEnergyStored(ForgeDirection from) {
-        return 0;
+        IInventory inventory = getPlayerInventory(TransferType.ENERGY_RF);
+        return inventory != null ? RFTransferHelper.getCharge(inventory) : 0;
     }
 
     @Override
     public int getMaxEnergyStored(ForgeDirection from) {
-        return 0;
+        IInventory inventory = getPlayerInventory(TransferType.ENERGY_RF);
+        return inventory != null ? RFTransferHelper.getMaxCharge(inventory) : 0;
     }
 
     @Override
     public boolean canConnectEnergy(ForgeDirection from) {
-        return false;
+        return getPlayerInventory(TransferType.ENERGY_RF) != null;
     }
 }
