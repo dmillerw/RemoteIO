@@ -1,6 +1,6 @@
 package dmillerw.remoteio.tile;
 
-import cpw.mods.fml.common.Optional;
+import cofh.api.energy.IEnergyHandler;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
@@ -31,12 +31,12 @@ import net.minecraftforge.fluids.IFluidHandler;
 /**
  * @author dmillerw
  */
-@Optional.InterfaceList({
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "IC2API"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "IC2API"),
-		@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "IC2API")
-})
-public class TileRemoteInventory extends TileIOCore implements IInventory, IFluidHandler, IEnergySink, IEnergySource {
+public class TileRemoteInventory extends TileIOCore implements
+        IInventory,
+        IFluidHandler,
+        IEnergySource, // IC2
+        IEnergySink, // IC2
+        IEnergyHandler {
 
 	public static final byte ACCESS_INVENTORY = 0;
 	public static final byte ACCESS_ARMOR = 1;
@@ -298,51 +298,78 @@ public class TileRemoteInventory extends TileIOCore implements IInventory, IFlui
 		return IInventory != null ? FluidTransferHelper.getTankInfo(IInventory) : new FluidTankInfo[0];
 	}
 
-	/* IENERGYSINK */
-	@Optional.Method(modid = "IC2API")
-	@Override
-	public double demandedEnergyUnits() {
-		IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
-		return IInventory != null ? IC2TransferHelper.requiresCharge(IInventory) ? 32D : 0D : 0D;
-	}
-
-	@Optional.Method(modid = "IC2API")
-	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount) {
-		IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
-		return IInventory != null ? IC2TransferHelper.fill(IInventory, (int)Math.floor(amount)) : 0D;
-	}
-
-	@Optional.Method(modid = "IC2API")
-	@Override
-	public int getMaxSafeInput() {
-		return Integer.MAX_VALUE;
-	}
-
-	@Optional.Method(modid = "IC2API")
-	@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
-		return getPlayerInventory(TransferType.ENERGY_IC2) != null;
-	}
-
-	/* IENERGYSOURCE */
-	@Optional.Method(modid = "IC2API")
+    /* IENERGYSOURCE */
 	@Override
 	public double getOfferedEnergy() {
 		IInventory inventory = getPlayerInventory(TransferType.ENERGY_IC2);
 		return inventory != null ? IC2TransferHelper.getCharge(inventory) : 0;
 	}
 
-	@Optional.Method(modid = "IC2API")
 	@Override
 	public void drawEnergy(double amount) {
 		IInventory inventory = getPlayerInventory(TransferType.ENERGY_IC2);
-		if (inventory != null) IC2TransferHelper.drain(inventory, (int) amount);
+		if (inventory != null) IC2TransferHelper.drain(inventory, amount);
 	}
 
-	@Optional.Method(modid = "IC2API")
-	@Override
+    @Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
 		return true;
 	}
+
+    /* IENERGYEMITTER */
+    @Override
+    public int getSourceTier() {
+        return Integer.MAX_VALUE;
+    }
+
+    /* IENERGYSINK */
+    @Override
+    public double getDemandedEnergy() {
+        IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
+        return IInventory != null ? IC2TransferHelper.requiresCharge(IInventory) ? 32D : 0D : 0D;
+    }
+
+    @Override
+    public int getSinkTier() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public double injectEnergy(ForgeDirection directionFrom, double amount, double voltage) {
+        IInventory IInventory = getPlayerInventory(TransferType.ENERGY_IC2);
+        return IInventory != null ? IC2TransferHelper.fill(IInventory, amount) : 0D;
+    }
+
+    /* IENERGYACCEPTOR */
+
+    @Override
+    public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
+        return getPlayerInventory(TransferType.ENERGY_IC2) != null;
+    }
+
+    /* IENERGYHANDLER */
+    @Override
+    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public int getEnergyStored(ForgeDirection from) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxEnergyStored(ForgeDirection from) {
+        return 0;
+    }
+
+    @Override
+    public boolean canConnectEnergy(ForgeDirection from) {
+        return false;
+    }
 }
