@@ -1,6 +1,7 @@
 package dmillerw.remoteio.item;
 
 import dmillerw.remoteio.core.TabRemoteIO;
+import dmillerw.remoteio.core.helper.PlayerHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.tile.TileRemoteInterface;
@@ -9,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
@@ -124,7 +124,7 @@ public class ItemWirelessTransmitter extends Item {
 		String player = getPlayerName(stack);
 
 		if (player != null && !player.isEmpty()) {
-			return MinecraftServer.getServer().getConfigurationManager().func_152612_a(player);
+			return PlayerHelper.getPlayerForUsername(player);
 		} else {
 			return null;
 		}

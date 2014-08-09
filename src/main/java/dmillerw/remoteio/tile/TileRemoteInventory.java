@@ -3,6 +3,7 @@ package dmillerw.remoteio.tile;
 import cofh.api.energy.IEnergyHandler;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.core.helper.PlayerHelper;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
 import dmillerw.remoteio.core.helper.transfer.IC2TransferHelper;
 import dmillerw.remoteio.core.helper.transfer.RFTransferHelper;
@@ -127,7 +128,7 @@ public class TileRemoteInventory extends TileIOCore implements
 		}
 
 		ServerConfigurationManager configurationManager = MinecraftServer.getServer().getConfigurationManager();
-		EntityPlayer player = configurationManager.func_152612_a(target);
+		EntityPlayer player = PlayerHelper.getPlayerForUsername(target);
 
 		if (player != null) {
 			if (!ItemWirelessTransmitter.hasValidRemote(player)) {
