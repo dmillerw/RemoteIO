@@ -125,19 +125,6 @@ public class HandlerRecipe {
 			);
 		}
 
-		// TRANSFER TYPE - BC
-		for (ItemStack pipe : getBCPipes()) {
-			RecipeHelper.addDependentOreRecipe(
-					"BuildCraft|Core",
-					new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_BC),
-					" B ",
-					"ICI",
-					'B', HandlerItem.blankPlate,
-					'I', pipe,
-					'C', HandlerItem.locationChip
-			);
-		}
-
 		// TRANSFER TYPE - RF
 		RecipeHelper.addDependentOreRecipe(
 				"CoFHAPI|energy",

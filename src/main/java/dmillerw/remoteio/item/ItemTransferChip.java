@@ -29,7 +29,6 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 			TransferType.MATTER_ESSENTIA,
 
 			TransferType.ENERGY_IC2,
-			TransferType.ENERGY_BC,
 			TransferType.ENERGY_RF,
 		},
 
