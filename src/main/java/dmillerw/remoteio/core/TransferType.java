@@ -25,7 +25,7 @@ public class TransferType {
 
 	// ENERGY
 	public static final int ENERGY_IC2 = 10;
-	public static final int ENERGY_BC = 11;
+//	public static final int ENERGY_BC = 11; // BC power has since been replaced with RF
 	public static final int ENERGY_RF = 12;
 
 	// MISC
@@ -55,5 +55,4 @@ public class TransferType {
 		}
 		return -1;
 	}
-
 }
