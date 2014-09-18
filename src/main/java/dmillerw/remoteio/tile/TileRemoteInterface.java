@@ -6,6 +6,7 @@ import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.ArrayHelper;
 import dmillerw.remoteio.core.helper.RotationHelper;
+import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.lib.DependencyInfo;
 import dmillerw.remoteio.lib.DimensionalCoords;
@@ -81,14 +82,14 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 			return;
 		}
 
-		// I think IC2 caches tile state...
-		if (registeredWithIC2) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-			registeredWithIC2 = false;
-		}
+        // I think IC2 caches tile state...
+        if (registeredWithIC2) {
+            IC2Helper.unloadEnergyTile(this);
+            registeredWithIC2 = false;
+        }
 
 		if (hasTransferChip(TransferType.ENERGY_IC2) && remotePosition != null && remotePosition.getTileEntity() != null && remotePosition.getTileEntity() instanceof IEnergyTile) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+            IC2Helper.loadEnergyTile(this);
 			registeredWithIC2 = true;
 		}
 

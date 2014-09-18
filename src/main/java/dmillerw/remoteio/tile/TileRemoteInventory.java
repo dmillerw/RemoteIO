@@ -5,6 +5,7 @@ import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.PlayerHelper;
+import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.helper.transfer.FluidTransferHelper;
 import dmillerw.remoteio.core.helper.transfer.IC2TransferHelper;
 import dmillerw.remoteio.core.helper.transfer.RFTransferHelper;
@@ -60,12 +61,12 @@ public class TileRemoteInventory extends TileIOCore implements
 
 		// I think IC2 caches tile state...
 		if (registeredWithIC2) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			IC2Helper.unloadEnergyTile(this);
 			registeredWithIC2 = false;
 		}
 
 		if (hasTransferChip(TransferType.ENERGY_IC2) && getPlayer() != null) {
-			MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+			IC2Helper.loadEnergyTile(this);
 			registeredWithIC2 = true;
 		}
 
