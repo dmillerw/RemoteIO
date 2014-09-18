@@ -2,26 +2,20 @@ package dmillerw.remoteio.block;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dmillerw.remoteio.RemoteIO;
-import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.block.core.BlockIOCore;
-import dmillerw.remoteio.client.render.RenderBlockRemoteInterface;
-import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
+import dmillerw.remoteio.core.handler.PlayerEventHandler;
 import dmillerw.remoteio.core.helper.RotationHelper;
-import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -51,6 +45,7 @@ public class BlockRemoteInterface extends BlockIOCore {
 				DimensionalCoords there = tile.remotePosition;
 				Block remote = there.getBlock();
 
+                PlayerEventHandler.whitelist.add(player.getCommandSenderName());
 				remote.onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
 
 				return true;
