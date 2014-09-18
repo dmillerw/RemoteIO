@@ -1,6 +1,9 @@
 package dmillerw.remoteio.lib;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -66,7 +69,11 @@ public class DimensionalCoords {
     }
 
     public World getWorld() {
-        return MinecraftServer.getServer().worldServerForDimension(this.dimensionID);
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            return Minecraft.getMinecraft().theWorld;
+        } else {
+            return MinecraftServer.getServer().worldServerForDimension(this.dimensionID);
+        }
     }
 
 	public boolean blockExists() {
