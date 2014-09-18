@@ -17,11 +17,14 @@ public class DependencyInfo {
         }
 
         public static final class IC2 {
-            private static final String COMMON_PATH = "ic2.api.tile.";
-            public static final String IWRENCHABLE = COMMON_PATH + "IWrenchable";
-            public static final String IENERGYSTORAGE = COMMON_PATH + "IEnergyStorage";
+            private static final String COMMON_PATH = "ic2.api.";
+            public static final String IWRENCHABLE = COMMON_PATH + "tile.IWrenchable";
+            public static final String IENERGYSTORAGE = COMMON_PATH + "tile.IEnergyStorage";
             public static final String IENERGYSINK = COMMON_PATH + "energy.IEnergySink";
+            public static final String IENERGYACCEPTOR = COMMON_PATH + "energy.IEnergyAcceptor";
             public static final String IENERGYSOURCE = COMMON_PATH + "energy.IEnergySource";
+            public static final String IENERGYEMITTER = COMMON_PATH + "energy.IEnergyEmitter";
+            public static final String IENERGYTILE = COMMON_PATH + "energy.IEnergyTile";
         }
 
         public static final class Thaumcraft {
