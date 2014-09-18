@@ -38,7 +38,6 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 			"essentia",
 
 			"energy_ic2",
-			"energy_mj",
 			"energy_rf",
 		});
 

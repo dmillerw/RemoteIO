@@ -21,7 +21,7 @@ public class ItemSelectiveMeta extends Item {
 		super();
 
 		if (values.length != names.length) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Values array isn't the same size as the unlocalized name array! Modder error! Report this!");
 		}
 
 		this.values = values;
