@@ -8,6 +8,7 @@ container.remoteio.transfer=Transfer
 # Chat
 chat.target.save=Target Saved
 chat.target.load=Target Loaded
+chat.target.loop=You cannot link an interface block with another interface block
 
 # Item
 item.chip.location.name=Location Chip
