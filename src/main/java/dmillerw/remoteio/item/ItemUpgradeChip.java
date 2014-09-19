@@ -1,8 +1,6 @@
 package dmillerw.remoteio.item;
 
 import dmillerw.remoteio.RemoteIO;
-import dmillerw.remoteio.block.HandlerBlock;
-import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
@@ -11,6 +9,7 @@ import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -44,7 +43,7 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
-			TileIOCore tile = (TileIOCore) world.getTileEntity(x, y, z);
+			TileEntity tile = world.getTileEntity(x, y, z);
 
 			if (tile != null && tile instanceof TileIOCore) {
 				TileIOCore io = (TileIOCore) tile;
