@@ -8,11 +8,13 @@ container.remoteio.transfer=转移
 # Chat
 chat.target.save=目标已保存
 chat.target.load=目标已加载
+chat.target.loop=你不能将两个远程接口链接在一起
 
 # Item
+item.blank_plate.name=空白芯片
 item.chip.location.name=方位芯片
 item.chip.transfer.item.name=物品转移芯片
-item.chip.transfer.fluid.name=液体转移芯片
+item.chip.transfer.fluid.name=流体转移芯片
 item.chip.transfer.essentia.name=要素转移芯片
 item.chip.transfer.energy_ic2.name=EU能量转移芯片
 item.chip.transfer.energy_mj.name=MJ能量转移芯片
@@ -20,9 +22,11 @@ item.chip.transfer.energy_rf.name=RF能量转移芯片
 item.chip.upgrade.remote_camo.name=远程伪装升级
 item.chip.upgrade.remote_access.name=远程访问升级
 item.chip.upgrade.simple_camo.name=简易伪装升级
-item.wireless_transmitter.name=无线发射器
+item.wireless_transmitter.name=无线收发器
 item.io_tool.name=接口工具
 
 # Block
 tile.remote_interface.name=远程接口
-tile.remote_inventory.name=远程物品栏
+tile.remote_inventory.name=远程物品栏接口
+tile.machine.reservoir.name=蓄水箱
+tile.machine.heater.name=岩浆加热器
