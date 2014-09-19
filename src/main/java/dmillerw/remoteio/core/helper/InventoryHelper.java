@@ -16,80 +16,79 @@ import java.util.Random;
  */
 public class InventoryHelper {
 
-	private static Random random = new Random();
-	
-	public static ItemStack[] toArray(IInventory inventory) {
-		ItemStack[] items = new ItemStack[inventory.getSizeInventory()];
-		for (int i=0; i<inventory.getSizeInventory(); i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
+    private static Random random = new Random();
 
-			if (stack != null) {
-				items[i] = stack;
-			}
-		}
-		return items;
-	}
+    public static ItemStack[] toArray(IInventory inventory) {
+        ItemStack[] items = new ItemStack[inventory.getSizeInventory()];
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
-	public static boolean containsStack(IInventory inventory, ItemStack stack, boolean compareMeta, boolean compareNBT) {
-		ItemStack[] items = toArray(inventory);
+            if (stack != null) {
+                items[i] = stack;
+            }
+        }
+        return items;
+    }
 
-		for (int i=0; i<items.length; i++) {
-			ItemStack item = items[i];
+    public static boolean containsStack(IInventory inventory, ItemStack stack, boolean compareMeta, boolean compareNBT) {
+        ItemStack[] items = toArray(inventory);
 
-			if (item != null) {
-				if (stack.getItem() == item.getItem()) {
-					if (!compareMeta || (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE || item.getItemDamage() == OreDictionary.WILDCARD_VALUE) || stack.getItemDamage() == item.getItemDamage()) {
-						if (!compareNBT || (ItemStack.areItemStacksEqual(stack, item))) {
-							return true;
-						}
-					}
-				}
-			}
-		}
+        for (int i = 0; i < items.length; i++) {
+            ItemStack item = items[i];
 
-		return false;
-	}
+            if (item != null) {
+                if (stack.getItem() == item.getItem()) {
+                    if (!compareMeta || (stack.getItemDamage() == OreDictionary.WILDCARD_VALUE || item.getItemDamage() == OreDictionary.WILDCARD_VALUE) || stack.getItemDamage() == item.getItemDamage()) {
+                        if (!compareNBT || (ItemStack.areItemStacksEqual(stack, item))) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
 
-	public static int[] getAccessibleSlots(IInventory inventory, ForgeDirection side) {
-		if (inventory instanceof ISidedInventory) {
-			return ((ISidedInventory)inventory).getAccessibleSlotsFromSide(side.ordinal());
-		} else {
-			return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory(), 1);
-		}
-	}
+        return false;
+    }
 
-	public static void dropContents(IInventory inventory, World world, int x, int y, int z) {
-		for (int i = 0; i < inventory.getSizeInventory(); ++i) {
-			ItemStack stack = inventory.getStackInSlot(i);
+    public static int[] getAccessibleSlots(IInventory inventory, ForgeDirection side) {
+        if (inventory instanceof ISidedInventory) {
+            return ((ISidedInventory) inventory).getAccessibleSlotsFromSide(side.ordinal());
+        } else {
+            return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory(), 1);
+        }
+    }
 
-			if (stack != null) {
-				float f = random.nextFloat() * 0.8F + 0.1F;
-				float f1 = random.nextFloat() * 0.8F + 0.1F;
-				float f2 = random.nextFloat() * 0.8F + 0.1F;
+    public static void dropContents(IInventory inventory, World world, int x, int y, int z) {
+        for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+            ItemStack stack = inventory.getStackInSlot(i);
 
-				while (stack.stackSize > 0) {
-					int j1 = random.nextInt(21) + 10;
+            if (stack != null) {
+                float f = random.nextFloat() * 0.8F + 0.1F;
+                float f1 = random.nextFloat() * 0.8F + 0.1F;
+                float f2 = random.nextFloat() * 0.8F + 0.1F;
 
-					if (j1 > stack.stackSize) {
-						j1 = stack.stackSize;
-					}
+                while (stack.stackSize > 0) {
+                    int j1 = random.nextInt(21) + 10;
 
-					stack.stackSize -= j1;
-					EntityItem entityitem = new EntityItem(world, (double) ((float) x + f), (double) ((float) y + f1), (double) ((float) z + f2), new ItemStack(stack.getItem(), j1, stack.getItemDamage()));
+                    if (j1 > stack.stackSize) {
+                        j1 = stack.stackSize;
+                    }
 
-					if (stack.hasTagCompound()) {
-						entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
-					}
+                    stack.stackSize -= j1;
+                    EntityItem entityitem = new EntityItem(world, (double) ((float) x + f), (double) ((float) y + f1), (double) ((float) z + f2), new ItemStack(stack.getItem(), j1, stack.getItemDamage()));
 
-					float f3 = 0.05F;
-					entityitem.motionX = (double) ((float) random.nextGaussian() * f3);
-					entityitem.motionY = (double) ((float) random.nextGaussian() * f3 + 0.2F);
-					entityitem.motionZ = (double) ((float) random.nextGaussian() * f3);
+                    if (stack.hasTagCompound()) {
+                        entityitem.getEntityItem().setTagCompound((NBTTagCompound) stack.getTagCompound().copy());
+                    }
 
-					world.spawnEntityInWorld(entityitem);
-				}
-			}
-		}
-	}
-	
+                    float f3 = 0.05F;
+                    entityitem.motionX = (double) ((float) random.nextGaussian() * f3);
+                    entityitem.motionY = (double) ((float) random.nextGaussian() * f3 + 0.2F);
+                    entityitem.motionZ = (double) ((float) random.nextGaussian() * f3);
+
+                    world.spawnEntityInWorld(entityitem);
+                }
+            }
+        }
+    }
 }

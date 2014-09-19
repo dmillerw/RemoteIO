@@ -113,9 +113,12 @@ public class BlockMachine extends BlockContainer {
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         switch (meta) {
-            case 0: return new TileMachineReservoir();
-            case 1: return new TileMachineHeater();
-            default: return null;
+            case 0:
+                return new TileMachineReservoir();
+            case 1:
+                return new TileMachineHeater();
+            default:
+                return null;
         }
     }
 }

@@ -9,12 +9,12 @@ import net.minecraft.item.ItemStack;
  */
 public class SlotPhantomBlock extends SlotPhantom {
 
-	public SlotPhantomBlock(IInventory inventory1, int id, int x, int y) {
-		super(inventory1, id, x, y);
-	}
+    public SlotPhantomBlock(IInventory inventory1, int id, int x, int y) {
+        super(inventory1, id, x, y);
+    }
 
-	@Override
-	public boolean isItemValid(ItemStack stack) {
-		return stack.getItem() instanceof ItemBlock;
-	}
+    @Override
+    public boolean isItemValid(ItemStack stack) {
+        return stack.getItem() instanceof ItemBlock;
+    }
 }

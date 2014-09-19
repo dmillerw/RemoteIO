@@ -11,21 +11,21 @@ import net.minecraft.util.IIcon;
  */
 public class ItemBlankPlate extends Item {
 
-	private IIcon icon;
+    private IIcon icon;
 
-	public ItemBlankPlate() {
-		super();
+    public ItemBlankPlate() {
+        super();
 
-		setCreativeTab(TabRemoteIO.TAB);
-	}
+        setCreativeTab(TabRemoteIO.TAB);
+    }
 
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icon;
-	}
+    @Override
+    public IIcon getIconFromDamage(int damage) {
+        return icon;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "plate_blank");
-	}
+    @Override
+    public void registerIcons(IIconRegister register) {
+        icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "plate_blank");
+    }
 }

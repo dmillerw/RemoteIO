@@ -23,94 +23,93 @@ import java.util.List;
  */
 public class ItemLocationChip extends Item {
 
-	public static void setCoordinates(ItemStack stack, DimensionalCoords coords) {
-		if (!stack.hasTagCompound()) {
-			stack.setTagCompound(new NBTTagCompound());
-		}
+    public static void setCoordinates(ItemStack stack, DimensionalCoords coords) {
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
 
-		NBTTagCompound nbt = stack.getTagCompound();
-		NBTTagCompound tag = new NBTTagCompound();
-		coords.writeToNBT(tag);
-		nbt.setTag("position", tag);
-		stack.setTagCompound(nbt);
-	}
+        NBTTagCompound nbt = stack.getTagCompound();
+        NBTTagCompound tag = new NBTTagCompound();
+        coords.writeToNBT(tag);
+        nbt.setTag("position", tag);
+        stack.setTagCompound(nbt);
+    }
 
-	public static DimensionalCoords getCoordinates(ItemStack stack) {
-		if (!stack.hasTagCompound()) {
-			return null;
-		}
+    public static DimensionalCoords getCoordinates(ItemStack stack) {
+        if (!stack.hasTagCompound()) {
+            return null;
+        }
 
-		NBTTagCompound nbt = stack.getTagCompound();
+        NBTTagCompound nbt = stack.getTagCompound();
 
-		if (!nbt.hasKey("position")) {
-			return null;
-		}
+        if (!nbt.hasKey("position")) {
+            return null;
+        }
 
-		return DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
-	}
+        return DimensionalCoords.fromNBT(nbt.getCompoundTag("position"));
+    }
 
-	private IIcon icon;
+    private IIcon icon;
 
-	public ItemLocationChip() {
-		super();
+    public ItemLocationChip() {
+        super();
 
-		setMaxDamage(0);
-		setMaxStackSize(1);
-		setCreativeTab(TabRemoteIO.TAB);
-	}
+        setMaxDamage(0);
+        setMaxStackSize(1);
+        setCreativeTab(TabRemoteIO.TAB);
+    }
 
-	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
-		DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
+    @Override
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
+        DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
 
-		if (coords != null) {
-			list.add("Dimension: " + DimensionManager.getProvider(coords.dimensionID).getDimensionName());
-			list.add("X: " + coords.x + " Y: " + coords.y + " Z: " + coords.z);
-		}
-	}
+        if (coords != null) {
+            list.add("Dimension: " + DimensionManager.getProvider(coords.dimensionID).getDimensionName());
+            list.add("X: " + coords.x + " Y: " + coords.y + " Z: " + coords.z);
+        }
+    }
 
-	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote) {
-			TileEntity tile = world.getTileEntity(x, y, z);
+    @Override
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote) {
+            TileEntity tile = world.getTileEntity(x, y, z);
 
-			if (player.isSneaking()) {
-				ItemLocationChip.setCoordinates(stack, new DimensionalCoords(world.provider.dimensionId, x, y, z));
-				player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
-			} else {
-				if (tile != null) {
-					if (tile instanceof TileRemoteInterface) {
-						DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
+            if (player.isSneaking()) {
+                ItemLocationChip.setCoordinates(stack, new DimensionalCoords(world.provider.dimensionId, x, y, z));
+                player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
+            } else {
+                if (tile != null) {
+                    if (tile instanceof TileRemoteInterface) {
+                        DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
 
-						if (coords != null) {
-							if (coords.getBlock() instanceof BlockRemoteInterface) {
+                        if (coords != null) {
+                            if (coords.getBlock() instanceof BlockRemoteInterface) {
                                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.loop"));
                             } else {
-                                ((TileRemoteInterface)tile).setRemotePosition(coords);
+                                ((TileRemoteInterface) tile).setRemotePosition(coords);
                                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.load"));
                             }
-						}
-					}
-				}
-			}
-		}
+                        }
+                    }
+                }
+            }
+        }
 
-		return !world.isRemote;
-	}
+        return !world.isRemote;
+    }
 
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icon;
-	}
+    @Override
+    public IIcon getIconFromDamage(int damage) {
+        return icon;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "chip");
-	}
+    @Override
+    public void registerIcons(IIconRegister register) {
+        icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "chip");
+    }
 
-	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
-		return false;
-	}
-
+    @Override
+    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+        return false;
+    }
 }

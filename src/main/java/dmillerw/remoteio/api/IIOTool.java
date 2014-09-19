@@ -5,6 +5,5 @@ package dmillerw.remoteio.api;
  */
 public interface IIOTool {
 
-	//TODO Do something nifty with this?
-
+    //TODO Do something nifty with this?
 }

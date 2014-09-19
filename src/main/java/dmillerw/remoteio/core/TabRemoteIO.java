@@ -6,15 +6,14 @@ import net.minecraft.item.Item;
 
 public class TabRemoteIO extends CreativeTabs {
 
-	public static final TabRemoteIO TAB = new TabRemoteIO();
+    public static final TabRemoteIO TAB = new TabRemoteIO();
 
-	private TabRemoteIO() {
-		super("rio");
-	}
+    private TabRemoteIO() {
+        super("rio");
+    }
 
-	@Override
-	public Item getTabIconItem() {
-		return Item.getItemFromBlock(HandlerBlock.remoteInterface);
-	}
-
+    @Override
+    public Item getTabIconItem() {
+        return Item.getItemFromBlock(HandlerBlock.remoteInterface);
+    }
 }

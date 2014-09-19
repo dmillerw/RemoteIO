@@ -14,28 +14,28 @@ import net.minecraft.world.World;
  */
 public class ItemIOTool extends Item implements IIOTool {
 
-	private IIcon icon;
+    private IIcon icon;
 
-	public ItemIOTool() {
-		super();
+    public ItemIOTool() {
+        super();
 
-		setMaxDamage(0);
-		setMaxStackSize(1);
-		setCreativeTab(TabRemoteIO.TAB);
-	}
+        setMaxDamage(0);
+        setMaxStackSize(1);
+        setCreativeTab(TabRemoteIO.TAB);
+    }
 
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icon;
-	}
+    @Override
+    public IIcon getIconFromDamage(int damage) {
+        return icon;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "tool");
-	}
+    @Override
+    public void registerIcons(IIconRegister register) {
+        icon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "tool");
+    }
 
-	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
-		return true;
-	}
+    @Override
+    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+        return true;
+    }
 }

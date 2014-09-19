@@ -8,15 +8,14 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public class OreHelper {
 
-	public static String getOreTag(ItemStack stack) {
-		int[] ids = OreDictionary.getOreIDs(stack);
-		if (ids != null && ids.length > 0) {
-			String tag = OreDictionary.getOreName(ids[0]);
-			if (!tag.isEmpty() && !(tag.equalsIgnoreCase("unknown"))) {
-				return tag;
-			}
-		}
-		return "";
-	}
-
+    public static String getOreTag(ItemStack stack) {
+        int[] ids = OreDictionary.getOreIDs(stack);
+        if (ids != null && ids.length > 0) {
+            String tag = OreDictionary.getOreName(ids[0]);
+            if (!tag.isEmpty() && !(tag.equalsIgnoreCase("unknown"))) {
+                return tag;
+            }
+        }
+        return "";
+    }
 }

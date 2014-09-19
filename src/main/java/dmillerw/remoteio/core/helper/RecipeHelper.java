@@ -12,53 +12,53 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
  */
 public class RecipeHelper {
 
-	public static void addOreRecipe(ItemStack output, Object ... inputs) {
-		for (int i=0; i<inputs.length; i++) {
-			ItemStack stack = null;
-			if (inputs[i] instanceof Block) {
-				stack = new ItemStack((Block)inputs[i]);
-			} else if (inputs[i] instanceof Item) {
-				stack = new ItemStack((Item)inputs[i]);
-			} else if (inputs[i] instanceof ItemStack) {
-				stack = (ItemStack) inputs[i];
-			}
+    public static void addOreRecipe(ItemStack output, Object... inputs) {
+        for (int i = 0; i < inputs.length; i++) {
+            ItemStack stack = null;
+            if (inputs[i] instanceof Block) {
+                stack = new ItemStack((Block) inputs[i]);
+            } else if (inputs[i] instanceof Item) {
+                stack = new ItemStack((Item) inputs[i]);
+            } else if (inputs[i] instanceof ItemStack) {
+                stack = (ItemStack) inputs[i];
+            }
 
-			String tag = OreHelper.getOreTag(stack);
+            String tag = OreHelper.getOreTag(stack);
 
-			if (!tag.isEmpty()) {
-				inputs[i] = tag;
-			}
-		}
+            if (!tag.isEmpty()) {
+                inputs[i] = tag;
+            }
+        }
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
-	}
+        GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
+    }
 
-	public static void addDependentOreRecipe(String modId, ItemStack output, Object ... inputs) {
-		for (int i=0; i<inputs.length; i++) {
-			ItemStack stack = null;
-			if (inputs[i] instanceof Block) {
-				stack = new ItemStack((Block)inputs[i]);
-			} else if (inputs[i] instanceof Item) {
-				stack = new ItemStack((Item)inputs[i]);
-			} else if (inputs[i] instanceof ItemStack) {
-				stack = (ItemStack) inputs[i];
-			}
+    public static void addDependentOreRecipe(String modId, ItemStack output, Object... inputs) {
+        for (int i = 0; i < inputs.length; i++) {
+            ItemStack stack = null;
+            if (inputs[i] instanceof Block) {
+                stack = new ItemStack((Block) inputs[i]);
+            } else if (inputs[i] instanceof Item) {
+                stack = new ItemStack((Item) inputs[i]);
+            } else if (inputs[i] instanceof ItemStack) {
+                stack = (ItemStack) inputs[i];
+            }
 
-			String tag = OreHelper.getOreTag(stack);
+            String tag = OreHelper.getOreTag(stack);
 
-			if (!tag.isEmpty()) {
-				inputs[i] = tag;
-			}
-		}
+            if (!tag.isEmpty()) {
+                inputs[i] = tag;
+            }
+        }
 
-		if (Loader.isModLoaded(modId)) {
-			GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
-		}
-	}
+        if (Loader.isModLoaded(modId)) {
+            GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
+        }
+    }
 
-	public static void addDependentRecipe(String modId, ItemStack output, Object ... inputs) {
-		if (Loader.isModLoaded(modId)) {
-			GameRegistry.addShapedRecipe(output, inputs);
-		}
-	}
+    public static void addDependentRecipe(String modId, ItemStack output, Object... inputs) {
+        if (Loader.isModLoaded(modId)) {
+            GameRegistry.addShapedRecipe(output, inputs);
+        }
+    }
 }

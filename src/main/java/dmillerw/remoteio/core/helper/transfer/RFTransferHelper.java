@@ -12,11 +12,11 @@ public class RFTransferHelper {
 
     public static int getCharge(IInventory inventory) {
         int charge = 0;
-        for (int i=0; i<inventory.getSizeInventory(); i++) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
 
             if (stack != null && stack.getItem() instanceof IElectricItem) {
-                charge += ((IEnergyContainerItem)stack.getItem()).getEnergyStored(stack);
+                charge += ((IEnergyContainerItem) stack.getItem()).getEnergyStored(stack);
             }
         }
         return charge;
@@ -24,20 +24,22 @@ public class RFTransferHelper {
 
     public static int getMaxCharge(IInventory inventory) {
         int charge = 0;
-        for (int i=0; i<inventory.getSizeInventory(); i++) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
 
             if (stack != null && stack.getItem() instanceof IElectricItem) {
-                charge += ((IEnergyContainerItem)stack.getItem()).getMaxEnergyStored(stack);
+                charge += ((IEnergyContainerItem) stack.getItem()).getMaxEnergyStored(stack);
             }
         }
         return charge;
     }
 
-    /** Returns amount NOT used */
+    /**
+     * Returns amount NOT used
+     */
     public static int fill(IInventory inventory, int maxAmount, boolean simulate) {
         int used = 0;
-        for (int i=0; i<inventory.getSizeInventory(); i++) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
 
             if (stack != null && stack.getItem() instanceof IEnergyContainerItem) {
@@ -51,9 +53,9 @@ public class RFTransferHelper {
         return used;
     }
 
-    public static int drain(IInventory inventory, int maxAmount,  boolean simulate) {
+    public static int drain(IInventory inventory, int maxAmount, boolean simulate) {
         int extracted = 0;
-        for (int i=0; i<inventory.getSizeInventory(); i++) {
+        for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
 
             if (stack != null && stack.getItem() instanceof IElectricItem) {

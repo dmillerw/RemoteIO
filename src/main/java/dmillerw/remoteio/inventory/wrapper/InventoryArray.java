@@ -9,103 +9,102 @@ import net.minecraft.item.ItemStack;
  */
 public class InventoryArray implements IInventory {
 
-	private ItemStack[] array;
-	
-	public InventoryArray(ItemStack[] array) {
-		this.array = array;
-	}
-	
-	@Override
-	public int getSizeInventory() {
-		return array.length;
-	}
+    private ItemStack[] array;
 
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return array[slot];
-	}
+    public InventoryArray(ItemStack[] array) {
+        this.array = array;
+    }
 
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		if (array[slot] != null) {
-			ItemStack itemstack;
+    @Override
+    public int getSizeInventory() {
+        return array.length;
+    }
 
-			if (array[slot].stackSize <= amount) {
-				itemstack = array[slot];
-				array[slot] = null;
-				return itemstack;
-			} else {
-				itemstack = array[slot].splitStack(amount);
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return array[slot];
+    }
 
-				if (array[slot].stackSize == 0) {
-					array[slot] = null;
-				}
+    @Override
+    public ItemStack decrStackSize(int slot, int amount) {
+        if (array[slot] != null) {
+            ItemStack itemstack;
 
-				return itemstack;
-			}
-		} else {
-			return null;
-		}
-	}
+            if (array[slot].stackSize <= amount) {
+                itemstack = array[slot];
+                array[slot] = null;
+                return itemstack;
+            } else {
+                itemstack = array[slot].splitStack(amount);
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		if (array[slot] != null) {
-			ItemStack itemstack = array[slot];
-			array[slot] = null;
-			return itemstack;
-		} else {
-			return null;
-		}
-	}
+                if (array[slot].stackSize == 0) {
+                    array[slot] = null;
+                }
 
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		array[slot] = stack;
+                return itemstack;
+            }
+        } else {
+            return null;
+        }
+    }
 
-		if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-			stack.stackSize = this.getInventoryStackLimit();
-		}
-	}
+    @Override
+    public ItemStack getStackInSlotOnClosing(int slot) {
+        if (array[slot] != null) {
+            ItemStack itemstack = array[slot];
+            array[slot] = null;
+            return itemstack;
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public String getInventoryName() {
-		return null;
-	}
+    @Override
+    public void setInventorySlotContents(int slot, ItemStack stack) {
+        array[slot] = stack;
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
+        if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
+            stack.stackSize = this.getInventoryStackLimit();
+        }
+    }
 
-	@Override
-	public int getInventoryStackLimit() {
-		return 64;
-	}
+    @Override
+    public String getInventoryName() {
+        return null;
+    }
 
-	@Override
-	public void markDirty() {
+    @Override
+    public boolean hasCustomInventoryName() {
+        return false;
+    }
 
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return 64;
+    }
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer var1) {
-		return true;
-	}
+    @Override
+    public void markDirty() {
 
-	@Override
-	public void openInventory() {
+    }
 
-	}
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer var1) {
+        return true;
+    }
 
-	@Override
-	public void closeInventory() {
+    @Override
+    public void openInventory() {
 
-	}
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return true;
-	}
-	
+    @Override
+    public void closeInventory() {
+
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+        return true;
+    }
 }

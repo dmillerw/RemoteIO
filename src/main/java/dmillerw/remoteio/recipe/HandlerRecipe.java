@@ -21,7 +21,7 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public class HandlerRecipe {
 
-	public static void initialize() {
+    public static void initialize() {
         // RESERVOIR
         RecipeHelper.addOreRecipe(
                 new ItemStack(HandlerBlock.machine, 1, 0),
@@ -44,193 +44,193 @@ public class HandlerRecipe {
                 'L', Items.lava_bucket
         );
 
-		// REMOTE INTERFACE
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerBlock.remoteInterface),
-				" E ",
-				"RGR",
-				"RRR",
-				'E', Items.ender_pearl,
-				'R', Items.redstone,
-				'G', Blocks.gold_block
-		);
+        // REMOTE INTERFACE
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerBlock.remoteInterface),
+                " E ",
+                "RGR",
+                "RRR",
+                'E', Items.ender_pearl,
+                'R', Items.redstone,
+                'G', Blocks.gold_block
+        );
 
-		// REMOTE INVENTORY
-		GameRegistry.addShapelessRecipe(
-				new ItemStack(HandlerBlock.remoteInventory),
-				new ItemStack(HandlerBlock.remoteInterface),
-				new ItemStack(HandlerItem.wirelessTransmitter)
-		);
+        // REMOTE INVENTORY
+        GameRegistry.addShapelessRecipe(
+                new ItemStack(HandlerBlock.remoteInventory),
+                new ItemStack(HandlerBlock.remoteInterface),
+                new ItemStack(HandlerItem.wirelessTransmitter)
+        );
 
-		// IO TOOL
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.ioTool),
-				" I ",
-				"RSI",
-				"IR ",
-				'I', Items.iron_ingot,
-				'R', Items.redstone,
-				'S', Items.stick
-		);
+        // IO TOOL
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.ioTool),
+                " I ",
+                "RSI",
+                "IR ",
+                'I', Items.iron_ingot,
+                'R', Items.redstone,
+                'S', Items.stick
+        );
 
-		// LOCATION CHIP
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.locationChip),
-				"R",
-				"P",
-				"G",
-				'R', Items.redstone,
-				'P', Items.paper,
-				'G', Items.gold_nugget
-		);
+        // LOCATION CHIP
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.locationChip),
+                "R",
+                "P",
+                "G",
+                'R', Items.redstone,
+                'P', Items.paper,
+                'G', Items.gold_nugget
+        );
 
-		// BLANK PLATE
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.blankPlate),
-				"III",
-				'I', Items.iron_ingot
-		);
+        // BLANK PLATE
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.blankPlate),
+                "III",
+                'I', Items.iron_ingot
+        );
 
-		// WIRELESS TRANSMITTER
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.wirelessTransmitter),
-				" E ",
-				"S  ",
-				"IRI",
-				'E', Items.ender_pearl,
-				'S', Items.stick,
-				'I', Items.iron_ingot,
-				'R', Items.redstone
-		);
+        // WIRELESS TRANSMITTER
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.wirelessTransmitter),
+                " E ",
+                "S  ",
+                "IRI",
+                'E', Items.ender_pearl,
+                'S', Items.stick,
+                'I', Items.iron_ingot,
+                'R', Items.redstone
+        );
 
-		// TRANSFER TYPE - ITEM
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ITEM),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', Blocks.chest,
-				'C', HandlerItem.locationChip
-		);
+        // TRANSFER TYPE - ITEM
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ITEM),
+                " B ",
+                "ICI",
+                'B', HandlerItem.blankPlate,
+                'I', Blocks.chest,
+                'C', HandlerItem.locationChip
+        );
 
-		// TRANSFER TYPE - WATER
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_FLUID),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', Items.bucket,
-				'C', HandlerItem.locationChip
-		);
+        // TRANSFER TYPE - WATER
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_FLUID),
+                " B ",
+                "ICI",
+                'B', HandlerItem.blankPlate,
+                'I', Items.bucket,
+                'C', HandlerItem.locationChip
+        );
 
-		// TRANSFER TYPE - ESSENTIA
-		RecipeHelper.addDependentOreRecipe(
-				"Thaumcraft",
-				new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', ModHelper.getThaumcraftItem("itemEssence", OreDictionary.WILDCARD_VALUE),
-				'C', HandlerItem.locationChip
-		);
+        // TRANSFER TYPE - ESSENTIA
+        RecipeHelper.addDependentOreRecipe(
+                "Thaumcraft",
+                new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
+                " B ",
+                "ICI",
+                'B', HandlerItem.blankPlate,
+                'I', ModHelper.getThaumcraftItem("itemEssence", OreDictionary.WILDCARD_VALUE),
+                'C', HandlerItem.locationChip
+        );
 
-		// TRANSFER TYPE - IC2
-		for (ItemStack cable : getIC2Cables()) {
-			RecipeHelper.addDependentOreRecipe(
-					"IC2",
-					new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_IC2),
-					" B ",
-					"ICI",
-					'B', HandlerItem.blankPlate,
-					'I', cable,
-					'C', HandlerItem.locationChip
-			);
-		}
+        // TRANSFER TYPE - IC2
+        for (ItemStack cable : getIC2Cables()) {
+            RecipeHelper.addDependentOreRecipe(
+                    "IC2",
+                    new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_IC2),
+                    " B ",
+                    "ICI",
+                    'B', HandlerItem.blankPlate,
+                    'I', cable,
+                    'C', HandlerItem.locationChip
+            );
+        }
 
-		// TRANSFER TYPE - RF
-		RecipeHelper.addDependentOreRecipe(
-				"CoFHAPI|energy",
-				new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_RF),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', Items.redstone,
-				'C', HandlerItem.locationChip
-		);
+        // TRANSFER TYPE - RF
+        RecipeHelper.addDependentOreRecipe(
+                "CoFHAPI|energy",
+                new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_RF),
+                " B ",
+                "ICI",
+                'B', HandlerItem.blankPlate,
+                'I', Items.redstone,
+                'C', HandlerItem.locationChip
+        );
 
-		// UPGRADE TYPE - REMOTE CAMOUFLAGE
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', Items.ender_pearl,
-				'C', HandlerItem.locationChip
-		);
+        // UPGRADE TYPE - REMOTE CAMOUFLAGE
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
+                " B ",
+                "ICI",
+                'B', HandlerItem.blankPlate,
+                'I', Items.ender_pearl,
+                'C', HandlerItem.locationChip
+        );
 
-		// UPGRADE TYPE - SIMPLE CAMOUFLAGE
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
-				" B ",
-				"ICI",
-				'B', HandlerItem.blankPlate,
-				'I', Blocks.stone,
-				'C', HandlerItem.locationChip
-		);
+        // UPGRADE TYPE - SIMPLE CAMOUFLAGE
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
+                " B ",
+                "ICI",
+                'B', HandlerItem.blankPlate,
+                'I', Blocks.stone,
+                'C', HandlerItem.locationChip
+        );
 
-		// UPGRADE TYPE - REMOTE ACCESS
-		RecipeHelper.addOreRecipe(
-				new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_ACCESS),
-				"B",
-				"C",
-				"R",
-				'B', HandlerItem.blankPlate,
-				'C', HandlerItem.locationChip,
-				'R', HandlerItem.wirelessTransmitter
-		);
-	}
+        // UPGRADE TYPE - REMOTE ACCESS
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_ACCESS),
+                "B",
+                "C",
+                "R",
+                'B', HandlerItem.blankPlate,
+                'C', HandlerItem.locationChip,
+                'R', HandlerItem.wirelessTransmitter
+        );
+    }
 
-	private static ItemStack[] getIC2Cables() {
-		if (Loader.isModLoaded("IC2")) {
-			String[] cableTypes = new String[] {"copper", "insulatedCopper", "gold", "insulatedGold", "iron", "insulatedIron", "insulatedTin", "glassFiber", "tin"};
-			ItemStack[] cables = new ItemStack[cableTypes.length];
-			boolean failed = false;
+    private static ItemStack[] getIC2Cables() {
+        if (Loader.isModLoaded("IC2")) {
+            String[] cableTypes = new String[]{"copper", "insulatedCopper", "gold", "insulatedGold", "iron", "insulatedIron", "insulatedTin", "glassFiber", "tin"};
+            ItemStack[] cables = new ItemStack[cableTypes.length];
+            boolean failed = false;
 
-			try {
-				for (int i=0; i<cableTypes.length; i++) {
-					cables[i] = IC2Items.getItem(cableTypes[i] + "CableItem");
-				}
-			} catch(Exception ex) {
-				FMLLog.warning("Tried to get IC2 power cables, but failed! IC2 support will not be available!");
-				return new ItemStack[0];
-			}
+            try {
+                for (int i = 0; i < cableTypes.length; i++) {
+                    cables[i] = IC2Items.getItem(cableTypes[i] + "CableItem");
+                }
+            } catch (Exception ex) {
+                FMLLog.warning("Tried to get IC2 power cables, but failed! IC2 support will not be available!");
+                return new ItemStack[0];
+            }
 
-			return cables;
-		}
+            return cables;
+        }
 
-		return new ItemStack[0];
-	}
+        return new ItemStack[0];
+    }
 
-	public static ItemStack[] getBCPipes() {
-		if (Loader.isModLoaded("BuildCraft|Core")) {
-			String[] pipeTypes = new String[] {"Wood", "Cobblestone", "Stone", "Quartz", "Iron", "Gold", "Diamond"};
-			ItemStack[] pipes = new ItemStack[pipeTypes.length];
-			boolean failed = false;
+    public static ItemStack[] getBCPipes() {
+        if (Loader.isModLoaded("BuildCraft|Core")) {
+            String[] pipeTypes = new String[]{"Wood", "Cobblestone", "Stone", "Quartz", "Iron", "Gold", "Diamond"};
+            ItemStack[] pipes = new ItemStack[pipeTypes.length];
+            boolean failed = false;
 
-			try {
-				Class clazz = Class.forName("buildcraft.BuildCraftTransport");
+            try {
+                Class clazz = Class.forName("buildcraft.BuildCraftTransport");
 
-				for (int i=0; i<pipeTypes.length; i++) {
-					pipes[i] = new ItemStack((Item)clazz.getDeclaredField("pipePower" + pipeTypes[i]).get(clazz));
-				}
-			} catch(Exception ex) {
-				FMLLog.warning("Tried to get Buildcraft power pipes, but failed! Buildcraft support will not be available!");
-				return new ItemStack[0];
-			}
+                for (int i = 0; i < pipeTypes.length; i++) {
+                    pipes[i] = new ItemStack((Item) clazz.getDeclaredField("pipePower" + pipeTypes[i]).get(clazz));
+                }
+            } catch (Exception ex) {
+                FMLLog.warning("Tried to get Buildcraft power pipes, but failed! Buildcraft support will not be available!");
+                return new ItemStack[0];
+            }
 
-			return pipes;
-		}
+            return pipes;
+        }
 
-		return new ItemStack[0];
-	}
+        return new ItemStack[0];
+    }
 }

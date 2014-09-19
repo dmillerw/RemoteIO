@@ -17,14 +17,12 @@ public class PlayerHelper {
         Iterator iterator = serverConfigurationManager.playerEntityList.iterator();
         EntityPlayerMP entityplayermp;
 
-        do
-        {
-            if (!iterator.hasNext())
-            {
+        do {
+            if (!iterator.hasNext()) {
                 return null;
             }
 
-            entityplayermp = (EntityPlayerMP)iterator.next();
+            entityplayermp = (EntityPlayerMP) iterator.next();
         }
         while (!entityplayermp.getCommandSenderName().equalsIgnoreCase(username));
 

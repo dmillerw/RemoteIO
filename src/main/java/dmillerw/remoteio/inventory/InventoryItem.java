@@ -24,13 +24,13 @@ public class InventoryItem implements IInventory {
         readFromNBT();
     }
 
-	private InventoryItem(ItemStack stack, int slotCount, int stackSize) {
-		this.stack = stack;
-		this.inv = new ItemStack[slotCount];
-		this.stackSize = stackSize;
+    private InventoryItem(ItemStack stack, int slotCount, int stackSize) {
+        this.stack = stack;
+        this.inv = new ItemStack[slotCount];
+        this.stackSize = stackSize;
 
-		readFromNBT();
-	}
+        readFromNBT();
+    }
 
     public ItemStack getStack() {
         return stack.copy();
@@ -174,5 +174,4 @@ public class InventoryItem implements IInventory {
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         return true;
     }
-
 }

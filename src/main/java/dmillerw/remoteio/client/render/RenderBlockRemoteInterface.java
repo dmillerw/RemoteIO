@@ -2,7 +2,6 @@ package dmillerw.remoteio.client.render;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
@@ -17,53 +16,52 @@ import net.minecraft.world.IBlockAccess;
  */
 public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler {
 
-	@Override
-	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-		IIcon inactive = ((BlockRemoteInterface)block).icons[0];
+    @Override
+    public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
+        IIcon inactive = ((BlockRemoteInterface) block).icons[0];
 
-		Tessellator tessellator = Tessellator.instance;
+        Tessellator tessellator = Tessellator.instance;
 
-		int oldUV = renderer.uvRotateTop;
-		renderer.uvRotateTop = 3;
+        int oldUV = renderer.uvRotateTop;
+        renderer.uvRotateTop = 3;
 
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0, 1, 0);
-		renderer.renderFaceYPos(block, -0.5, -0.5, -0.5, inactive);
-		tessellator.setNormal(0, -1, 0);
-		renderer.renderFaceYNeg(block, -0.5, -0.5, -0.5, inactive);
-		tessellator.setNormal(1, 0, 0);
-		renderer.renderFaceXPos(block, -0.5, -0.5, -0.5, inactive);
-		tessellator.setNormal(-1, 0, 0);
-		renderer.renderFaceXNeg(block, -0.5, -0.5, -0.5, inactive);
-		tessellator.setNormal(0, 0, 1);
-		renderer.renderFaceZPos(block, -0.5, -0.5, -0.5, inactive);
-		tessellator.setNormal(0, 0, -1);
-		renderer.renderFaceZNeg(block, -0.5, -0.5, -0.5, inactive);
-		tessellator.draw();
+        tessellator.startDrawingQuads();
+        tessellator.setNormal(0, 1, 0);
+        renderer.renderFaceYPos(block, -0.5, -0.5, -0.5, inactive);
+        tessellator.setNormal(0, -1, 0);
+        renderer.renderFaceYNeg(block, -0.5, -0.5, -0.5, inactive);
+        tessellator.setNormal(1, 0, 0);
+        renderer.renderFaceXPos(block, -0.5, -0.5, -0.5, inactive);
+        tessellator.setNormal(-1, 0, 0);
+        renderer.renderFaceXNeg(block, -0.5, -0.5, -0.5, inactive);
+        tessellator.setNormal(0, 0, 1);
+        renderer.renderFaceZPos(block, -0.5, -0.5, -0.5, inactive);
+        tessellator.setNormal(0, 0, -1);
+        renderer.renderFaceZNeg(block, -0.5, -0.5, -0.5, inactive);
+        tessellator.draw();
 
-		renderer.uvRotateTop =  oldUV;
-	}
+        renderer.uvRotateTop = oldUV;
+    }
 
-	@Override
-	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+    @Override
+    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null) {
-			if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != VisualState.CAMOUFLAGE_REMOTE) {
-				renderer.renderStandardBlock(block, x, y, z);
-			}
-		}
-		return true;
-	}
+        if (tile != null) {
+            if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != VisualState.CAMOUFLAGE_REMOTE) {
+                renderer.renderStandardBlock(block, x, y, z);
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public boolean shouldRender3DInInventory(int modelId) {
-		return true;
-	}
+    @Override
+    public boolean shouldRender3DInInventory(int modelId) {
+        return true;
+    }
 
-	@Override
-	public int getRenderId() {
-		return BlockRemoteInterface.renderID;
-	}
-
+    @Override
+    public int getRenderId() {
+        return BlockRemoteInterface.renderID;
+    }
 }

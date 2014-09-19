@@ -13,37 +13,37 @@ import java.util.Map;
  */
 public class ItemSelectiveMeta extends Item {
 
-	protected final int[] values;
+    protected final int[] values;
 
-	protected Map<Integer, String> names;
+    protected Map<Integer, String> names;
 
-	public ItemSelectiveMeta(int[] values, String[] names) {
-		super();
+    public ItemSelectiveMeta(int[] values, String[] names) {
+        super();
 
-		if (values.length != names.length) {
-			throw new IllegalArgumentException("Values array isn't the same size as the unlocalized name array! Modder error! Report this!");
-		}
+        if (values.length != names.length) {
+            throw new IllegalArgumentException("Values array isn't the same size as the unlocalized name array! Modder error! Report this!");
+        }
 
-		this.values = values;
-		this.names = new HashMap<Integer, String>();
+        this.values = values;
+        this.names = new HashMap<Integer, String>();
 
-		for (int i=0; i<values.length; i++) {
-			this.names.put(values[i], names[i]);
-		}
+        for (int i = 0; i < values.length; i++) {
+            this.names.put(values[i], names[i]);
+        }
 
-		setMaxDamage(0);
-		setHasSubtypes(true);
-	}
+        setMaxDamage(0);
+        setHasSubtypes(true);
+    }
 
-	@Override
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
-		for (int i : values) {
-			list.add(new ItemStack(this, 1, i));
-		}
-	}
+    @Override
+    public void getSubItems(Item item, CreativeTabs tab, List list) {
+        for (int i : values) {
+            list.add(new ItemStack(this, 1, i));
+        }
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return super.getUnlocalizedName(stack) + "." + this.names.get(stack.getItemDamage());
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack stack) {
+        return super.getUnlocalizedName(stack) + "." + this.names.get(stack.getItemDamage());
+    }
 }

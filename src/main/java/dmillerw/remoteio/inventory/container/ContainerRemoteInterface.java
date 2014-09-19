@@ -10,22 +10,25 @@ import net.minecraft.entity.player.InventoryPlayer;
  */
 public class ContainerRemoteInterface extends ContainerIO {
 
-	public ContainerRemoteInterface(InventoryPlayer inventoryPlayer, TileRemoteInterface tile) {
-		super(inventoryPlayer, tile);
-	}
+    public ContainerRemoteInterface(InventoryPlayer inventoryPlayer, TileRemoteInterface tile) {
+        super(inventoryPlayer, tile);
+    }
 
-	@Override
-	public boolean enchantItem(EntityPlayer player, int id) {
-		if (!player.worldObj.isRemote) {
-			switch(id) {
-				case 0: ((TileRemoteInterface)tile).updateRotation(-1); break;
-				case 1: ((TileRemoteInterface)tile).updateRotation( 1); break;
-			}
+    @Override
+    public boolean enchantItem(EntityPlayer player, int id) {
+        if (!player.worldObj.isRemote) {
+            switch (id) {
+                case 0:
+                    ((TileRemoteInterface) tile).updateRotation(-1);
+                    break;
+                case 1:
+                    ((TileRemoteInterface) tile).updateRotation(1);
+                    break;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
-
+        return false;
+    }
 }

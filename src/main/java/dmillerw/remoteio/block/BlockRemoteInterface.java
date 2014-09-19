@@ -28,159 +28,158 @@ import java.util.List;
  */
 public class BlockRemoteInterface extends BlockIOCore {
 
-	public static int renderID;
+    public static int renderID;
 
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
-		boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
-		if (result) {
-			return result;
-		}
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
+        boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+        if (result) {
+            return result;
+        }
 
-		if (!world.isRemote) {
-			TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (!world.isRemote) {
+            TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-			if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
-				int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
-				DimensionalCoords there = tile.remotePosition;
-				Block remote = there.getBlock();
+            if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
+                int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
+                DimensionalCoords there = tile.remotePosition;
+                Block remote = there.getBlock();
 
                 PlayerEventHandler.whitelist.add(player.getCommandSenderName());
-				remote.onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
+                remote.onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
 
-				return true;
-			}
-		}
+                return true;
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public int getGuiID() {
-		return GuiHandler.GUI_REMOTE_INTERFACE;
-	}
+    @Override
+    public int getGuiID() {
+        return GuiHandler.GUI_REMOTE_INTERFACE;
+    }
 
 	/* BEGIN COLLISION HANDLING */
 
-	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
-		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+    @Override
+    public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
-			DimensionalCoords there = tile.remotePosition;
-			Block remote = there.getBlock(world);
+        if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+            DimensionalCoords there = tile.remotePosition;
+            Block remote = there.getBlock(world);
 
-			int offsetX = there.x - x;
-			int offsetY = there.y - y;
-			int offsetZ = there.z - z;
+            int offsetX = there.x - x;
+            int offsetY = there.y - y;
+            int offsetZ = there.z - z;
 
-			Vec3 offsetStart = Vec3.createVectorHelper(start.xCoord + offsetX, start.yCoord + offsetY, start.zCoord + offsetZ);
-			Vec3 offsetEnd = Vec3.createVectorHelper(end.xCoord + offsetX, end.yCoord + offsetY, end.zCoord + offsetZ);
+            Vec3 offsetStart = Vec3.createVectorHelper(start.xCoord + offsetX, start.yCoord + offsetY, start.zCoord + offsetZ);
+            Vec3 offsetEnd = Vec3.createVectorHelper(end.xCoord + offsetX, end.yCoord + offsetY, end.zCoord + offsetZ);
 
-			MovingObjectPosition mob = remote.collisionRayTrace(world, there.x, there.y, there.z, offsetStart, offsetEnd);
+            MovingObjectPosition mob = remote.collisionRayTrace(world, there.x, there.y, there.z, offsetStart, offsetEnd);
 
-			if (mob != null) {
-				mob.blockX -= offsetX;
-				mob.blockY -= offsetY;
-				mob.blockZ -= offsetZ;
-				mob.hitVec.xCoord -= offsetX;
-				mob.hitVec.yCoord -= offsetY;
-				mob.hitVec.zCoord -= offsetZ;
-			}
+            if (mob != null) {
+                mob.blockX -= offsetX;
+                mob.blockY -= offsetY;
+                mob.blockZ -= offsetZ;
+                mob.hitVec.xCoord -= offsetX;
+                mob.hitVec.yCoord -= offsetY;
+                mob.hitVec.zCoord -= offsetZ;
+            }
 
-			return mob;
-		}
+            return mob;
+        }
 
-		return super.collisionRayTrace(world, x, y, z, start, end);
-	}
+        return super.collisionRayTrace(world, x, y, z, start, end);
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
-		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
-			DimensionalCoords there = tile.remotePosition;
-			Block remote = there.getBlock(world);
+        if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+            DimensionalCoords there = tile.remotePosition;
+            Block remote = there.getBlock(world);
 
-			int offsetX = there.x - x;
-			int offsetY = there.y - y;
-			int offsetZ = there.z - z;
+            int offsetX = there.x - x;
+            int offsetY = there.y - y;
+            int offsetZ = there.z - z;
 
-			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
-			//TODO: Rotate the player based on the block rotation to get accurate hit results
+            //TODO: Rotate the player based on the block rotation to get accurate hit results
 
-			// We're about to descend into madness here...
-			player.prevPosX += offsetX;
-			player.prevPosY += offsetY;
-			player.prevPosZ += offsetZ;
-			player.posX += offsetX;
-			player.posY += offsetY;
-			player.posZ += offsetZ;
+            // We're about to descend into madness here...
+            player.prevPosX += offsetX;
+            player.prevPosY += offsetY;
+            player.prevPosZ += offsetZ;
+            player.posX += offsetX;
+            player.posY += offsetY;
+            player.posZ += offsetZ;
 
-			AxisAlignedBB aabb = remote.getSelectedBoundingBoxFromPool(world, there.x, there.y, there.z);
+            AxisAlignedBB aabb = remote.getSelectedBoundingBoxFromPool(world, there.x, there.y, there.z);
 
-			// Ending the madness
-			player.prevPosX -= offsetX;
-			player.prevPosY -= offsetY;
-			player.prevPosZ -= offsetZ;
-			player.posX -= offsetX;
-			player.posY -= offsetY;
-			player.posZ -= offsetZ;
+            // Ending the madness
+            player.prevPosX -= offsetX;
+            player.prevPosY -= offsetY;
+            player.prevPosZ -= offsetZ;
+            player.posX -= offsetX;
+            player.posY -= offsetY;
+            player.posZ -= offsetZ;
 
-			if (aabb != null) {
-				aabb.offset(-offsetX, -offsetY, -offsetZ);
-			}
+            if (aabb != null) {
+                aabb.offset(-offsetX, -offsetY, -offsetZ);
+            }
 
-			return aabb;
-		}
+            return aabb;
+        }
 
-		return super.getSelectedBoundingBoxFromPool(world, x, y, z);
-	}
+        return super.getSelectedBoundingBoxFromPool(world, x, y, z);
+    }
 
-	@Override
-	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
-		TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+    @Override
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-		if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
-			DimensionalCoords there = tile.remotePosition;
-			Block remote = there.getBlock(world);
+        if (tile != null && tile.visualState == VisualState.CAMOUFLAGE_REMOTE && tile.remotePosition != null) {
+            DimensionalCoords there = tile.remotePosition;
+            Block remote = there.getBlock(world);
 
-			int offsetX = there.x - x;
-			int offsetY = there.y - y;
-			int offsetZ = there.z - z;
+            int offsetX = there.x - x;
+            int offsetY = there.y - y;
+            int offsetZ = there.z - z;
 
-			AxisAlignedBB newAABB = AxisAlignedBB.getBoundingBox(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ).offset(offsetX, offsetY, offsetZ);
-			List newList = new ArrayList();
+            AxisAlignedBB newAABB = AxisAlignedBB.getBoundingBox(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ).offset(offsetX, offsetY, offsetZ);
+            List newList = new ArrayList();
 
-			remote.addCollisionBoxesToList(world, there.x, there.y, there.z, newAABB, newList, entity);
+            remote.addCollisionBoxesToList(world, there.x, there.y, there.z, newAABB, newList, entity);
 
-			for (Object o : newList) {
-				AxisAlignedBB aabb1 = (AxisAlignedBB) o;
-				aabb1.offset(-offsetX, -offsetY, -offsetZ);
+            for (Object o : newList) {
+                AxisAlignedBB aabb1 = (AxisAlignedBB) o;
+                aabb1.offset(-offsetX, -offsetY, -offsetZ);
 
-				if (aabb.intersectsWith(aabb1)) {
-					list.add(aabb1);
-				}
-			}
+                if (aabb.intersectsWith(aabb1)) {
+                    list.add(aabb1);
+                }
+            }
 
-			return;
-		}
+            return;
+        }
 
-		super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
-	}
+        super.addCollisionBoxesToList(world, x, y, z, aabb, list, entity);
+    }
 
 	/* END COLLISION HANDLING */
 
-	@Override
-	public int getRenderType() {
-		return BlockRemoteInterface.renderID;
-	}
+    @Override
+    public int getRenderType() {
+        return BlockRemoteInterface.renderID;
+    }
 
-	@Override
-	public TileIOCore getTileEntity() {
-		return new TileRemoteInterface();
-	}
-
+    @Override
+    public TileIOCore getTileEntity() {
+        return new TileRemoteInterface();
+    }
 }

@@ -44,7 +44,7 @@ public class DimensionalCoords {
     }
 
     public DimensionalCoords(int dimensionID, double x, double y, double z) {
-        this(dimensionID, (int)Math.floor(x), (int)Math.floor(y), (int)Math.floor(z));
+        this(dimensionID, (int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
     }
 
     public DimensionalCoords(int dimensionID, int x, int y, int z) {
@@ -76,37 +76,37 @@ public class DimensionalCoords {
         }
     }
 
-	public boolean blockExists() {
-		return getBlock() != null && !getBlock().isAir(getWorld(), x, y, z);
-	}
+    public boolean blockExists() {
+        return getBlock() != null && !getBlock().isAir(getWorld(), x, y, z);
+    }
 
-	public boolean blockExists(World world) {
-		return getBlock(world) != null && !getBlock().isAir(world, x, y, z);
-	}
+    public boolean blockExists(World world) {
+        return getBlock(world) != null && !getBlock().isAir(world, x, y, z);
+    }
 
-	public Block getBlock() {
-		return getWorld().getBlock(x, y, z);
-	}
+    public Block getBlock() {
+        return getWorld().getBlock(x, y, z);
+    }
 
-	public int getMeta() {
-		return getWorld().getBlockMetadata(x, y, z);
-	}
+    public int getMeta() {
+        return getWorld().getBlockMetadata(x, y, z);
+    }
 
     public TileEntity getTileEntity() {
         return getWorld().getTileEntity(x, y, z);
     }
 
-	public Block getBlock(IBlockAccess world) {
-		return world.getBlock(x, y, z);
-	}
+    public Block getBlock(IBlockAccess world) {
+        return world.getBlock(x, y, z);
+    }
 
-	public int getMeta(IBlockAccess world) {
-		return world.getBlockMetadata(x, y, z);
-	}
+    public int getMeta(IBlockAccess world) {
+        return world.getBlockMetadata(x, y, z);
+    }
 
-	public TileEntity getTileEntity(IBlockAccess world) {
-		return world.getTileEntity(x, y, z);
-	}
+    public TileEntity getTileEntity(IBlockAccess world) {
+        return world.getTileEntity(x, y, z);
+    }
 
     /* END */
 
@@ -136,16 +136,15 @@ public class DimensionalCoords {
 
     public boolean equals(DimensionalCoords coords) {
         return (
-			(this.dimensionID == coords.dimensionID) &&
-			(this.x == coords.x) &&
-			(this.y == coords.y) &&
-			(this.z == coords.z)
-		);
+                (this.dimensionID == coords.dimensionID) &&
+                        (this.x == coords.x) &&
+                        (this.y == coords.y) &&
+                        (this.z == coords.z)
+        );
     }
 
-	@Override
-	public String toString() {
-		return "[" + dimensionID + " : " + x + ", " + y + ", " + z + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "[" + dimensionID + " : " + x + ", " + y + ", " + z + "]";
+    }
 }

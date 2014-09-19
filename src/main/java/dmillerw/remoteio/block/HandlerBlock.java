@@ -13,22 +13,22 @@ import net.minecraft.block.Block;
  */
 public class HandlerBlock {
 
-	public static Block remoteInterface;
-	public static Block remoteInventory;
+    public static Block remoteInterface;
+    public static Block remoteInventory;
     public static Block machine;
 
-	public static void initialize() {
-		remoteInterface = new BlockRemoteInterface().setBlockName("remote_interface");
-		GameRegistry.registerBlock(remoteInterface, remoteInterface.getUnlocalizedName());
-		GameRegistry.registerTileEntity(TileRemoteInterface.class, remoteInterface.getUnlocalizedName());
+    public static void initialize() {
+        remoteInterface = new BlockRemoteInterface().setBlockName("remote_interface");
+        GameRegistry.registerBlock(remoteInterface, remoteInterface.getUnlocalizedName());
+        GameRegistry.registerTileEntity(TileRemoteInterface.class, remoteInterface.getUnlocalizedName());
 
-		remoteInventory = new BlockRemoteInventory().setBlockName("remote_inventory");
-		GameRegistry.registerBlock(remoteInventory, remoteInventory.getUnlocalizedName());
-		GameRegistry.registerTileEntity(TileRemoteInventory.class, remoteInventory.getUnlocalizedName());
+        remoteInventory = new BlockRemoteInventory().setBlockName("remote_inventory");
+        GameRegistry.registerBlock(remoteInventory, remoteInventory.getUnlocalizedName());
+        GameRegistry.registerTileEntity(TileRemoteInventory.class, remoteInventory.getUnlocalizedName());
 
         machine = new BlockMachine().setBlockName("machine");
-        GameRegistry.registerBlock(machine, ItemBlockMulti.class, machine.getUnlocalizedName(), new Object[] {new String[] {"reservoir", "heater"}});
+        GameRegistry.registerBlock(machine, ItemBlockMulti.class, machine.getUnlocalizedName(), new Object[]{new String[]{"reservoir", "heater"}});
         GameRegistry.registerTileEntity(TileMachineReservoir.class, "remoteio:machine_reservoir");
         GameRegistry.registerTileEntity(TileMachineHeater.class, "remoteio:machine_heater");
-	}
+    }
 }

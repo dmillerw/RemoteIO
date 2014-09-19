@@ -56,7 +56,7 @@ public class TileMachineReservoir extends TileCore implements IFluidHandler {
             if (tileEntity != null && tileEntity instanceof IFluidHandler) found++;
         }
 
-        final int amount = (int)((float)FluidContainerRegistry.BUCKET_VOLUME / (float)found);
+        final int amount = (int) ((float) FluidContainerRegistry.BUCKET_VOLUME / (float) found);
 
         for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {
             TileEntity tileEntity = worldObj.getTileEntity(xCoord + forgeDirection.offsetX, yCoord + forgeDirection.offsetY, zCoord + forgeDirection.offsetZ);
@@ -93,8 +93,8 @@ public class TileMachineReservoir extends TileCore implements IFluidHandler {
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return new FluidTankInfo[] {
-            new FluidTankInfo(new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME), FluidContainerRegistry.BUCKET_VOLUME)
+        return new FluidTankInfo[]{
+                new FluidTankInfo(new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.BUCKET_VOLUME), FluidContainerRegistry.BUCKET_VOLUME)
         };
     }
 }

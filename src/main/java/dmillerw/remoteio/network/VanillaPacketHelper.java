@@ -15,46 +15,46 @@ import net.minecraft.world.chunk.Chunk;
  */
 public class VanillaPacketHelper {
 
-	public static void sendToAllWatchingTile(TileEntity tile, Packet packet) {
-		if (!tile.hasWorldObj()) {
-			return;
-		}
+    public static void sendToAllWatchingTile(TileEntity tile, Packet packet) {
+        if (!tile.hasWorldObj()) {
+            return;
+        }
 
-		sendToAllWatchingChunk(tile.getWorldObj().getChunkFromBlockCoords(tile.xCoord, tile.zCoord), packet);
-	}
+        sendToAllWatchingChunk(tile.getWorldObj().getChunkFromBlockCoords(tile.xCoord, tile.zCoord), packet);
+    }
 
-	/**
-	 * Sends the specified packet to all players either in specified chunk, or at least have that chunk loaded
-	 */
-	public static void sendToAllWatchingChunk(Chunk chunk, Packet packet) {
-		ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
-		World world = chunk.worldObj;
+    /**
+     * Sends the specified packet to all players either in specified chunk, or at least have that chunk loaded
+     */
+    public static void sendToAllWatchingChunk(Chunk chunk, Packet packet) {
+        ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
+        World world = chunk.worldObj;
 
-		if (world instanceof WorldServer) {
-			PlayerManager playerManager = ((WorldServer)world).getPlayerManager();
-			for (Object obj : manager.playerEntityList) {
-				EntityPlayerMP player = (EntityPlayerMP) obj;
+        if (world instanceof WorldServer) {
+            PlayerManager playerManager = ((WorldServer) world).getPlayerManager();
+            for (Object obj : manager.playerEntityList) {
+                EntityPlayerMP player = (EntityPlayerMP) obj;
 
-				if (playerManager.isPlayerWatchingChunk(player, chunk.xPosition, chunk.zPosition)) {
+                if (playerManager.isPlayerWatchingChunk(player, chunk.xPosition, chunk.zPosition)) {
 //					if (!player.loadedChunks.contains(new ChunkCoordIntPair(chunk.xPosition, chunk.zPosition))) {
-						player.playerNetServerHandler.sendPacket(packet);
+                    player.playerNetServerHandler.sendPacket(packet);
 //					}
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	public static void sendToAllInDimension(int dimension, Packet packet) {
-		ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
+    public static void sendToAllInDimension(int dimension, Packet packet) {
+        ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
 
-		for (Object obj : manager.playerEntityList) {
-			EntityPlayerMP player = (EntityPlayerMP) obj;
+        for (Object obj : manager.playerEntityList) {
+            EntityPlayerMP player = (EntityPlayerMP) obj;
 
-			if (player.getEntityWorld().provider.dimensionId == dimension) {
-				player.playerNetServerHandler.sendPacket(packet);
-			}
-		}
-	}
+            if (player.getEntityWorld().provider.dimensionId == dimension) {
+                player.playerNetServerHandler.sendPacket(packet);
+            }
+        }
+    }
 
     public static void sendToAllInRange(int dimension, int x, int y, int z, int range, Packet packet) {
         ServerConfigurationManager manager = MinecraftServer.getServer().getConfigurationManager();
@@ -67,5 +67,4 @@ public class VanillaPacketHelper {
             }
         }
     }
-
 }
