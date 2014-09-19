@@ -22,7 +22,8 @@ import net.minecraft.world.World;
  */
 public abstract class BlockIOCore extends BlockContainer {
 
-    public IIcon[] icons;
+    public static IIcon[] icons;
+    public static IIcon[] overlays;
 
     public BlockIOCore() {
         super(Material.iron);
@@ -102,6 +103,11 @@ public abstract class BlockIOCore extends BlockContainer {
         icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "inactive_blink");
         icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active");
         icons[3] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "active_blink");
+        overlays = new IIcon[4];
+        overlays[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/inactive");
+        overlays[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/inactive_blink");
+        overlays[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/active");
+        overlays[3] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/active_blink");
     }
 
     @Override

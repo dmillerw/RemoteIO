@@ -2,6 +2,8 @@ package dmillerw.remoteio.client.render;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLLog;
+import dmillerw.remoteio.block.core.BlockIOCore;
+import dmillerw.remoteio.client.helper.IORenderHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
@@ -15,6 +17,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -39,11 +42,8 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
             GL11.glPushMatrix();
 
             GL11.glTranslated(x, y, z);
-
             GL11.glTranslated(0.5, 0.5, 0.5);
-
             GL11.glRotated(90 * tile.rotationY, 0, 1, 0);
-
             GL11.glTranslated(-0.5, -0.5, -0.5);
 
             Block remote = there.getBlock(worldClient);
@@ -92,6 +92,27 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
             }
 
             GL11.glPopMatrix();
+        } else {
+            if (!tile.visualState.isCamouflage()) {
+                IIcon icon = BlockIOCore.overlays[tile.visualState.ordinal()];
+
+                GL11.glPushMatrix();
+                GL11.glDisable(GL11.GL_LIGHTING);
+                GL11.glTranslated(x, y, z);
+
+                bindTexture(TextureMap.locationBlocksTexture);
+
+                char c0 = 61680;
+                int j = c0 % 65536;
+                int k = c0 / 65536;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F, (float) k / 1.0F);
+                GL11.glColor4f(1, 1, 1, 1);
+
+                IORenderHelper.renderCube(icon);
+
+                GL11.glEnable(GL11.GL_LIGHTING);
+                GL11.glPopMatrix();
+            }
         }
     }
 

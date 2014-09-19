@@ -29,7 +29,8 @@ import java.util.List;
  */
 public class BlockMachine extends BlockContainer {
 
-    public IIcon[] icons;
+    public static IIcon[] icons;
+    public static IIcon[] overlays;
 
     public BlockMachine() {
         super(Material.iron);
@@ -108,6 +109,9 @@ public class BlockMachine extends BlockContainer {
         icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "reservoir");
         icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "heater");
         icons[2] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "machine_inactive");
+        overlays = new IIcon[2];
+        overlays[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/reservoir");
+        overlays[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "overlay/heater");
     }
 
     @Override
