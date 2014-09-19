@@ -1,22 +1,18 @@
 package dmillerw.remoteio.core;
 
-import cofh.api.energy.IEnergyHandler;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import ic2.api.energy.tile.*;
-import ic2.api.tile.IEnergyStorage;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraftforge.fluids.IFluidHandler;
-import thaumcraft.api.aspects.IAspectContainer;
-import thaumcraft.api.aspects.IAspectSource;
-import thaumcraft.api.aspects.IEssentiaTransport;
 
 import java.util.Map;
 
+import static dmillerw.remoteio.lib.DependencyInfo.Paths.*;
+
 public class TransferType {
 
-    private static BiMap<Integer, Class[]> typeToInterfaceMap = HashBiMap.create();
+    private static BiMap<Integer, String[]> typeToInterfaceMap = HashBiMap.create();
 
     // MATTER
     public static final int MATTER_ITEM = 0;
@@ -33,21 +29,28 @@ public class TransferType {
     static {
         registerType(MATTER_ITEM, IInventory.class, ISidedInventory.class);
         registerType(MATTER_FLUID, IFluidHandler.class);
-        registerType(MATTER_ESSENTIA, IAspectContainer.class, IAspectSource.class, IEssentiaTransport.class);
+        registerType(MATTER_ESSENTIA, Thaumcraft.IASPECTCONTAINER, Thaumcraft.IASPECTSOURCE, Thaumcraft.IESSENTIATRANSPORT);
 
-        registerType(ENERGY_IC2, IEnergyTile.class, IEnergySource.class, IEnergyEmitter.class, IEnergySink.class, IEnergyAcceptor.class, IEnergyStorage.class);
-        // ENERGY_BC is handled via tile
-        registerType(ENERGY_RF, IEnergyHandler.class);
+        registerType(ENERGY_IC2, IC2.IENERGYTILE, IC2.IENERGYSOURCE, IC2.IENERGYEMITTER, IC2.IENERGYSINK, IC2.IENERGYACCEPTOR, IC2.IENERGYSTORAGE);
+        registerType(ENERGY_RF, COFH.IENERGYHANDLER);
     }
 
     public static void registerType(int type, Class... classes) {
+        String[] names = new String[classes.length];
+        for (int i=0; i<classes.length; i++) {
+            names[i] = classes[i].getName();
+        }
+        registerType(type, names);
+    }
+
+    public static void registerType(int type, String ... classes) {
         typeToInterfaceMap.put(type, classes);
     }
 
     public static int getTypeForInterface(Class cls) {
-        for (Map.Entry<Class[], Integer> entry : typeToInterfaceMap.inverse().entrySet()) {
-            for (Class clz : entry.getKey()) {
-                if (cls == clz) {
+        for (Map.Entry<String[], Integer> entry : typeToInterfaceMap.inverse().entrySet()) {
+            for (String clz : entry.getKey()) {
+                if (cls.getName().equals(clz)) {
                     return entry.getValue();
                 }
             }
