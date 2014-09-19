@@ -25,6 +25,7 @@ public class DependencyInfo {
             public static final String IENERGYSOURCE = COMMON_PATH + "energy.tile.IEnergySource";
             public static final String IENERGYEMITTER = COMMON_PATH + "energy.tile.IEnergyEmitter";
             public static final String IENERGYTILE = COMMON_PATH + "energy.tile.IEnergyTile";
+            public static final String IHEATSOURCE = COMMON_PATH + "energy.tile.IHeatSource";
         }
 
         public static final class Thaumcraft {

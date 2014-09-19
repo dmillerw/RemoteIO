@@ -1,6 +1,5 @@
 package dmillerw.remoteio.tile.core;
 
-import dmillerw.remoteio.inventory.InventoryNBT;
 import dmillerw.remoteio.network.VanillaPacketHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -18,6 +17,8 @@ public abstract class TileCore extends TileEntity {
 	public abstract void readCustomNBT(NBTTagCompound nbt);
 
 	public void onClientUpdate(NBTTagCompound nbt) {}
+
+    public void onNeighborUpdated() {}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {

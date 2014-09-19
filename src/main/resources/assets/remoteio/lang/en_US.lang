@@ -27,3 +27,5 @@ item.io_tool.name=IO Tool
 # Block
 tile.remote_interface.name=Remote Interface
 tile.remote_inventory.name=Remote Inventory
+tile.machine.reservoir.name=Water Reservoir
+tile.machine.heater.name=Lava Heater
