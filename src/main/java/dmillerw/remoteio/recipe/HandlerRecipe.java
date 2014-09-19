@@ -22,6 +22,28 @@ import net.minecraftforge.oredict.OreDictionary;
 public class HandlerRecipe {
 
 	public static void initialize() {
+        // RESERVOIR
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerBlock.machine, 1, 0),
+                "SGS",
+                "GWG",
+                "SGS",
+                'S', Blocks.stone,
+                'G', Blocks.glass,
+                'W', Items.water_bucket
+        );
+
+        // LAVA HEATER
+        RecipeHelper.addOreRecipe(
+                new ItemStack(HandlerBlock.machine, 1, 1),
+                "SIS",
+                "ILI",
+                "SIS",
+                'S', Blocks.stone,
+                'I', Blocks.iron_bars,
+                'L', Items.lava_bucket
+        );
+
 		// REMOTE INTERFACE
 		RecipeHelper.addOreRecipe(
 				new ItemStack(HandlerBlock.remoteInterface),
