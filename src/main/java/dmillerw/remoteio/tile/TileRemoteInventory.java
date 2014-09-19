@@ -44,7 +44,6 @@ import net.minecraftforge.fluids.IFluidHandler;
 })
 public class TileRemoteInventory extends TileIOCore implements
         IInventory,
-        IFluidHandler,
         IEnergySource, // IC2
         IEnergySink, // IC2
         IEnergyHandler // COFH
@@ -270,43 +269,6 @@ public class TileRemoteInventory extends TileIOCore implements
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		IInventory inventoryPlayer = getPlayerInventory(TransferType.MATTER_ITEM);
 		return inventoryPlayer != null && inventoryPlayer.isItemValidForSlot(slot, stack);
-	}
-
-	/* IFLUIDHANDLER */
-	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		IInventory IInventory = getPlayerInventory(TransferType.MATTER_FLUID);
-		return IInventory != null ? FluidTransferHelper.fill(IInventory, resource, doFill) : 0;
-	}
-
-	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		IInventory IInventory = getPlayerInventory(TransferType.MATTER_FLUID);
-		return IInventory != null ? FluidTransferHelper.drain(IInventory, resource, doDrain) : null;
-	}
-
-	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		IInventory IInventory = getPlayerInventory(TransferType.MATTER_FLUID);
-		return IInventory != null ? FluidTransferHelper.drain(IInventory, maxDrain, doDrain) : null;
-	}
-
-	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		IInventory IInventory = getPlayerInventory(TransferType.MATTER_FLUID);
-		return IInventory != null && FluidTransferHelper.canFill(IInventory, fluid);
-	}
-
-	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		IInventory IInventory = getPlayerInventory(TransferType.MATTER_FLUID);
-		return IInventory != null && FluidTransferHelper.canDrain(IInventory, fluid);
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		IInventory IInventory = getPlayerInventory(TransferType.MATTER_FLUID);
-		return IInventory != null ? FluidTransferHelper.getTankInfo(IInventory) : new FluidTankInfo[0];
 	}
 
     /* IENERGYSOURCE */
