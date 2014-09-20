@@ -53,22 +53,24 @@ public class BlockMachine extends BlockContainer {
         int meta = world.getBlockMetadata(x, y, z);
         if (meta == 0) {
             ItemStack held = player.getHeldItem();
-            if (held.stackSize == 1) {
-                if (held.getItem() instanceof IFluidContainerItem) {
-                    if (!world.isRemote) {
-                        IFluidContainerItem fluidContainerItem = (IFluidContainerItem) held.getItem();
-                        fluidContainerItem.fill(held, new FluidStack(FluidRegistry.WATER, fluidContainerItem.getCapacity(held)), true);
-                    }
-                    return true;
-                } else if (FluidContainerRegistry.isEmptyContainer(held)) {
-                    if (!world.isRemote) {
-                        ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.getContainerCapacity(held)), held);
-                        if (filled != null) {
-                            player.setCurrentItemOrArmor(0, filled);
-                            return true;
+            if (held != null) {
+                if (held.stackSize == 1) {
+                    if (held.getItem() instanceof IFluidContainerItem) {
+                        if (!world.isRemote) {
+                            IFluidContainerItem fluidContainerItem = (IFluidContainerItem) held.getItem();
+                            fluidContainerItem.fill(held, new FluidStack(FluidRegistry.WATER, fluidContainerItem.getCapacity(held)), true);
                         }
+                        return true;
+                    } else if (FluidContainerRegistry.isEmptyContainer(held)) {
+                        if (!world.isRemote) {
+                            ItemStack filled = FluidContainerRegistry.fillFluidContainer(new FluidStack(FluidRegistry.WATER, FluidContainerRegistry.getContainerCapacity(held)), held);
+                            if (filled != null) {
+                                player.setCurrentItemOrArmor(0, filled);
+                                return true;
+                            }
+                        }
+                        return false;
                     }
-                    return false;
                 }
             }
             return false;
