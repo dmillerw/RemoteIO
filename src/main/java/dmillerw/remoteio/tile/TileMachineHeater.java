@@ -70,7 +70,7 @@ public class TileMachineHeater extends TileCore implements IHeatSource {
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     public int maxrequestHeatTick(ForgeDirection directionFrom) {
-        return filled ? Integer.MAX_VALUE : 0;
+        return 1;
     }
 
     @Override

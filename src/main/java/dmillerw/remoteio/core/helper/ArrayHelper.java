@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class ArrayHelper {
 
+    public static <T> T safeGetArray(T[] array, int index) {
+        return array[index < 0 ? 0 : index >= array.length ? array.length - 1 : index];
+    }
+
     public static String toString(Object... objects) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");

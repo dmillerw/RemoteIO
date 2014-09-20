@@ -2,6 +2,7 @@ package dmillerw.remoteio.client.render;
 
 import dmillerw.remoteio.block.BlockMachine;
 import dmillerw.remoteio.client.helper.IORenderHelper;
+import dmillerw.remoteio.core.helper.ArrayHelper;
 import dmillerw.remoteio.tile.TileMachineHeater;
 import dmillerw.remoteio.tile.TileMachineReservoir;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -23,7 +24,7 @@ public class RenderTileMachine extends TileEntitySpecialRenderer {
         if (tileEntity instanceof TileMachineHeater) if (((TileMachineHeater) tileEntity).filled) render = true;
         if (!render) return;
 
-        IIcon icon = BlockMachine.overlays[tileEntity.blockMetadata];
+        IIcon icon = ArrayHelper.safeGetArray(BlockMachine.overlays, tileEntity.getBlockMetadata());
 
         GL11.glPushMatrix();
         GL11.glDisable(GL11.GL_LIGHTING);
