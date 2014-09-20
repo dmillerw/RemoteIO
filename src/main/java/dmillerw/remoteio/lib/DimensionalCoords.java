@@ -1,12 +1,9 @@
 package dmillerw.remoteio.lib;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
+import dmillerw.remoteio.RemoteIO;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -69,11 +66,7 @@ public class DimensionalCoords {
     }
 
     public World getWorld() {
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            return Minecraft.getMinecraft().theWorld;
-        } else {
-            return MinecraftServer.getServer().worldServerForDimension(this.dimensionID);
-        }
+        return RemoteIO.proxy.getWorld(dimensionID);
     }
 
     public boolean blockExists() {

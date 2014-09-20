@@ -11,6 +11,8 @@ import dmillerw.remoteio.tile.TileMachineHeater;
 import dmillerw.remoteio.tile.TileMachineReservoir;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.TileRemoteInventory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
 
 /**
  * @author dmillerw
@@ -24,5 +26,10 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileRemoteInventory.class, new RenderTileRemoteInventory());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMachineReservoir.class, new RenderTileMachine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMachineHeater.class, new RenderTileMachine());
+    }
+
+    @Override
+    public World getWorld(int dimension) {
+        return Minecraft.getMinecraft().theWorld;
     }
 }
