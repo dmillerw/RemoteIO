@@ -24,10 +24,8 @@ public class EventHelper {
                 Class<?> event = method.getParameterTypes()[0];
 
                 if (event.getName().contains("net.minecraftforge.event")) {
-                    System.out.println(instance.getClass().getSimpleName() + " has an FORGE event");
                     forge = true;
                 } else if (event.getName().contains("cpw.mods.fml.common.gameevent")) {
-                    System.out.println(instance.getClass().getSimpleName() + " has an FML event");
                     fml = true;
                 }
             }
