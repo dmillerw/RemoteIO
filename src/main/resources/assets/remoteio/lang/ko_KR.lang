@@ -1,0 +1,32 @@
+# Misc
+itemGroup.rio=리모트IO[RemoteIO]
+
+# GUI
+container.remoteio.upgrade=업그레이드
+container.remoteio.transfer=전송
+
+# Chat
+chat.target.save=타겟 저장
+chat.target.load=타켓을 불러옴
+chat.target.loop=인터페이스블럭을 링크한 상태로 다른 인터페이스를 링크할수 없습니다
+
+# Item
+item.blank_plate.name=빈 판
+item.chip.location.name=추적 칩
+item.chip.transfer.item.name=아이템 전송 칩
+item.chip.transfer.fluid.name=액체 전송 칩
+item.chip.transfer.essentia.name=에센시아 전송칩
+item.chip.transfer.energy_ic2.name=EU 전송 칩
+item.chip.transfer.energy_mj.name=MJ 전송 칩
+item.chip.transfer.energy_rf.name=RF 전송 칩
+item.chip.upgrade.remote_camo.name=위장 원격 업그레이드
+item.chip.upgrade.remote_access.name=원격 접속 업그레이드
+item.chip.upgrade.simple_camo.name=간단 위장 업그레이드
+item.wireless_transmitter.name=무선 전송기
+item.io_tool.name=입출력 도구
+
+# Block
+tile.remote_interface.name=원격 인터페이스
+tile.remote_inventory.name=원격 인벤토리
+tile.machine.reservoir.name=물 저수지
+tile.machine.heater.name=용암 히터
