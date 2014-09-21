@@ -14,6 +14,8 @@ public class ItemBlockMulti extends ItemBlock {
     public ItemBlockMulti(Block block, String[] names) {
         super(block);
         this.names = names;
+        this.setMaxDamage(0);
+        this.setHasSubtypes(true);
     }
 
     @Override
