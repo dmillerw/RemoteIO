@@ -16,6 +16,7 @@ public class HandlerBlock {
     public static Block remoteInterface;
     public static Block remoteInventory;
     public static Block machine;
+    public static Block skylight;
 
     public static void initialize() {
         remoteInterface = new BlockRemoteInterface().setBlockName("remote_interface");
@@ -30,5 +31,8 @@ public class HandlerBlock {
         GameRegistry.registerBlock(machine, ItemBlockMulti.class, machine.getUnlocalizedName(), new Object[]{new String[]{"reservoir", "heater"}});
         GameRegistry.registerTileEntity(TileMachineReservoir.class, "remoteio:machine_reservoir");
         GameRegistry.registerTileEntity(TileMachineHeater.class, "remoteio:machine_heater");
+
+        skylight = new BlockSkylight().setBlockName("skylight");
+        GameRegistry.registerBlock(skylight, "skylight");
     }
 }

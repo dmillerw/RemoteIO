@@ -78,15 +78,15 @@ public class DimensionalCoords {
     }
 
     public Block getBlock() {
-        return getWorld().getBlock(x, y, z);
+        return getWorld() != null ? getWorld().getBlock(x, y, z) : null;
     }
 
     public int getMeta() {
-        return getWorld().getBlockMetadata(x, y, z);
+        return getWorld() != null ? getWorld().getBlockMetadata(x, y, z) : 0;
     }
 
     public TileEntity getTileEntity() {
-        return getWorld().getTileEntity(x, y, z);
+        return getWorld() != null ? getWorld().getTileEntity(x, y, z) : null;
     }
 
     public Block getBlock(IBlockAccess world) {
