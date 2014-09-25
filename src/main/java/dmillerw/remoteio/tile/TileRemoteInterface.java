@@ -442,7 +442,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
 
             if (inventory != null) {
-                return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory(), 1);
+                return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory() - 1, 1);
             }
         }
         return new int[0];
