@@ -1,15 +1,14 @@
 package dmillerw.remoteio.block;
 
 import dmillerw.remoteio.core.TabRemoteIO;
+import dmillerw.remoteio.core.handler.BlockUpdateTicker;
 import dmillerw.remoteio.lib.ModInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockSkylight extends Block {
 
@@ -43,25 +42,9 @@ public class BlockSkylight extends Block {
         boolean powered = world.isBlockIndirectlyGettingPowered(x, y, z);
 
         if (powered && (meta == 0 || meta == 1)) {
-            world.setBlockMetadataWithNotify(x, y, z, 2, 3);
-            world.updateLightByType(EnumSkyBlock.Block, x, y, z);
-            world.updateLightByType(EnumSkyBlock.Sky, x, y, z);
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-                Block block = world.getBlock(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (block != null && block == this) {
-                    ((BlockSkylight)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, this, 2);
-                }
-            }
+            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 2);
         } else if (!powered && meta == 2) {
-            world.setBlockMetadataWithNotify(x, y, z, 0, 3);
-            world.updateLightByType(EnumSkyBlock.Block, x, y, z);
-            world.updateLightByType(EnumSkyBlock.Sky, x, y, z);
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-                Block block = world.getBlock(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (block != null && block == this) {
-                    ((BlockSkylight)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, this, 0);
-                }
-            }
+            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 0);
         }
     }
 
@@ -70,25 +53,9 @@ public class BlockSkylight extends Block {
         boolean powered = (causeMeta == 2 || causeMeta == 1);
 
         if (powered && meta == 0) {
-            world.setBlockMetadataWithNotify(x, y, z, 1, 3);
-            world.updateLightByType(EnumSkyBlock.Block, x, y, z);
-            world.updateLightByType(EnumSkyBlock.Sky, x, y, z);
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-                Block block = world.getBlock(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (block != null && block == this) {
-                    ((BlockSkylight)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, this, 2);
-                }
-            }
+            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 1);
         } else if (!powered && meta == 1) {
-            world.setBlockMetadataWithNotify(x, y, z, 0, 3);
-            world.updateLightByType(EnumSkyBlock.Block, x, y, z);
-            world.updateLightByType(EnumSkyBlock.Sky, x, y, z);
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-                Block block = world.getBlock(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (block != null && block == this) {
-                    ((BlockSkylight)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, this, 0);
-                }
-            }
+            BlockUpdateTicker.registerBlockUpdate(world, x, y, z, this, 0);
         }
     }
 

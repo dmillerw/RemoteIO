@@ -14,6 +14,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.block.HandlerBlock;
+import dmillerw.remoteio.core.handler.BlockUpdateTicker;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.core.handler.PlayerEventHandler;
 import dmillerw.remoteio.core.helper.EventHelper;
@@ -51,6 +52,7 @@ public class RemoteIO {
         EventHelper.register(new RecipeKeepTransmitter());
         EventHelper.register(BlockTracker.INSTANCE);
         EventHelper.register(new PlayerEventHandler());
+        EventHelper.register(new BlockUpdateTicker());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
