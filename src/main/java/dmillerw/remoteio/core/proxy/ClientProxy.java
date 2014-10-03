@@ -12,12 +12,15 @@ import dmillerw.remoteio.tile.TileMachineReservoir;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.TileRemoteInventory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 /**
  * @author dmillerw
  */
 public class ClientProxy extends CommonProxy {
+
+    public static boolean allowContainerUsage = false;
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
@@ -31,5 +34,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public World getWorld(int dimension) {
         return Minecraft.getMinecraft().theWorld;
+    }
+
+    @Override
+    public boolean canPlayerOpenContainer(EntityPlayer player) {
+        return allowContainerUsage;
+    }
+
+    @Override
+    public void resetPlayerWhitelist(EntityPlayer player) {
+        allowContainerUsage = false;
     }
 }

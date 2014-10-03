@@ -3,6 +3,8 @@ package dmillerw.remoteio.core.proxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import dmillerw.remoteio.core.handler.PlayerEventHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
@@ -25,5 +27,13 @@ public class CommonProxy {
 
     public World getWorld(int dimension) {
         return MinecraftServer.getServer().worldServerForDimension(dimension);
+    }
+
+    public boolean canPlayerOpenContainer(EntityPlayer player) {
+        return PlayerEventHandler.whitelist.contains(player.getCommandSenderName());
+    }
+
+    public void resetPlayerWhitelist(EntityPlayer player) {
+        PlayerEventHandler.whitelist.remove(player.getCommandSenderName());
     }
 }

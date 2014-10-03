@@ -9,12 +9,15 @@ import dmillerw.remoteio.core.handler.PlayerEventHandler;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
+import dmillerw.remoteio.network.PacketHandler;
+import dmillerw.remoteio.network.packet.PacketClientWhitelist;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -46,6 +49,7 @@ public class BlockRemoteInterface extends BlockIOCore {
                 Block remote = there.getBlock();
 
                 PlayerEventHandler.whitelist.add(player.getCommandSenderName());
+                PacketHandler.INSTANCE.sendTo(new PacketClientWhitelist(), (EntityPlayerMP) player);
                 remote.onBlockActivated(there.getWorld(), there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
 
                 return true;

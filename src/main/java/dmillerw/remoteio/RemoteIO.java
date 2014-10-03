@@ -22,6 +22,7 @@ import dmillerw.remoteio.core.proxy.CommonProxy;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.item.HandlerItem;
 import dmillerw.remoteio.lib.ModInfo;
+import dmillerw.remoteio.network.PacketHandler;
 import dmillerw.remoteio.recipe.HandlerRecipe;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
 import dmillerw.remoteio.recipe.RecipeKeepTransmitter;
@@ -55,6 +56,8 @@ public class RemoteIO {
         EventHelper.register(new BlockUpdateTicker());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+
+        PacketHandler.initialize();
 
         proxy.preInit(event);
     }
