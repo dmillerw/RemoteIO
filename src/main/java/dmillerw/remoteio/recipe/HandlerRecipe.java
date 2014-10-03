@@ -170,7 +170,7 @@ public class HandlerRecipe {
 
         // UPGRADE TYPE - SIMPLE CAMOUFLAGE
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
+                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.SIMPLE_CAMO),
                 " B ",
                 "ICI",
                 'B', HandlerItem.blankPlate,
@@ -194,7 +194,6 @@ public class HandlerRecipe {
         if (Loader.isModLoaded("IC2")) {
             String[] cableTypes = new String[]{"copper", "insulatedCopper", "gold", "insulatedGold", "iron", "insulatedIron", "insulatedTin", "glassFiber", "tin"};
             ItemStack[] cables = new ItemStack[cableTypes.length];
-            boolean failed = false;
 
             try {
                 for (int i = 0; i < cableTypes.length; i++) {
@@ -206,29 +205,6 @@ public class HandlerRecipe {
             }
 
             return cables;
-        }
-
-        return new ItemStack[0];
-    }
-
-    public static ItemStack[] getBCPipes() {
-        if (Loader.isModLoaded("BuildCraft|Core")) {
-            String[] pipeTypes = new String[]{"Wood", "Cobblestone", "Stone", "Quartz", "Iron", "Gold", "Diamond"};
-            ItemStack[] pipes = new ItemStack[pipeTypes.length];
-            boolean failed = false;
-
-            try {
-                Class clazz = Class.forName("buildcraft.BuildCraftTransport");
-
-                for (int i = 0; i < pipeTypes.length; i++) {
-                    pipes[i] = new ItemStack((Item) clazz.getDeclaredField("pipePower" + pipeTypes[i]).get(clazz));
-                }
-            } catch (Exception ex) {
-                FMLLog.warning("Tried to get Buildcraft power pipes, but failed! Buildcraft support will not be available!");
-                return new ItemStack[0];
-            }
-
-            return pipes;
         }
 
         return new ItemStack[0];

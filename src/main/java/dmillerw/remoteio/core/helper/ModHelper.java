@@ -1,6 +1,7 @@
 package dmillerw.remoteio.core.helper;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModAPIManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -8,6 +9,16 @@ import net.minecraft.item.ItemStack;
  * @author dmillerw
  */
 public class ModHelper {
+
+    public static boolean isModLoaded(String modId) {
+        if (Loader.isModLoaded(modId)) {
+            return true;
+        } else if (ModAPIManager.INSTANCE.hasAPI(modId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public static ItemStack getThaumcraftItem(String id, int meta) {
         if (Loader.isModLoaded("Thaumcraft")) {

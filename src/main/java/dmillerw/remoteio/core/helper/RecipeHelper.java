@@ -51,13 +51,13 @@ public class RecipeHelper {
             }
         }
 
-        if (Loader.isModLoaded(modId)) {
+        if (ModHelper.isModLoaded(modId)) {
             GameRegistry.addRecipe(new ShapedOreRecipe(output, inputs));
         }
     }
 
     public static void addDependentRecipe(String modId, ItemStack output, Object... inputs) {
-        if (Loader.isModLoaded(modId)) {
+        if (ModHelper.isModLoaded(modId)) {
             GameRegistry.addShapedRecipe(output, inputs);
         }
     }
