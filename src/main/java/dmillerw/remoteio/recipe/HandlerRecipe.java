@@ -61,6 +61,17 @@ public class HandlerRecipe {
                 new ItemStack(HandlerItem.wirelessTransmitter)
         );
 
+        // SKY LIGHT
+        GameRegistry.addShapedRecipe(
+                new ItemStack(HandlerBlock.skylight),
+                "SGS",
+                "GRG",
+                "STS",
+                'S', Blocks.stone,
+                'G', Blocks.glass,
+                'R', Items.redstone
+        );
+
         // IO TOOL
         RecipeHelper.addOreRecipe(
                 new ItemStack(HandlerItem.ioTool),
