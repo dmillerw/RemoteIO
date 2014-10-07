@@ -11,13 +11,7 @@ import net.minecraft.item.ItemStack;
 public class ModHelper {
 
     public static boolean isModLoaded(String modId) {
-        if (Loader.isModLoaded(modId)) {
-            return true;
-        } else if (ModAPIManager.INSTANCE.hasAPI(modId)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Loader.isModLoaded(modId) || ModAPIManager.INSTANCE.hasAPI(modId);
     }
 
     public static ItemStack getThaumcraftItem(String id, int meta) {
