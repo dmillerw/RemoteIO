@@ -17,6 +17,9 @@ public class GuiIntelligentWorkbench extends GuiContainer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/crafting_table.png");
 
+    private GuiBetterButton buttonPrevious;
+    private GuiBetterButton buttonNext;
+
     private int recipeIndex = 0;
 
     public GuiIntelligentWorkbench(InventoryPlayer inventoryPlayer, World world, int x, int y, int z) {
@@ -26,8 +29,8 @@ public class GuiIntelligentWorkbench extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        buttonList.add(new GuiBetterButton(0, width / 2 + 31, height / 2 - 26, 12, 12, "<"));
-        buttonList.add(new GuiBetterButton(1, width / 2 + 45, height / 2 - 26, 12, 12, ">"));
+        buttonList.add(buttonPrevious = new GuiBetterButton(0, width / 2 + 31, height / 2 - 26, 12, 12, "<"));
+        buttonList.add(buttonNext = new GuiBetterButton(1, width / 2 + 45, height / 2 - 26, 12, 12, ">"));
     }
 
     @Override
@@ -36,17 +39,42 @@ public class GuiIntelligentWorkbench extends GuiContainer {
             recipeIndex = 0;
             ((ContainerIntelligentWorkbench)inventorySlots).resultChanged = false;
         }
+
+        if (recipeIndex <= 0) {
+            buttonPrevious.enabled = false;
+        } else {
+            buttonPrevious.enabled = true;
+        }
+
+        if (recipeIndex >= ((ContainerIntelligentWorkbench)inventorySlots).resultCount - 1) {
+            buttonNext.enabled = false;
+        } else {
+            buttonNext.enabled = true;
+        }
     }
 
     @Override
     protected void actionPerformed(GuiButton button) {
         super.actionPerformed(button);
+
         if (button.id == 0) {
             recipeIndex--;
             this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, -1);
         } else if (button.id == 1) {
             recipeIndex++;
             this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, 1);
+        }
+
+        if (recipeIndex <= 0) {
+            buttonPrevious.enabled = false;
+        } else {
+            buttonPrevious.enabled = true;
+        }
+
+        if (recipeIndex >= ((ContainerIntelligentWorkbench)inventorySlots).resultCount) {
+            buttonNext.enabled = false;
+        } else {
+            buttonNext.enabled = true;
         }
     }
 
