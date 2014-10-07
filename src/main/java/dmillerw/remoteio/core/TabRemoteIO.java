@@ -1,6 +1,6 @@
 package dmillerw.remoteio.core;
 
-import dmillerw.remoteio.block.HandlerBlock;
+import dmillerw.remoteio.lib.ModBlocks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
@@ -14,6 +14,6 @@ public class TabRemoteIO extends CreativeTabs {
 
     @Override
     public Item getTabIconItem() {
-        return Item.getItemFromBlock(HandlerBlock.remoteInterface);
+        return Item.getItemFromBlock(ModBlocks.remoteInterface);
     }
 }

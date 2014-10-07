@@ -2,7 +2,7 @@ package dmillerw.remoteio.block;
 
 import dmillerw.remoteio.block.core.BlockIOCore;
 import dmillerw.remoteio.core.handler.GuiHandler;
-import dmillerw.remoteio.item.HandlerItem;
+import dmillerw.remoteio.lib.ModItems;
 import dmillerw.remoteio.item.ItemWirelessTransmitter;
 import dmillerw.remoteio.tile.TileRemoteInventory;
 import dmillerw.remoteio.tile.core.TileIOCore;
@@ -24,7 +24,7 @@ public class BlockRemoteInventory extends BlockIOCore {
 
         TileRemoteInventory tile = (TileRemoteInventory) world.getTileEntity(x, y, z);
 
-        if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == HandlerItem.wirelessTransmitter) {
+        if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == ModItems.wirelessTransmitter) {
             if (!world.isRemote) {
                 EntityPlayer player1 = ItemWirelessTransmitter.getPlayer(player.getCurrentEquippedItem());
 

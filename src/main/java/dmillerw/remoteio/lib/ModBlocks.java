@@ -1,6 +1,7 @@
-package dmillerw.remoteio.block;
+package dmillerw.remoteio.lib;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import dmillerw.remoteio.block.*;
 import dmillerw.remoteio.item.block.ItemBlockMulti;
 import dmillerw.remoteio.tile.*;
 import net.minecraft.block.Block;
@@ -8,7 +9,7 @@ import net.minecraft.block.Block;
 /**
  * @author dmillerw
  */
-public class HandlerBlock {
+public class ModBlocks {
 
     public static Block remoteInterface;
     public static Block remoteInventory;

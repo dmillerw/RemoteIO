@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import dmillerw.remoteio.RemoteIO;
-import dmillerw.remoteio.item.HandlerItem;
+import dmillerw.remoteio.lib.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.player.PlayerOpenContainerEvent;
 
@@ -23,7 +23,7 @@ public class PlayerEventHandler {
         if (RemoteIO.proxy.canPlayerOpenContainer(player)) {
             event.setResult(Event.Result.ALLOW);
             RemoteIO.proxy.resetPlayerWhitelist(player);
-        } else if (player.getHeldItem() != null && player.getHeldItem().getItem() == HandlerItem.wirelessTransmitter) {
+        } else if (player.getHeldItem() != null && player.getHeldItem().getItem() == ModItems.wirelessTransmitter) {
             event.setResult(Event.Result.ALLOW);
         }
     }

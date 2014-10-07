@@ -1,12 +1,13 @@
-package dmillerw.remoteio.item;
+package dmillerw.remoteio.lib;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import dmillerw.remoteio.item.*;
 import net.minecraft.item.Item;
 
 /**
  * @author dmillerw
  */
-public class HandlerItem {
+public class ModItems {
 
     public static Item locationChip;
     public static Item transferChip;

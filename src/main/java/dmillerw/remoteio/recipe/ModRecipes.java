@@ -3,12 +3,12 @@ package dmillerw.remoteio.recipe;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
-import dmillerw.remoteio.block.HandlerBlock;
+import dmillerw.remoteio.lib.ModBlocks;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.ModHelper;
 import dmillerw.remoteio.core.helper.RecipeHelper;
-import dmillerw.remoteio.item.HandlerItem;
+import dmillerw.remoteio.lib.ModItems;
 import ic2.api.item.IC2Items;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -18,12 +18,12 @@ import net.minecraftforge.oredict.OreDictionary;
 /**
  * @author dmillerw
  */
-public class HandlerRecipe {
+public class ModRecipes {
 
     public static void initialize() {
         // RESERVOIR
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerBlock.machine, 1, 0),
+                new ItemStack(ModBlocks.machine, 1, 0),
                 "SGS",
                 "GWG",
                 "SGS",
@@ -34,7 +34,7 @@ public class HandlerRecipe {
 
         // LAVA HEATER
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerBlock.machine, 1, 1),
+                new ItemStack(ModBlocks.machine, 1, 1),
                 "SIS",
                 "ILI",
                 "SIS",
@@ -45,7 +45,7 @@ public class HandlerRecipe {
 
         // REMOTE INTERFACE
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerBlock.remoteInterface),
+                new ItemStack(ModBlocks.remoteInterface),
                 " E ",
                 "RGR",
                 "RRR",
@@ -56,14 +56,14 @@ public class HandlerRecipe {
 
         // REMOTE INVENTORY
         GameRegistry.addShapelessRecipe(
-                new ItemStack(HandlerBlock.remoteInventory),
-                new ItemStack(HandlerBlock.remoteInterface),
-                new ItemStack(HandlerItem.wirelessTransmitter)
+                new ItemStack(ModBlocks.remoteInventory),
+                new ItemStack(ModBlocks.remoteInterface),
+                new ItemStack(ModItems.wirelessTransmitter)
         );
 
         // SKY LIGHT
         GameRegistry.addShapedRecipe(
-                new ItemStack(HandlerBlock.skylight),
+                new ItemStack(ModBlocks.skylight),
                 "SGS",
                 "GRG",
                 "STS",
@@ -74,14 +74,14 @@ public class HandlerRecipe {
 
         // INTELLIGENT WORKBENCH
         GameRegistry.addShapelessRecipe(
-                new ItemStack(HandlerBlock.intelligentWorkbench),
+                new ItemStack(ModBlocks.intelligentWorkbench),
                 Blocks.crafting_table,
-                HandlerItem.locationChip
+                ModItems.locationChip
         );
 
         // IO TOOL
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.ioTool),
+                new ItemStack(ModItems.ioTool),
                 " I ",
                 "RSI",
                 "IR ",
@@ -92,7 +92,7 @@ public class HandlerRecipe {
 
         // LOCATION CHIP
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.locationChip),
+                new ItemStack(ModItems.locationChip),
                 "R",
                 "P",
                 "G",
@@ -103,14 +103,14 @@ public class HandlerRecipe {
 
         // BLANK PLATE
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.blankPlate),
+                new ItemStack(ModItems.blankPlate),
                 "III",
                 'I', Items.iron_ingot
         );
 
         // WIRELESS TRANSMITTER
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.wirelessTransmitter),
+                new ItemStack(ModItems.wirelessTransmitter),
                 " E ",
                 "S  ",
                 "IRI",
@@ -122,88 +122,88 @@ public class HandlerRecipe {
 
         // TRANSFER TYPE - ITEM
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ITEM),
+                new ItemStack(ModItems.transferChip, 1, TransferType.MATTER_ITEM),
                 " B ",
                 "ICI",
-                'B', HandlerItem.blankPlate,
+                'B', ModItems.blankPlate,
                 'I', Blocks.chest,
-                'C', HandlerItem.locationChip
+                'C', ModItems.locationChip
         );
 
         // TRANSFER TYPE - WATER
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_FLUID),
+                new ItemStack(ModItems.transferChip, 1, TransferType.MATTER_FLUID),
                 " B ",
                 "ICI",
-                'B', HandlerItem.blankPlate,
+                'B', ModItems.blankPlate,
                 'I', Items.bucket,
-                'C', HandlerItem.locationChip
+                'C', ModItems.locationChip
         );
 
         // TRANSFER TYPE - ESSENTIA
         RecipeHelper.addDependentOreRecipe(
                 "Thaumcraft",
-                new ItemStack(HandlerItem.transferChip, 1, TransferType.MATTER_ESSENTIA),
+                new ItemStack(ModItems.transferChip, 1, TransferType.MATTER_ESSENTIA),
                 " B ",
                 "ICI",
-                'B', HandlerItem.blankPlate,
+                'B', ModItems.blankPlate,
                 'I', ModHelper.getThaumcraftItem("itemEssence", OreDictionary.WILDCARD_VALUE),
-                'C', HandlerItem.locationChip
+                'C', ModItems.locationChip
         );
 
         // TRANSFER TYPE - IC2
         for (ItemStack cable : getIC2Cables()) {
             RecipeHelper.addDependentOreRecipe(
                     "IC2",
-                    new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_IC2),
+                    new ItemStack(ModItems.transferChip, 1, TransferType.ENERGY_IC2),
                     " B ",
                     "ICI",
-                    'B', HandlerItem.blankPlate,
+                    'B', ModItems.blankPlate,
                     'I', cable,
-                    'C', HandlerItem.locationChip
+                    'C', ModItems.locationChip
             );
         }
 
         // TRANSFER TYPE - RF
         RecipeHelper.addDependentOreRecipe(
                 "CoFHAPI|energy",
-                new ItemStack(HandlerItem.transferChip, 1, TransferType.ENERGY_RF),
+                new ItemStack(ModItems.transferChip, 1, TransferType.ENERGY_RF),
                 " B ",
                 "ICI",
-                'B', HandlerItem.blankPlate,
+                'B', ModItems.blankPlate,
                 'I', Items.redstone,
-                'C', HandlerItem.locationChip
+                'C', ModItems.locationChip
         );
 
         // UPGRADE TYPE - REMOTE CAMOUFLAGE
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
+                new ItemStack(ModItems.upgradeChip, 1, UpgradeType.REMOTE_CAMO),
                 " B ",
                 "ICI",
-                'B', HandlerItem.blankPlate,
+                'B', ModItems.blankPlate,
                 'I', Items.ender_pearl,
-                'C', HandlerItem.locationChip
+                'C', ModItems.locationChip
         );
 
         // UPGRADE TYPE - SIMPLE CAMOUFLAGE
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.SIMPLE_CAMO),
+                new ItemStack(ModItems.upgradeChip, 1, UpgradeType.SIMPLE_CAMO),
                 " B ",
                 "ICI",
-                'B', HandlerItem.blankPlate,
+                'B', ModItems.blankPlate,
                 'I', Blocks.stone,
-                'C', HandlerItem.locationChip
+                'C', ModItems.locationChip
         );
 
         // UPGRADE TYPE - REMOTE ACCESS
         RecipeHelper.addOreRecipe(
-                new ItemStack(HandlerItem.upgradeChip, 1, UpgradeType.REMOTE_ACCESS),
+                new ItemStack(ModItems.upgradeChip, 1, UpgradeType.REMOTE_ACCESS),
                 "B",
                 "C",
                 "R",
-                'B', HandlerItem.blankPlate,
-                'C', HandlerItem.locationChip,
-                'R', HandlerItem.wirelessTransmitter
+                'B', ModItems.blankPlate,
+                'C', ModItems.locationChip,
+                'R', ModItems.wirelessTransmitter
         );
     }
 

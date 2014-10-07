@@ -2,7 +2,7 @@ package dmillerw.remoteio.recipe;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
-import dmillerw.remoteio.item.HandlerItem;
+import dmillerw.remoteio.lib.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -17,12 +17,12 @@ public class RecipeCopyLocation implements IRecipe {
 
     @SubscribeEvent
     public void onCrafting(PlayerEvent.ItemCraftedEvent event) {
-        if (event.crafting.getItem() == HandlerItem.locationChip && event.crafting.hasTagCompound()) {
+        if (event.crafting.getItem() == ModItems.locationChip && event.crafting.hasTagCompound()) {
             for (int i = 0; i < event.craftMatrix.getSizeInventory(); i++) {
                 ItemStack stack = event.craftMatrix.getStackInSlot(i);
 
                 if (stack != null) {
-                    if (stack.getItem() == HandlerItem.locationChip) {
+                    if (stack.getItem() == ModItems.locationChip) {
                         if (stack.hasTagCompound()) {
                             stack.stackSize++;
                         }
@@ -41,7 +41,7 @@ public class RecipeCopyLocation implements IRecipe {
             ItemStack stack = inv.getStackInSlot(i);
 
             if (stack != null) {
-                if (stack.getItem() == HandlerItem.locationChip) {
+                if (stack.getItem() == ModItems.locationChip) {
                     if (stack.hasTagCompound()) {
                         foundFilled++;
                     } else {
@@ -62,7 +62,7 @@ public class RecipeCopyLocation implements IRecipe {
             ItemStack stack = inv.getStackInSlot(i);
 
             if (stack != null) {
-                if (stack.getItem() == HandlerItem.locationChip) {
+                if (stack.getItem() == ModItems.locationChip) {
                     if (stack.hasTagCompound()) {
                         return stack.copy();
                     }
@@ -80,6 +80,6 @@ public class RecipeCopyLocation implements IRecipe {
 
     @Override
     public ItemStack getRecipeOutput() {
-        return new ItemStack(HandlerItem.locationChip);
+        return new ItemStack(ModItems.locationChip);
     }
 }

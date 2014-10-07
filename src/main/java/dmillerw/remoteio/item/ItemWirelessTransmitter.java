@@ -3,6 +3,7 @@ package dmillerw.remoteio.item;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.helper.PlayerHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.lib.ModItems;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -25,7 +26,7 @@ public class ItemWirelessTransmitter extends Item {
 
     public static boolean hasValidRemote(EntityPlayer player) {
         for (ItemStack stack : player.inventory.mainInventory) {
-            if (stack != null && stack.getItem() == HandlerItem.wirelessTransmitter) {
+            if (stack != null && stack.getItem() == ModItems.wirelessTransmitter) {
                 if (player.getCommandSenderName().equalsIgnoreCase(getPlayerName(stack))) {
                     return true;
                 }

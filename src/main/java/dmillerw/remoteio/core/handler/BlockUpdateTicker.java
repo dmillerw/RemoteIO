@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import dmillerw.remoteio.block.BlockSkylight;
-import dmillerw.remoteio.block.HandlerBlock;
+import dmillerw.remoteio.lib.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -49,8 +49,8 @@ public class BlockUpdateTicker {
             world.updateLightByType(EnumSkyBlock.Sky, x, y, z);
             for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
                 Block block = world.getBlock(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (block != null && block == HandlerBlock.skylight) {
-                    ((BlockSkylight)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, HandlerBlock.skylight, meta);
+                if (block != null && block == ModBlocks.skylight) {
+                    ((BlockSkylight)block).onBlockUpdate(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, ModBlocks.skylight, meta);
                 }
             }
         }

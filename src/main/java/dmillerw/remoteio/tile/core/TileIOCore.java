@@ -4,7 +4,7 @@ import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.inventory.InventoryItem;
 import dmillerw.remoteio.inventory.InventoryNBT;
-import dmillerw.remoteio.item.HandlerItem;
+import dmillerw.remoteio.lib.ModItems;
 import dmillerw.remoteio.lib.VisualState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,11 +67,11 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
     }
 
     public boolean hasTransferChip(int type) {
-        return InventoryHelper.containsStack(transferChips, new ItemStack(HandlerItem.transferChip, 1, type), true, false);
+        return InventoryHelper.containsStack(transferChips, new ItemStack(ModItems.transferChip, 1, type), true, false);
     }
 
     public boolean hasUpgradeChip(int type) {
-        return InventoryHelper.containsStack(upgradeChips, new ItemStack(HandlerItem.upgradeChip, 1, type), true, false);
+        return InventoryHelper.containsStack(upgradeChips, new ItemStack(ModItems.upgradeChip, 1, type), true, false);
     }
 
 	/* BEGIN CLIENT UPDATE METHODS
