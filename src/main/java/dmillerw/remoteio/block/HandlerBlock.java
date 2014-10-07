@@ -2,10 +2,7 @@ package dmillerw.remoteio.block;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.item.block.ItemBlockMulti;
-import dmillerw.remoteio.tile.TileMachineHeater;
-import dmillerw.remoteio.tile.TileMachineReservoir;
-import dmillerw.remoteio.tile.TileRemoteInterface;
-import dmillerw.remoteio.tile.TileRemoteInventory;
+import dmillerw.remoteio.tile.*;
 import net.minecraft.block.Block;
 
 /**
@@ -17,6 +14,7 @@ public class HandlerBlock {
     public static Block remoteInventory;
     public static Block machine;
     public static Block skylight;
+    public static Block intelligentWorkbench;
 
     public static void initialize() {
         remoteInterface = new BlockRemoteInterface().setBlockName("remote_interface");
@@ -34,5 +32,9 @@ public class HandlerBlock {
 
         skylight = new BlockSkylight().setBlockName("skylight");
         GameRegistry.registerBlock(skylight, "skylight");
+
+        intelligentWorkbench = new BlockIntelligentWorkbench().setBlockName("intelligentWorkbench");
+        GameRegistry.registerBlock(intelligentWorkbench, "intelligentWorkbench");
+        GameRegistry.registerTileEntity(TileIntelligentWorkbench.class, "remoteio:intelligentWorkbench");
     }
 }

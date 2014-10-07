@@ -72,6 +72,13 @@ public class HandlerRecipe {
                 'R', Items.redstone
         );
 
+        // INTELLIGENT WORKBENCH
+        GameRegistry.addShapelessRecipe(
+                new ItemStack(HandlerBlock.intelligentWorkbench),
+                Blocks.crafting_table,
+                HandlerItem.locationChip
+        );
+
         // IO TOOL
         RecipeHelper.addOreRecipe(
                 new ItemStack(HandlerItem.ioTool),

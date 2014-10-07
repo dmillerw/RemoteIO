@@ -124,7 +124,7 @@ public class DimensionalCoords {
             return false;
         }
 
-        return equals(obj);
+        return equals((DimensionalCoords)obj);
     }
 
     public boolean equals(DimensionalCoords coords) {

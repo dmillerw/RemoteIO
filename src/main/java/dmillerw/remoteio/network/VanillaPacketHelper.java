@@ -1,6 +1,12 @@
 package dmillerw.remoteio.network;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerManager;
@@ -10,11 +16,68 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 
+import java.io.IOException;
+
 /**
  * @author dmillerw
  */
 public class VanillaPacketHelper {
 
+    /* IO */
+    public static void writeNBTTagCompoundToBuffer(ByteBuf byteBuf, NBTTagCompound nbtTagCompound) throws IOException {
+        if (nbtTagCompound == null) {
+            byteBuf.writeShort(-1);
+        } else {
+            byte[] abyte = CompressedStreamTools.compress(nbtTagCompound);
+            byteBuf.writeShort((short) abyte.length);
+            byteBuf.writeBytes(abyte);
+        }
+    }
+
+    public static NBTTagCompound readNBTTagCompoundFromBuffer(ByteBuf byteBuf) throws IOException {
+        short short1 = byteBuf.readShort();
+
+        if (short1 < 0) {
+            return null;
+        } else {
+            byte[] abyte = new byte[short1];
+            byteBuf.readBytes(abyte);
+            return CompressedStreamTools.func_152457_a(abyte, new NBTSizeTracker(2097152L));
+        }
+    }
+
+    public static void writeItemStackToBuffer(ByteBuf byteBuf, ItemStack itemStack) throws IOException {
+        if (itemStack == null) {
+            byteBuf.writeShort(-1);
+        } else {
+            byteBuf.writeShort(Item.getIdFromItem(itemStack.getItem()));
+            byteBuf.writeByte(itemStack.stackSize);
+            byteBuf.writeShort(itemStack.getItemDamage());
+            NBTTagCompound nbttagcompound = null;
+
+            if (itemStack.getItem().isDamageable() || itemStack.getItem().getShareTag()) {
+                nbttagcompound = itemStack.stackTagCompound;
+            }
+
+            writeNBTTagCompoundToBuffer(byteBuf, nbttagcompound);
+        }
+    }
+
+    public static ItemStack readItemStackFromBuffer(ByteBuf byteBuf) throws IOException {
+        ItemStack itemstack = null;
+        short short1 = byteBuf.readShort();
+
+        if (short1 >= 0) {
+            byte b0 = byteBuf.readByte();
+            short short2 = byteBuf.readShort();
+            itemstack = new ItemStack(Item.getItemById(short1), b0, short2);
+            itemstack.stackTagCompound = readNBTTagCompoundFromBuffer(byteBuf);
+        }
+
+        return itemstack;
+    }
+
+    /* SENDING */
     public static void sendToAllWatchingTile(TileEntity tile, Packet packet) {
         if (!tile.hasWorldObj()) {
             return;

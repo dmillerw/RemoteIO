@@ -1,10 +1,12 @@
 package dmillerw.remoteio.core.handler;
 
 import cpw.mods.fml.common.network.IGuiHandler;
+import dmillerw.remoteio.client.gui.GuiIntelligentWorkbench;
 import dmillerw.remoteio.client.gui.GuiRemoteInterface;
 import dmillerw.remoteio.client.gui.GuiRemoteInventory;
 import dmillerw.remoteio.client.gui.GuiSimpleCamo;
 import dmillerw.remoteio.inventory.InventoryItem;
+import dmillerw.remoteio.inventory.container.ContainerIntelligentWorkbench;
 import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
 import dmillerw.remoteio.inventory.container.ContainerRemoteInventory;
 import dmillerw.remoteio.inventory.container.ContainerSimpleCamo;
@@ -21,6 +23,7 @@ public class GuiHandler implements IGuiHandler {
     public static final int GUI_REMOTE_INTERFACE = 0;
     public static final int GUI_SIMPLE_CAMO = 1;
     public static final int GUI_REMOTE_INVENTORY = 2;
+    public static final int GUI_INTELLIGENT_WORKBENCH = 3;
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -33,6 +36,9 @@ public class GuiHandler implements IGuiHandler {
 
             case GUI_REMOTE_INVENTORY:
                 return new ContainerRemoteInventory(player.inventory, (TileRemoteInventory) world.getTileEntity(x, y, z));
+
+            case GUI_INTELLIGENT_WORKBENCH:
+                return new ContainerIntelligentWorkbench(player.inventory, world, x, y, z);
         }
 
         return null;
@@ -49,6 +55,9 @@ public class GuiHandler implements IGuiHandler {
 
             case GUI_REMOTE_INVENTORY:
                 return new GuiRemoteInventory(player.inventory, (TileRemoteInventory) world.getTileEntity(x, y, z));
+
+            case GUI_INTELLIGENT_WORKBENCH:
+                return new GuiIntelligentWorkbench(player.inventory, world, x, y, z);
         }
 
         return null;
