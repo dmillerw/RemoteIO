@@ -23,6 +23,6 @@ public class CommonProxy {
     }
 
     public void setClientPlayerSlot(int slot, ItemStack itemStack) {
-        C
+
     }
 }
