@@ -3,6 +3,7 @@ package dmillerw.remoteio.core.proxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author dmillerw
@@ -19,5 +20,9 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent event) {
 
+    }
+
+    public void setClientPlayerSlot(int slot, ItemStack itemStack) {
+        C
     }
 }

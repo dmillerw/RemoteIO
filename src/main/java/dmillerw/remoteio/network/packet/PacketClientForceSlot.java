@@ -3,10 +3,9 @@ package dmillerw.remoteio.network.packet;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.network.VanillaPacketHelper;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import java.io.IOException;
@@ -57,8 +56,7 @@ public class PacketClientForceSlot implements IMessage, IMessageHandler<PacketCl
 
     @Override
     public IMessage onMessage(PacketClientForceSlot message, MessageContext ctx) {
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        player.openContainer.getSlot(message.slot).putStack(message.itemStack);
+        RemoteIO.proxy.setClientPlayerSlot(message.slot, message.itemStack);
         return null;
     }
 }

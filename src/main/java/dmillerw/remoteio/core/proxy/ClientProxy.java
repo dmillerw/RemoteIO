@@ -6,8 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import dmillerw.remoteio.client.render.*;
 import dmillerw.remoteio.tile.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
+import net.minecraft.item.ItemStack;
 
 /**
  * @author dmillerw
@@ -23,5 +22,10 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMachineReservoir.class, new RenderTileMachine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMachineHeater.class, new RenderTileMachine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileIntelligentWorkbench.class, new RenderTileIntelligentWorkbench());
+    }
+
+    @Override
+    public void setClientPlayerSlot(int slot, ItemStack itemStack) {
+        Minecraft.getMinecraft().thePlayer.openContainer.getSlot(slot).putStack(itemStack);
     }
 }
