@@ -28,12 +28,8 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
 
     private RenderBlocks renderBlocks;
 
-    public static boolean shouldRender(VisualState state) {
-        return state == VisualState.CAMOUFLAGE_REMOTE || state == VisualState.CAMOUFLAGE_BOTH;
-    }
-
     public void renderRemoteInterfaceAt(TileRemoteInterface tile, double x, double y, double z, float partial) {
-        if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj()) && shouldRender(tile.visualState)) {
+        if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj()) && tile.visualState.isCamouflage()) {
             WorldClient worldClient = FMLClientHandler.instance().getWorldClient();
             DimensionalCoords there = tile.remotePosition;
 

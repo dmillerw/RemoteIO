@@ -1,6 +1,5 @@
 package dmillerw.remoteio.client.gui;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import dmillerw.remoteio.client.gui.button.GuiButtonCustom;
 import dmillerw.remoteio.core.helper.MatrixHelper;
 import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
@@ -9,7 +8,6 @@ import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.I18n;
@@ -70,8 +68,6 @@ public class GuiRemoteInterface extends GuiContainer {
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 
         if (tile.remotePosition != null) {
-            WorldClient world = FMLClientHandler.instance().getWorldClient();
-
             GL11.glPushMatrix();
 
             double scale = 32;

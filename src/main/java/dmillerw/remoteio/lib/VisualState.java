@@ -6,12 +6,9 @@ public enum VisualState {
     INACTIVE_BLINK,
     ACTIVE,
     ACTIVE_BLINK,
-    CAMOUFLAGE_SIMPLE,
-    CAMOUFLAGE_REMOTE,
-    CAMOUFLAGE_BOTH;
+    CAMOUFLAGE_REMOTE;
 
     public boolean isCamouflage() {
-        return this == CAMOUFLAGE_SIMPLE || this == CAMOUFLAGE_REMOTE || this == CAMOUFLAGE_BOTH;
+        return this == CAMOUFLAGE_REMOTE;
     }
-
 }

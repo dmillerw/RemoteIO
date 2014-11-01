@@ -28,11 +28,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public World getWorld(int dimension) {
-        return Minecraft.getMinecraft().theWorld;
-    }
-
-    @Override
     public boolean canPlayerOpenContainer(EntityPlayer player) {
         return allowContainerUsage;
     }

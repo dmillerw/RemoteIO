@@ -88,8 +88,6 @@ public abstract class BlockIOCore extends BlockContainer {
         if (tile != null) {
             if (!tile.visualState.isCamouflage()) {
                 return icons[tile.visualState.ordinal()];
-            } else if (tile.simpleCamo != null) {
-                return Block.getBlockFromItem(tile.simpleCamo.getItem()).getIcon(side, tile.simpleCamo.getItemDamage());
             }
         }
 

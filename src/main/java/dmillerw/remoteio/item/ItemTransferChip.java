@@ -13,8 +13,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.awt.*;
-
 /**
  * @author dmillerw
  */
@@ -74,8 +72,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
     @Override
     public int getColorFromItemStack(ItemStack stack, int pass) {
         if (pass == 1) {
-            Color color = new Color(names.get(stack.getItemDamage()).hashCode()).brighter();
-            return color.getRGB();
+            return names.get(stack.getItemDamage()).hashCode();
         }
         return 0xFFFFFF;
     }

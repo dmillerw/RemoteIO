@@ -3,7 +3,6 @@ package dmillerw.remoteio.tile;
 import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
-import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.PlayerHelper;
 import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.helper.transfer.IC2TransferHelper;
@@ -187,12 +186,6 @@ public class TileRemoteInventory extends TileIOCore implements
 
             if (player == null) {
                 return VisualState.INACTIVE_BLINK;
-            }
-
-            boolean simple = hasUpgradeChip(UpgradeType.SIMPLE_CAMO);
-
-            if (simple) {
-                return VisualState.CAMOUFLAGE_SIMPLE;
             }
 
             return missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;

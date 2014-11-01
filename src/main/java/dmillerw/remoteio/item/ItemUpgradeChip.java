@@ -1,9 +1,7 @@
 package dmillerw.remoteio.item;
 
-import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.UpgradeType;
-import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -15,8 +13,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import java.awt.*;
-
 /**
  * @author dmillerw
  */
@@ -25,17 +21,17 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
     private IIcon[] icons;
 
     public ItemUpgradeChip() {
-        super(new int[]{
-                UpgradeType.REMOTE_CAMO,
-                UpgradeType.REMOTE_ACCESS,
-                UpgradeType.SIMPLE_CAMO
-        },
+        super(
+                new int[]{
+                    UpgradeType.REMOTE_CAMO,
+                    UpgradeType.REMOTE_ACCESS
+                },
 
                 new String[]{
-                        "remote_camo",
-                        "remote_access",
-                        "simple_camo"
-                });
+                    "remote_camo",
+                    "remote_access"
+                }
+        );
 
         setCreativeTab(TabRemoteIO.TAB);
     }
@@ -68,25 +64,9 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-        if (!world.isRemote) {
-            if (player.isSneaking()) {
-                switch (stack.getItemDamage()) {
-                    case UpgradeType.SIMPLE_CAMO:
-                        player.openGui(RemoteIO.instance, GuiHandler.GUI_SIMPLE_CAMO, world, 0, 0, 0);
-                        break;
-                }
-            }
-        }
-
-        return stack;
-    }
-
-    @Override
     public int getColorFromItemStack(ItemStack stack, int pass) {
         if (pass == 1) {
-            Color color = new Color(names.get(stack.getItemDamage()).hashCode()).brighter();
-            return color.getRGB();
+            return names.get(stack.getItemDamage()).hashCode();
         }
         return 0xFFFFFF;
     }

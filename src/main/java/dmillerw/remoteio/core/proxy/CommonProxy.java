@@ -25,10 +25,6 @@ public class CommonProxy {
 
     }
 
-    public World getWorld(int dimension) {
-        return MinecraftServer.getServer().worldServerForDimension(dimension);
-    }
-
     public boolean canPlayerOpenContainer(EntityPlayer player) {
         return PlayerEventHandler.whitelist.contains(player.getCommandSenderName());
     }

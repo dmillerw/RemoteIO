@@ -3,6 +3,7 @@ package dmillerw.remoteio.client.render;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import dmillerw.remoteio.block.BlockRemoteInterface;
+import dmillerw.remoteio.block.core.BlockIOCore;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
@@ -18,7 +19,7 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
 
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-        IIcon inactive = ((BlockRemoteInterface) block).icons[0];
+        IIcon inactive = BlockIOCore.icons[0];
 
         Tessellator tessellator = Tessellator.instance;
 
