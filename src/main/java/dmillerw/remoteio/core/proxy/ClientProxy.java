@@ -14,8 +14,6 @@ import net.minecraft.world.World;
  */
 public class ClientProxy extends CommonProxy {
 
-    public static boolean allowContainerUsage = false;
-
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         RenderingRegistry.registerBlockHandler(new RenderBlockRemoteInterface());
@@ -25,15 +23,5 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileMachineReservoir.class, new RenderTileMachine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileMachineHeater.class, new RenderTileMachine());
         ClientRegistry.bindTileEntitySpecialRenderer(TileIntelligentWorkbench.class, new RenderTileIntelligentWorkbench());
-    }
-
-    @Override
-    public boolean canPlayerOpenContainer(EntityPlayer player) {
-        return allowContainerUsage;
-    }
-
-    @Override
-    public void resetPlayerWhitelist(EntityPlayer player) {
-        allowContainerUsage = false;
     }
 }

@@ -1,5 +1,6 @@
 package dmillerw.remoteio.item;
 
+import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.helper.PlayerHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
@@ -185,7 +186,7 @@ public class ItemWirelessTransmitter extends Item {
                 float[] hit = getHitCoordinates(stack);
 
                 if (coord.inWorld(world)) {
-                    coord.getBlock().onBlockActivated(coord.getWorld(), coord.x, coord.y, coord.z, player, side, hit[0], hit[1], hit[2]);
+                    BlockRemoteInterface.activateBlock(coord.getWorld(), coord.x, coord.y, coord.z, (net.minecraft.entity.player.EntityPlayerMP) player, side, hit[0], hit[1], hit[2]);
                 }
             }
         }
