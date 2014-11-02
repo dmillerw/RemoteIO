@@ -3,7 +3,14 @@ package dmillerw.remoteio.core.proxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import dmillerw.remoteio.core.handler.ContainerHandler;
+import dmillerw.remoteio.network.ServerProxyPlayer;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 /**
  * @author dmillerw
@@ -24,5 +31,30 @@ public class CommonProxy {
 
     public void setClientPlayerSlot(int slot, ItemStack itemStack) {
 
+    }
+
+    public void activateBlock(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float fx, float fy, float fz) {
+        EntityPlayerMP entityPlayerMP = (EntityPlayerMP) entityPlayer;
+        Container container = entityPlayer.openContainer;
+        ServerProxyPlayer proxyPlayer = new ServerProxyPlayer(entityPlayerMP);
+
+        proxyPlayer.playerNetServerHandler = entityPlayerMP.playerNetServerHandler;
+        proxyPlayer.inventory = entityPlayerMP.inventory;
+        proxyPlayer.currentWindowId = entityPlayerMP.currentWindowId;
+        proxyPlayer.inventoryContainer = entityPlayerMP.inventoryContainer;
+        proxyPlayer.openContainer = entityPlayerMP.openContainer;
+        proxyPlayer.worldObj = entityPlayerMP.worldObj;
+
+        Block block = proxyPlayer.worldObj.getBlock(x, y, z);
+        if (block != null) {
+            block.onBlockActivated(proxyPlayer.worldObj, x, y, z, proxyPlayer, side, fx, fy, fz);
+        }
+
+        entityPlayerMP.theItemInWorldManager.thisPlayerMP = entityPlayerMP;
+        if (container != proxyPlayer.openContainer) {
+            entityPlayerMP.openContainer = proxyPlayer.openContainer;
+        }
+
+        ContainerHandler.INSTANCE.containerWhitelist.put(entityPlayerMP.getCommandSenderName(), entityPlayerMP.openContainer);
     }
 }

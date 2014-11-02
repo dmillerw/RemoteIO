@@ -2,22 +2,20 @@ package dmillerw.remoteio.block;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.core.BlockIOCore;
+import dmillerw.remoteio.client.handler.SoundHandler;
 import dmillerw.remoteio.core.UpgradeType;
-import dmillerw.remoteio.core.handler.ContainerHandler;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
-import dmillerw.remoteio.network.ServerProxyPlayer;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -33,50 +31,24 @@ public class BlockRemoteInterface extends BlockIOCore {
 
     public static int renderID;
 
-    public static void activateBlock(World world, int x, int y, int z, EntityPlayerMP entityPlayer, int side, float fx, float fy, float fz) {
-        Container container = entityPlayer.openContainer;
-        ServerProxyPlayer proxyPlayer = new ServerProxyPlayer(entityPlayer);
-
-        proxyPlayer.playerNetServerHandler = entityPlayer.playerNetServerHandler;
-        proxyPlayer.inventory = entityPlayer.inventory;
-        proxyPlayer.currentWindowId = entityPlayer.currentWindowId;
-        proxyPlayer.inventoryContainer = entityPlayer.inventoryContainer;
-        proxyPlayer.openContainer = entityPlayer.openContainer;
-        proxyPlayer.worldObj = entityPlayer.worldObj;
-
-        Block block = proxyPlayer.worldObj.getBlock(x, y, z);
-        if (block != null)
-            block.onBlockActivated(proxyPlayer.worldObj, x, y, z, proxyPlayer, side, fx, fy, fz);
-
-        entityPlayer.theItemInWorldManager.thisPlayerMP = entityPlayer;
-        if (container != proxyPlayer.openContainer) {
-            entityPlayer.openContainer = proxyPlayer.openContainer;
-        }
-
-        ContainerHandler.INSTANCE.containerWhitelist.put(entityPlayer.getCommandSenderName(), entityPlayer.openContainer);
-    }
-
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float fx, float fy, float fz) {
         boolean result = super.onBlockActivated(world, x, y, z, player, side, fx, fy, fz);
+
         if (result) {
-            return result;
+            return true;
         }
 
-        if (!world.isRemote) {
-            TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
-            if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
-                int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
-                DimensionalCoords there = tile.remotePosition;
-
-                BlockRemoteInterface.activateBlock(world, there.x, there.y, there.z, (EntityPlayerMP) player, adjustedSide, fx, fy, fz);
-
-                return true;
-            }
+        if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
+            int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
+            DimensionalCoords there = tile.remotePosition;
+            SoundHandler.INSTANCE.translateNextSound(x, y, z);
+            RemoteIO.proxy.activateBlock(world, there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
         }
 
-        return result;
+        return true;
     }
 
     @Override

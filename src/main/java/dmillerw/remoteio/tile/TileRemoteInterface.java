@@ -4,7 +4,6 @@ import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
-import dmillerw.remoteio.core.helper.ArrayHelper;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
@@ -431,9 +430,12 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             return sidedInventory.getAccessibleSlotsFromSide(getAdjustedSide(side));
         } else {
             IInventory inventory = (IInventory) getTransferImplementation(IInventory.class);
-
             if (inventory != null) {
-                return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory() - 1, 1);
+                int[] array = new int[inventory.getSizeInventory()];
+                for (int i=0; i<array.length; i++) {
+                    array[i] = i;
+                }
+                return array;
             }
         }
         return new int[0];

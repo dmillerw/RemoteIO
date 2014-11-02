@@ -50,14 +50,6 @@ public class InventoryHelper {
         return false;
     }
 
-    public static int[] getAccessibleSlots(IInventory inventory, ForgeDirection side) {
-        if (inventory instanceof ISidedInventory) {
-            return ((ISidedInventory) inventory).getAccessibleSlotsFromSide(side.ordinal());
-        } else {
-            return ArrayHelper.getIncrementalArray(0, inventory.getSizeInventory(), 1);
-        }
-    }
-
     public static void dropContents(IInventory inventory, World world, int x, int y, int z) {
         for (int i = 0; i < inventory.getSizeInventory(); ++i) {
             ItemStack stack = inventory.getStackInSlot(i);
