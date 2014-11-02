@@ -55,8 +55,11 @@ public class ClientProxy extends CommonProxy {
 
             Block block = entityClientPlayerMP.worldObj.getBlock(x, y, z);
             if (block != null) {
+                if (proxyPlayer.getHeldItem() != null) {
+                    if (proxyPlayer.getHeldItem().getItem().onItemUseFirst(proxyPlayer.getHeldItem(), proxyPlayer, proxyPlayer.worldObj, x, y, z, side, fx, fy, fz))
+                        return;
+                }
                 block.onBlockActivated(entityClientPlayerMP.worldObj, x, y, z, proxyPlayer, side, fx, fy, fz);
-                SoundHandler.INSTANCE.translateNextSound(x, y, z);
             }
 
             if (entityClientPlayerMP.openContainer != proxyPlayer.openContainer) {
