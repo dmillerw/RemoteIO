@@ -79,7 +79,7 @@ public class ItemLocationChip extends Item {
                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
             } else {
                 if (tile != null) {
-                    if (tile instanceof TileRemoteInterface) {
+                    if (tile instanceof TileRemoteInterface && !((TileRemoteInterface) tile).locked) {
                         DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
 
                         if (coords != null) {
