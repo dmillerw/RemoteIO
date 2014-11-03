@@ -220,6 +220,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             registeredWithIC2 = false;
         }
 
+        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+            if (aeGridNode != null) {
+                aeGridNode.destroy();
+                aeGridNode.updateState();
+            }
+        }
+
         BlockTracker.INSTANCE.stopTracking(remotePosition);
     }
 
@@ -228,6 +235,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         if (registeredWithIC2) {
             MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
             registeredWithIC2 = false;
+        }
+
+        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+            if (aeGridNode != null) {
+                aeGridNode.destroy();
+                aeGridNode.updateState();
+            }
         }
 
         BlockTracker.INSTANCE.stopTracking(remotePosition);
@@ -317,6 +331,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
         if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
+                aeGridNode.destroy();
                 aeGridNode.updateState();
             }
         }
@@ -337,6 +352,15 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
                 if (remotePosition.getTileEntity() instanceof IGridHost) {
                     aeGridNode = new LinkedGridNode(((IGridHost) remotePosition.getTileEntity()).getGridNode(ForgeDirection.UNKNOWN), this);
                     aeGridNode.updateState();
+                }
+            }
+
+            for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {
+                TileEntity tileEntity = worldObj.getTileEntity(xCoord + forgeDirection.offsetZ, yCoord + forgeDirection.offsetY, zCoord + forgeDirection.offsetZ);
+                if (tileEntity != null && tileEntity instanceof IGridHost) {
+                    IGridNode gridNode = ((IGridHost) tileEntity).getGridNode(forgeDirection.getOpposite());
+                    if (gridNode != null)
+                        gridNode.updateState();
                 }
             }
         }
