@@ -1,5 +1,6 @@
 package dmillerw.remoteio.recipe;
 
+import appeng.api.AEApi;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -181,9 +182,10 @@ public class ModRecipes {
                 DependencyInfo.ModIds.AE2,
                 new ItemStack(ModItems.transferChip, 1, TransferType.NETWORK_AE),
                 " B ",
-                "ICI",
+                " C ",
+                " I ",
                 'B', ModItems.blankPlate,
-                'I', Blocks.dirt,
+                'I', AEApi.instance().blocks().blockController.block(),
                 'C', ModItems.locationChip
         );
 
@@ -194,16 +196,6 @@ public class ModRecipes {
                 "ICI",
                 'B', ModItems.blankPlate,
                 'I', Items.ender_pearl,
-                'C', ModItems.locationChip
-        );
-
-        // UPGRADE TYPE - SIMPLE CAMOUFLAGE
-        RecipeHelper.addOreRecipe(
-                new ItemStack(ModItems.upgradeChip, 1, UpgradeType.SIMPLE_CAMO),
-                " B ",
-                "ICI",
-                'B', ModItems.blankPlate,
-                'I', Blocks.stone,
                 'C', ModItems.locationChip
         );
 

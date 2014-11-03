@@ -52,6 +52,27 @@ public class BlockRemoteInterface extends BlockIOCore {
     }
 
     @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
+        if (!world.isRemote) {
+            TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+            if (tile != null && tile.remotePosition != null) {
+                DimensionalCoords there = tile.remotePosition;
+                Block remote = there.getBlock();
+
+                if (remote.hasComparatorInputOverride()) {
+                    return remote.getComparatorInputOverride(there.getWorld(), there.x, there.y, there.z, side);
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
     public int getGuiID() {
         return GuiHandler.GUI_REMOTE_INTERFACE;
     }

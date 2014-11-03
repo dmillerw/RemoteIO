@@ -55,6 +55,16 @@ public class BlockTracker {
                         trackedBlock.callback();
                         trackedBlock.lastBlock = trackedBlock.coordinates.getBlock();
                         trackedBlock.lastMeta = trackedBlock.coordinates.getMeta();
+                    } else {
+                        Block block = trackedBlock.coordinates.getBlock();
+                        for (int i=0; i<6; i++) {
+                            int comparator = block.getComparatorInputOverride(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
+                            if (comparator != trackedBlock.lastComparatorValue) {
+                                trackedBlock.callback();
+                                trackedBlock.lastComparatorValue = comparator;
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -65,6 +75,7 @@ public class BlockTracker {
         public final DimensionalCoords coordinates;
         public Block lastBlock;
         public int lastMeta;
+        public int lastComparatorValue;
         public final ITrackerCallback callback;
         public boolean isDead = false;
 
