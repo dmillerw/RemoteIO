@@ -6,6 +6,7 @@ import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.LinkedGridNode;
 import dmillerw.remoteio.core.TransferType;
@@ -15,6 +16,7 @@ import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
 import dmillerw.remoteio.lib.DependencyInfo;
 import dmillerw.remoteio.lib.DimensionalCoords;
+import dmillerw.remoteio.lib.ModItems;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import ic2.api.energy.event.EnergyTileLoadEvent;
@@ -164,6 +166,46 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             if (!tracking) {
                 BlockTracker.INSTANCE.startTracking(remotePosition, this);
                 tracking = true;
+            }
+
+            if (ModAPIManager.INSTANCE.hasAPI(DependencyInfo.ModIds.COFH_API)) {
+                ItemStack rfTransferChip = null;
+                for (int i=0; i<transferChips.getSizeInventory(); i++) {
+                    ItemStack itemStack = transferChips.getStackInSlot(i);
+                    if (itemStack != null && itemStack.hasTagCompound() &&  itemStack.getItem() == ModItems.transferChip && itemStack.getItemDamage() == TransferType.ENERGY_RF) {
+                        rfTransferChip = itemStack;
+                        break;
+                    }
+                }
+
+                if (rfTransferChip != null) {
+                    boolean pushPower = rfTransferChip.getTagCompound().getBoolean("pushPower");
+                    int maxPushPower = rfTransferChip.getTagCompound().getInteger("maxPushPower");
+
+                    if (pushPower) {
+                        int count = 0;
+                        IEnergyHandler[] energyHandlers = new IEnergyHandler[ForgeDirection.VALID_DIRECTIONS.length];
+                        for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {
+                            TileEntity tileEntity = worldObj.getTileEntity(xCoord + forgeDirection.offsetX, yCoord + forgeDirection.offsetY, zCoord + forgeDirection.offsetZ);
+                            if (tileEntity instanceof IEnergyHandler && getEnergyStored(forgeDirection.getOpposite()) > 0) {
+                                count++;
+                                energyHandlers[forgeDirection.ordinal()] = (IEnergyHandler) tileEntity;
+                            }
+                        }
+
+                        if (count > 0) {
+                            int perBlock = maxPushPower / count;
+                            for (int i=0; i<energyHandlers.length; i++) {
+                                IEnergyHandler energyHandler = energyHandlers[i];
+                                if (energyHandler != null) {
+                                    ForgeDirection to = ForgeDirection.getOrientation(i);
+                                    ForgeDirection from = to.getOpposite();
+                                    energyHandler.receiveEnergy(from, extractEnergy(to, perBlock, false), false);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

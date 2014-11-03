@@ -1,7 +1,9 @@
 package dmillerw.remoteio.item;
 
+import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.TransferType;
+import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -49,9 +51,14 @@ public class ItemTransferChip extends ItemSelectiveMeta {
     }
 
     @Override
-    public void addInformation(ItemStack p_77624_1_, EntityPlayer p_77624_2_, List p_77624_3_, boolean p_77624_4_) {
-        if (p_77624_1_.getItemDamage() == TransferType.NETWORK_AE) {
-            p_77624_3_.add("TEMPORARY RECIPE!");
+    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean debug) {
+        if (itemStack.getItemDamage() == TransferType.NETWORK_AE) {
+            list.add("TEMPORARY RECIPE!");
+        } else if (itemStack.getItemDamage() == TransferType.ENERGY_RF) {
+            if (itemStack.hasTagCompound()) {
+                list.add("Push Power: " + itemStack.getTagCompound().getBoolean("pushPower"));
+                list.add("Power Rate: " + itemStack.getTagCompound().getInteger("maxPushPower"));
+            }
         }
     }
 
@@ -80,6 +87,14 @@ public class ItemTransferChip extends ItemSelectiveMeta {
         }
 
         return false;
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer) {
+        if (world.isRemote && entityPlayer.isSneaking()) {
+            entityPlayer.openGui(RemoteIO.instance, GuiHandler.GUI_RF_CONFIG, world, 0, 0, 0);
+        }
+        return itemStack;
     }
 
     @Override
