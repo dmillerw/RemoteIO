@@ -9,6 +9,7 @@ public class DependencyInfo {
         public static final String COFH_API = "CoFHAPI";
         public static final String THAUMCRAFT = "Thaumcraft";
         public static final String IC2 = "IC2";
+        public static final String AE2 = "appliedenergistics2";
     }
 
     public static final class Paths {
@@ -34,6 +35,11 @@ public class DependencyInfo {
             public static final String IASPECTSOURCE = COMMON_PATH + "aspects.IAspectSource";
             public static final String IASPECTCONTAINER = COMMON_PATH + "aspects.IAspectContainer";
             public static final String IWANDABLE = COMMON_PATH + "wands.IWandable";
+        }
+
+        public static final class AE2 {
+            public static final String IGRIDHOST = "appeng.api.networking.IGridHost";
+            public static final String IGRIDBLOCK = "appeng.api.networking.IGridBlock";
         }
     }
 }

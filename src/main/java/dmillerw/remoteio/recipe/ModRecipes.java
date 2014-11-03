@@ -3,11 +3,12 @@ package dmillerw.remoteio.recipe;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
-import dmillerw.remoteio.lib.ModBlocks;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.ModHelper;
 import dmillerw.remoteio.core.helper.RecipeHelper;
+import dmillerw.remoteio.lib.DependencyInfo;
+import dmillerw.remoteio.lib.ModBlocks;
 import dmillerw.remoteio.lib.ModItems;
 import ic2.api.item.IC2Items;
 import net.minecraft.init.Blocks;
@@ -172,6 +173,17 @@ public class ModRecipes {
                 "ICI",
                 'B', ModItems.blankPlate,
                 'I', Items.redstone,
+                'C', ModItems.locationChip
+        );
+
+        // TRANSFER TYPE - AE2 NETWORK
+        RecipeHelper.addDependentRecipe(
+                DependencyInfo.ModIds.AE2,
+                new ItemStack(ModItems.transferChip, 1, TransferType.NETWORK_AE),
+                " B ",
+                "ICI",
+                'B', ModItems.blankPlate,
+                'I', Blocks.dirt,
                 'C', ModItems.locationChip
         );
 

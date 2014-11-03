@@ -1,7 +1,12 @@
 package dmillerw.remoteio.tile;
 
+import appeng.api.networking.*;
+import appeng.api.util.AECableType;
+import appeng.api.util.AEColor;
+import appeng.api.util.DimensionalCoord;
 import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Optional;
+import dmillerw.remoteio.core.LinkedGridNode;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.RotationHelper;
@@ -37,6 +42,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 import thaumcraft.api.aspects.*;
 import thaumcraft.api.wands.IWandable;
 
+import java.util.EnumSet;
+
 /**
  * @author dmillerw
  */
@@ -51,6 +58,7 @@ import thaumcraft.api.wands.IWandable;
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYTILE, modid = DependencyInfo.ModIds.IC2),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IENERGYSTORAGE, modid = DependencyInfo.ModIds.IC2),
         @Optional.Interface(iface = DependencyInfo.Paths.COFH.IENERGYHANDLER, modid = DependencyInfo.ModIds.COFH_API),
+        @Optional.Interface(iface = DependencyInfo.Paths.AE2.IGRIDHOST, modid = DependencyInfo.ModIds.AE2),
         @Optional.Interface(iface = DependencyInfo.Paths.Thaumcraft.IWANDABLE, modid = DependencyInfo.ModIds.THAUMCRAFT),
         @Optional.Interface(iface = DependencyInfo.Paths.IC2.IWRENCHABLE, modid = DependencyInfo.ModIds.IC2)
 })
@@ -65,6 +73,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         IEnergySink, // IC2
         IEnergyStorage, // IC2
         IEnergyHandler, // COFH
+        IGridHost, // AE2
+        IGridBlock, //AE2
         IWandable, // THAUMCRAFT
         IWrenchable // IC2
 {
@@ -100,6 +110,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     public DimensionalCoords remotePosition;
+
+    private LinkedGridNode aeGridNode;
 
     // THIS IS NOT AN ANGLE, BUT THE NUMBER OF LEFT-HAND ROTATIONS!
     public int rotationY = 0;
@@ -255,6 +267,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             registeredWithIC2 = false;
         }
 
+        if (aeGridNode != null) {
+            aeGridNode.updateState();
+        }
+
         BlockTracker.INSTANCE.stopTracking(remotePosition);
         remotePosition = coords;
         BlockTracker.INSTANCE.startTracking(remotePosition, this);
@@ -264,6 +280,14 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             registeredWithIC2 = true;
         }
 
+        if (remotePosition != null && remotePosition.getTileEntity() != this && hasTransferChip(TransferType.NETWORK_AE)) {
+            if (remotePosition.getTileEntity() instanceof IGridHost) {
+                aeGridNode = new LinkedGridNode(((IGridHost) remotePosition.getTileEntity()).getGridNode(ForgeDirection.UNKNOWN), this);
+                aeGridNode.updateState();
+            }
+        }
+
+        worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, this.getBlockType());
         markForUpdate();
     }
 
@@ -871,5 +895,87 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     public ItemStack getWrenchDrop(EntityPlayer entityPlayer) {
         return null;
     }
+
+    /* IGRIDHOST */
+    @Override
+    public IGridNode getGridNode(ForgeDirection dir) {
+        IGridHost gridNode = (IGridHost) getTransferImplementation(IGridHost.class);
+        return gridNode != null ? gridNode.getGridNode(dir) : null;
+    }
+
+    @Override
+    public AECableType getCableConnectionType(ForgeDirection dir) {
+        return AECableType.GLASS;
+    }
+
+    @Override
+    public void securityBreak() {
+        worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+    }
+
+    /* IGRIDBLOCK */
+    @Override
+    public double getIdlePowerUsage() {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        return gridBlock != null ? gridBlock.getIdlePowerUsage() : 0;
+    }
+
+    @Override
+    public EnumSet<GridFlags> getFlags() {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        return gridBlock != null ? getFlags() : EnumSet.noneOf(GridFlags.class);
+    }
+
+    @Override
+    public boolean isWorldAccessable() {
+        return true;
+    }
+
+    @Override
+    public DimensionalCoord getLocation() {
+        return new DimensionalCoord(this);
+    }
+
+    @Override
+    public AEColor getGridColor() {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        return gridBlock != null ? gridBlock.getGridColor() : AEColor.Transparent;
+    }
+
+    @Override
+    public void onGridNotification(GridNotification notification) {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        if (gridBlock != null) gridBlock.onGridNotification(notification);
+    }
+
+    @Override
+    public void setNetworkStatus(IGrid grid, int channelsInUse) {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        if (gridBlock != null) gridBlock.setNetworkStatus(grid, channelsInUse);
+    }
+
+    @Override
+    public EnumSet<ForgeDirection> getConnectableSides() {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        return gridBlock != null ? gridBlock.getConnectableSides() : EnumSet.noneOf(ForgeDirection.class);
+    }
+
+    @Override
+    public IGridHost getMachine() {
+        return this;
+    }
+
+    @Override
+    public void gridChanged() {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        if (gridBlock != null) gridBlock.gridChanged();
+    }
+
+    @Override
+    public ItemStack getMachineRepresentation() {
+        IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
+        return gridBlock != null ? getMachineRepresentation() : new ItemStack(this.blockType);
+    }
+
     /* END IMPLEMENTATIONS */
 }

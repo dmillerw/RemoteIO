@@ -33,6 +33,8 @@ public class TransferType {
 
         registerType(ENERGY_IC2, IC2.IENERGYTILE, IC2.IENERGYSOURCE, IC2.IENERGYEMITTER, IC2.IENERGYSINK, IC2.IENERGYACCEPTOR, IC2.IENERGYSTORAGE);
         registerType(ENERGY_RF, COFH.IENERGYHANDLER);
+
+        registerType(NETWORK_AE, AE2.IGRIDHOST, AE2.IGRIDBLOCK);
     }
 
     public static void registerType(int type, Class... classes) {

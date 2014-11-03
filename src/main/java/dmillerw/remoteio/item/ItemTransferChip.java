@@ -13,6 +13,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import java.util.List;
+
 /**
  * @author dmillerw
  */
@@ -28,6 +30,8 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 
                 TransferType.ENERGY_IC2,
                 TransferType.ENERGY_RF,
+
+                TransferType.NETWORK_AE,
         },
 
                 new String[]{
@@ -37,9 +41,18 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 
                         "energy_ic2",
                         "energy_rf",
+
+                        "network_ae"
                 });
 
         setCreativeTab(TabRemoteIO.TAB);
+    }
+
+    @Override
+    public void addInformation(ItemStack p_77624_1_, EntityPlayer p_77624_2_, List p_77624_3_, boolean p_77624_4_) {
+        if (p_77624_1_.getItemDamage() == TransferType.NETWORK_AE) {
+            p_77624_3_.add("TEMPORARY RECIPE!");
+        }
     }
 
     @Override
