@@ -5,6 +5,7 @@ import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.lib.ModInfo;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -69,19 +70,22 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 
             if (tile != null && tile instanceof TileIOCore) {
                 TileIOCore io = (TileIOCore) tile;
-                ItemStack chip = stack.copy();
-                chip.stackSize = 1;
 
-                if (TileEntityHopper.func_145889_a(io.transferChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
-                    io.callback(io.transferChips);
-                    if (stack.stackSize == 1) {
-                        player.setCurrentItemOrArmor(0, null);
-                    } else {
-                        ItemStack stack1 = stack.copy();
-                        stack1.stackSize = stack.stackSize - 1;
-                        player.setCurrentItemOrArmor(0, stack1);
+                if (!(io instanceof TileRemoteInterface) || !((TileRemoteInterface) io).locked) {
+                    ItemStack chip = stack.copy();
+                    chip.stackSize = 1;
+
+                    if (TileEntityHopper.func_145889_a(io.transferChips, chip, ForgeDirection.UNKNOWN.ordinal()) == null) {
+                        io.callback(io.transferChips);
+                        if (stack.stackSize == 1) {
+                            player.setCurrentItemOrArmor(0, null);
+                        } else {
+                            ItemStack stack1 = stack.copy();
+                            stack1.stackSize = stack.stackSize - 1;
+                            player.setCurrentItemOrArmor(0, stack1);
+                        }
+                        return true;
                     }
-                    return true;
                 }
             }
         }

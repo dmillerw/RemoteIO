@@ -119,6 +119,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     // THIS IS NOT AN ANGLE, BUT THE NUMBER OF LEFT-HAND ROTATIONS!
     public int rotationY = 0;
 
+    public boolean locked = false;
+
     private boolean registeredWithIC2 = false;
     private boolean missingUpgrade = false;
     private boolean tracking = false;
@@ -132,6 +134,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         }
 
         nbt.setInteger("axisY", this.rotationY);
+        nbt.setBoolean("locked", locked);
     }
 
     @Override
@@ -143,6 +146,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         }
 
         rotationY = nbt.getInteger("axisY");
+        locked = nbt.getBoolean("locked");
     }
 
     @Override

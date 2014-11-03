@@ -5,6 +5,7 @@ import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.helper.InventoryHelper;
 import dmillerw.remoteio.lib.ModInfo;
+import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -42,7 +43,8 @@ public abstract class BlockIOCore extends BlockContainer {
 
             if (stack.getItem() instanceof IIOTool) {
                 if (!world.isRemote) {
-                    player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
+                    if (!(tile instanceof TileRemoteInterface) || !((TileRemoteInterface) tile).locked)
+                        player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
                 }
                 return true;
             }
