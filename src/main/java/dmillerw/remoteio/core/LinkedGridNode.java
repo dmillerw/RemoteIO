@@ -39,10 +39,10 @@ public class LinkedGridNode implements IGridNode {
     }
 
     @Override
-    public void beginVisition(IGridVisitor g) {
+    public void beginVisit(IGridVisitor g) {
         IGridNode gridNode = getParentNode();
         IGridNode ourNode = getOurNode();
-        if (gridNode != null) gridNode.beginVisition(g); else if (ourNode != null) ourNode.beginVisition(g);
+        if (gridNode != null) gridNode.beginVisit(g); else if (ourNode != null) ourNode.beginVisit(g);
     }
 
     @Override

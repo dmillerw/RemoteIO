@@ -5,6 +5,7 @@ import appeng.api.util.AECableType;
 import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 import cofh.api.energy.IEnergyHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Optional;
 import dmillerw.remoteio.core.LinkedGridNode;
 import dmillerw.remoteio.core.TransferType;
@@ -262,28 +263,36 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
      * Sets the server-side remote position to the passed in position, and resets the tracker
      */
     public void setRemotePosition(DimensionalCoords coords) {
-        if (registeredWithIC2) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-            registeredWithIC2 = false;
+        if (Loader.isModLoaded(DependencyInfo.ModIds.IC2)) {
+            if (registeredWithIC2) {
+                MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+                registeredWithIC2 = false;
+            }
         }
 
-        if (aeGridNode != null) {
-            aeGridNode.updateState();
+        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+            if (aeGridNode != null) {
+                aeGridNode.updateState();
+            }
         }
 
         BlockTracker.INSTANCE.stopTracking(remotePosition);
         remotePosition = coords;
         BlockTracker.INSTANCE.startTracking(remotePosition, this);
 
-        if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition.getTileEntity() instanceof IEnergyTile) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
-            registeredWithIC2 = true;
+        if (Loader.isModLoaded(DependencyInfo.ModIds.IC2)) {
+            if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition.getTileEntity() instanceof IEnergyTile) {
+                MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+                registeredWithIC2 = true;
+            }
         }
 
-        if (remotePosition != null && remotePosition.getTileEntity() != this && hasTransferChip(TransferType.NETWORK_AE)) {
-            if (remotePosition.getTileEntity() instanceof IGridHost) {
-                aeGridNode = new LinkedGridNode(((IGridHost) remotePosition.getTileEntity()).getGridNode(ForgeDirection.UNKNOWN), this);
-                aeGridNode.updateState();
+        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+            if (remotePosition != null && remotePosition.getTileEntity() != this && hasTransferChip(TransferType.NETWORK_AE)) {
+                if (remotePosition.getTileEntity() instanceof IGridHost) {
+                    aeGridNode = new LinkedGridNode(((IGridHost) remotePosition.getTileEntity()).getGridNode(ForgeDirection.UNKNOWN), this);
+                    aeGridNode.updateState();
+                }
             }
         }
 
@@ -898,80 +907,94 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     /* IGRIDHOST */
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public IGridNode getGridNode(ForgeDirection dir) {
         IGridHost gridNode = (IGridHost) getTransferImplementation(IGridHost.class);
         return gridNode != null ? gridNode.getGridNode(dir) : null;
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public AECableType getCableConnectionType(ForgeDirection dir) {
         return AECableType.GLASS;
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public void securityBreak() {
         worldObj.setBlockToAir(xCoord, yCoord, zCoord);
     }
 
     /* IGRIDBLOCK */
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public double getIdlePowerUsage() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         return gridBlock != null ? gridBlock.getIdlePowerUsage() : 0;
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public EnumSet<GridFlags> getFlags() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         return gridBlock != null ? getFlags() : EnumSet.noneOf(GridFlags.class);
     }
 
     @Override
-    public boolean isWorldAccessable() {
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
+    public boolean isWorldAccessible() {
         return true;
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public DimensionalCoord getLocation() {
         return new DimensionalCoord(this);
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public AEColor getGridColor() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         return gridBlock != null ? gridBlock.getGridColor() : AEColor.Transparent;
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public void onGridNotification(GridNotification notification) {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         if (gridBlock != null) gridBlock.onGridNotification(notification);
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public void setNetworkStatus(IGrid grid, int channelsInUse) {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         if (gridBlock != null) gridBlock.setNetworkStatus(grid, channelsInUse);
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public EnumSet<ForgeDirection> getConnectableSides() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         return gridBlock != null ? gridBlock.getConnectableSides() : EnumSet.noneOf(ForgeDirection.class);
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public IGridHost getMachine() {
         return this;
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public void gridChanged() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         if (gridBlock != null) gridBlock.gridChanged();
     }
 
     @Override
+    @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public ItemStack getMachineRepresentation() {
         IGridBlock gridBlock = (IGridBlock) getTransferImplementation(IGridBlock.class);
         return gridBlock != null ? getMachineRepresentation() : new ItemStack(this.blockType);
