@@ -1,6 +1,5 @@
 package dmillerw.remoteio.item;
 
-import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModInfo;
@@ -83,12 +82,12 @@ public class ItemLocationChip extends Item {
                         DimensionalCoords coords = ItemLocationChip.getCoordinates(stack);
 
                         if (coords != null) {
-                            if (coords.getBlock() instanceof BlockRemoteInterface) {
-                                player.addChatComponentMessage(new ChatComponentTranslation("chat.target.loop"));
-                            } else {
+//                            if (coords.getBlock() instanceof BlockRemoteInterface) {
+//                                player.addChatComponentMessage(new ChatComponentTranslation("chat.target.loop"));
+//                            } else {
                                 ((TileRemoteInterface) tile).setRemotePosition(coords);
                                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.load"));
-                            }
+//                            }
                         }
                     }
                 }
