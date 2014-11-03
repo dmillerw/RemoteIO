@@ -8,9 +8,11 @@ import dmillerw.remoteio.network.packet.PacketServerApplyRFConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -22,29 +24,49 @@ public class GuiRFConfig extends GuiContainer {
 
     private final ItemStack itemStack;
 
-    private int maxPushRate;
-    private boolean pushPower;
-
     public GuiBetterButton buttonDec;
     public GuiBetterButton buttonInc;
-    public GuiBetterButton buttonToggle;
+
+    public GuiTextField textFieldRate;
+
+    public int maxPushRate = 0;
 
     public GuiRFConfig(ItemStack itemStack) {
         super(new ContainerNull());
         this.itemStack = itemStack;
+    }
 
-        if (itemStack.hasTagCompound()) {
-            maxPushRate = itemStack.getTagCompound().getInteger("maxPushRate");
-            pushPower = itemStack.getTagCompound().getBoolean("pushPower");
+    private int getMaxPushRate() {
+        String text = textFieldRate.getText();
+        if (text != null && !text.isEmpty()) {
+            try {
+                return Integer.valueOf(text);
+            } catch (NumberFormatException ex) {
+                return 0;
+            }
         }
+        return 0;
     }
 
     public void initGui() {
         super.initGui();
 
-        buttonList.add(buttonDec = new GuiBetterButton(0, width / 2 + 31, height / 2 - 26, 12, 12, "-"));
-        buttonList.add(buttonInc = new GuiBetterButton(1, width / 2 + 45, height / 2 - 26, 12, 12, "+"));
-        buttonList.add(buttonToggle = new GuiBetterButton(2, width / 2 + 45, height / 2, 200, 24, pushPower ? "ON" : "OFF"));
+        buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 4, 12, 12, "-"));
+        buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 4, 12, 12, "+"));
+        textFieldRate = new GuiTextField(mc.fontRenderer, 5, 5, 100, 10);
+        textFieldRate.setFocused(true);
+        textFieldRate.setCanLoseFocus(false);
+        if (itemStack.hasTagCompound()) {
+            textFieldRate.setText(String.valueOf(itemStack.getTagCompound().getInteger("maxPushRate")));
+            maxPushRate = getMaxPushRate();
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+
+        textFieldRate.updateCursorCounter();
     }
 
     @Override
@@ -57,7 +79,16 @@ public class GuiRFConfig extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawString(mc.fontRenderer, Integer.toString(maxPushRate), 5, 5, 0xFFFFFF);
+        textFieldRate.drawTextBox();
+    }
+
+    @Override
+    protected void keyTyped(char character, int key) {
+        super.keyTyped(character, key);
+        if (key == Keyboard.KEY_BACK || Character.isDigit(character)) {
+            textFieldRate.textboxKeyTyped(character, key);
+            maxPushRate = getMaxPushRate();
+        }
     }
 
     @Override
@@ -65,11 +96,10 @@ public class GuiRFConfig extends GuiContainer {
         int rate = GuiScreen.isShiftKeyDown() ? 100 : GuiScreen.isCtrlKeyDown() ? 1 : 10;
         if (guiButton.id == 0) {
             maxPushRate = (Math.max(0, maxPushRate - rate));
+            textFieldRate.setText(String.valueOf(maxPushRate));
         } else if (guiButton.id == 1) {
-            maxPushRate = (Math.min(10000, maxPushRate + rate));
-        } else if (guiButton.id == 2) {
-            pushPower = !pushPower;
-            buttonToggle.displayString = (pushPower ? "ON" : "OFF");
+            maxPushRate = (Math.min(1000000, maxPushRate + rate));
+            textFieldRate.setText(String.valueOf(maxPushRate));
         }
     }
 
@@ -77,8 +107,7 @@ public class GuiRFConfig extends GuiContainer {
     public void onGuiClosed() {
         super.onGuiClosed();
         PacketServerApplyRFConfig packetServerApplyRFConfig = new PacketServerApplyRFConfig();
-        packetServerApplyRFConfig.pushPower = pushPower;
-        packetServerApplyRFConfig.maxPushPower = maxPushRate;
+        packetServerApplyRFConfig.maxPushRate = maxPushRate;
         PacketHandler.INSTANCE.sendToServer(packetServerApplyRFConfig);
     }
 }

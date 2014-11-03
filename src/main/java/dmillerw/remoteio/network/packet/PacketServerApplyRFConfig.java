@@ -15,19 +15,16 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class PacketServerApplyRFConfig implements IMessage, IMessageHandler<PacketServerApplyRFConfig, IMessage> {
 
-    public boolean pushPower;
-    public int maxPushPower;
+    public int maxPushRate;
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(pushPower);
-        buf.writeInt(maxPushPower);
+        buf.writeInt(maxPushRate);
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        pushPower = buf.readBoolean();
-        maxPushPower = buf.readInt();
+        maxPushRate = buf.readInt();
     }
 
     @Override
@@ -39,8 +36,7 @@ public class PacketServerApplyRFConfig implements IMessage, IMessageHandler<Pack
             if (itemStack.hasTagCompound()) {
                 nbtTagCompound = itemStack.getTagCompound();
             }
-            nbtTagCompound.setBoolean("pushPower", message.pushPower);
-            nbtTagCompound.setInteger("maxPushPower", message.maxPushPower);
+            nbtTagCompound.setInteger("maxPushRate", message.maxPushRate);
             itemStack.setTagCompound(nbtTagCompound);
             entityPlayerMP.updateHeldItem();
         }

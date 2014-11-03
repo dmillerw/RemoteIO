@@ -179,10 +179,9 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
                 }
 
                 if (rfTransferChip != null) {
-                    boolean pushPower = rfTransferChip.getTagCompound().getBoolean("pushPower");
-                    int maxPushPower = rfTransferChip.getTagCompound().getInteger("maxPushPower");
+                    int maxPushPower = rfTransferChip.getTagCompound().getInteger("maxPushRate");
 
-                    if (pushPower) {
+                    if (maxPushPower > 0) {
                         int count = 0;
                         IEnergyHandler[] energyHandlers = new IEnergyHandler[ForgeDirection.VALID_DIRECTIONS.length];
                         for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {

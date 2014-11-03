@@ -57,7 +57,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
         } else if (itemStack.getItemDamage() == TransferType.ENERGY_RF) {
             if (itemStack.hasTagCompound()) {
                 list.add("Push Power: " + itemStack.getTagCompound().getBoolean("pushPower"));
-                list.add("Power Rate: " + itemStack.getTagCompound().getInteger("maxPushPower"));
+                list.add("Power Rate: " + itemStack.getTagCompound().getInteger("maxPushRate"));
             }
         }
     }
