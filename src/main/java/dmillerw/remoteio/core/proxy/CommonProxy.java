@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 /**
@@ -31,6 +32,10 @@ public class CommonProxy {
 
     public void setClientPlayerSlot(int slot, ItemStack itemStack) {
 
+    }
+
+    public World getWorld(int dimension) {
+        return MinecraftServer.getServer().worldServerForDimension(dimension);
     }
 
     public void activateBlock(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float fx, float fy, float fz) {

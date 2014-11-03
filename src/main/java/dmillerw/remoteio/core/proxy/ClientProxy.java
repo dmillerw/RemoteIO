@@ -2,6 +2,7 @@ package dmillerw.remoteio.core.proxy;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import dmillerw.remoteio.client.handler.SoundHandler;
 import dmillerw.remoteio.client.render.*;
@@ -39,6 +40,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void setClientPlayerSlot(int slot, ItemStack itemStack) {
         Minecraft.getMinecraft().thePlayer.openContainer.getSlot(slot).putStack(itemStack);
+    }
+
+    @Override
+    public World getWorld(int dimension) {
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            return super.getWorld(dimension);
+        } else {
+            return Minecraft.getMinecraft().theWorld;
+        }
     }
 
     @Override
