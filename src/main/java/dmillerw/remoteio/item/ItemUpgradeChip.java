@@ -60,6 +60,8 @@ public class ItemUpgradeChip extends ItemSelectiveMeta {
                         }
                         return true;
                     }
+
+                    io.markForUpdate();
                 }
             }
         }

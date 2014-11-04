@@ -90,6 +90,8 @@ public class ItemTransferChip extends ItemSelectiveMeta {
                         }
                         return true;
                     }
+
+                    io.markForUpdate();
                 }
             }
         }
