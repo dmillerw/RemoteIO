@@ -57,12 +57,29 @@ public class BlockTracker {
                         trackedBlock.lastMeta = trackedBlock.coordinates.getMeta();
                     } else {
                         Block block = trackedBlock.coordinates.getBlock();
+
                         for (int i=0; i<6; i++) {
                             int comparator = block.getComparatorInputOverride(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
                             if (comparator != trackedBlock.lastComparatorValue) {
                                 trackedBlock.callback();
                                 trackedBlock.lastComparatorValue = comparator;
                                 break;
+                            }
+                        }
+
+                        for (int i=0; i<6; i++) {
+                            int redstone = block.isProvidingWeakPower(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
+                            if (redstone != trackedBlock.lastWeakRedstoneValue) {
+                                trackedBlock.callback();
+                                trackedBlock.lastWeakRedstoneValue = redstone;
+                            }
+                        }
+
+                        for (int i=0; i<6; i++) {
+                            int redstone = block.isProvidingStrongPower(trackedBlock.coordinates.getWorld(), trackedBlock.coordinates.x, trackedBlock.coordinates.y, trackedBlock.coordinates.z, i);
+                            if (redstone != trackedBlock.lastStrongRedstoneValue) {
+                                trackedBlock.callback();
+                                trackedBlock.lastStrongRedstoneValue = redstone;
                             }
                         }
                     }
@@ -76,6 +93,8 @@ public class BlockTracker {
         public Block lastBlock;
         public int lastMeta;
         public int lastComparatorValue;
+        public int lastWeakRedstoneValue;
+        public int lastStrongRedstoneValue;
         public final ITrackerCallback callback;
         public boolean isDead = false;
 

@@ -26,6 +26,7 @@ public class TransferType {
 
     // MISC
     public static final int NETWORK_AE = 20;
+    public static final int REDSTONE = 21;
     static {
         registerType(MATTER_ITEM, IInventory.class, ISidedInventory.class);
         registerType(MATTER_FLUID, IFluidHandler.class);

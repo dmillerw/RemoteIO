@@ -35,6 +35,8 @@ public class ItemTransferChip extends ItemSelectiveMeta {
                 TransferType.ENERGY_RF,
 
                 TransferType.NETWORK_AE,
+
+                TransferType.REDSTONE
         },
 
                 new String[]{
@@ -45,7 +47,9 @@ public class ItemTransferChip extends ItemSelectiveMeta {
                         "energy_ic2",
                         "energy_rf",
 
-                        "network_ae"
+                        "network_ae",
+
+                        "redstone"
                 });
 
         setCreativeTab(TabRemoteIO.TAB);

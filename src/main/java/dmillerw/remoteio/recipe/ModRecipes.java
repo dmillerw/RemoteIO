@@ -189,6 +189,17 @@ public class ModRecipes {
                 'C', ModItems.locationChip
         );
 
+        // TRANSFER TYPE - AE2 NETWORK
+        RecipeHelper.addOreRecipe(
+                new ItemStack(ModItems.transferChip, 1, TransferType.REDSTONE),
+                " B ",
+                " C ",
+                " I ",
+                'B', ModItems.blankPlate,
+                'I', Blocks.redstone_block,
+                'C', ModItems.locationChip
+        );
+
         // UPGRADE TYPE - REMOTE CAMOUFLAGE
         RecipeHelper.addOreRecipe(
                 new ItemStack(ModItems.upgradeChip, 1, UpgradeType.REMOTE_CAMO),

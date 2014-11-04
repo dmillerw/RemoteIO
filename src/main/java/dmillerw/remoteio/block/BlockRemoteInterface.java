@@ -1,10 +1,12 @@
 package dmillerw.remoteio.block;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.core.BlockIOCore;
 import dmillerw.remoteio.client.handler.SoundHandler;
+import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
 import dmillerw.remoteio.core.helper.RotationHelper;
@@ -19,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -60,12 +63,49 @@ public class BlockRemoteInterface extends BlockIOCore {
     public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
         if (!world.isRemote) {
             TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-            if (tile != null && tile.remotePosition != null) {
+            if (tile != null && tile.hasTransferChip(TransferType.REDSTONE) && tile.remotePosition != null) {
                 DimensionalCoords there = tile.remotePosition;
                 Block remote = there.getBlock();
 
                 if (remote.hasComparatorInputOverride()) {
                     return remote.getComparatorInputOverride(there.getWorld(), there.x, there.y, there.z, side);
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean canProvidePower() {
+        return true;
+    }
+
+    @Override
+    public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+            if (tile != null && tile.hasTransferChip(TransferType.REDSTONE) && tile.remotePosition != null) {
+                DimensionalCoords there = tile.remotePosition;
+                Block remote = there.getBlock();
+
+                if (remote.canProvidePower()) {
+                    return remote.isProvidingWeakPower(there.getWorld(), there.x, there.y, there.z, side);
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+            TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+            if (tile != null && tile.hasTransferChip(TransferType.REDSTONE) && tile.remotePosition != null) {
+                DimensionalCoords there = tile.remotePosition;
+                Block remote = there.getBlock();
+
+                if (remote.canProvidePower()) {
+                    return remote.isProvidingStrongPower(there.getWorld(), there.x, there.y, there.z, side);
                 }
             }
         }
