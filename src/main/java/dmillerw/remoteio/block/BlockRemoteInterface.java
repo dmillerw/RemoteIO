@@ -18,6 +18,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -51,6 +52,26 @@ public class BlockRemoteInterface extends BlockIOCore {
         }
 
         return true;
+    }
+
+    @Override
+    public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
+            return new ItemStack(tile.remotePosition.getBlock());
+        } else {
+            return super.getPickBlock(target, world, x, y, z);
+        }
+    }
+
+    @Override
+    public int getDamageValue(World world, int x, int y, int z) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
+            return tile.remotePosition.getMeta();
+        } else {
+            return super.getDamageValue(world, x, y, z);
+        }
     }
 
     @Override
