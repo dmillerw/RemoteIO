@@ -1,7 +1,7 @@
 package dmillerw.remoteio.core.compat;
 
 import dmillerw.remoteio.block.BlockRemoteInterface;
-import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -27,13 +27,14 @@ public class WailaProvider implements IWailaDataProvider {
         if (tileEntity != null && tileEntity instanceof TileRemoteInterface) {
             TileRemoteInterface tileRemoteInterface = (TileRemoteInterface) tileEntity;
 
-            if (tileRemoteInterface.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+
+            if (tileRemoteInterface.visualState == VisualState.CAMOUFLAGE_REMOTE) {
                 if (tileRemoteInterface.remotePosition != null && tileRemoteInterface.remotePosition.inWorld(accessor.getWorld())) {
                     return new ItemStack(tileRemoteInterface.remotePosition.getBlock(), 1, tileRemoteInterface.remotePosition.getMeta());
                 }
             }
         }
-        return null;
+        return accessor.getStack();
     }
 
     @Override

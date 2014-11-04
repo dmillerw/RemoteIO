@@ -91,6 +91,9 @@ public class ItemTransferChip extends ItemSelectiveMeta {
                         return true;
                     }
 
+                    if (io instanceof TileRemoteInterface)
+                        ((TileRemoteInterface) io).updateRemotePosition();
+                    io.updateVisualState();
                     io.markForUpdate();
                 }
             }

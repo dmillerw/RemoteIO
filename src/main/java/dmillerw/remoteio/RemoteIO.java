@@ -57,6 +57,10 @@ public class RemoteIO {
 
         PacketHandler.initialize();
 
+        if (Loader.isModLoaded("Waila")) {
+            FMLInterModComms.sendMessage("Waila", "register", "dmillerw.remoteio.core.compat.WailaProvider.registerProvider");
+        }
+
         proxy.preInit(event);
     }
 
@@ -69,10 +73,6 @@ public class RemoteIO {
     public void postInit(FMLPostInitializationEvent event) {
         // We do recipe setup in post-init as some recipes rely on other mods
         ModRecipes.initialize();
-
-        if (Loader.isModLoaded("Waila")) {
-            FMLInterModComms.sendMessage("Waila", "register", "dmillerw.remoteio.core.compat.WailaProvider.registerProvider");
-        }
 
         proxy.postInit(event);
     }
