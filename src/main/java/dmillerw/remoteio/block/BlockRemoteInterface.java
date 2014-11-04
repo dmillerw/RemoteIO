@@ -45,10 +45,9 @@ public class BlockRemoteInterface extends BlockIOCore {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
         if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
-            int adjustedSide = RotationHelper.getRotatedSide(0, tile.rotationY, 0, side);
             DimensionalCoords there = tile.remotePosition;
             SoundHandler.INSTANCE.translateNextSound(x, y, z);
-            RemoteIO.proxy.activateBlock(world, there.x, there.y, there.z, player, adjustedSide, fx, fy, fz);
+            RemoteIO.proxy.activateBlock(world, there.x, there.y, there.z, player, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side), fx, fy, fz);
         }
 
         return true;
@@ -68,7 +67,7 @@ public class BlockRemoteInterface extends BlockIOCore {
                 Block remote = there.getBlock();
 
                 if (remote.hasComparatorInputOverride()) {
-                    return remote.getComparatorInputOverride(there.getWorld(), there.x, there.y, there.z, side);
+                    return remote.getComparatorInputOverride(there.getWorld(), there.x, there.y, there.z, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side));
                 }
             }
         }
@@ -89,7 +88,7 @@ public class BlockRemoteInterface extends BlockIOCore {
                 Block remote = there.getBlock();
 
                 if (remote.canProvidePower()) {
-                    return remote.isProvidingWeakPower(there.getWorld(), there.x, there.y, there.z, side);
+                    return remote.isProvidingWeakPower(there.getWorld(), there.x, there.y, there.z, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side));
                 }
             }
         }
@@ -105,7 +104,7 @@ public class BlockRemoteInterface extends BlockIOCore {
                 Block remote = there.getBlock();
 
                 if (remote.canProvidePower()) {
-                    return remote.isProvidingStrongPower(there.getWorld(), there.x, there.y, there.z, side);
+                    return remote.isProvidingStrongPower(there.getWorld(), there.x, there.y, there.z, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side));
                 }
             }
         }

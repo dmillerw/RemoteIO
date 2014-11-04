@@ -800,7 +800,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     public double injectEnergy(ForgeDirection directionFrom, double amount, double voltage) {
         IEnergySink energySink = (IEnergySink) getTransferImplementation(IEnergySink.class);
-        return energySink != null ? energySink.injectEnergy(directionFrom, amount, voltage) : 0;
+        return energySink != null ? energySink.injectEnergy(getAdjustedSide(directionFrom), amount, voltage) : 0;
     }
 
     /* IENERGYACCEPTOR */
@@ -808,7 +808,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
         IEnergyAcceptor energyAcceptor = (IEnergyAcceptor) getTransferImplementation(IEnergyAcceptor.class);
-        return energyAcceptor != null && energyAcceptor.acceptsEnergyFrom(emitter, direction);
+        return energyAcceptor != null && energyAcceptor.acceptsEnergyFrom(emitter, getAdjustedSide(direction));
     }
 
     /* IENERGYSOURCE */
@@ -866,7 +866,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     public boolean isTeleporterCompatible(ForgeDirection side) {
         IEnergyStorage energyStorage = (IEnergyStorage) getTransferImplementation(IEnergyStorage.class);
-        return energyStorage != null && energyStorage.isTeleporterCompatible(side);
+        return energyStorage != null && energyStorage.isTeleporterCompatible(getAdjustedSide(side));
     }
 
     /* IENERGYHANDLER - COFH*/
@@ -874,35 +874,35 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null ? energyHandler.receiveEnergy(from, maxReceive, simulate) : 0;
+        return energyHandler != null ? energyHandler.receiveEnergy(getAdjustedSide(from), maxReceive, simulate) : 0;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
     public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null ? energyHandler.extractEnergy(from, maxExtract, simulate) : 0;
+        return energyHandler != null ? energyHandler.extractEnergy(getAdjustedSide(from), maxExtract, simulate) : 0;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
     public int getEnergyStored(ForgeDirection from) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null ? energyHandler.getEnergyStored(from) : 0;
+        return energyHandler != null ? energyHandler.getEnergyStored(getAdjustedSide(from)) : 0;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
     public int getMaxEnergyStored(ForgeDirection from) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null ? energyHandler.getMaxEnergyStored(from) : 0;
+        return energyHandler != null ? energyHandler.getMaxEnergyStored(getAdjustedSide(from)) : 0;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.COFH_API)
     public boolean canConnectEnergy(ForgeDirection from) {
         IEnergyHandler energyHandler = (IEnergyHandler) getTransferImplementation(IEnergyHandler.class);
-        return energyHandler != null && energyHandler.canConnectEnergy(from);
+        return energyHandler != null && energyHandler.canConnectEnergy(getAdjustedSide(from));
     }
 
     /* IWANDABLE */
@@ -910,7 +910,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public int onWandRightClick(World world, ItemStack wandstack, EntityPlayer player, int x, int y, int z, int side, int md) {
         IWandable wandable = (IWandable) getUpgradeImplementation(IWandable.class, UpgradeType.REMOTE_ACCESS);
-        return wandable != null ? wandable.onWandRightClick(world, wandstack, player, x, y, z, getAdjustedSide(ForgeDirection.getOrientation(side)).ordinal(), md) : -1;
+        return wandable != null ? wandable.onWandRightClick(world, wandstack, player, x, y, z, getAdjustedSide(side), md) : -1;
     }
 
     @Override
@@ -939,7 +939,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     public boolean wrenchCanSetFacing(EntityPlayer entityPlayer, int side) {
         IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
-        return wrenchable != null && wrenchable.wrenchCanSetFacing(entityPlayer, side);
+        return wrenchable != null && wrenchable.wrenchCanSetFacing(entityPlayer, getAdjustedSide(side));
     }
 
     @Override
@@ -953,7 +953,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     public void setFacing(short facing) {
         IWrenchable wrenchable = (IWrenchable) getUpgradeImplementation(IWrenchable.class, UpgradeType.REMOTE_ACCESS);
-        if (wrenchable != null) wrenchable.setFacing(facing);
+        if (wrenchable != null) wrenchable.setFacing((short) getAdjustedSide(facing));
     }
 
     @Override
@@ -979,7 +979,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Optional.Method(modid = DependencyInfo.ModIds.AE2)
     public IGridNode getGridNode(ForgeDirection dir) {
         IGridHost gridNode = (IGridHost) getTransferImplementation(IGridHost.class);
-        return gridNode != null ? gridNode.getGridNode(dir) : null;
+        return gridNode != null ? gridNode.getGridNode(getAdjustedSide(dir)) : null;
     }
 
     @Override
