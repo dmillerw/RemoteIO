@@ -53,6 +53,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void activateBlock(World world, int x, int y, int z, EntityPlayer entityPlayer, int side, float fx, float fy, float fz) {
+        SoundHandler.INSTANCE.translateNextSound(x, y, z);
         if (entityPlayer instanceof EntityPlayerMP) {
             super.activateBlock(world, x, y, z, entityPlayer, side, fx, fy, fz);
         } else {

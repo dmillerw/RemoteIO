@@ -47,7 +47,6 @@ public class BlockRemoteInterface extends BlockIOCore {
 
         if (tile.remotePosition != null && !player.isSneaking() && tile.hasUpgradeChip(UpgradeType.REMOTE_ACCESS)) {
             DimensionalCoords there = tile.remotePosition;
-            SoundHandler.INSTANCE.translateNextSound(x, y, z);
             RemoteIO.proxy.activateBlock(world, there.x, there.y, there.z, player, RotationHelper.getRotatedSide(0, tile.rotationY, 0, side), fx, fy, fz);
         }
 
