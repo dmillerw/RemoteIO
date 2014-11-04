@@ -8,7 +8,7 @@ import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional;
-import dmillerw.remoteio.core.LinkedGridNode;
+import dmillerw.remoteio.core.compat.LinkedGridNode;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.helper.RotationHelper;

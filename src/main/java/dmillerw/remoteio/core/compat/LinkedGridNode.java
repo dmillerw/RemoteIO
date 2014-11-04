@@ -1,10 +1,11 @@
-package dmillerw.remoteio.core;
+package dmillerw.remoteio.core.compat;
 
 import appeng.api.AEApi;
 import appeng.api.networking.*;
 import appeng.api.util.IReadOnlyCollection;
 import appeng.util.ReadOnlyCollection;
 import com.google.common.collect.Lists;
+import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;

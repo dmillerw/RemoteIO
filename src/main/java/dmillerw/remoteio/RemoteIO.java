@@ -1,15 +1,13 @@
 package dmillerw.remoteio;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
@@ -71,6 +69,10 @@ public class RemoteIO {
     public void postInit(FMLPostInitializationEvent event) {
         // We do recipe setup in post-init as some recipes rely on other mods
         ModRecipes.initialize();
+
+        if (Loader.isModLoaded("Waila")) {
+            FMLInterModComms.sendMessage("Waila", "register", "dmillerw.remoteio.core.compat.WailaProvider.registerProvider");
+        }
 
         proxy.postInit(event);
     }
