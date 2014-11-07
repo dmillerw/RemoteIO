@@ -178,16 +178,18 @@ public class ModRecipes {
         );
 
         // TRANSFER TYPE - AE2 NETWORK
-        RecipeHelper.addDependentRecipe(
-                DependencyInfo.ModIds.AE2,
-                new ItemStack(ModItems.transferChip, 1, TransferType.NETWORK_AE),
-                " B ",
-                " C ",
-                " I ",
-                'B', ModItems.blankPlate,
-                'I', AEApi.instance().blocks().blockController.block(),
-                'C', ModItems.locationChip
-        );
+        if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
+            RecipeHelper.addDependentRecipe(
+                    DependencyInfo.ModIds.AE2,
+                    new ItemStack(ModItems.transferChip, 1, TransferType.NETWORK_AE),
+                    " B ",
+                    " C ",
+                    " I ",
+                    'B', ModItems.blankPlate,
+                    'I', AEApi.instance().blocks().blockController.block(),
+                    'C', ModItems.locationChip
+            );
+        }
 
         // TRANSFER TYPE - AE2 NETWORK
         RecipeHelper.addOreRecipe(
