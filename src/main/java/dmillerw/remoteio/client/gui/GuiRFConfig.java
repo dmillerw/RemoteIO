@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -51,9 +52,9 @@ public class GuiRFConfig extends GuiContainer {
     public void initGui() {
         super.initGui();
 
-        buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 4, 12, 12, "-"));
-        buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 4, 12, 12, "+"));
-        textFieldRate = new GuiTextField(mc.fontRenderer, 5, 5, 100, 10);
+        buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 19, 12, 12, "-"));
+        buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 19, 12, 12, "+"));
+        textFieldRate = new GuiTextField(mc.fontRenderer, 5, 20, 100, 10);
         textFieldRate.setFocused(true);
         textFieldRate.setCanLoseFocus(false);
         if (itemStack.hasTagCompound()) {
@@ -79,6 +80,8 @@ public class GuiRFConfig extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.rfconfig"), 5, 5, 4210752);
+        fontRendererObj.drawSplitString(StatCollector.translateToLocal("container.remoteio.rfconfig_desc"), 5, 35, 170, 4210752);
         textFieldRate.drawTextBox();
     }
 

@@ -4,6 +4,9 @@ itemGroup.rio=RemoteIO
 # GUI
 container.remoteio.upgrade=Upgrade
 container.remoteio.transfer=Transfer
+container.remoteio.rfconfig=RF Config
+
+container.remoteio.rfconfig_desc=RF by default relies on energy sources to push power to neighboring blocks, instead of them pulling. As this isn't possible with the interface block by default, configuring this allows the interface block to passively push power to adjacent blocks.
 
 # Chat
 chat.target.save=Target Saved
