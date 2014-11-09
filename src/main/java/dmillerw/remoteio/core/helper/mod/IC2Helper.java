@@ -22,7 +22,8 @@ public class IC2Helper {
 
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     private static void internalLoadEnergyTile(TileEntity tileEntity) {
-        MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile) tileEntity));
+        if (tileEntity instanceof IEnergyTile)
+            MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent((IEnergyTile) tileEntity));
     }
 
     public static void unloadEnergyTile(TileEntity tileEntity) {
@@ -33,6 +34,7 @@ public class IC2Helper {
 
     @Optional.Method(modid = DependencyInfo.ModIds.IC2)
     private static void internalUnloadEnergyTile(TileEntity tileEntity) {
-        MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile) tileEntity));
+        if (tileEntity instanceof IEnergyTile)
+            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent((IEnergyTile) tileEntity));
     }
 }

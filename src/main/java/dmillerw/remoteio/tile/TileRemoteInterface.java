@@ -8,9 +8,9 @@ import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional;
-import dmillerw.remoteio.core.compat.LinkedGridNode;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
+import dmillerw.remoteio.core.compat.LinkedGridNode;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
@@ -19,12 +19,9 @@ import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModItems;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.core.TileIOCore;
-import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
-import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.tile.IEnergyStorage;
 import ic2.api.tile.IWrenchable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +33,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -101,7 +97,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             registeredWithIC2 = false;
         }
 
-        if (hasTransferChip(TransferType.ENERGY_IC2) && remotePosition != null && remotePosition.getTileEntity() != null && remotePosition.getTileEntity() instanceof IEnergyTile) {
+        if (hasTransferChip(TransferType.ENERGY_IC2) && remotePosition != null && remotePosition.getTileEntity() != null) {
             IC2Helper.loadEnergyTile(this);
             registeredWithIC2 = true;
         }
@@ -216,10 +212,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     @Override
     public void onChunkUnload() {
-        if (registeredWithIC2) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-            registeredWithIC2 = false;
-        }
+       IC2Helper.unloadEnergyTile(this);
 
         if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
@@ -233,10 +226,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     @Override
     public void invalidate() {
-        if (registeredWithIC2) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-            registeredWithIC2 = false;
-        }
+        IC2Helper.unloadEnergyTile(this);
 
         if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
@@ -323,12 +313,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
      * Sets the server-side remote position to the passed in position, and resets the tracker
      */
     public void setRemotePosition(DimensionalCoords coords) {
-        if (Loader.isModLoaded(DependencyInfo.ModIds.IC2)) {
-            if (registeredWithIC2) {
-                MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-                registeredWithIC2 = false;
-            }
-        }
+        IC2Helper.unloadEnergyTile(this);
 
         if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (aeGridNode != null) {
@@ -341,12 +326,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         remotePosition = coords;
         BlockTracker.INSTANCE.startTracking(remotePosition, this);
 
-        if (Loader.isModLoaded(DependencyInfo.ModIds.IC2)) {
-            if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2) && remotePosition.getTileEntity() instanceof IEnergyTile) {
-                MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
-                registeredWithIC2 = true;
-            }
-        }
+        IC2Helper.loadEnergyTile(this);
 
         if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
             if (remotePosition != null && remotePosition.getTileEntity() != this && hasTransferChip(TransferType.NETWORK_AE)) {

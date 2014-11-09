@@ -13,8 +13,6 @@ import dmillerw.remoteio.item.ItemWirelessTransmitter;
 import dmillerw.remoteio.lib.DependencyInfo;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.core.TileIOCore;
-import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +20,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
@@ -108,18 +105,12 @@ public class TileRemoteInventory extends TileIOCore implements
 
     @Override
     public void onChunkUnload() {
-        if (registeredWithIC2) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-            registeredWithIC2 = false;
-        }
+        IC2Helper.unloadEnergyTile(this);
     }
 
     @Override
     public void invalidate() {
-        if (registeredWithIC2) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-            registeredWithIC2 = false;
-        }
+        IC2Helper.unloadEnergyTile(this);
     }
 
 	/* CHIP METHODS */
@@ -162,14 +153,14 @@ public class TileRemoteInventory extends TileIOCore implements
 
     public void setPlayer(EntityPlayer player) {
         if (registeredWithIC2) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+            IC2Helper.unloadEnergyTile(this);
             registeredWithIC2 = false;
         }
 
         target = player.getCommandSenderName();
 
         if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2)) {
-            MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
+            IC2Helper.loadEnergyTile(this);
             registeredWithIC2 = true;
         }
 
