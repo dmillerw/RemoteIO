@@ -3,7 +3,10 @@ itemGroup.rio=远程接口
 
 # GUI
 container.remoteio.upgrade=升级
-container.remoteio.transfer=转移
+container.remoteio.transfer=转运
+container.remoteio.rfconfig=RF能量设定
+
+container.remoteio.rfconfig_desc=默认情况下RF能量不能直接传输至相邻方块,传输需要依赖能量源. 同样的RF能量也不能直接传输至接口方块, 调整此设定可以让接口方块被动地将能量传输至邻近的方块
 
 # Chat
 chat.target.save=目标已保存
@@ -13,12 +16,13 @@ chat.target.loop=你不能将两个远程接口链接在一起
 # Item
 item.blank_plate.name=空白芯片
 item.chip.location.name=方位芯片
-item.chip.transfer.item.name=物品转移芯片
-item.chip.transfer.fluid.name=流体转移芯片
-item.chip.transfer.essentia.name=源质转移芯片
-item.chip.transfer.energy_ic2.name=EU能量转移芯片
-item.chip.transfer.energy_mj.name=MJ能量转移芯片
-item.chip.transfer.energy_rf.name=RF能量转移芯片
+item.chip.transfer.item.name=物品转运芯片
+item.chip.transfer.fluid.name=流体转运芯片
+item.chip.transfer.essentia.name=源质转运芯片
+item.chip.transfer.energy_ic2.name=EU能量转运芯片
+item.chip.transfer.energy_mj.name=MJ能量转运芯片
+item.chip.transfer.energy_rf.name=RF能量转运芯片
+item.chip.transfer.network_ae.name=AE网络转运芯片
 item.chip.upgrade.remote_camo.name=远程伪装升级
 item.chip.upgrade.remote_access.name=远程访问升级
 item.chip.upgrade.simple_camo.name=简易伪装升级
@@ -27,7 +31,8 @@ item.io_tool.name=接口工具
 
 # Block
 tile.remote_interface.name=远程接口
-tile.remote_inventory.name=远程物品栏接口
+tile.remote_inventory.name=远程背包接口
 tile.machine.reservoir.name=蓄水箱
 tile.machine.heater.name=岩浆加热器
 tile.intelligentWorkbench.name=智能工作台
+tile.skylight.name=天窗
