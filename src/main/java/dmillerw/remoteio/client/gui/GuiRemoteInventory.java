@@ -21,8 +21,6 @@ public class GuiRemoteInventory extends GuiContainer {
 
     private final TileRemoteInventory tile;
 
-    private GuiButton access;
-
     public GuiRemoteInventory(InventoryPlayer inventoryPlayer, TileRemoteInventory tile) {
         super(new ContainerRemoteInventory(inventoryPlayer, tile));
 
@@ -30,35 +28,6 @@ public class GuiRemoteInventory extends GuiContainer {
         this.ySize = 243;
 
         this.tile = tile;
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-
-        this.buttonList.add(access = new GuiButtonCustom(0, 83, 21, 34, 18, "").setTexture(TEXTURE).setNormalUV(196, 0).setHighlightUV(196, 18).setOffset(guiLeft, guiTop));
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-
-        switch (tile.accessType) {
-            case 0:
-                access.displayString = "INV";
-                break;
-            case 1:
-                access.displayString = "ARMOR";
-                break;
-            default:
-                access.displayString = "";
-                break;
-        }
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        this.mc.playerController.sendEnchantPacket(this.inventorySlots.windowId, button.id);
     }
 
     @Override
@@ -74,9 +43,5 @@ public class GuiRemoteInventory extends GuiContainer {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-
-        for (Object obj : this.buttonList) {
-            ((GuiButton) obj).drawButton(Minecraft.getMinecraft(), x, y);
-        }
     }
 }

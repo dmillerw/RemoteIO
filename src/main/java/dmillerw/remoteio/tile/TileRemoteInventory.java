@@ -7,7 +7,6 @@ import dmillerw.remoteio.core.helper.PlayerHelper;
 import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.helper.transfer.IC2TransferHelper;
 import dmillerw.remoteio.core.helper.transfer.RFTransferHelper;
-import dmillerw.remoteio.inventory.wrapper.InventoryArmor;
 import dmillerw.remoteio.inventory.wrapper.InventoryArray;
 import dmillerw.remoteio.item.ItemWirelessTransmitter;
 import dmillerw.remoteio.lib.DependencyInfo;
@@ -40,9 +39,6 @@ public class TileRemoteInventory extends TileIOCore implements
         IEnergyHandler // COFH
 {
 
-    public static final byte ACCESS_INVENTORY = 0;
-    public static final byte ACCESS_ARMOR = 1;
-
     @Override
     public void callback(IInventory inventory) {
         if (!hasWorldObj() || getWorldObj().isRemote) {
@@ -69,8 +65,6 @@ public class TileRemoteInventory extends TileIOCore implements
 
     public String target;
 
-    public byte accessType = ACCESS_INVENTORY;
-
     private boolean registeredWithIC2 = false;
     private boolean missingUpgrade = false;
 
@@ -78,17 +72,6 @@ public class TileRemoteInventory extends TileIOCore implements
     public void writeCustomNBT(NBTTagCompound nbt) {
         if (target != null && !target.isEmpty()) {
             nbt.setString("target", target);
-        }
-
-        nbt.setByte("access", accessType);
-    }
-
-    @Override
-    public void onClientUpdate(NBTTagCompound nbt) {
-        super.onClientUpdate(nbt);
-
-        if (nbt.hasKey("access")) {
-            accessType = nbt.getByte("access");
         }
     }
 
@@ -99,8 +82,6 @@ public class TileRemoteInventory extends TileIOCore implements
         } else {
             target = "";
         }
-
-        accessType = nbt.getByte("access");
     }
 
     @Override
@@ -134,22 +115,12 @@ public class TileRemoteInventory extends TileIOCore implements
     public IInventory getPlayerInventory(int transferType) {
         EntityPlayer player = getPlayer();
         if (player != null && hasTransferChip(transferType)) {
-            if (accessType == ACCESS_INVENTORY) {
-                return new InventoryArray(player.inventory.mainInventory);
-            } else if (accessType == ACCESS_ARMOR) {
-                return new InventoryArmor(player);
-            }
+            return new InventoryArray(player.inventory.mainInventory);
         }
         return null;
     }
 
 	/* END CHIP METHODS */
-
-    public void sendAccessType() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setByte("access", accessType);
-        sendClientUpdate(nbt);
-    }
 
     public void setPlayer(EntityPlayer player) {
         if (registeredWithIC2) {
