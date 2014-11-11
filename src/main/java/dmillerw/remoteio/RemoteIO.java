@@ -14,6 +14,7 @@ import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.core.handler.BlockUpdateTicker;
 import dmillerw.remoteio.core.handler.ContainerHandler;
 import dmillerw.remoteio.core.handler.GuiHandler;
+import dmillerw.remoteio.core.handler.PlayerEventHandler;
 import dmillerw.remoteio.core.helper.EventHelper;
 import dmillerw.remoteio.core.proxy.CommonProxy;
 import dmillerw.remoteio.core.tracker.BlockTracker;
@@ -23,6 +24,7 @@ import dmillerw.remoteio.lib.ModItems;
 import dmillerw.remoteio.network.PacketHandler;
 import dmillerw.remoteio.recipe.ModRecipes;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
+import dmillerw.remoteio.recipe.RecipeInhibitorApply;
 import dmillerw.remoteio.recipe.RecipeKeepTransmitter;
 import net.minecraft.item.Item;
 
@@ -46,12 +48,14 @@ public class RemoteIO {
         BlockRemoteInterface.renderID = RenderingRegistry.getNextAvailableRenderId();
 
         GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
+        GameRegistry.addRecipe(new RecipeInhibitorApply());
 
         EventHelper.register(RecipeCopyLocation.INSTANCE);
         EventHelper.register(new RecipeKeepTransmitter());
         EventHelper.register(BlockTracker.INSTANCE);
         EventHelper.register(new BlockUpdateTicker());
         EventHelper.register(ContainerHandler.INSTANCE);
+        EventHelper.register(new PlayerEventHandler());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 

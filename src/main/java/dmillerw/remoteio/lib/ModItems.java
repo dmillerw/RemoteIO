@@ -15,6 +15,7 @@ public class ModItems {
     public static Item blankPlate;
     public static Item ioTool;
     public static Item wirelessTransmitter;
+    public static Item interactionInhibitor;
 
     public static void initialize() {
         locationChip = new ItemLocationChip().setUnlocalizedName("chip.location");
@@ -34,6 +35,9 @@ public class ModItems {
 
         wirelessTransmitter = new ItemWirelessTransmitter().setUnlocalizedName("wireless_transmitter");
         register(wirelessTransmitter);
+
+        interactionInhibitor = new ItemInteractionInhibitor().setUnlocalizedName("interaction_inhibitor");
+        register(interactionInhibitor);
     }
 
     private static void register(Item item) {

@@ -1,5 +1,10 @@
 # Misc
 itemGroup.rio=RemoteIO
+inhibitor.tooltip=Interaction Inhibitor:
+inhibitor.block=Block
+inhibitor.item=Item
+inhibitor.inactive=Inactive
+inhibitor.active=Active
 
 # GUI
 container.remoteio.upgrade=Upgrade
@@ -28,6 +33,7 @@ item.chip.upgrade.remote_access.name=Remote Access Upgrade
 item.chip.upgrade.simple_camo.name=Simple Camouflage Upgrade
 item.wireless_transmitter.name=Wireless Transmitter
 item.io_tool.name=IO Tool
+item.interaction_inhibitor.name=Interaction Inhibitor
 
 # Block
 tile.remote_interface.name=Remote Interface
