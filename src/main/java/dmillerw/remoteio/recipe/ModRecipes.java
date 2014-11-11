@@ -179,19 +179,26 @@ public class ModRecipes {
 
         // TRANSFER TYPE - AE2 NETWORK
         if (Loader.isModLoaded(DependencyInfo.ModIds.AE2)) {
-            RecipeHelper.addDependentRecipe(
-                    DependencyInfo.ModIds.AE2,
-                    new ItemStack(ModItems.transferChip, 1, TransferType.NETWORK_AE),
-                    " B ",
-                    " C ",
-                    " I ",
-                    'B', ModItems.blankPlate,
-                    'I', AEApi.instance().blocks().blockController.block(),
-                    'C', ModItems.locationChip
-            );
+            Object component = AEApi.instance().blocks().blockController.block();
+            if (component == null) {
+                component = AEApi.instance().blocks().blockChest.block();
+            }
+
+            if (component != null) {
+                RecipeHelper.addDependentRecipe(
+                        DependencyInfo.ModIds.AE2,
+                        new ItemStack(ModItems.transferChip, 1, TransferType.NETWORK_AE),
+                        " B ",
+                        " C ",
+                        " I ",
+                        'B', ModItems.blankPlate,
+                        'I', component,
+                        'C', ModItems.locationChip
+                );
+            }
         }
 
-        // TRANSFER TYPE - AE2 NETWORK
+        // TRANSFER TYPE - REDSTONE
         RecipeHelper.addOreRecipe(
                 new ItemStack(ModItems.transferChip, 1, TransferType.REDSTONE),
                 " B ",

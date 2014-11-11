@@ -57,9 +57,7 @@ public class ItemTransferChip extends ItemSelectiveMeta {
 
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List list, boolean debug) {
-        if (itemStack.getItemDamage() == TransferType.NETWORK_AE) {
-            list.add("TEMPORARY RECIPE!");
-        } else if (itemStack.getItemDamage() == TransferType.ENERGY_RF) {
+        if (itemStack.getItemDamage() == TransferType.ENERGY_RF) {
             if (itemStack.hasTagCompound()) {
                 list.add("Push Power: " + itemStack.getTagCompound().getBoolean("pushPower"));
                 list.add("Power Rate: " + itemStack.getTagCompound().getInteger("maxPushRate"));

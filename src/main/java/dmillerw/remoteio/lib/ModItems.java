@@ -36,8 +36,8 @@ public class ModItems {
         wirelessTransmitter = new ItemWirelessTransmitter().setUnlocalizedName("wireless_transmitter");
         register(wirelessTransmitter);
 
-        interactionInhibitor = new ItemInteractionInhibitor().setUnlocalizedName("interaction_inhibitor");
-        register(interactionInhibitor);
+//        interactionInhibitor = new ItemInteractionInhibitor().setUnlocalizedName("interaction_inhibitor");
+//        register(interactionInhibitor);
     }
 
     private static void register(Item item) {
