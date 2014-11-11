@@ -42,21 +42,24 @@ public class PlayerEventHandler {
                 }
             }
 
-            if (preventBlock) {
-                event.useBlock = Event.Result.DENY;
-            } else {
-                event.useBlock = Event.Result.ALLOW;
-            }
-
-            if (preventItem) {
-                // Prevents annoying client block flicker
-                if (held != null && held.getItem() instanceof ItemBlock) {
-                    event.setCanceled(true);
+            // Don't fuck with things if they shouldn't be fucked with
+            if (preventBlock || preventItem) {
+                if (preventBlock) {
+                    event.useBlock = Event.Result.DENY;
                 } else {
-                    event.useItem = Event.Result.DENY;
+                    event.useBlock = Event.Result.ALLOW;
                 }
-            } else {
-                event.useItem = Event.Result.ALLOW;
+
+                if (preventItem) {
+                    // Prevents annoying client block flicker
+                    if (held != null && held.getItem() instanceof ItemBlock) {
+                        event.setCanceled(true);
+                    } else {
+                        event.useItem = Event.Result.DENY;
+                    }
+                } else {
+                    event.useItem = Event.Result.ALLOW;
+                }
             }
         }
     }
