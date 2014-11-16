@@ -1,6 +1,5 @@
 package dmillerw.remoteio.client.render;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.block.core.BlockIOCore;
@@ -49,8 +48,15 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
 
         if (tile != null) {
-            if (tile.remotePosition == null || !tile.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) || tile.visualState != VisualState.CAMOUFLAGE_REMOTE) {
+            if (tile.remotePosition == null || !tile.remotePosition.inWorld(tile.getWorldObj()) || tile.visualState != VisualState.CAMOUFLAGE_REMOTE) {
                 renderer.renderStandardBlock(block, x, y, z);
+            } else {
+                if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj())) {
+                    Block remoteBlock = tile.remotePosition.getBlock();
+                    if (remoteBlock.getRenderType() == 0) {
+                        renderer.renderStandardBlock(block, x, y, z);
+                    }
+                }
             }
         }
         return true;

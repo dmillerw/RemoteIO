@@ -54,18 +54,20 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
                 Tessellator.instance.setTranslation(-tile.xCoord, -tile.yCoord, -tile.zCoord);
                 Tessellator.instance.addTranslation(-(there.x - tile.xCoord), -(there.y - tile.yCoord), -(there.z - tile.zCoord));
 
-                for (int i = 0; i < 2; i++) {
-                    if (i == 1) {
-                        OpenGlHelper.glBlendFunc(770, 771, 0, 1);
-                        GL11.glEnable(GL11.GL_BLEND);
-                    }
+                if (remote.getRenderType() != 0) {
+                    for (int i = 0; i < 2; i++) {
+                        if (i == 1) {
+                            OpenGlHelper.glBlendFunc(770, 771, 0, 1);
+                            GL11.glEnable(GL11.GL_BLEND);
+                        }
 
-                    if (remote.canRenderInPass(i)) {
-                        renderBlocks.renderBlockByRenderType(remote, there.x, there.y, there.z);
-                    }
+                        if (remote.canRenderInPass(i)) {
+                            renderBlocks.renderBlockByRenderType(remote, there.x, there.y, there.z);
+                        }
 
-                    if (i == 1) {
-                        GL11.glDisable(GL11.GL_BLEND);
+                        if (i == 1) {
+                            GL11.glDisable(GL11.GL_BLEND);
+                        }
                     }
                 }
 

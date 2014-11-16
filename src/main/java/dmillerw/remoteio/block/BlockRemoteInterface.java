@@ -1,5 +1,6 @@
 package dmillerw.remoteio.block;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -19,8 +20,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -85,13 +88,15 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        tile.markForUpdate();
-        tile.markForRenderUpdate();
         if (tile.remotePosition != null && tile.hasTransferChip(TransferType.REDSTONE)) {
             tile.remotePosition.getBlock().onNeighborBlockChange(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z, block);
         } else {
             super.onNeighborBlockChange(world, x, y, z, block);
         }
+
+        tile.markForUpdate();
+        tile.markForRenderUpdate();
+        world.updateLightByType(EnumSkyBlock.Block, x, y, z);
     }
 
     @Override
@@ -298,6 +303,18 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public int getRenderType() {
         return BlockRemoteInterface.renderID;
+    }
+
+    @Override
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
+        TileRemoteInterface tileRemoteInterface = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tileRemoteInterface.remotePosition != null && tileRemoteInterface.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient())) {
+            Block block = tileRemoteInterface.remotePosition.getBlock();
+            if (block.getRenderType() == 0) {
+                return block.getIcon(world, tileRemoteInterface.remotePosition.x, tileRemoteInterface.remotePosition.y, tileRemoteInterface.remotePosition.z, RotationHelper.getRotatedSide(0, tileRemoteInterface.rotationY, 0, side));
+            }
+        }
+        return super.getIcon(world, x, y, z, side);
     }
 
     @Override
