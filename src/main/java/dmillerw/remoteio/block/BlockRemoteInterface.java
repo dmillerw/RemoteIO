@@ -53,8 +53,40 @@ public class BlockRemoteInterface extends BlockIOCore {
     }
 
     @Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+            return tile.remotePosition.getBlock().getLightValue(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
+        } else {
+            return super.getLightValue(world, x, y, z);
+        }
+    }
+
+    @Override
+    public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+            return tile.remotePosition.getBlock().getLightOpacity(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
+        } else {
+            return super.getLightOpacity(world, x, y, z);
+        }
+    }
+
+    @Override
+    public float getBlockHardness(World world, int x, int y, int z) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+            return tile.remotePosition.getBlock().getBlockHardness(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
+        } else {
+            return super.getBlockHardness(world, x, y, z);
+        }
+    }
+
+    @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        tile.markForUpdate();
+        tile.markForRenderUpdate();
         if (tile.remotePosition != null && tile.hasTransferChip(TransferType.REDSTONE)) {
             tile.remotePosition.getBlock().onNeighborBlockChange(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z, block);
         } else {
