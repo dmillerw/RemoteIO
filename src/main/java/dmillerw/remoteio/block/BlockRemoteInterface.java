@@ -308,7 +308,7 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileRemoteInterface tileRemoteInterface = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tileRemoteInterface.remotePosition != null && tileRemoteInterface.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient())) {
+        if (tileRemoteInterface.remotePosition != null && tileRemoteInterface.remotePosition.inWorld(FMLClientHandler.instance().getWorldClient()) && tileRemoteInterface.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
             Block block = tileRemoteInterface.remotePosition.getBlock();
             if (block.getRenderType() == 0) {
                 return block.getIcon(world, tileRemoteInterface.remotePosition.x, tileRemoteInterface.remotePosition.y, tileRemoteInterface.remotePosition.z, RotationHelper.getRotatedSide(0, tileRemoteInterface.rotationY, 0, side));
