@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.block.core.BlockIOCore;
-import dmillerw.remoteio.client.handler.SoundHandler;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.core.UpgradeType;
 import dmillerw.remoteio.core.handler.GuiHandler;
@@ -51,6 +50,16 @@ public class BlockRemoteInterface extends BlockIOCore {
         }
 
         return true;
+    }
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
+        if (tile.remotePosition != null && tile.hasTransferChip(TransferType.REDSTONE)) {
+            tile.remotePosition.getBlock().onNeighborBlockChange(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z, block);
+        } else {
+            super.onNeighborBlockChange(world, x, y, z, block);
+        }
     }
 
     @Override
@@ -129,6 +138,11 @@ public class BlockRemoteInterface extends BlockIOCore {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override

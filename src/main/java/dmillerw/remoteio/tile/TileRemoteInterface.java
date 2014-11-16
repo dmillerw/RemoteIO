@@ -14,6 +14,7 @@ import dmillerw.remoteio.core.compat.LinkedGridNode;
 import dmillerw.remoteio.core.helper.RotationHelper;
 import dmillerw.remoteio.core.helper.mod.IC2Helper;
 import dmillerw.remoteio.core.tracker.BlockTracker;
+import dmillerw.remoteio.core.tracker.RedstoneTracker;
 import dmillerw.remoteio.lib.DependencyInfo;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.ModItems;
@@ -102,6 +103,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             registeredWithIC2 = true;
         }
 
+        if (trackingRedstone) {
+            RedstoneTracker.unregister(this);
+            trackingRedstone = false;
+        }
+
+        RedstoneTracker.register(this);
+
         // Clear missing upgrade flag
         missingUpgrade = false;
 
@@ -118,7 +126,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
     public boolean locked = false;
 
+    private int lastRedstoneLevel = 0;
+
     private boolean registeredWithIC2 = false;
+    private boolean trackingRedstone = false;
     private boolean missingUpgrade = false;
     private boolean tracking = false;
 
@@ -167,6 +178,19 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             if (!tracking) {
                 BlockTracker.INSTANCE.startTracking(remotePosition, this);
                 tracking = true;
+            }
+
+            if (!trackingRedstone) {
+                RedstoneTracker.register(this);
+                trackingRedstone = true;
+            }
+
+            if (remotePosition != null && hasTransferChip(TransferType.REDSTONE)) {
+                int redstone = worldObj.getStrongestIndirectPower(xCoord, yCoord, zCoord);
+                if (redstone != lastRedstoneLevel) {
+                    remotePosition.markForUpdate();
+                    lastRedstoneLevel = redstone;
+                }
             }
 
             if (ModAPIManager.INSTANCE.hasAPI(DependencyInfo.ModIds.COFH_API)) {
@@ -221,6 +245,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             }
         }
 
+        RedstoneTracker.unregister(this);
         BlockTracker.INSTANCE.stopTracking(remotePosition);
     }
 
@@ -235,6 +260,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             }
         }
 
+        RedstoneTracker.unregister(this);
         BlockTracker.INSTANCE.stopTracking(remotePosition);
     }
 
@@ -322,8 +348,10 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
             }
         }
 
+        RedstoneTracker.unregister(this);
         BlockTracker.INSTANCE.stopTracking(remotePosition);
         remotePosition = coords;
+        RedstoneTracker.register(this);
         BlockTracker.INSTANCE.startTracking(remotePosition, this);
 
         IC2Helper.loadEnergyTile(this);

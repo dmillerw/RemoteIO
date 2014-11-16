@@ -17,4 +17,45 @@ buildscript {
 
 apply plugin: 'forge'
 
-apply from: "https://raw.githubusercontent.com/dmillerw/MainGradle/master/main.gradle"
+version = project.mod_version
+group = mod_group
+archivesBaseName = mod_archive_name
+
+minecraft {
+    runDir = "run/assets"
+    version = minecraft_version + "-" + forge_version
+    replaceIn mod_info_path
+    replace "%MOD_VERSION%", mod_version
+    replace "%FORGE_VERSION%", forge_version
+}
+
+def final_display_version = hasProperty("display_version") ? display_version : minecraft_version
+version = "${final_display_version}-${mod_version}.B${System.getenv("BUILD_NUMBER") ?: 0}"
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+	inputs.property "mod_version", mod_version
+	inputs.property "minecraft_version", minecraft_version
+    
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'mod_version':mod_version, 'minecraft_version':minecraft_version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }  
+}
+
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'dmillerw.remoteio.asm.RemoteIOCorePlugin'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
+
+    classifier = 'universal'
+}

@@ -5,7 +5,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
@@ -89,16 +88,20 @@ public class DimensionalCoords {
         return getWorld() != null ? getWorld().getTileEntity(x, y, z) : null;
     }
 
-    public Block getBlock(IBlockAccess world) {
+    public Block getBlock(World world) {
         return world.getBlock(x, y, z);
     }
 
-    public int getMeta(IBlockAccess world) {
+    public int getMeta(World world) {
         return world.getBlockMetadata(x, y, z);
     }
 
-    public TileEntity getTileEntity(IBlockAccess world) {
+    public TileEntity getTileEntity(World world) {
         return world.getTileEntity(x, y, z);
+    }
+
+    public void markForUpdate() {
+        if (getWorld() != null) getWorld().markBlockForUpdate(x, y, z);
     }
 
     /* END */
