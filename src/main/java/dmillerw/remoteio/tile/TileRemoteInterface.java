@@ -320,9 +320,18 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
                 return VisualState.INACTIVE_BLINK;
             }
 
+            boolean simple = hasUpgradeChip(UpgradeType.SIMPLE_CAMO);
             boolean remote = hasUpgradeChip(UpgradeType.REMOTE_CAMO);
 
-            return remote ? VisualState.CAMOUFLAGE_REMOTE : missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
+            if (simple && !remote) {
+                return VisualState.CAMOUFLAGE_SIMPLE;
+            } else if (!simple && remote) {
+                return VisualState.CAMOUFLAGE_REMOTE;
+            } else if (simple && remote) {
+                return VisualState.CAMOUFLAGE_BOTH;
+            }
+
+            return missingUpgrade ? VisualState.ACTIVE_BLINK : VisualState.ACTIVE;
         }
     }
 

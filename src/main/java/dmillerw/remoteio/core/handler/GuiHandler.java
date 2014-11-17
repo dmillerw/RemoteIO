@@ -1,14 +1,9 @@
 package dmillerw.remoteio.core.handler;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import dmillerw.remoteio.client.gui.GuiIntelligentWorkbench;
-import dmillerw.remoteio.client.gui.GuiRFConfig;
-import dmillerw.remoteio.client.gui.GuiRemoteInterface;
-import dmillerw.remoteio.client.gui.GuiRemoteInventory;
-import dmillerw.remoteio.inventory.container.ContainerIntelligentWorkbench;
-import dmillerw.remoteio.inventory.container.ContainerNull;
-import dmillerw.remoteio.inventory.container.ContainerRemoteInterface;
-import dmillerw.remoteio.inventory.container.ContainerRemoteInventory;
+import dmillerw.remoteio.client.gui.*;
+import dmillerw.remoteio.inventory.InventoryItem;
+import dmillerw.remoteio.inventory.container.*;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.TileRemoteInventory;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +18,7 @@ public class GuiHandler implements IGuiHandler {
     public static final int GUI_RF_CONFIG = 1;
     public static final int GUI_REMOTE_INVENTORY = 2;
     public static final int GUI_INTELLIGENT_WORKBENCH = 3;
+    public static final int GUI_SIMPLE_CAMO = 4;
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -38,6 +34,9 @@ public class GuiHandler implements IGuiHandler {
 
             case GUI_INTELLIGENT_WORKBENCH:
                 return new ContainerIntelligentWorkbench(player.inventory, world, x, y, z);
+
+            case GUI_SIMPLE_CAMO:
+                return new ContainerSimpleCamo(player, new InventoryItem(player.getCurrentEquippedItem(), 1));
         }
 
         return null;
@@ -57,6 +56,9 @@ public class GuiHandler implements IGuiHandler {
 
             case GUI_INTELLIGENT_WORKBENCH:
                 return new GuiIntelligentWorkbench(player.inventory, world, x, y, z);
+
+            case GUI_SIMPLE_CAMO:
+                return new GuiSimpleCamo(player, new InventoryItem(player.getCurrentEquippedItem(), 1));
         }
 
         return null;

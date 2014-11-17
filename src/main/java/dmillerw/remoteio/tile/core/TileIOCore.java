@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public abstract class TileIOCore extends TileCore implements InventoryNBT.IInventoryCallback {
 
     public VisualState visualState = VisualState.INACTIVE;
+    public ItemStack simpleCamo;
 
     public InventoryNBT transferChips = new InventoryNBT(this, 9, 1);
     public InventoryNBT upgradeChips = new InventoryNBT(this, 9, 1);
@@ -26,6 +27,12 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
         transferChips.writeToNBT("TransferChips", nbt);
         upgradeChips.writeToNBT("UpgradeChips", nbt);
 
+        if (simpleCamo != null) {
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            simpleCamo.writeToNBT(nbtTagCompound);
+            nbt.setTag("simple", nbtTagCompound);
+        }
+
         nbt.setByte("state", (byte) visualState.ordinal());
     }
 
@@ -36,6 +43,12 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
         transferChips.readFromNBT("TransferChips", nbt);
         upgradeChips.readFromNBT("UpgradeChips", nbt);
 
+        if (nbt.hasKey("simple")) {
+            simpleCamo = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("simple"));
+        } else {
+            simpleCamo = null;
+        }
+
         visualState = VisualState.values()[nbt.getByte("state")];
     }
 
@@ -43,6 +56,12 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
     public void onClientUpdate(NBTTagCompound nbt) {
         if (nbt.hasKey("state")) {
             visualState = VisualState.values()[nbt.getByte("state")];
+        }
+
+        if (nbt.hasKey("simple")) {
+            simpleCamo = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("simple"));
+        } else {
+            simpleCamo = null;
         }
     }
 
@@ -52,6 +71,31 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
 
     public boolean hasUpgradeChip(int type) {
         return InventoryHelper.containsStack(upgradeChips, new ItemStack(ModItems.upgradeChip, 1, type), true, false);
+    }
+
+    public void updateSimpleCamouflage() {
+        for (ItemStack stack1 : InventoryHelper.toArray(upgradeChips)) {
+            if (stack1 != null && stack1.getItemDamage() == UpgradeType.SIMPLE_CAMO) {
+                ItemStack stack = new InventoryItem(stack1, 1).getStackInSlot(0);
+                if (stack != null) {
+                    this.simpleCamo = stack;
+                    sendSimpleCamouflage(stack);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void sendSimpleCamouflage(ItemStack stack) {
+        NBTTagCompound nbt = new NBTTagCompound();
+        if (stack != null) {
+            NBTTagCompound tag = new NBTTagCompound();
+            stack.writeToNBT(tag);
+            nbt.setTag("simple", tag);
+        } else {
+            nbt.setBoolean("simple_null", true);
+        }
+        sendClientUpdate(nbt);
     }
 
 	/* BEGIN CLIENT UPDATE METHODS
@@ -77,6 +121,10 @@ public abstract class TileIOCore extends TileCore implements InventoryNBT.IInven
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("state", (byte) visualState.ordinal());
         sendClientUpdate(nbt);
+
+        if (visualState == VisualState.CAMOUFLAGE_SIMPLE || visualState == VisualState.CAMOUFLAGE_BOTH) {
+            updateSimpleCamouflage();
+        }
     }
 
 	/* END CLIENT UPDATE METHODS */
