@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
@@ -148,13 +149,15 @@ public class ItemWirelessTransmitter extends Item {
         String bound = getPlayerName(stack);
 
         if (coords != null) {
-            list.add("Dimension: " + DimensionManager.getProvider(coords.dimensionID).getDimensionName());
-            list.add("X: " + coords.x + " Y: " + coords.y + " Z: " + coords.z);
-            list.add(" --- ");
+            list.add(String.format(StatCollector.translateToLocal("tooltip.dimension"), DimensionManager.getProvider(coords.dimensionID).getDimensionName()));
+            list.add(String.format(StatCollector.translateToLocal("tooltip.coords"), coords.x, coords.y, coords.z));
+
+            if (bound != null)
+                list.add(" --- ");
         }
 
         if (bound != null) {
-            list.add("Bound to: " + bound);
+            list.add(String.format(StatCollector.translateToLocal("tooltip.bound"), bound));
         }
     }
 

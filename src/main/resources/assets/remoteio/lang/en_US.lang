@@ -13,6 +13,12 @@ container.remoteio.rfconfig=RF Config
 
 container.remoteio.rfconfig_desc=RF by default relies on energy sources to push power to neighboring blocks, instead of them pulling. As this isn't possible with the interface block by default, configuring this allows the interface block to passively push power to adjacent blocks.
 
+# Tooltip
+tooltip.bound=Bound to: %s
+tooltip.dimension=Dimension: %s
+tooltip.coords=X: %s Y: %s Z: %s
+tooltip.inventory.creative=Right-click with bound Wireless Transmitter to link this Remote Inventory
+
 # Chat
 chat.target.save=Target Saved
 chat.target.load=Target Loaded
