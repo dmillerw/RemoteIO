@@ -2,6 +2,7 @@ package dmillerw.remoteio.lib;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.*;
+import dmillerw.remoteio.block.item.ItemBlockRemoteInventory;
 import dmillerw.remoteio.item.block.ItemBlockMulti;
 import dmillerw.remoteio.tile.*;
 import net.minecraft.block.Block;
@@ -23,7 +24,7 @@ public class ModBlocks {
         GameRegistry.registerTileEntity(TileRemoteInterface.class, remoteInterface.getUnlocalizedName());
 
         remoteInventory = new BlockRemoteInventory().setBlockName("remote_inventory");
-        GameRegistry.registerBlock(remoteInventory, remoteInventory.getUnlocalizedName());
+        GameRegistry.registerBlock(remoteInventory, ItemBlockRemoteInventory.class, remoteInventory.getUnlocalizedName());
         GameRegistry.registerTileEntity(TileRemoteInventory.class, remoteInventory.getUnlocalizedName());
 
         machine = new BlockMachine().setBlockName("machine");

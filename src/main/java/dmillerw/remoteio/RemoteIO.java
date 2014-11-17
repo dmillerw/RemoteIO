@@ -25,7 +25,7 @@ import dmillerw.remoteio.network.PacketHandler;
 import dmillerw.remoteio.recipe.ModRecipes;
 import dmillerw.remoteio.recipe.RecipeCopyLocation;
 import dmillerw.remoteio.recipe.RecipeInhibitorApply;
-import dmillerw.remoteio.recipe.RecipeKeepTransmitter;
+import dmillerw.remoteio.recipe.RecipeRemoteInventory;
 import net.minecraft.item.Item;
 
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
@@ -49,9 +49,10 @@ public class RemoteIO {
 
         GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
         GameRegistry.addRecipe(new RecipeInhibitorApply());
+        GameRegistry.addRecipe(new RecipeRemoteInventory());
 
         EventHelper.register(RecipeCopyLocation.INSTANCE);
-        EventHelper.register(new RecipeKeepTransmitter());
+        EventHelper.register(new RecipeRemoteInventory());
         EventHelper.register(BlockTracker.INSTANCE);
         EventHelper.register(new BlockUpdateTicker());
         EventHelper.register(ContainerHandler.INSTANCE);

@@ -65,6 +65,7 @@ public class TileRemoteInventory extends TileIOCore implements
 
     public String target;
 
+    private boolean hasPlayer = false;
     private boolean registeredWithIC2 = false;
     private boolean missingUpgrade = false;
 
@@ -81,6 +82,21 @@ public class TileRemoteInventory extends TileIOCore implements
             target = nbt.getString("target");
         } else {
             target = "";
+        }
+    }
+
+    @Override
+    public void updateEntity() {
+        if (!worldObj.isRemote && worldObj.getTotalWorldTime() % 10 == 0) {
+            EntityPlayer player = getPlayer();
+            boolean hasPlayer = player != null;
+            if (hasPlayer != this.hasPlayer) {
+                markForUpdate();
+                updateVisualState();
+                updateNeighbors();
+
+                this.hasPlayer = hasPlayer;
+            }
         }
     }
 
@@ -122,13 +138,13 @@ public class TileRemoteInventory extends TileIOCore implements
 
 	/* END CHIP METHODS */
 
-    public void setPlayer(EntityPlayer player) {
+    public void setPlayer(String target) {
         if (registeredWithIC2) {
             IC2Helper.unloadEnergyTile(this);
             registeredWithIC2 = false;
         }
 
-        target = player.getCommandSenderName();
+        this.target = target;
 
         if (!registeredWithIC2 && hasTransferChip(TransferType.ENERGY_IC2)) {
             IC2Helper.loadEnergyTile(this);

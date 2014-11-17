@@ -56,13 +56,6 @@ public class ModRecipes {
                 'G', Blocks.gold_block
         );
 
-        // REMOTE INVENTORY
-        GameRegistry.addShapelessRecipe(
-                new ItemStack(ModBlocks.remoteInventory),
-                new ItemStack(ModBlocks.remoteInterface),
-                new ItemStack(ModItems.wirelessTransmitter)
-        );
-
         // SKY LIGHT
         GameRegistry.addShapedRecipe(
                 new ItemStack(ModBlocks.skylight),
