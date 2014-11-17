@@ -1,8 +1,10 @@
 package dmillerw.remoteio.inventory.container;
 
 import com.google.common.collect.Lists;
+import dmillerw.remoteio.inventory.InventoryTileCrafting;
 import dmillerw.remoteio.network.PacketHandler;
 import dmillerw.remoteio.network.packet.PacketClientForceSlot;
+import dmillerw.remoteio.tile.TileIntelligentWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -20,7 +22,7 @@ import java.util.List;
  */
 public class ContainerIntelligentWorkbench extends Container {
 
-    public static List<ItemStack> getAllCraftingResults(InventoryCrafting craftMatrix, World world) {
+    public static List<ItemStack> getAllCraftingResults(InventoryTileCrafting craftMatrix, World world) {
         List<ItemStack> list = Lists.newArrayList();
 
         int i = 0;
@@ -69,12 +71,8 @@ public class ContainerIntelligentWorkbench extends Container {
         return list;
     }
 
-    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+    public final TileIntelligentWorkbench tileIntelligentWorkbench;
     public IInventory craftResult = new InventoryCraftResult();
-    private World worldObj;
-    private int posX;
-    private int posY;
-    private int posZ;
 
     public int resultCount = 0;
     public boolean resultChanged = false;
@@ -83,17 +81,15 @@ public class ContainerIntelligentWorkbench extends Container {
     private List<ItemStack> results;
 
     public ContainerIntelligentWorkbench(InventoryPlayer inventoryPlayer, World world, int x, int y, int z) {
-        this.worldObj = world;
-        this.posX = x;
-        this.posY = y;
-        this.posZ = z;
-        this.addSlotToContainer(new SlotCrafting(inventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
+        this.tileIntelligentWorkbench = (TileIntelligentWorkbench) world.getTileEntity(x, y, z);
+        this.tileIntelligentWorkbench.craftMatrix.setContainer(this);
+        this.addSlotToContainer(new SlotCrafting(inventoryPlayer.player, tileIntelligentWorkbench.craftMatrix, this.craftResult, 0, 124, 35));
         int l;
         int i1;
 
         for (l = 0; l < 3; ++l) {
             for (i1 = 0; i1 < 3; ++i1) {
-                this.addSlotToContainer(new Slot(this.craftMatrix, i1 + l * 3, 30 + i1 * 18, 17 + l * 18));
+                this.addSlotToContainer(new Slot(tileIntelligentWorkbench.craftMatrix, i1 + l * 3, 30 + i1 * 18, 17 + l * 18));
             }
         }
 
@@ -107,12 +103,12 @@ public class ContainerIntelligentWorkbench extends Container {
             this.addSlotToContainer(new Slot(inventoryPlayer, l, 8 + l * 18, 142));
         }
 
-        this.onCraftMatrixChanged(this.craftMatrix);
+        this.onCraftMatrixChanged(tileIntelligentWorkbench.craftMatrix);
     }
 
     @Override
     public void onCraftMatrixChanged(IInventory inventory) {
-        results = ContainerIntelligentWorkbench.getAllCraftingResults(craftMatrix, worldObj);
+        results = ContainerIntelligentWorkbench.getAllCraftingResults(tileIntelligentWorkbench.craftMatrix, tileIntelligentWorkbench.getWorldObj());
         recipeIndex = 0;
         this.craftResult.setInventorySlotContents(0, !results.isEmpty() ? results.get(recipeIndex) : null);
         detectAndSendChanges();
@@ -159,23 +155,8 @@ public class ContainerIntelligentWorkbench extends Container {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
-
-        if (!this.worldObj.isRemote) {
-            for (int i = 0; i < 9; ++i) {
-                ItemStack itemstack = this.craftMatrix.getStackInSlotOnClosing(i);
-
-                if (itemstack != null) {
-                    player.dropPlayerItemWithRandomChoice(itemstack, false);
-                }
-            }
-        }
-    }
-
-    @Override
     public boolean canInteractWith(EntityPlayer player) {
-        return player.getDistanceSq((double) this.posX + 0.5D, (double) this.posY + 0.5D, (double) this.posZ + 0.5D) <= 64.0D;
+        return player.getDistanceSq((double) tileIntelligentWorkbench.xCoord + 0.5D, (double) tileIntelligentWorkbench.yCoord + 0.5D, (double) tileIntelligentWorkbench.zCoord + 0.5D) <= 64.0D;
     }
 
     @Override
