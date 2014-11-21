@@ -11,6 +11,7 @@ import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
+import dmillerw.remoteio.core.ChannelRegistry;
 import dmillerw.remoteio.core.handler.BlockUpdateTicker;
 import dmillerw.remoteio.core.handler.ContainerHandler;
 import dmillerw.remoteio.core.handler.GuiHandler;
@@ -37,10 +38,14 @@ public class RemoteIO {
     @SidedProxy(serverSide = ModInfo.SERVER, clientSide = ModInfo.CLIENT)
     public static CommonProxy proxy;
 
+    public static ChannelRegistry channelRegistry;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         ModMetadata modMetadata = event.getModMetadata();
         modMetadata.version = ModInfo.VERSION;
+
+        channelRegistry = new ChannelRegistry();
 
         ModBlocks.initialize();
         ModItems.initialize();

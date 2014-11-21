@@ -23,7 +23,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -56,26 +55,6 @@ public class BlockRemoteInterface extends BlockIOCore {
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
-            return tile.remotePosition.getBlock().getLightValue(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
-        } else {
-            return super.getLightValue(world, x, y, z);
-        }
-    }
-
-    @Override
-    public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
-        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
-            return tile.remotePosition.getBlock().getLightOpacity(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
-        } else {
-            return super.getLightOpacity(world, x, y, z);
-        }
-    }
-
-    @Override
     public float getBlockHardness(World world, int x, int y, int z) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
         if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
@@ -95,8 +74,6 @@ public class BlockRemoteInterface extends BlockIOCore {
         }
 
         tile.markForUpdate();
-        tile.markForRenderUpdate();
-        world.updateLightByType(EnumSkyBlock.Block, x, y, z);
     }
 
     @Override
@@ -175,11 +152,6 @@ public class BlockRemoteInterface extends BlockIOCore {
             }
         }
         return 0;
-    }
-
-    @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override
@@ -305,6 +277,7 @@ public class BlockRemoteInterface extends BlockIOCore {
         return BlockRemoteInterface.renderID;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileRemoteInterface tileRemoteInterface = (TileRemoteInterface) world.getTileEntity(x, y, z);

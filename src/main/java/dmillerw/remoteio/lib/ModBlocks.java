@@ -17,6 +17,7 @@ public class ModBlocks {
     public static Block machine;
     public static Block skylight;
     public static Block intelligentWorkbench;
+    public static Block transceiver;
 
     public static void initialize() {
         remoteInterface = new BlockRemoteInterface().setBlockName("remote_interface");
@@ -38,5 +39,9 @@ public class ModBlocks {
         intelligentWorkbench = new BlockIntelligentWorkbench().setBlockName("intelligentWorkbench");
         GameRegistry.registerBlock(intelligentWorkbench, "intelligentWorkbench");
         GameRegistry.registerTileEntity(TileIntelligentWorkbench.class, "remoteio:intelligentWorkbench");
+
+//        transceiver = new BlockTransceiver().setBlockName("transceiver");
+//        GameRegistry.registerBlock(transceiver, ItemBlockTransceiver.class, "transceiver");
+//        GameRegistry.registerTileEntity(TileTransceiver.class, "remoteio:transceiver");
     }
 }

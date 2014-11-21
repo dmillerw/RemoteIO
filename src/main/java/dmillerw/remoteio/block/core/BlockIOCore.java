@@ -1,5 +1,7 @@
 package dmillerw.remoteio.block.core;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.core.TabRemoteIO;
@@ -23,7 +25,9 @@ import net.minecraft.world.World;
  */
 public abstract class BlockIOCore extends BlockContainer {
 
+    @SideOnly(Side.CLIENT)
     public static IIcon[] icons;
+    @SideOnly(Side.CLIENT)
     public static IIcon[] overlays;
 
     public BlockIOCore() {
@@ -68,21 +72,25 @@ public abstract class BlockIOCore extends BlockContainer {
         super.breakBlock(world, x, y, z, block, meta);
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public boolean isOpaqueCube() {
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public boolean renderAsNormalBlock() {
         return false;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
         return icons[0];
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileIOCore tile = (TileIOCore) world.getTileEntity(x, y, z);
@@ -98,6 +106,7 @@ public abstract class BlockIOCore extends BlockContainer {
         return icons[0];
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void registerBlockIcons(IIconRegister register) {
         icons = new IIcon[4];

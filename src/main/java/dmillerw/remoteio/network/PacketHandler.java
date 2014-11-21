@@ -4,10 +4,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import dmillerw.remoteio.lib.ModInfo;
-import dmillerw.remoteio.network.packet.PacketClientAllowContainer;
-import dmillerw.remoteio.network.packet.PacketClientForceSlot;
-import dmillerw.remoteio.network.packet.PacketServerApplyRFConfig;
-import dmillerw.remoteio.network.packet.PacketServerOpenRemoteGUI;
+import dmillerw.remoteio.network.packet.*;
 
 /**
  * @author dmillerw
@@ -21,5 +18,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketClientForceSlot.class, PacketClientForceSlot.class, 1, Side.CLIENT);
         INSTANCE.registerMessage(PacketServerOpenRemoteGUI.class, PacketServerOpenRemoteGUI.class, 2, Side.SERVER);
         INSTANCE.registerMessage(PacketServerApplyRFConfig.class, PacketServerApplyRFConfig.class, 3, Side.SERVER);
+        INSTANCE.registerMessage(PacketServerSetChannel.class, PacketServerSetChannel.class, 4, Side.SERVER);
     }
 }
