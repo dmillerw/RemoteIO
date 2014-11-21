@@ -13,6 +13,12 @@ container.remoteio.rfconfig=RF能量配置
 
 container.remoteio.rfconfig_desc=默认情况下RF能量需要能量源才能传输到邻接的方块,对远程接口亦是如此.调整此数值可以让远程接口自动将能量转输至邻接的能量接收端
 
+# Tooltip
+tooltip.bound=已绑定: %s
+tooltip.dimension=位于世界: %s
+tooltip.coords=X: %s Y: %s Z: %s
+tooltip.inventory.creative=用绑定的无线收发器右键远程背包接口以此构建连接
+
 # Chat
 chat.target.save=目标已定位
 chat.target.load=目标已载入
@@ -28,6 +34,7 @@ item.chip.transfer.energy_ic2.name=EU能量转输芯片
 item.chip.transfer.energy_mj.name=MJ能量转输芯片
 item.chip.transfer.energy_rf.name=RF能量转输芯片
 item.chip.transfer.network_ae.name=AE网络转输芯片
+item.chip.transfer.redstone.name=红石转输芯片
 item.chip.upgrade.remote_camo.name=远程伪装升级
 item.chip.upgrade.remote_access.name=远程访问升级
 item.chip.upgrade.simple_camo.name=简易伪装升级
