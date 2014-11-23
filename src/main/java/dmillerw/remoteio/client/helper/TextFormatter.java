@@ -148,23 +148,25 @@ public class TextFormatter {
     }
 
     public static enum Format {
-        BOLD('l'),
-        ITALIC('o'),
-        UNDERLINE('n');
+        BOLD('*', 'l'),
+        ITALIC('-', 'o'),
+        UNDERLINE('_', 'n');
 
+        public char token;
         public char code;
 
-        private Format(char code) {
+        private Format(char token, char code) {
+            this.token = token;
             this.code = code;
         }
 
         public static Format getFormat(char token) {
-            switch (token) {
-                case '*': return BOLD;
-                case '-': return ITALIC;
-                case '_': return UNDERLINE;
-                default: return null;
+            for (Format format : Format.values()) {
+                if (format.token == token) {
+                    return format;
+                }
             }
+            return null;
         }
     }
 }
