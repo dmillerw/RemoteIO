@@ -13,83 +13,88 @@ public class TextFormatter {
 
     private static final char FORMATTING = '§';
 
-    public static LinkedList<FormattedString> format(String ... strings) {
+    public static LinkedList<FormattedString> format(String string) {
+        return format(string, -1);
+    }
+
+    public static LinkedList<FormattedString> format(String string, int overrideColor) {
         LinkedList<FormattedString> list = Lists.newLinkedList();
         EnumSet<Format> activeFormats = EnumSet.noneOf(Format.class);
         int activeColor = -1;
 
-        for (String str : strings) {
-            str = str.trim();
-            String[] words = str.split(" ");
+        string = string.trim();
+        String[] words = string.split(" ");
 
-            for (String word : words) {
-                if (word == null || word.isEmpty()) {
-                    continue;
-                }
+        for (String word : words) {
+            if (word == null || word.isEmpty()) {
+                continue;
+            }
 
-                word = word.trim();
+            word = word.trim();
 
-                StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
 
-                EnumSet<Format> formats = EnumSet.copyOf(activeFormats);
-                EnumSet<Format> toRemove = EnumSet.noneOf(Format.class);
+            EnumSet<Format> formats = EnumSet.copyOf(activeFormats);
+            EnumSet<Format> toRemove = EnumSet.noneOf(Format.class);
 
-                boolean resetColor = false;
+            boolean resetColor = false;
 
-                for (int i=0; i<word.length(); i++) {
-                    char character = word.charAt(i);
-                    if (character == '@') {
-                        boolean terminator = ((i == word.length() - 1) || ((word.charAt(i + 1) != '0') || word.length() <= i + 9) || activeColor != -1);
-                        if (!terminator && activeColor != -1) {
-                            // NESTED COLORS ARE BAD! STAHP!
-                            activeColor = -1;
+            for (int i=0; i<word.length(); i++) {
+                char character = word.charAt(i);
+                if (overrideColor == -1 && character == '@') {
+                    boolean terminator = ((i == word.length() - 1) || ((word.charAt(i + 1) != '0') || word.length() <= i + 9) || activeColor != -1);
+                    if (!terminator && activeColor != -1) {
+                        // NESTED COLORS ARE BAD! STAHP!
+                        activeColor = -1;
+                    } else {
+                        // Try and parse 6 digit HEX color
+                        if (terminator) {
+                            resetColor = true;
                         } else {
-                            // Try and parse 6 digit HEX color
-                            if (terminator) {
-                                resetColor = true;
-                            } else {
-                                try {
-                                    activeColor = Integer.parseInt(word.substring(i + 3, i + 9), 16);
-                                } catch (NumberFormatException ex) {
-                                    activeColor = -1;
-                                    ex.printStackTrace();
-                                }
-                            }
-
-                            // If we suceeded in parsing
-                            if (activeColor != -1) {
-                                i += 8; // Skip the HEX color
+                            try {
+                                activeColor = Integer.parseInt(word.substring(i + 3, i + 9), 16);
+                            } catch (NumberFormatException ex) {
+                                activeColor = -1;
+                                ex.printStackTrace();
                             }
                         }
-                    } else {
-                        Format format = Format.getFormat(character);
-                        if (format != null) {
-                            if (formats.contains(format)) {
-                                toRemove.add(format);
-                            } else {
-                                formats.add(format);
-                            }
-                        } else {
-                            stringBuilder.append(character);
+
+                        // If we suceeded in parsing
+                        if (activeColor != -1) {
+                            i += 8; // Skip the HEX color
                         }
                     }
+                } else {
+                    Format format = Format.getFormat(character);
+                    if (format != null) {
+                        if (formats.contains(format)) {
+                            toRemove.add(format);
+                        } else {
+                            formats.add(format);
+                        }
+                    } else {
+                        stringBuilder.append(character);
+                    }
                 }
-
-                FormattedString formattedString = new FormattedString(stringBuilder.toString(), EnumSet.copyOf(formats), activeColor);
-
-                formats.removeAll(toRemove);
-                toRemove.clear();
-
-                if (resetColor)
-                    activeColor = -1;
-
-                formattedString.setContinuingFormat(formats, !resetColor);
-                list.add(formattedString);
-
-                activeFormats.clear();
-                activeFormats.addAll(formats);
-
             }
+
+            if (overrideColor != -1)
+                activeColor = -1;
+
+            FormattedString formattedString = new FormattedString(stringBuilder.toString(), EnumSet.copyOf(formats), activeColor);
+
+            formats.removeAll(toRemove);
+            toRemove.clear();
+
+            if (resetColor)
+                activeColor = -1;
+
+            formattedString.setContinuingFormat(formats, !resetColor);
+            list.add(formattedString);
+
+            activeFormats.clear();
+            activeFormats.addAll(formats);
+
         }
 
         return list;

@@ -3,7 +3,9 @@ package dmillerw.remoteio.core.proxy;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import dmillerw.remoteio.client.documentation.Documentation;
 import dmillerw.remoteio.client.handler.SoundHandler;
 import dmillerw.remoteio.client.handler.TooltipEventHandler;
 import dmillerw.remoteio.client.render.*;
@@ -40,6 +42,12 @@ public class ClientProxy extends CommonProxy {
         EventHelper.register(new TooltipEventHandler());
     }
 
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        super.postInit(event);
+
+        Documentation.initialize();
+    }
 
     @Override
     public void setClientPlayerSlot(int slot, ItemStack itemStack) {

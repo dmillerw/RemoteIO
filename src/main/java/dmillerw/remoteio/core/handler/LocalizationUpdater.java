@@ -13,6 +13,7 @@ import net.minecraftforge.common.config.Configuration;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +56,11 @@ public class LocalizationUpdater {
                             }
                         }
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        // Most likely due to the lack of an internet connection. No need to print
+                        if (ex instanceof UnknownHostException)
+                            optout = true;
+                        else
+                            ex.printStackTrace();
                     }
                 }
             });
