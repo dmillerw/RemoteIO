@@ -28,8 +28,6 @@ public class GuiRFConfig extends GuiContainer {
 
     private final ItemStack itemStack;
 
-    private LinkedList<TextFormatter.FormattedString> list;
-
     public GuiBetterButton buttonDec;
     public GuiBetterButton buttonInc;
 
@@ -56,8 +54,6 @@ public class GuiRFConfig extends GuiContainer {
 
     public void initGui() {
         super.initGui();
-
-        list = TextFormatter.format("*Hello!* _This is_ -a test-");
 
         buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 19, 12, 12, "-"));
         buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 19, 12, 12, "+"));
@@ -87,8 +83,7 @@ public class GuiRFConfig extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        TextFormatter.draw(fontRendererObj, list, 5, 5);
-//        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.rfconfig"), 5, 5, 4210752);
+        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.rfconfig"), 5, 5, 4210752);
         fontRendererObj.drawSplitString(StatCollector.translateToLocal("container.remoteio.rfconfig_desc"), 5, 35, 170, 4210752);
         textFieldRate.drawTextBox();
     }

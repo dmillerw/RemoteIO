@@ -15,7 +15,8 @@ public class TextFormatter {
 
     public static LinkedList<FormattedString> format(String ... strings) {
         LinkedList<FormattedString> list = Lists.newLinkedList();
-        Format lastFormat = null;
+        EnumSet<Format> activeFormats = EnumSet.noneOf(Format.class);
+        int activeColor = -1;
 
         for (String str : strings) {
             str = str.trim();
@@ -28,51 +29,66 @@ public class TextFormatter {
 
                 word = word.trim();
 
-                Format format = null;
-                boolean trimStart = false;
-                boolean trimEnd = false;
-                boolean continuingFormat = false;
+                StringBuilder stringBuilder = new StringBuilder();
 
-                char start = word.charAt(0);
-                char end = word.charAt(word.length() - 1);
+                EnumSet<Format> formats = EnumSet.copyOf(activeFormats);
+                EnumSet<Format> toRemove = EnumSet.noneOf(Format.class);
 
-                // If they don't match (like one is a letter and the other is symbol)
-                if (start != end) {
-                    Format fStart = Format.getFormat(start);
-                    Format fEnd = Format.getFormat(end);
+                boolean resetColor = false;
 
-                    if (fStart != null)
-                        trimStart = true;
-
-                    if (fEnd != null)
-                        trimEnd = true;
-
-                    // If last format isn't null, we ignore the starting token, and see if the current format should be ended
-                    if (lastFormat != null) {
-                        if (fEnd == lastFormat) {
-                            format = lastFormat;
-                            lastFormat = null;
+                for (int i=0; i<word.length(); i++) {
+                    char character = word.charAt(i);
+                    if (character == '@') {
+                        boolean terminator = ((i == word.length() - 1) || ((word.charAt(i + 1) != '0') || word.length() <= i + 9) || activeColor != -1);
+                        if (!terminator && activeColor != -1) {
+                            // NESTED COLORS ARE BAD! STAHP!
+                            activeColor = -1;
                         } else {
-                            continuingFormat = true;
+                            // Try and parse 6 digit HEX color
+                            if (terminator) {
+                                resetColor = true;
+                            } else {
+                                try {
+                                    activeColor = Integer.parseInt(word.substring(i + 3, i + 9), 16);
+                                } catch (NumberFormatException ex) {
+                                    activeColor = -1;
+                                    ex.printStackTrace();
+                                }
+                            }
+
+                            // If we suceeded in parsing
+                            if (activeColor != -1) {
+                                i += 8; // Skip the HEX color
+                            }
                         }
                     } else {
-                        // Otherwise, we set the last format to the starting token, ignoring the end
-                        format = fStart;
-                        lastFormat = fStart;
-                        continuingFormat = true;
+                        Format format = Format.getFormat(character);
+                        if (format != null) {
+                            if (formats.contains(format)) {
+                                toRemove.add(format);
+                            } else {
+                                formats.add(format);
+                            }
+                        } else {
+                            stringBuilder.append(character);
+                        }
                     }
-                } else {
-                    // They match, so the format is specific to this word
-                    format = Format.getFormat(start);
-                    trimStart = true;
-                    trimEnd = true;
                 }
 
-                if (format != null) {
-                    list.add(new FormattedString(word.substring(trimStart ? 1 : 0, word.length() - (trimEnd ? 1 : 0)), EnumSet.of(format)).setContinuingFormat(continuingFormat));
-                } else {
-                    list.add(new FormattedString(word));
-                }
+                FormattedString formattedString = new FormattedString(stringBuilder.toString(), EnumSet.copyOf(formats), activeColor);
+
+                formats.removeAll(toRemove);
+                toRemove.clear();
+
+                if (resetColor)
+                    activeColor = -1;
+
+                formattedString.setContinuingFormat(formats, !resetColor);
+                list.add(formattedString);
+
+                activeFormats.clear();
+                activeFormats.addAll(formats);
+
             }
         }
 
@@ -95,7 +111,8 @@ public class TextFormatter {
         public EnumSet<Format> format;
         public int color;
 
-        private boolean continuingFormat = false;
+        private EnumSet<Format> continuingFormats = EnumSet.noneOf(Format.class);
+        private boolean continueColor = false;
 
         public FormattedString(String string) {
             this(string, EnumSet.noneOf(Format.class), 0xFFFFFF);
@@ -115,8 +132,9 @@ public class TextFormatter {
             this.color = color;
         }
 
-        public FormattedString setContinuingFormat(boolean continuingFormat) {
-            this.continuingFormat = continuingFormat;
+        public FormattedString setContinuingFormat(EnumSet<Format> formats, boolean continueColor) {
+            this.continuingFormats = formats;
+            this.continueColor = continueColor;
             return this;
         }
 
@@ -126,16 +144,28 @@ public class TextFormatter {
 
         public void draw(FontRenderer fontRenderer, int x, int y) {
             if (!format.isEmpty()) {
-                StringBuffer stringBuffer = new StringBuffer();
+                // Actual word
+                StringBuilder stringBuilder = new StringBuilder();
                 for (Format format1 : format) {
-                    stringBuffer.append(FORMATTING).append(format1.code);
-                    stringBuffer.append(string);
-                    if (continuingFormat) {
-                        stringBuffer.append(" ");
-                    }
-                    stringBuffer.append(FORMATTING).append('r');
+                    stringBuilder.append(FORMATTING).append(format1.code);
                 }
-                fontRenderer.drawString(stringBuffer.toString(), x, y, color);
+                stringBuilder.append(string);
+                stringBuilder.append(FORMATTING).append('r');
+                fontRenderer.drawString(stringBuilder.toString(), x, y, color);
+
+                int length = fontRenderer.getStringWidth(stringBuilder.toString());
+                stringBuilder = new StringBuilder();
+                x += length;
+
+                if (!continuingFormats.isEmpty()) {
+                    for (Format format2 : continuingFormats) {
+                        stringBuilder.append(FORMATTING).append(format2.code);
+                    }
+                    stringBuilder.append(" ");
+                    stringBuilder.append(FORMATTING).append('r');
+                }
+
+                fontRenderer.drawString(stringBuilder.toString(), x, y, continueColor ? color : 0xFFFFFF);
             } else {
                 fontRenderer.drawString(string, x, y, color);
             }
