@@ -21,6 +21,7 @@ public class GuiHandler implements IGuiHandler {
     public static final int GUI_INTELLIGENT_WORKBENCH = 3;
     public static final int GUI_SIMPLE_CAMO = 4;
     public static final int GUI_SET_CHANNEL = 5;
+    public static final int GUI_PDA = 6;
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -42,6 +43,9 @@ public class GuiHandler implements IGuiHandler {
 
             case GUI_SET_CHANNEL:
                 return new ContainerNull();
+
+            case GUI_PDA:
+                return null;
         }
 
         return null;
@@ -71,6 +75,9 @@ public class GuiHandler implements IGuiHandler {
                 else
                     return new GuiItemSetChannel(player.getHeldItem());
             }
+
+            case GUI_PDA:
+                return new GuiDocumentation();
         }
 
         return null;
