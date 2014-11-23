@@ -12,10 +12,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.core.ChannelRegistry;
-import dmillerw.remoteio.core.handler.BlockUpdateTicker;
-import dmillerw.remoteio.core.handler.ContainerHandler;
-import dmillerw.remoteio.core.handler.GuiHandler;
-import dmillerw.remoteio.core.handler.PlayerEventHandler;
+import dmillerw.remoteio.core.handler.*;
 import dmillerw.remoteio.core.helper.EventHelper;
 import dmillerw.remoteio.core.proxy.CommonProxy;
 import dmillerw.remoteio.core.tracker.BlockTracker;
@@ -28,6 +25,7 @@ import dmillerw.remoteio.recipe.RecipeCopyLocation;
 import dmillerw.remoteio.recipe.RecipeInhibitorApply;
 import dmillerw.remoteio.recipe.RecipeRemoteInventory;
 import net.minecraft.item.Item;
+import net.minecraftforge.common.config.Configuration;
 
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
 public class RemoteIO {
@@ -40,8 +38,13 @@ public class RemoteIO {
 
     public static ChannelRegistry channelRegistry;
 
+    public static Configuration configuration;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        configuration = new Configuration(event.getSuggestedConfigurationFile());
+        configuration.load();
+
         ModMetadata modMetadata = event.getModMetadata();
         modMetadata.version = ModInfo.VERSION;
 
@@ -71,7 +74,13 @@ public class RemoteIO {
             FMLInterModComms.sendMessage("Waila", "register", "dmillerw.remoteio.core.compat.WailaProvider.registerProvider");
         }
 
+        LocalizationUpdater.initializeThread(configuration);
+
         proxy.preInit(event);
+
+        if (configuration.hasChanged()) {
+            configuration.save();
+        }
     }
 
     @EventHandler
