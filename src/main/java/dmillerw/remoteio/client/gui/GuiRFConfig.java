@@ -1,6 +1,7 @@
 package dmillerw.remoteio.client.gui;
 
 import dmillerw.remoteio.client.gui.button.GuiBetterButton;
+import dmillerw.remoteio.client.helper.TextFormatter;
 import dmillerw.remoteio.inventory.container.ContainerNull;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.network.PacketHandler;
@@ -16,6 +17,8 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import java.util.LinkedList;
+
 /**
  * @author dmillerw
  */
@@ -24,6 +27,8 @@ public class GuiRFConfig extends GuiContainer {
     private static final ResourceLocation GUI_BLANK = new ResourceLocation(ModInfo.RESOURCE_PREFIX + "textures/gui/blank.png");
 
     private final ItemStack itemStack;
+
+    private LinkedList<TextFormatter.FormattedString> list;
 
     public GuiBetterButton buttonDec;
     public GuiBetterButton buttonInc;
@@ -51,6 +56,8 @@ public class GuiRFConfig extends GuiContainer {
 
     public void initGui() {
         super.initGui();
+
+        list = TextFormatter.format("*Hello!* _This is_ -a test-");
 
         buttonList.add(buttonDec = new GuiBetterButton(0, guiLeft + 107, guiTop + 19, 12, 12, "-"));
         buttonList.add(buttonInc = new GuiBetterButton(1, guiLeft + 121, guiTop + 19, 12, 12, "+"));
@@ -80,7 +87,8 @@ public class GuiRFConfig extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.rfconfig"), 5, 5, 4210752);
+        TextFormatter.draw(fontRendererObj, list, 5, 5);
+//        fontRendererObj.drawString(StatCollector.translateToLocal("container.remoteio.rfconfig"), 5, 5, 4210752);
         fontRendererObj.drawSplitString(StatCollector.translateToLocal("container.remoteio.rfconfig_desc"), 5, 35, 170, 4210752);
         textFieldRate.drawTextBox();
     }
