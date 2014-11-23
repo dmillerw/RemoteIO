@@ -1,7 +1,6 @@
 package dmillerw.remoteio.client.gui;
 
 import dmillerw.remoteio.client.gui.button.GuiBetterButton;
-import dmillerw.remoteio.client.helper.TextFormatter;
 import dmillerw.remoteio.inventory.container.ContainerNull;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.network.PacketHandler;
@@ -16,8 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-
-import java.util.LinkedList;
 
 /**
  * @author dmillerw

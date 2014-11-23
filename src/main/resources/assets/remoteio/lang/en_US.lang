@@ -6,6 +6,11 @@ inhibitor.item=Item
 inhibitor.inactive=Inactive
 inhibitor.active=Active
 
+#Documentation
+documentation.category.block=Block
+documentation.category.item=Item
+documentation.category.other=Other
+
 # GUI
 container.remoteio.upgrade=Upgrade
 container.remoteio.transfer=Transfer
