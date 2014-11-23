@@ -25,7 +25,7 @@ chat.target.load=Target Loaded
 chat.target.loop=You cannot link an interface block with another interface block
 
 # Item
-item.blank_plate.name=Blank Plate
+item.blank_plate.name=Blank Plate + I like cheese :3
 item.chip.location.name=Location Chip
 item.chip.transfer.item.name=Item Transfer Chip
 item.chip.transfer.fluid.name=Fluid Transfer Chip
