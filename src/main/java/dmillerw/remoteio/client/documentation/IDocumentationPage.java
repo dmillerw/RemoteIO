@@ -10,8 +10,8 @@ import net.minecraft.client.gui.GuiScreen;
 public interface IDocumentationPage {
 
     @SideOnly(Side.CLIENT)
-    public abstract void renderScreen(GuiScreen gui, int mx, int my);
+    public abstract void renderScreen(GuiScreen guiScreen, int mouseX, int mouseY);
 
     @SideOnly(Side.CLIENT)
-    public abstract void updateScreen(GuiScreen gui);
+    public abstract void updateScreen(GuiScreen guiScreen);
 }
