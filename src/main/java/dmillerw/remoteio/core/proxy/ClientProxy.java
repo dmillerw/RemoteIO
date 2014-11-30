@@ -5,6 +5,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import dmillerw.remoteio.RemoteIO;
 import dmillerw.remoteio.client.documentation.Documentation;
 import dmillerw.remoteio.client.handler.SoundHandler;
 import dmillerw.remoteio.client.handler.TooltipEventHandler;
@@ -40,6 +41,8 @@ public class ClientProxy extends CommonProxy {
 //        EventHelper.register(SoundHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(SoundHandler.INSTANCE);
         EventHelper.register(new TooltipEventHandler());
+
+        RemoteIO.localizationUpdater.registerListener();
     }
 
     @Override

@@ -132,7 +132,20 @@ public class GuiDocumentation extends GuiScreen {
                         localizedName = mc.fontRenderer.trimStringToWidth(localizedName, SCREEN_WIDTH - (mc.fontRenderer.getStringWidth(".....")));
                         localizedName = localizedName + "...";
                     }
-                    mc.fontRenderer.drawString(localizedName, centeredX(localizedName), guiTop + SCREEN_Y + 20 + (15 * i), TEXT_COLOR);
+                    boolean selected = mouseX >= guiLeft + mousePadding && mouseX <= guiLeft + XSIZE - mousePadding && mouseY >= guiTop + SCREEN_Y + 20 + (15 * i) && mouseY <= guiTop + SCREEN_Y + 20 + (15 * i) + 10;
+                    GL11.glDisable(GL11.GL_TEXTURE_2D);
+                    Tessellator tessellator = Tessellator.instance;
+                    tessellator.startDrawingQuads();
+                    tessellator.setColorOpaque_I(BACK_COLOR);
+                    if (selected) {
+                        tessellator.addVertex(guiLeft + mousePadding, guiTop + SCREEN_Y + 20 + (15 * i) + 10, 0);
+                        tessellator.addVertex(guiLeft + XSIZE - mousePadding, guiTop + SCREEN_Y + 20 + (15 * i) + 10, 0);
+                        tessellator.addVertex(guiLeft + XSIZE - mousePadding, guiTop + SCREEN_Y + 20 + (15 * i), 0);
+                        tessellator.addVertex(guiLeft + mousePadding, guiTop + SCREEN_Y + 20 + (15 * i), 0);
+                    }
+                    tessellator.draw();
+                    GL11.glEnable(GL11.GL_TEXTURE_2D);
+                    mc.fontRenderer.drawString(localizedName, centeredX(localizedName), guiTop + SCREEN_Y + 20 + (15 * i), selected ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
                 }
             }
         }

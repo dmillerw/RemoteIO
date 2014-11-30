@@ -38,6 +38,8 @@ public class RemoteIO {
 
     public static ChannelRegistry channelRegistry;
 
+    public static LocalizationUpdater localizationUpdater;
+
     public static Configuration configuration;
 
     @EventHandler
@@ -74,7 +76,8 @@ public class RemoteIO {
             FMLInterModComms.sendMessage("Waila", "register", "dmillerw.remoteio.core.compat.WailaProvider.registerProvider");
         }
 
-        LocalizationUpdater.initializeThread(configuration);
+        localizationUpdater = new LocalizationUpdater("dmillerw", "RemoteIO", "17", "src/main/resources/assets/remoteio/lang/");
+        localizationUpdater.initializeThread(configuration);
 
         proxy.preInit(event);
 
