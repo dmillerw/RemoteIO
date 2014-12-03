@@ -74,6 +74,7 @@ public class ItemLocationChip extends Item {
             if (player.isSneaking()) {
                 ItemLocationChip.setCoordinates(stack, new DimensionalCoords(world.provider.dimensionId, x, y, z));
                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
+                return true;
             } else {
                 if (tile != null) {
                     if (tile instanceof TileRemoteInterface && !((TileRemoteInterface) tile).locked) {
@@ -87,12 +88,13 @@ public class ItemLocationChip extends Item {
                                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.load"));
 //                            }
                         }
+                        return true;
                     }
                 }
             }
         }
 
-        return !world.isRemote;
+        return false;
     }
 
     @Override
