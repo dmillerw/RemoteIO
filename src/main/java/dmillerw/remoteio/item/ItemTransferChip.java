@@ -103,7 +103,8 @@ public class ItemTransferChip extends ItemSelectiveMeta {
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer) {
         if (world.isRemote && entityPlayer.isSneaking()) {
-            entityPlayer.openGui(RemoteIO.instance, GuiHandler.GUI_RF_CONFIG, world, 0, 0, 0);
+            if (itemStack.getItemDamage() == TransferType.ENERGY_RF)
+                entityPlayer.openGui(RemoteIO.instance, GuiHandler.GUI_RF_CONFIG, world, 0, 0, 0);
         }
         return itemStack;
     }
