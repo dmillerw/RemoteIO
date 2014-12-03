@@ -80,6 +80,11 @@ public class BlockMachine extends BlockContainer {
     }
 
     @Override
+    public int damageDropped(int damage) {
+        return damage;
+    }
+
+    @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
         list.add(new ItemStack(this, 1, 0));
         list.add(new ItemStack(this, 1, 1));
