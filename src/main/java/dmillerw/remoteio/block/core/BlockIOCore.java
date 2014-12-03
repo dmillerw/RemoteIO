@@ -3,9 +3,9 @@ package dmillerw.remoteio.block.core;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dmillerw.remoteio.RemoteIO;
-import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.core.TabRemoteIO;
 import dmillerw.remoteio.core.helper.InventoryHelper;
+import dmillerw.remoteio.core.helper.mod.ToolHelper;
 import dmillerw.remoteio.lib.ModInfo;
 import dmillerw.remoteio.tile.TileRemoteInterface;
 import dmillerw.remoteio.tile.core.TileIOCore;
@@ -43,14 +43,18 @@ public abstract class BlockIOCore extends BlockContainer {
         TileIOCore tile = (TileIOCore) world.getTileEntity(x, y, z);
 
         if (player.getCurrentEquippedItem() != null) {
-            ItemStack stack = player.getCurrentEquippedItem();
+            ItemStack itemStack = player.getCurrentEquippedItem();
 
-            if (stack.getItem() instanceof IIOTool) {
+            if (ToolHelper.isTool(itemStack, player, world, x, y, z)) {
                 if (!world.isRemote) {
-                    if (!(tile instanceof TileRemoteInterface) || !((TileRemoteInterface) tile).locked)
-                        player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
+                    if (!player.isSneaking()) {
+                        if (tile instanceof TileRemoteInterface)
+                            ((TileRemoteInterface) tile).updateRotation(1);
+                    } else {
+                        if (!(tile instanceof TileRemoteInterface) || !((TileRemoteInterface)tile).locked)
+                            player.openGui(RemoteIO.instance, getGuiID(), world, x, y, z);
+                    }
                 }
-                return true;
             }
         }
 
