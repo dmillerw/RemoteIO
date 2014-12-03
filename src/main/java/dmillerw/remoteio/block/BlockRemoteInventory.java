@@ -9,7 +9,6 @@ import dmillerw.remoteio.tile.core.TileIOCore;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
 
@@ -20,10 +19,12 @@ public class BlockRemoteInventory extends BlockIOCore {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLivingBase, ItemStack itemStack) {
-        if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("targetPlayer")) {
-            TileRemoteInventory tileRemoteInventory = (TileRemoteInventory) world.getTileEntity(x, y, z);
-            if (tileRemoteInventory != null) {
-                tileRemoteInventory.setPlayer(itemStack.getTagCompound().getString("targetPlayer"));
+        if (!world.isRemote) {
+            if (itemStack.hasTagCompound() && itemStack.getTagCompound().hasKey("targetPlayer")) {
+                TileRemoteInventory tileRemoteInventory = (TileRemoteInventory) world.getTileEntity(x, y, z);
+                if (tileRemoteInventory != null) {
+                    tileRemoteInventory.setPlayer(itemStack.getTagCompound().getString("targetPlayer"));
+                }
             }
         }
     }
