@@ -57,7 +57,7 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public float getBlockHardness(World world, int x, int y, int z) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+        if (tile != null && tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
             return tile.remotePosition.getBlock().getBlockHardness(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
         } else {
             return super.getBlockHardness(world, x, y, z);
@@ -67,19 +67,18 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tile.remotePosition != null && tile.hasTransferChip(TransferType.REDSTONE)) {
+        if (tile != null && tile.remotePosition != null && tile.hasTransferChip(TransferType.REDSTONE)) {
             tile.remotePosition.getBlock().onNeighborBlockChange(tile.remotePosition.getWorld(), tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z, block);
+            tile.markForUpdate();
         } else {
             super.onNeighborBlockChange(world, x, y, z, block);
         }
-
-        tile.markForUpdate();
     }
 
     @Override
     public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+        if (tile != null && tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
             return new ItemStack(tile.remotePosition.getBlock());
         } else {
             return super.getPickBlock(target, world, x, y, z);
@@ -89,7 +88,7 @@ public class BlockRemoteInterface extends BlockIOCore {
     @Override
     public int getDamageValue(World world, int x, int y, int z) {
         TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(x, y, z);
-        if (tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
+        if (tile != null && tile.remotePosition != null && tile.hasUpgradeChip(UpgradeType.REMOTE_CAMO)) {
             return tile.remotePosition.getMeta();
         } else {
             return super.getDamageValue(world, x, y, z);
