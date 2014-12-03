@@ -53,8 +53,6 @@ public class ItemLocationChip extends Item {
     public ItemLocationChip() {
         super();
 
-        setMaxDamage(0);
-        setMaxStackSize(1);
         setCreativeTab(TabRemoteIO.TAB);
     }
 

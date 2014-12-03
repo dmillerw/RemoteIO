@@ -25,6 +25,7 @@ import dmillerw.remoteio.recipe.RecipeCopyLocation;
 import dmillerw.remoteio.recipe.RecipeInhibitorApply;
 import dmillerw.remoteio.recipe.RecipeRemoteInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 
 @Mod(modid = ModInfo.ID, name = ModInfo.NAME, version = ModInfo.VERSION, dependencies = ModInfo.DEPENDENCIES)
@@ -56,6 +57,9 @@ public class RemoteIO {
         ModItems.initialize();
 
         BlockRemoteInterface.renderID = RenderingRegistry.getNextAvailableRenderId();
+
+        // Used for clearing location chips
+        GameRegistry.addShapedRecipe(new ItemStack(ModItems.locationChip), new ItemStack(ModItems.locationChip));
 
         GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
         GameRegistry.addRecipe(new RecipeInhibitorApply());
