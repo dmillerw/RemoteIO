@@ -59,7 +59,7 @@ public class RemoteIO {
         BlockRemoteInterface.renderID = RenderingRegistry.getNextAvailableRenderId();
 
         // Used for clearing location chips
-        GameRegistry.addShapedRecipe(new ItemStack(ModItems.locationChip), new ItemStack(ModItems.locationChip));
+        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.locationChip), new ItemStack(ModItems.locationChip));
 
         GameRegistry.addRecipe(RecipeCopyLocation.INSTANCE);
         GameRegistry.addRecipe(new RecipeInhibitorApply());
