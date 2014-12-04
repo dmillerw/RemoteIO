@@ -276,6 +276,11 @@ public class BlockRemoteInterface extends BlockIOCore {
         return BlockRemoteInterface.renderID;
     }
 
+    @Override
+    public boolean canRenderInPass(int pass) {
+        return true;
+    }
+
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {

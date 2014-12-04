@@ -67,7 +67,6 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         IInventory,
         ISidedInventory,
         IFluidHandler,
-        IAspectContainer, // THAUMCRAFT
         IAspectSource, // THAUMCRAFT
         IEssentiaTransport, // THAUMCRAFT
         IEnergySource, // IC2
@@ -480,7 +479,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     }
 
     public ForgeDirection getAdjustedSide(ForgeDirection side) {
-        return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
+        return side;
+//        return ForgeDirection.getOrientation(RotationHelper.getRotatedSide(0, rotationY, 0, side.ordinal()));
     }
 
     public int getAdjustedSide(int side) {
@@ -646,67 +646,67 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         return fluidHandler != null ? fluidHandler.getTankInfo(getAdjustedSide(from)) : new FluidTankInfo[0];
     }
 
-    /* IASPECTCONTAINER */
+    /* IASPECTSOURCE */
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public AspectList getAspects() {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null ? aspectContainer.getAspects() : new AspectList();
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public void setAspects(AspectList aspects) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         if (aspectContainer != null) aspectContainer.setAspects(aspects);
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean doesContainerAccept(Aspect tag) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null && aspectContainer.doesContainerAccept(tag);
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public int addToContainer(Aspect tag, int amount) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null ? aspectContainer.addToContainer(tag, amount) : amount;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean takeFromContainer(Aspect tag, int amount) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null && aspectContainer.takeFromContainer(tag, amount);
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean takeFromContainer(AspectList ot) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null && aspectContainer.takeFromContainer(ot);
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean doesContainerContainAmount(Aspect tag, int amount) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null && aspectContainer.doesContainerContainAmount(tag, amount);
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean doesContainerContain(AspectList ot) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null && aspectContainer.doesContainerContain(ot);
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public int containerContains(Aspect tag) {
-        IAspectContainer aspectContainer = (IAspectContainer) getTransferImplementation(IAspectContainer.class);
+        IAspectSource aspectContainer = (IAspectSource) getTransferImplementation(IAspectSource.class);
         return aspectContainer != null ? aspectContainer.containerContains(tag) : 0;
     }
 
@@ -721,15 +721,13 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean canInputFrom(ForgeDirection face) {
-        IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
-        return essentiaTransport != null && essentiaTransport.canInputFrom(getAdjustedSide(face));
+        return true;
     }
 
     @Override
     @Optional.Method(modid = DependencyInfo.ModIds.THAUMCRAFT)
     public boolean canOutputTo(ForgeDirection face) {
-        IEssentiaTransport essentiaTransport = (IEssentiaTransport) getTransferImplementation(IEssentiaTransport.class);
-        return essentiaTransport != null && essentiaTransport.canOutputTo(getAdjustedSide(face));
+        return true;
     }
 
     @Override

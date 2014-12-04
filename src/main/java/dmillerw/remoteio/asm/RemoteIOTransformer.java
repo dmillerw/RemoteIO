@@ -68,6 +68,16 @@ public class RemoteIOTransformer implements IClassTransformer {
         }
     }
 
+    private String remap(String owner, String name, String desc) {
+        if (obfuscated)
+            owner = remap(owner, true);
+
+        if (obfuscated)
+            return FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(owner, name, desc);
+        else
+            return name;
+    }
+
     private boolean equals(String string, String ... compare) {
         for (String s : compare) {
             if (s.equals(string)) {

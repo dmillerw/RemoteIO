@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.ForgeHooksClient;
+import org.lwjgl.opengl.GL11;
 
 /**
  * @author dmillerw
@@ -53,8 +55,22 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
             } else {
                 if (tile.remotePosition != null && tile.remotePosition.inWorld(tile.getWorldObj())) {
                     Block remoteBlock = tile.remotePosition.getBlock();
+                    int rx = tile.remotePosition.x - x;
+                    int ry = tile.remotePosition.y - y;
+                    int rz = tile.remotePosition.z - z;
+
+                    Tessellator tessellator = Tessellator.instance;
+
                     if (remoteBlock.getRenderType() == 0) {
                         renderer.renderStandardBlock(block, x, y, z);
+                    } else {
+                        if (remoteBlock.canRenderInPass(ForgeHooksClient.getWorldRenderPass())) {
+                            GL11.glRotated(90 * tile.rotationY, 0, 1, 0);
+                            tessellator.addTranslation(-rx, -ry, -rz);
+                            renderer.renderBlockByRenderType(remoteBlock, tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
+                            tessellator.addTranslation(rx, ry, rz);
+                            GL11.glRotated(90 * tile.rotationY, 0, -1, 0);
+                        }
                     }
                 }
             }

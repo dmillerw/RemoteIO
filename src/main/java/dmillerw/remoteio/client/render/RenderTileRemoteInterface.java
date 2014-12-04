@@ -7,12 +7,10 @@ import dmillerw.remoteio.client.helper.IORenderHelper;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.lib.VisualState;
 import dmillerw.remoteio.tile.TileRemoteInterface;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -46,40 +44,7 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
             GL11.glRotated(90 * tile.rotationY, 0, 1, 0);
             GL11.glTranslated(-0.5, -0.5, -0.5);
 
-            Block remote = there.getBlock(worldClient);
             TileEntity remoteTile = there.getTileEntity(worldClient);
-
-            // Don't call the block's renderer if there's a simple camo chip
-            if (tile.visualState == VisualState.CAMOUFLAGE_REMOTE) {
-                GL11.glDisable(GL11.GL_LIGHTING);
-
-                Tessellator.instance.startDrawingQuads();
-                Tessellator.instance.setColorOpaque_F(1, 1, 1);
-                Tessellator.instance.setTranslation(-tile.xCoord, -tile.yCoord, -tile.zCoord);
-                Tessellator.instance.addTranslation(-(there.x - tile.xCoord), -(there.y - tile.yCoord), -(there.z - tile.zCoord));
-
-                if (remote.getRenderType() != 0) {
-                    for (int i = 0; i < 2; i++) {
-                        if (i == 1) {
-                            OpenGlHelper.glBlendFunc(770, 771, 0, 1);
-                            GL11.glEnable(GL11.GL_BLEND);
-                        }
-
-                        if (remote.canRenderInPass(i)) {
-                            renderBlocks.renderBlockByRenderType(remote, there.x, there.y, there.z);
-                        }
-
-                        if (i == 1) {
-                            GL11.glDisable(GL11.GL_BLEND);
-                        }
-                    }
-                }
-
-                Tessellator.instance.setTranslation(0, 0, 0);
-                Tessellator.instance.draw();
-
-                GL11.glEnable(GL11.GL_LIGHTING);
-            }
 
             if (remoteTile != null) {
                 try {

@@ -11,7 +11,7 @@ public class RemoteIOCorePlugin implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {"dmillerw.remoteio.asm.RemoteIOTransformer"};
+        return new String[] {"dmillerw.remoteio.asm.RemoteIOTransformer", "dmillerw.remoteio.asm.TessellatorPatcher"};
     }
 
     @Override
