@@ -1,47 +1,17 @@
 package dmillerw.remoteio.asm;
 
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.shader.TesselatorVertexState;
-import net.minecraft.client.util.QuadComparator;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
-
-import java.util.PriorityQueue;
 
 /**
  * @author dmillerw
  */
 public class TessellatorPatcher implements IClassTransformer {
-
-    public static TesselatorVertexState getVertexState(Tessellator tessellator, int[] rawBuffer, int rawBufferIndex, int vertexCount, boolean hasTexture, boolean hasBrightness, boolean hasNormals, boolean hasColor, double xOffset, double yOffset, double zOffset, float x, float y, float z) {
-        if (rawBufferIndex < 1) {
-            return new TesselatorVertexState(new int[0], rawBufferIndex, vertexCount, hasTexture, hasBrightness, hasNormals, hasColor);
-        }
-
-        int[] aint = new int[rawBufferIndex];
-        PriorityQueue priorityqueue = new PriorityQueue(rawBufferIndex, new QuadComparator(rawBuffer, x + (float) xOffset, y + (float) yOffset, z + (float) zOffset));
-        byte b0 = 32;
-        int i;
-
-        for (i = 0; i < rawBufferIndex; i += b0) {
-            priorityqueue.add(Integer.valueOf(i));
-        }
-
-        for (i = 0; !priorityqueue.isEmpty(); i += b0) {
-            int j = ((Integer) priorityqueue.remove()).intValue();
-
-            for (int k = 0; k < b0; ++k) {
-                aint[i + k] = rawBuffer[j + k];
-            }
-        }
-
-        System.arraycopy(aint, 0, rawBuffer, 0, aint.length);
-        return new TesselatorVertexState(aint, rawBufferIndex, vertexCount, hasTexture, hasBrightness, hasNormals, hasColor);
-    }
 
     private boolean obfuscated = false;
 
@@ -70,37 +40,41 @@ public class TessellatorPatcher implements IClassTransformer {
         }
 
         if (targetNode != null) {
-            targetNode.instructions.clear();
-
             final String tessellator = remap("net/minecraft/client/renderer/Tessellator", true);
             final String vertexState = remap("net/minecraft/client/shader/TesselatorVertexState", true);
 
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "rawBuffer", "[I"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "rawBufferIndex", "I"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "vertexCount", "I"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "hasTexture", "Z"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "hasBrightness", "Z"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "hasNormals", "Z"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "hasColor", "Z"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "xOffset", "D"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "yOffset", "D"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
-            targetNode.instructions.add(getFieldNode(tessellator, "zOffset", "D"));
-            targetNode.instructions.add(new VarInsnNode(Opcodes.FLOAD, 1)); // float x
-            targetNode.instructions.add(new VarInsnNode(Opcodes.FLOAD, 2)); // float y
-            targetNode.instructions.add(new VarInsnNode(Opcodes.FLOAD, 3)); // float z
-            targetNode.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "dmillerw/remoteio/asm/TessellatorPatcher", "getVertexState", "(L" + tessellator + ";[IIIZZZZDDDFFF)L" + vertexState + ";", false));
-            targetNode.instructions.add(new InsnNode(Opcodes.ARETURN));
+            InsnList insnList = new InsnList();
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // Add this (tessellator instance) to stack
+            insnList.add(getFieldNode(tessellator, "rawBufferIndex", "I")); // add rawBufferIndex variable
+            insnList.add(new InsnNode(Opcodes.ICONST_1)); // add number 1 to stack
+            LabelNode l1 = new LabelNode(new Label());
+            insnList.add(new JumpInsnNode(Opcodes.IF_ICMPGE, l1));
+            insnList.add(new TypeInsnNode(Opcodes.NEW, vertexState)); // create new vertex state object
+            insnList.add(new InsnNode(Opcodes.DUP)); // duplicate top object on stack
+            insnList.add(new InsnNode(Opcodes.ICONST_0)); // add number 0 to stack
+            insnList.add(new IntInsnNode(Opcodes.NEWARRAY, Opcodes.T_INT)); // create new array of type int with size 0
+
+            // Add important variables to stack
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
+            insnList.add(getFieldNode(tessellator, "rawBufferIndex", "I"));
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
+            insnList.add(getFieldNode(tessellator, "vertexCount", "I"));
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
+            insnList.add(getFieldNode(tessellator, "hasTexture", "Z"));
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
+            insnList.add(getFieldNode(tessellator, "hasBrightness", "Z"));
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
+            insnList.add(getFieldNode(tessellator, "hasNormals", "Z"));
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 0)); // this
+            insnList.add(getFieldNode(tessellator, "hasColor", "Z"));
+
+            // Call init method on TesselatorVertexState object
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, vertexState, "<init>", "([IIIZZZZ)V", false));
+
+            insnList.add(new InsnNode(Opcodes.ARETURN)); // return
+            insnList.add(l1); // jump back
+            insnList.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null)); // clear frame (?)
 
             ClassWriter classWriter = new ClassWriter(0);
             classNode.accept(classWriter);
