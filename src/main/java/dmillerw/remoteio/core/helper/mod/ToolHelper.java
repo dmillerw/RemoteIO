@@ -3,6 +3,7 @@ package dmillerw.remoteio.core.helper.mod;
 import appeng.api.implementations.items.IAEWrench;
 import cofh.api.item.IToolHammer;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModAPIManager;
 import dmillerw.remoteio.api.IIOTool;
 import dmillerw.remoteio.lib.DependencyInfo;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +22,7 @@ public class ToolHelper {
         if (itemStack.getItem() instanceof IIOTool)
             return true;
 
-        if (Loader.isModLoaded(DependencyInfo.ModIds.COFH_API)) {
+        if (ModAPIManager.INSTANCE.hasAPI(DependencyInfo.ModIds.COFH_API)) {
             if (itemStack.getItem() instanceof IToolHammer)
                 return ((IToolHammer) itemStack.getItem()).isUsable(itemStack, entityPlayer, x, y, z);
         }
