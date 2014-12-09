@@ -1,6 +1,7 @@
 package dmillerw.remoteio.client.render;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import dmillerw.remoteio.asm.TessellatorPatcher;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.block.core.BlockIOCore;
 import dmillerw.remoteio.lib.VisualState;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.ForgeHooksClient;
-import org.lwjgl.opengl.GL11;
 
 /**
  * @author dmillerw
@@ -65,11 +65,15 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
                         renderer.renderStandardBlock(block, x, y, z);
                     } else {
                         if (remoteBlock.canRenderInPass(ForgeHooksClient.getWorldRenderPass())) {
-                            GL11.glRotated(90 * tile.rotationY, 0, 1, 0);
+                            TessellatorPatcher.rotationAngle = 90 * tile.rotationY;
+                            TessellatorPatcher.offsetX = -(x + rx) - 1;
+                            TessellatorPatcher.offsetZ = -(z + rz) - 1;
+
                             tessellator.addTranslation(-rx, -ry, -rz);
                             renderer.renderBlockByRenderType(remoteBlock, tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
                             tessellator.addTranslation(rx, ry, rz);
-                            GL11.glRotated(90 * tile.rotationY, 0, -1, 0);
+
+                            TessellatorPatcher.reset();
                         }
                     }
                 }

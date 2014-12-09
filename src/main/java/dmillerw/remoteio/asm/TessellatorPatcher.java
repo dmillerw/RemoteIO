@@ -13,6 +13,65 @@ import org.objectweb.asm.tree.*;
  */
 public class TessellatorPatcher implements IClassTransformer {
 
+    public static double rotationAngle = 0D;
+
+    public static double offsetX = 0D;
+    public static double offsetZ = 0D;
+
+    public static void reset() {
+        rotationAngle = 0;
+        offsetX = 0;
+        offsetZ = 0;
+    }
+
+    public static double[] rotatePoint(double x, double y, double z) {
+        if (rotationAngle != 0D) {
+            final double radians = Math.toRadians(rotationAngle);
+            final double sin = Math.sin(radians);
+            final double cos = Math.cos(radians);
+
+            double nx = x * cos - z * sin;
+            double nz = x * sin + z * cos;
+
+            x = nx;
+            z = nz;
+        }
+
+        return new double[] {x, y, z};
+    }
+
+    public static double[] rotatePointWithOffset(double x, double y, double z) {
+        return rotatePointWithOffset(x, y, z, offsetX, 0, offsetZ);
+    }
+
+    public static double[] rotatePointWithOffset(double x, double y, double z, double offsetX, double offsetY, double offsetZ) {
+        if (rotationAngle != 0D) {
+            final double radians = Math.toRadians(rotationAngle);
+            final double sin = Math.sin(radians);
+            final double cos = Math.cos(radians);
+
+            x += offsetX;
+            z += offsetZ;
+
+            x += 0.5;
+            z += 0.5;
+
+            double nx = x * cos - z * sin;
+            double nz = x * sin + z * cos;
+
+            x = nx;
+            z = nz;
+
+            x -= offsetX;
+            z -= offsetZ;
+
+            x -= 0.5;
+            z -= 0.5;
+        }
+
+        return new double[] {x, y, z};
+    }
+
     private boolean obfuscated = false;
 
     @Override
@@ -30,17 +89,21 @@ public class TessellatorPatcher implements IClassTransformer {
         ClassNode classNode = new ClassNode();
         classReader.accept(classNode, 0);
 
-        MethodNode targetNode = null;
+        MethodNode getVertexStateNode = null;
+        MethodNode addVertexNode = null;
+        MethodNode setNormalNode = null;
 
         for (MethodNode methodNode : classNode.methods) {
             if (equals(methodNode.name, remap("getVertexState", false))) {
-                targetNode = methodNode;
-                break;
+                getVertexStateNode = methodNode;
+            } else if (equals(methodNode.name, remap("addVertex", false))) {
+                addVertexNode = methodNode;
             }
         }
 
-        if (targetNode != null) {
-            final String tessellator = remap("net/minecraft/client/renderer/Tessellator", true);
+        final String tessellator = remap("net/minecraft/client/renderer/Tessellator", true);
+
+        if (getVertexStateNode != null) {
             final String vertexState = remap("net/minecraft/client/shader/TesselatorVertexState", true);
 
             InsnList insnList = new InsnList();
@@ -49,7 +112,7 @@ public class TessellatorPatcher implements IClassTransformer {
             insnList.add(getFieldNode(tessellator, "rawBufferIndex", "I")); // add rawBufferIndex variable
             insnList.add(new InsnNode(Opcodes.ICONST_1)); // add number 1 to stack
             LabelNode l1 = new LabelNode(new Label());
-            insnList.add(new JumpInsnNode(Opcodes.IF_ICMPGE, l1));
+            insnList.add(new JumpInsnNode(Opcodes.IF_ICMPGE, l1)); // if rawBufferIndex is less than or equal to 1
             insnList.add(new TypeInsnNode(Opcodes.NEW, vertexState)); // create new vertex state object
             insnList.add(new InsnNode(Opcodes.DUP)); // duplicate top object on stack
             insnList.add(new InsnNode(Opcodes.ICONST_0)); // add number 0 to stack
@@ -76,6 +139,41 @@ public class TessellatorPatcher implements IClassTransformer {
             insnList.add(l1); // jump back
             insnList.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null)); // clear frame (?)
 
+            getVertexStateNode.instructions.insertBefore(getVertexStateNode.instructions.get(0), insnList);
+        }
+
+        if (addVertexNode != null) {
+            InsnList insnList = new InsnList();
+
+            // Load the three parameters
+            insnList.add(new VarInsnNode(Opcodes.DLOAD, 1));
+            insnList.add(new VarInsnNode(Opcodes.DLOAD, 3));
+            insnList.add(new VarInsnNode(Opcodes.DLOAD, 5));
+
+            // Invoke rotation method
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "dmillerw/remoteio/asm/TessellatorPatcher", "rotatePoint", "(DDD)[D", false));
+
+            insnList.add(new VarInsnNode(Opcodes.ASTORE, 6)); // Store returned array
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 6)); // Add array to stack
+            insnList.add(new InsnNode(Opcodes.ICONST_0)); // Load 0 on to stack
+            insnList.add(new InsnNode(Opcodes.DALOAD)); // Load array index
+            insnList.add(new VarInsnNode(Opcodes.DSTORE, 1)); // Save value to param 1
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 6)); // Add array to stack
+            insnList.add(new InsnNode(Opcodes.ICONST_1)); // Load 1 on to stack
+            insnList.add(new InsnNode(Opcodes.DALOAD)); // Load array index
+            insnList.add(new VarInsnNode(Opcodes.DSTORE, 3)); // Save value to param 3
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 6)); // Add array to stack
+            insnList.add(new InsnNode(Opcodes.ICONST_2)); // Load 2 on to stack
+            insnList.add(new InsnNode(Opcodes.DALOAD)); // Load array index
+            insnList.add(new VarInsnNode(Opcodes.DSTORE, 5)); // Save value to param 5
+
+            addVertexNode.instructions.insertBefore(addVertexNode.instructions.get(0), insnList);
+        }
+
+        if (getVertexStateNode != null && addVertexNode != null) {
             ClassWriter classWriter = new ClassWriter(0);
             classNode.accept(classWriter);
             return classWriter.toByteArray();
