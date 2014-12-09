@@ -50,9 +50,6 @@ public class LocalizationUpdater {
     public LocalizationUpdater(String langUrl, String rawUrl) {
         this.langUrl = langUrl;
         this.rawUrl = rawUrl;
-
-        System.out.println(langUrl);
-        System.out.println(rawUrl);
     }
 
     // Called in preInit to start the download thread
