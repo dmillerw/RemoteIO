@@ -13,19 +13,27 @@ import org.objectweb.asm.tree.*;
  */
 public class TessellatorPatcher implements IClassTransformer {
 
+    private static boolean capture = false;
+
     public static double rotationAngle = 0D;
 
     public static double offsetX = 0D;
     public static double offsetZ = 0D;
 
+    public static void startCapturing() {
+        reset();
+        capture = true;
+    }
+
     public static void reset() {
+        capture = false;
         rotationAngle = 0;
         offsetX = 0;
         offsetZ = 0;
     }
 
     public static double[] rotatePoint(double x, double y, double z) {
-        if (rotationAngle != 0D) {
+        if (capture) {
             final double radians = Math.toRadians(rotationAngle);
             final double sin = Math.sin(radians);
             final double cos = Math.cos(radians);
@@ -45,7 +53,7 @@ public class TessellatorPatcher implements IClassTransformer {
     }
 
     public static double[] rotatePointWithOffset(double x, double y, double z, double offsetX, double offsetY, double offsetZ) {
-        if (rotationAngle != 0D) {
+        if (capture) {
             final double radians = Math.toRadians(rotationAngle);
             final double sin = Math.sin(radians);
             final double cos = Math.cos(radians);
@@ -98,6 +106,8 @@ public class TessellatorPatcher implements IClassTransformer {
                 getVertexStateNode = methodNode;
             } else if (equals(methodNode.name, remap("addVertex", false))) {
                 addVertexNode = methodNode;
+            } else if (equals(methodNode.name, remap("setNormal", false))) {
+                setNormalNode = methodNode;
             }
         }
 
@@ -151,7 +161,7 @@ public class TessellatorPatcher implements IClassTransformer {
             insnList.add(new VarInsnNode(Opcodes.DLOAD, 5));
 
             // Invoke rotation method
-            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "dmillerw/remoteio/asm/TessellatorPatcher", "rotatePoint", "(DDD)[D", false));
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "dmillerw/remoteio/asm/TessellatorPatcher", "rotatePointWithOffset", "(DDD)[D", false));
 
             insnList.add(new VarInsnNode(Opcodes.ASTORE, 6)); // Store returned array
 
@@ -173,7 +183,44 @@ public class TessellatorPatcher implements IClassTransformer {
             addVertexNode.instructions.insertBefore(addVertexNode.instructions.get(0), insnList);
         }
 
-        if (getVertexStateNode != null && addVertexNode != null) {
+        if (setNormalNode != null) {
+            InsnList insnList = new InsnList();
+
+            // Load and convert the parameters
+            insnList.add(new VarInsnNode(Opcodes.FLOAD, 1));
+            insnList.add(new InsnNode(Opcodes.F2D));
+            insnList.add(new VarInsnNode(Opcodes.FLOAD, 2));
+            insnList.add(new InsnNode(Opcodes.F2D));
+            insnList.add(new VarInsnNode(Opcodes.FLOAD, 3));
+            insnList.add(new InsnNode(Opcodes.F2D));
+
+            // Invoke rotation method
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "dmillerw/remoteio/asm/TessellatorPatcher", "rotatePoint", "(DDD)[D", false));
+
+            insnList.add(new VarInsnNode(Opcodes.ASTORE, 3)); // Store the result
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 3)); // Add array to stack
+            insnList.add(new InsnNode(Opcodes.ICONST_0)); // Load 0 on to stack
+            insnList.add(new InsnNode(Opcodes.DALOAD)); // Load array index
+            insnList.add(new InsnNode(Opcodes.D2F)); // Cast
+            insnList.add(new VarInsnNode(Opcodes.FSTORE, 1)); // Save value to param 1
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 3)); // Add array to stack
+            insnList.add(new InsnNode(Opcodes.ICONST_1)); // Load 1 on to stack
+            insnList.add(new InsnNode(Opcodes.DALOAD)); // Load array index
+            insnList.add(new InsnNode(Opcodes.D2F)); // Cast
+            insnList.add(new VarInsnNode(Opcodes.FSTORE, 2)); // Save value to param 2
+
+            insnList.add(new VarInsnNode(Opcodes.ALOAD, 3)); // Add array to stack
+            insnList.add(new InsnNode(Opcodes.ICONST_2)); // Load 2 on to stack
+            insnList.add(new InsnNode(Opcodes.DALOAD)); // Load array index
+            insnList.add(new InsnNode(Opcodes.D2F)); // Cast
+            insnList.add(new VarInsnNode(Opcodes.FSTORE, 3)); // Save value to param 3
+
+            setNormalNode.instructions.insertBefore(setNormalNode.instructions.get(0), insnList);
+        }
+
+        if (getVertexStateNode != null && addVertexNode != null && setNormalNode != null) {
             ClassWriter classWriter = new ClassWriter(0);
             classNode.accept(classWriter);
             return classWriter.toByteArray();

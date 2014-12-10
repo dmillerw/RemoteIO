@@ -65,6 +65,8 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
                         renderer.renderStandardBlock(block, x, y, z);
                     } else {
                         if (remoteBlock.canRenderInPass(ForgeHooksClient.getWorldRenderPass())) {
+                            TessellatorPatcher.startCapturing();
+
                             TessellatorPatcher.rotationAngle = 90 * tile.rotationY;
                             TessellatorPatcher.offsetX = -(x + rx) - 1;
                             TessellatorPatcher.offsetZ = -(z + rz) - 1;
