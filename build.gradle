@@ -53,7 +53,7 @@ processResources {
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'dmillerw.remoteio.asm.RemoteIOCorePlugin'
+        attributes 'FMLCorePlugin': 'dmillerw.remoteio.asm.LoadingPlugin'
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 

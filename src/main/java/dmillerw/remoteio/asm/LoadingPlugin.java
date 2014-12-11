@@ -7,11 +7,11 @@ import java.util.Map;
 /**
  * @author dmillerw
  */
-public class RemoteIOCorePlugin implements IFMLLoadingPlugin {
+public class LoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {"dmillerw.remoteio.asm.RemoteIOTransformer", "dmillerw.remoteio.asm.TessellatorPatcher"};
+        return new String[] {"dmillerw.remoteio.asm.transform.CoreTransformer"};
     }
 
     @Override
@@ -26,7 +26,7 @@ public class RemoteIOCorePlugin implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-
+        MappingHelper.obfuscated = ((Boolean)data.get("runtimeDeobfuscationEnabled"));
     }
 
     @Override

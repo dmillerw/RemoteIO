@@ -34,7 +34,7 @@ public class RedstoneTracker {
     public static boolean isBlockIndirectlyGettingPowered(World world, int x, int y, int z) {
         DimensionalCoords dimensionalCoords = new DimensionalCoords(world, x, y, z);
         DimensionalCoords tile = positionBiMap.get(dimensionalCoords);
-        
+
         // First check remote redstone levels, if it exists
         if (tile != null) {
             for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {

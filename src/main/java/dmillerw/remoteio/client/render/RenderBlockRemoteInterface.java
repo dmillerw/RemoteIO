@@ -1,7 +1,6 @@
 package dmillerw.remoteio.client.render;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import dmillerw.remoteio.asm.TessellatorPatcher;
 import dmillerw.remoteio.block.BlockRemoteInterface;
 import dmillerw.remoteio.block.core.BlockIOCore;
 import dmillerw.remoteio.lib.VisualState;
@@ -65,17 +64,17 @@ public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler 
                         renderer.renderStandardBlock(block, x, y, z);
                     } else {
                         if (remoteBlock.canRenderInPass(ForgeHooksClient.getWorldRenderPass())) {
-                            TessellatorPatcher.startCapturing();
+                            TessellatorCapture.startCapturing();
 
-                            TessellatorPatcher.rotationAngle = 90 * tile.rotationY;
-                            TessellatorPatcher.offsetX = -(x + rx) - 1;
-                            TessellatorPatcher.offsetZ = -(z + rz) - 1;
+                            TessellatorCapture.rotationAngle = 90 * tile.rotationY;
+                            TessellatorCapture.offsetX = -(x + rx) - 1;
+                            TessellatorCapture.offsetZ = -(z + rz) - 1;
 
                             tessellator.addTranslation(-rx, -ry, -rz);
                             renderer.renderBlockByRenderType(remoteBlock, tile.remotePosition.x, tile.remotePosition.y, tile.remotePosition.z);
                             tessellator.addTranslation(rx, ry, rz);
 
-                            TessellatorPatcher.reset();
+                            TessellatorCapture.reset();
                         }
                     }
                 }

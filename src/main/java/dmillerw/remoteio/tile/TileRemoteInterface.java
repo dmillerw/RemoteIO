@@ -467,7 +467,7 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
 
         if (requiresChip) {
             if (!hasTransferChip(TransferType.getTypeForInterface(cls))) {
-                if (missingUpgrade = false) {
+                if (missingUpgrade == false) {
                     missingUpgrade = true;
                     updateVisualState();
                 }
