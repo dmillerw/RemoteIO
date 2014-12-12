@@ -126,7 +126,7 @@ public class LocalizationUpdater {
                             break;
                         }
                     }
-                } catch (Exception ex) {}
+                } catch (Exception ignored) {}
             }
             return instance;
         }
@@ -136,7 +136,7 @@ public class LocalizationUpdater {
                 Map<String, String> languageMap = ObfuscationReflectionHelper.getPrivateValue(StringTranslate.class, getInstance(), LANGUAGE_MAP);
                 languageMap.putAll(map);
                 ObfuscationReflectionHelper.setPrivateValue(StringTranslate.class, getInstance(), System.currentTimeMillis(), LAST_UPDATE);
-            } catch (Exception ex) {}
+            } catch (Exception ignored) {}
         }
     }
 }
