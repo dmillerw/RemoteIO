@@ -34,7 +34,7 @@ public class LocalizationUpdater {
     private static final String[] LANGUAGE_MAP = new String[] {"languageList", "field_74816_c", "d"};
     private static final String[] LAST_UPDATE = new String[] {"lastUpdateTimeInMilliseconds", "field_150511_e", "e"};
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger("RemoteIO:Localization");
 
     private Map<String, Map<String, String>> loadedLangFiles = Maps.newConcurrentMap();
 
@@ -126,9 +126,7 @@ public class LocalizationUpdater {
                             break;
                         }
                     }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                } catch (Exception ex) {}
             }
             return instance;
         }
@@ -138,9 +136,7 @@ public class LocalizationUpdater {
                 Map<String, String> languageMap = ObfuscationReflectionHelper.getPrivateValue(StringTranslate.class, getInstance(), LANGUAGE_MAP);
                 languageMap.putAll(map);
                 ObfuscationReflectionHelper.setPrivateValue(StringTranslate.class, getInstance(), System.currentTimeMillis(), LAST_UPDATE);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            } catch (Exception ex) {}
         }
     }
 }
