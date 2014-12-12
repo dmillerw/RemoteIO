@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import dmillerw.remoteio.core.TransferType;
 import dmillerw.remoteio.lib.DimensionalCoords;
 import dmillerw.remoteio.tile.TileRemoteInterface;
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -31,30 +32,29 @@ public class RedstoneTracker {
         }
     }
 
-    public static boolean isBlockIndirectlyGettingPowered(World world, int x, int y, int z) {
-        DimensionalCoords dimensionalCoords = new DimensionalCoords(world, x, y, z);
-        DimensionalCoords tile = positionBiMap.get(dimensionalCoords);
+    public static int getIndirectPowerLevelTo(World world, int x, int y, int z, int side) {
+        ForgeDirection forgeDirection = ForgeDirection.getOrientation(side).getOpposite();
+        int fx = x + forgeDirection.offsetX;
+        int fy = y + forgeDirection.offsetY;
+        int fz = z + forgeDirection.offsetZ;
 
-        // First check remote redstone levels, if it exists
-        if (tile != null) {
-            for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {
-                if (isBlockIndirectlyGettingPowered_default(tile.getWorld(), tile.x + forgeDirection.offsetX, tile.y + forgeDirection.offsetY, tile.z + forgeDirection.offsetZ)) {
-                    return true;
-                }
-            }
-        }
-        
-        // Then check self, if remote doesn't return
-        for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {
-            if (isBlockIndirectlyGettingPowered_default(world, x + forgeDirection.offsetX, y + forgeDirection.offsetY, z + forgeDirection.offsetZ)) {
-                return true;
-            }
+        DimensionalCoords dimensionalCoords = new DimensionalCoords(world, fx, fy, fz);
+        DimensionalCoords tileCoords = positionBiMap.get(dimensionalCoords);
+
+        int level = 0;
+        if (tileCoords != null) {
+            level = default_getIndirectPowerLevelTo(tileCoords.getWorld(), tileCoords.x + forgeDirection.getOpposite().offsetX, tileCoords.y + forgeDirection.getOpposite().offsetY, tileCoords.z + forgeDirection.getOpposite().offsetZ, side);
         }
 
-        return false;
+        int local = default_getIndirectPowerLevelTo(world, x, y, z, side);
+        if (local > level)
+            level = local;
+
+        return level;
     }
     
-    private static boolean isBlockIndirectlyGettingPowered_default(World world, int x, int y, int z) {
-        return (world.getIndirectPowerLevelTo(x, y - 1, z, 0) > 0) || ((world.getIndirectPowerLevelTo(x, y + 1, z, 1) > 0) || ((world.getIndirectPowerLevelTo(x, y, z - 1, 2) > 0) || ((world.getIndirectPowerLevelTo(x, y, z + 1, 3) > 0) || ((world.getIndirectPowerLevelTo(x - 1, y, z, 4) > 0) || (world.getIndirectPowerLevelTo(x + 1, y, z, 5) > 0)))));
+    private static int default_getIndirectPowerLevelTo(World world, int x, int y, int z, int side) {
+        Block block = world.getBlock(x, y, z);
+        return block.shouldCheckWeakPower(world, x, y, z, side) ? world.getBlockPowerInput(x, y, z) : block.isProvidingWeakPower(world, x, y, z, side);
     }
 }

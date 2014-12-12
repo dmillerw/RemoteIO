@@ -31,7 +31,7 @@ public class MappingConstants {
         public static final String[] GET_VERTEX_STATE = new String[] {"getVertexState", "func_147564_a", "a"};
         public static final String[] ADD_VERTEX = new String[] {"addVertex", "func_78377_a", "a"};
         public static final String[] SET_NORMAL = new String[] {"setNormal", "func_78375_b", "c"};
-        public static final String[] IS_BLOCK_GETTING_POWERED = new String[] {"isBlockIndirectlyGettingPowered", "func_72864_z", "v"};
+        public static final String[] GET_INDIRECT_POWER_LEVEL_TO = new String[] {"getIndirectPowerLevelTo", "func_72878_l", "g"};
 
         public static class Desc {
             // [0]: Deobfuscated
@@ -39,7 +39,7 @@ public class MappingConstants {
             public static final String[] GET_VERTEX_STATE = new String[] {"(FFF)Lnet/minecraft/client/shader/TesselatorVertexState;", "(FFF)Lbmi;"};
             public static final String[] ADD_VERTEX = new String[] {"(DDD)V", "(DDD)V"};
             public static final String[] SET_NORMAL = new String[] {"(FFF)V", "(FFF)V"};
-            public static final String[] IS_BLOCK_GETTING_POWERED = new String[] {"(III)Z", "(III)Z"};
+            public static final String[] GET_INDIRECT_POWER_LEVEL_TO = new String[] {"(IIII)I", "(IIII)I"};
 
             public static String get(String[] array) {
                 if (MappingHelper.obfuscated) {

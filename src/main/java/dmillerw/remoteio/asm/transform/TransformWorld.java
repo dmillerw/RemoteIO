@@ -14,8 +14,8 @@ public class TransformWorld implements ITransformer {
 
     private static final String METHOD_HANDLER = "dmillerw/remoteio/core/tracker/RedstoneTracker";
 
-    private static final String METHOD_REDSTONE = "isBlockIndirectlyGettingPowered";
-    private static final String METHOD_REDSTONE_DESC = "(L%s;III)Z";
+    private static final String METHOD_REDSTONE = "getIndirectPowerLevelTo";
+    private static final String METHOD_REDSTONE_DESC = "(L%s;IIII)I";
 
     @Override
     public String[] getClasses() {
@@ -33,9 +33,9 @@ public class TransformWorld implements ITransformer {
         final String world = MappingConstants.Type.get(MappingConstants.Type.WORLD);
 
         for (MethodNode methodNode : classNode.methods) {
-            if (MappingConstants.Method.equals(methodNode, MappingConstants.Method.IS_BLOCK_GETTING_POWERED, MappingConstants.Method.Desc.IS_BLOCK_GETTING_POWERED)) {
+            if (MappingConstants.Method.equals(methodNode, MappingConstants.Method.GET_INDIRECT_POWER_LEVEL_TO, MappingConstants.Method.Desc.GET_INDIRECT_POWER_LEVEL_TO)) {
                 targetNode = methodNode;
-                MappingHelper.logger.info("Found method 'isBlockIndirectlyGettingPowered'");
+                MappingHelper.logger.info("Found method 'getIndirectPowerLevelTo'");
                 break;
             }
         }
@@ -46,6 +46,7 @@ public class TransformWorld implements ITransformer {
             targetNode.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
             targetNode.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
             targetNode.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
+            targetNode.instructions.add(new VarInsnNode(Opcodes.ILOAD, 4));
             targetNode.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, METHOD_HANDLER, METHOD_REDSTONE, String.format(METHOD_REDSTONE_DESC, world), false));
             targetNode.instructions.add(new InsnNode(Opcodes.IRETURN));
 
