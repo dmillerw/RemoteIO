@@ -16,14 +16,13 @@ import java.util.List;
 /**
  * @author dmillerw
  */
-public class ItemInteractionInhibitor extends Item {
+public class ItemInteractionInhibitor
+extends Item {
 
     private IIcon iconInactive;
     private IIcon iconActive;
 
     public ItemInteractionInhibitor() {
-        super();
-
         setMaxDamage(0);
         setMaxStackSize(1);
         setCreativeTab(TabRemoteIO.TAB);

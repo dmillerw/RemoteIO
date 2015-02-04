@@ -79,6 +79,8 @@ public class TileRemoteInterface extends TileIOCore implements BlockTracker.ITra
         IWrenchable // IC2
 {
 
+    public static TileRemoteInterface dummy_instance = new TileRemoteInterface();
+
     @Override
     public void callback(IBlockAccess world, int x, int y, int z) {
         updateVisualState();

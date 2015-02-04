@@ -57,7 +57,7 @@ public class TileMachineHeater extends TileCore implements IHeatSource {
     private void push() {
         for (ForgeDirection forgeDirection : ForgeDirection.VALID_DIRECTIONS) {
             TileEntity tileEntity = worldObj.getTileEntity(xCoord + forgeDirection.offsetX, yCoord + forgeDirection.offsetY, zCoord + forgeDirection.offsetZ);
-            if (tileEntity != null && tileEntity instanceof TileEntityFurnace) {
+            if (tileEntity instanceof TileEntityFurnace) {
                 ((TileEntityFurnace) tileEntity).furnaceBurnTime = 200;
                 if (tileEntity.getBlockType() == Blocks.furnace) {
                     BlockFurnace.updateFurnaceBlockState(true, worldObj, xCoord + forgeDirection.offsetX, yCoord + forgeDirection.offsetY, zCoord + forgeDirection.offsetZ);

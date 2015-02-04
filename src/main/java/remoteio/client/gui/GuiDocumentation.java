@@ -1,14 +1,15 @@
 package remoteio.client.gui;
 
-import remoteio.client.documentation.Documentation;
-import remoteio.client.documentation.DocumentationEntry;
-import remoteio.client.documentation.IDocumentationPage;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
+import remoteio.client.documentation.Documentation;
+import remoteio.client.documentation.DocumentationEntry;
+import remoteio.client.documentation.IDocumentationPage;
 
+import java.awt.Rectangle;
 import java.util.List;
 
 /**
@@ -182,15 +183,12 @@ extends GuiScreen {
                     case 0:
                         currentCategory = Documentation.Category.BLOCK;
                         break;
-
                     case 1:
                         currentCategory = Documentation.Category.ITEM;
                         break;
-
                     case 2:
                         currentCategory = Documentation.Category.OTHER;
                         break;
-
                     default:
                         break;
                 }
@@ -200,6 +198,11 @@ extends GuiScreen {
                 }
             }
 
+            if(this.currentEntry == null){
+                this.currentEntry = this.getEntry(mouseX, mouseY);
+                this.currentPage = this.currentEntry.pages.getFirst();
+            }
+
             if (mouseX >= guiLeft + HOME_X && mouseX <= guiLeft + HOME_X + HOME_WIDTH && mouseY >= guiTop + HOME_Y && mouseY <= guiTop + HOME_Y + HOME_HEIGHT) {
                 currentCategory = null;
                 categoryCache = null;
@@ -207,6 +210,29 @@ extends GuiScreen {
                 currentPage = null;
             }
         }
+    }
+
+    private boolean isEntry(int x, int y){
+        for(int i = 0; i < this.categoryCache.size(); i++){
+            Rectangle rect = new Rectangle(guiLeft + 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10, guiLeft + XSIZE - 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10);
+            if(rect.contains(x, y)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private DocumentationEntry getEntry(int x, int y){
+        for(int i = 0; i < this.categoryCache.size(); i++){
+            Rectangle rect = new Rectangle(guiLeft + 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10, guiLeft + XSIZE - 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10);
+            if(rect.contains(x, y)){
+                System.out.println(this.categoryCache.get(i).getUnlocalizedName());
+                return this.categoryCache.get(i);
+            }
+        }
+
+        return null;
     }
 
     @Override

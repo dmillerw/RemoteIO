@@ -11,6 +11,13 @@ documentation.category.block=Block
 documentation.category.item=Item
 documentation.category.other=Other
 
+documentation.block.remoteInterface=Remote Interface
+documentation.block.remoteInventory=Remote Inventory
+documentation.block.skylight=Skylight
+documentation.block.heater=Heater
+documentation.block.reservoir=Reservoir
+documentation.block.intelligentWorkbench=Intelligent Workbench
+
 # GUI
 container.remoteio.upgrade=Upgrade
 container.remoteio.transfer=Transfer

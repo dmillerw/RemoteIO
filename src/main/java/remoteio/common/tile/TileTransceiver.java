@@ -34,7 +34,7 @@ public class TileTransceiver extends TileCore {
         if (!worldObj.isRemote) {
             if (forceUpdate || RemoteIO.channelRegistry.pollDirty(channel)) {
                 TileEntity tileEntity = worldObj.getTileEntity(xCoord + orientation.offsetX, yCoord + orientation.offsetY, zCoord + orientation.offsetZ);
-                if (tileEntity != null && tileEntity instanceof TileRemoteInterface) {
+                if (tileEntity instanceof TileRemoteInterface) {
                     ((TileRemoteInterface) tileEntity).setRemotePosition(RemoteIO.channelRegistry.getChannelData(channel));
                 }
             }

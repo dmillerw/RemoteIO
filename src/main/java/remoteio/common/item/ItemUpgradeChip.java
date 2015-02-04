@@ -19,8 +19,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 /**
  * @author dmillerw
  */
-public class ItemUpgradeChip extends ItemSelectiveMeta {
-
+public class ItemUpgradeChip
+extends ItemSelectiveMeta {
     private IIcon[] icons;
 
     public ItemUpgradeChip() {

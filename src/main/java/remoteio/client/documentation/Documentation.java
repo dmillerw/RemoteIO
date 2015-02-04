@@ -22,9 +22,12 @@ public class Documentation {
 
     public static void initialize() {
         List<DocumentationEntry> list = Lists.newArrayList();
-        list.add(new DocumentationEntry("documentation.block.test_1").addPage(new DocumentationPageText("documentation.block.test.page.1")));
-        list.add(new DocumentationEntry("documentation.block.test_2").addPage(new DocumentationPageText("documentation.block.test.page.1")));
-        list.add(new DocumentationEntry("documentation.block.test_3").addPage(new DocumentationPageText("documentation.block.test.page.1")));
+        list.add(new DocumentationEntry("documentation.block.remoteInterface").addPage(new DocumentationPageText("documentation.block.remoteInterface.page.1")));
+        list.add(new DocumentationEntry("documentation.block.remoteInventory").addPage(new DocumentationPageText("documentation.block.remoteInventory.page.1")));
+        list.add(new DocumentationEntry("documentation.block.skylight").addPage(new DocumentationPageText("documentation.block.skylight.page.1")));
+        list.add(new DocumentationEntry("documentation.block.heater").addPage(new DocumentationPageText("documentation.block.heater.page.1")));
+        list.add(new DocumentationEntry("documentation.block.reservoir").addPage(new DocumentationPageText("documentation.block.reservoir.page.1")));
+        list.add(new DocumentationEntry("documentation.block.intelligentWorkbench").addPage(new DocumentationPageText("documentation.block.intelligentWorkbench.page.1")));
         register(Category.BLOCK, list);
     }
 

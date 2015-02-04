@@ -8,7 +8,6 @@ import net.minecraft.client.gui.GuiScreen;
  * @author dmillerw
  */
 public interface IDocumentationPage {
-
     @SideOnly(Side.CLIENT)
     public abstract void renderScreen(GuiScreen guiScreen, int mouseX, int mouseY);
 
