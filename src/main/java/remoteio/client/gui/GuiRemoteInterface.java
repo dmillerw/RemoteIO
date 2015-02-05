@@ -69,22 +69,17 @@ public class GuiRemoteInterface extends GuiContainer {
 
         if (tile.remotePosition != null) {
             GL11.glPushMatrix();
-
             double scale = 32;
-
             //FIXME: This is hard coded for a 32D scale
             GL11.glTranslated(k + (61 + 37.5), l + (71 + 37.5) - (scale / 2), scale);
             GL11.glScaled(scale, -scale, scale);
-
             MatrixHelper.loadMatrix(initialMatrix);
-
             GL11.glPushMatrix();
 
             //TODO Properly allow for rendering even without upgrades
             TileEntityRendererDispatcher.instance.renderTileEntityAt(tile, -0.5, -0.5, -0.5, 0);
 
             GL11.glPopMatrix();
-
             GL11.glPopMatrix();
         }
 

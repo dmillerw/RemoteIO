@@ -10,14 +10,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockSkylight extends Block {
-
+public class BlockSkylight
+extends Block {
     private IIcon blank;
     private IIcon[] icons;
 
     public BlockSkylight() {
         super(Material.glass);
-
         setHardness(2F);
         setResistance(2F);
         setCreativeTab(TabRemoteIO.TAB);

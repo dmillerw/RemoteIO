@@ -13,6 +13,7 @@ import remoteio.common.core.TabRemoteIO;
 import remoteio.common.lib.DimensionalCoords;
 import remoteio.common.lib.ModInfo;
 import remoteio.common.tile.TileRemoteInterface;
+import remoteio.common.tile.TileRemoteInventory;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ extends Item {
         if (!world.isRemote) {
             TileEntity tile = world.getTileEntity(x, y, z);
 
-            if (player.isSneaking()) {
+            if (player.isSneaking() && !((tile instanceof TileRemoteInterface) || (tile instanceof TileRemoteInventory))) {
                 ItemLocationChip.setCoordinates(stack, new DimensionalCoords(world.provider.dimensionId, x, y, z));
                 player.addChatComponentMessage(new ChatComponentTranslation("chat.target.save"));
                 return true;
