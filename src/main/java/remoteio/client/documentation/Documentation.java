@@ -28,6 +28,14 @@ public class Documentation {
         list.add(new DocumentationEntry("documentation.block.reservoir").addPage(new DocumentationPageText("documentation.block.reservoir.page.1")));
         list.add(new DocumentationEntry("documentation.block.intelligentWorkbench").addPage(new DocumentationPageText("documentation.block.intelligentWorkbench.page.1")));
         register(Category.BLOCK, list);
+
+        list = Lists.newArrayList();
+        list.add(new DocumentationEntry("documentation.item.ioTool"));
+        list.add(new DocumentationEntry("documentation.item.pda"));
+        list.add(new DocumentationEntry("documentation.item.wirelessTransmitter"));
+        list.add(new DocumentationEntry("documentation.item.wirelessLocationChip"));
+        list.add(new DocumentationEntry("documentation.item.upgrades"));
+        register(Category.ITEM, list);
     }
 
     public static enum Category {
