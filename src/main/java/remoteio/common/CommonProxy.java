@@ -1,4 +1,4 @@
-package remoteio.common.core.proxy;
+package remoteio.common;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;

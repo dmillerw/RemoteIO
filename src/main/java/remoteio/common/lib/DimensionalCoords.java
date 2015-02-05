@@ -11,7 +11,6 @@ import net.minecraft.world.World;
  * @author dmillerw
  */
 public class DimensionalCoords {
-
     public static DimensionalCoords create(TileEntity tile) {
         return new DimensionalCoords(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
     }

@@ -8,7 +8,6 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent17;
  * @author dmillerw
  */
 public class SoundHandler {
-
     public static final SoundHandler INSTANCE = new SoundHandler();
 
     public int x;

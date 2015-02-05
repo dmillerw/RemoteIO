@@ -1,7 +1,8 @@
 package remoteio.client.helper;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.gui.FontRenderer;
+
+import com.google.common.collect.Lists;
 
 import java.util.EnumSet;
 import java.util.LinkedList;

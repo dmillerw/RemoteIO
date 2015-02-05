@@ -9,7 +9,6 @@ import java.util.List;
  * @author dmillerw
  */
 public class Documentation {
-
     private static EnumMap<Category, List<DocumentationEntry>> documentationMap = new EnumMap<Category, List<DocumentationEntry>>(Category.class);
 
     public static void register(Category category, List<DocumentationEntry> documentation) {

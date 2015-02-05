@@ -1,18 +1,10 @@
-package remoteio.common.core.proxy;
+package remoteio.client;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import remoteio.common.RemoteIO;
-import remoteio.client.documentation.Documentation;
-import remoteio.client.handler.SoundHandler;
-import remoteio.client.handler.TooltipEventHandler;
-import remoteio.client.render.*;
-import remoteio.common.core.helper.EventHelper;
-import remoteio.common.network.ClientProxyPlayer;
-import remoteio.common.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -21,11 +13,30 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import remoteio.client.documentation.Documentation;
+import remoteio.client.handler.SoundHandler;
+import remoteio.client.handler.TooltipEventHandler;
+import remoteio.client.render.RenderBlockRemoteInterface;
+import remoteio.client.render.RenderTileIntelligentWorkbench;
+import remoteio.client.render.RenderTileMachine;
+import remoteio.client.render.RenderTileRemoteInterface;
+import remoteio.client.render.RenderTileRemoteInventory;
+import remoteio.client.render.RenderTileTransceiver;
+import remoteio.common.RemoteIO;
+import remoteio.common.core.helper.EventHelper;
+import remoteio.common.CommonProxy;
+import remoteio.common.network.ClientProxyPlayer;
+import remoteio.common.tile.TileIntelligentWorkbench;
+import remoteio.common.tile.TileMachineHeater;
+import remoteio.common.tile.TileMachineReservoir;
+import remoteio.common.tile.TileRemoteInterface;
+import remoteio.common.tile.TileRemoteInventory;
+import remoteio.common.tile.TileTransceiver;
 
 /**
  * @author dmillerw
  */
-public class ClientProxy extends CommonProxy {
+public class ClientProxy extends CommonProxy{
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
@@ -38,7 +49,6 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileIntelligentWorkbench.class, new RenderTileIntelligentWorkbench());
         ClientRegistry.bindTileEntitySpecialRenderer(TileTransceiver.class, new RenderTileTransceiver());
 
-//        EventHelper.register(SoundHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(SoundHandler.INSTANCE);
         EventHelper.register(new TooltipEventHandler());
 

@@ -1,4 +1,4 @@
-package remoteio.common.core.tracker;
+package remoteio.common.tracker;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

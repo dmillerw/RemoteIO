@@ -8,7 +8,6 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
  * @author dmillerw
  */
 public class TooltipEventHandler {
-
     @SubscribeEvent
     public void itemTooltipEvent(ItemTooltipEvent event) {
         if (event.itemStack.hasTagCompound() && event.itemStack.getTagCompound().hasKey("inhibit")) {

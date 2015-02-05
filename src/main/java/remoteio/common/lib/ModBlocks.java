@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
  * @author dmillerw
  */
 public class ModBlocks {
-
     public static Block remoteInterface;
     public static Block remoteInventory;
     public static Block machine;

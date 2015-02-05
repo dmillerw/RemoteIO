@@ -12,7 +12,7 @@ import org.objectweb.asm.tree.*;
  */
 public class TransformWorld implements ITransformer {
 
-    private static final String METHOD_HANDLER = "remoteio/common/core/tracker/RedstoneTracker";
+    private static final String METHOD_HANDLER = "remoteio/common/tracker/RedstoneTracker";
 
     private static final String METHOD_REDSTONE = "getIndirectPowerLevelTo";
     private static final String METHOD_REDSTONE_DESC = "(L%s;IIII)I";

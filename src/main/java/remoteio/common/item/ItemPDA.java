@@ -11,11 +11,9 @@ import net.minecraft.world.World;
 /**
  * @author dmillerw
  */
-public class ItemPDA extends Item {
-
+public class ItemPDA
+extends Item {
     public ItemPDA() {
-        super();
-
         setMaxStackSize(1);
         setCreativeTab(TabRemoteIO.TAB);
     }

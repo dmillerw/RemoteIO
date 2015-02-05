@@ -9,7 +9,6 @@ import remoteio.client.documentation.Documentation;
 import remoteio.client.documentation.DocumentationEntry;
 import remoteio.client.documentation.IDocumentationPage;
 
-import java.awt.Rectangle;
 import java.util.List;
 
 /**
@@ -19,9 +18,9 @@ public class GuiDocumentation
 extends GuiScreen {
     private static final ResourceLocation TEXTURE = new ResourceLocation("remoteio:textures/gui/tablet_green.png");
 
-    private static final int BACK_COLOR = 0x304029;
-    private static final int TEXT_COLOR = 0x3C5033;
-    private static final int TEXT_HIGHLIGHT_COLOR = 0x729A61;
+    public static final int BACK_COLOR = 0x304029;
+    public static final int TEXT_COLOR = 0x3C5033;
+    public static final int TEXT_HIGHLIGHT_COLOR = 0x729A61;
 
     public static final int XSIZE = 142;
     public static final int YSIZE = 180;
@@ -149,6 +148,8 @@ extends GuiScreen {
                     mc.fontRenderer.drawString(localizedName, centeredX(localizedName), guiTop + SCREEN_Y + 20 + (15 * i), selected ? TEXT_HIGHLIGHT_COLOR : TEXT_COLOR);
                 }
             }
+        } else if(currentPage == null){
+            this.currentPage = this.currentEntry.pages.getFirst();
         }
 
         if (currentPage != null) {
@@ -196,11 +197,10 @@ extends GuiScreen {
                 if (currentCategory != null) {
                     categoryCache = Documentation.get(currentCategory);
                 }
-            }
-
-            if(this.currentEntry == null){
-                this.currentEntry = this.getEntry(mouseX, mouseY);
-                this.currentPage = this.currentEntry.pages.getFirst();
+            } else if(currentEntry == null){
+                if(isEntry(mouseX, mouseY)){
+                    this.currentEntry = getEntry(mouseX, mouseY);
+                }
             }
 
             if (mouseX >= guiLeft + HOME_X && mouseX <= guiLeft + HOME_X + HOME_WIDTH && mouseY >= guiTop + HOME_Y && mouseY <= guiTop + HOME_Y + HOME_HEIGHT) {
@@ -213,21 +213,15 @@ extends GuiScreen {
     }
 
     private boolean isEntry(int x, int y){
-        for(int i = 0; i < this.categoryCache.size(); i++){
-            Rectangle rect = new Rectangle(guiLeft + 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10, guiLeft + XSIZE - 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10);
-            if(rect.contains(x, y)){
-                return true;
-            }
-        }
+        return this.categoryCache != null && getEntry(x, y) != null;
 
-        return false;
     }
 
     private DocumentationEntry getEntry(int x, int y){
+        int mousePadding = 25;
         for(int i = 0; i < this.categoryCache.size(); i++){
-            Rectangle rect = new Rectangle(guiLeft + 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10, guiLeft + XSIZE - 25, guiTop + SCREEN_Y + 20 + (15 * i) + 10);
-            if(rect.contains(x, y)){
-                System.out.println(this.categoryCache.get(i).getUnlocalizedName());
+            boolean selected = x >= guiLeft + mousePadding && x <= guiLeft + XSIZE - mousePadding && y >= guiTop + SCREEN_Y + 20 + (15 * i) && y <= guiTop + SCREEN_Y + 20 + (15 * i) + 10;
+            if(selected){
                 return this.categoryCache.get(i);
             }
         }

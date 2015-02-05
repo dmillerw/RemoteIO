@@ -1,4 +1,4 @@
-package remoteio.common.core.tracker;
+package remoteio.common.tracker;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;

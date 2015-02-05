@@ -18,6 +18,9 @@ documentation.block.heater=Heater
 documentation.block.reservoir=Reservoir
 documentation.block.intelligentWorkbench=Intelligent Workbench
 
+documentation.block.remoteInterface.page.1=The Remote Interface is your core block in this mod. In short, it allows the user to access one block remote from great distances, as though the block were sitting right there.
+documentation.block.remoteInventory.page.1=The Remote Inventory is quite similar to the Remote Interface, but instead of connecting to a block, it connects to a Player. Most transfer upgrades will also work, but may work in ways you may not expect
+
 # GUI
 container.remoteio.upgrade=Upgrade
 container.remoteio.transfer=Transfer

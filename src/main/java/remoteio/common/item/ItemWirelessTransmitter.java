@@ -23,8 +23,8 @@ import java.util.List;
 /**
  * @author dmillerw
  */
-public class ItemWirelessTransmitter extends Item {
-
+public class ItemWirelessTransmitter
+extends Item {
     public static boolean hasValidRemote(EntityPlayer player) {
         for (ItemStack stack : player.inventory.mainInventory) {
             if (stack != null && stack.getItem() == ModItems.wirelessTransmitter) {

@@ -4,7 +4,6 @@ package remoteio.common.lib;
  * @author dmillerw
  */
 public class DependencyInfo {
-
     public static final class ModIds {
         public static final String COFH_API = "CoFHAPI";
         public static final String THAUMCRAFT = "Thaumcraft";

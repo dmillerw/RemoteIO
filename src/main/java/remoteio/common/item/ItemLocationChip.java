@@ -22,6 +22,7 @@ import java.util.List;
 public final class ItemLocationChip
 extends Item {
     public ItemLocationChip() {
+        setMaxStackSize(1);
         setCreativeTab(TabRemoteIO.TAB);
     }
 

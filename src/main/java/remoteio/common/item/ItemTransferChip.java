@@ -21,8 +21,8 @@ import java.util.List;
 /**
  * @author dmillerw
  */
-public class ItemTransferChip extends ItemSelectiveMeta {
-
+public class ItemTransferChip
+extends ItemSelectiveMeta {
     private IIcon[] icons;
 
     public ItemTransferChip() {

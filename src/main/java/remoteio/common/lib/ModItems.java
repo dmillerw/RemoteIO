@@ -45,8 +45,6 @@ public class ModItems {
 
         pda = new ItemPDA().setUnlocalizedName("pda");
         register(pda);
-
-
     }
 
     private static void register(Item item) {

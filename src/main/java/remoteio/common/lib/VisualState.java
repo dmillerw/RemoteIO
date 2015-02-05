@@ -1,7 +1,6 @@
 package remoteio.common.lib;
 
 public enum VisualState {
-
     INACTIVE,
     INACTIVE_BLINK,
     ACTIVE,

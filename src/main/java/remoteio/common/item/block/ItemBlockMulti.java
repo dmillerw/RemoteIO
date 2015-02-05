@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
  */
 public class ItemBlockMulti
 extends ItemBlock {
-
     private final String[] names;
 
     public ItemBlockMulti(Block block, String[] names) {

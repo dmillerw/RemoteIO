@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class ItemInteractionInhibitor
 extends Item {
-
     private IIcon iconInactive;
     private IIcon iconActive;
 
