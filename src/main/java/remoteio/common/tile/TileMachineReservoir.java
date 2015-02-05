@@ -12,7 +12,6 @@ import net.minecraftforge.fluids.*;
  * @author dmillerw
  */
 public class TileMachineReservoir extends TileCore implements IFluidHandler {
-
     public boolean filled = false;
 
     @Override
