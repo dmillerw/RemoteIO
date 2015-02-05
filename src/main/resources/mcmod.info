@@ -3,10 +3,10 @@
 	"modid": "RemoteIO",
 	"name": "Remote IO",
 	"version": "@VERSION@",
-	"description": "[description pending]",
+	"description": "Remote IO let's the player think outside the blocks; no longer are you limited to only six sides. The concept is simple. The possibilities are endless.",
 	"credits": "CyanideX, Royalixor",
 	"url": "http://www.electrodynamicsmod.com",
-	"authors": [ "dmillerw" ],
+	"authors": [ "dmillerw, s0cks" ],
 	"dependencies": [
 		"mod_MinecraftForge"
 	]
