@@ -16,7 +16,6 @@ import org.lwjgl.opengl.GL11;
  * @author dmillerw
  */
 public class RenderTileMachine extends TileEntitySpecialRenderer {
-
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
         boolean render = false;

@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL11;
  * @author dmillerw
  */
 public class RenderTileTransceiver extends TileEntitySpecialRenderer {
-
     public static final IModelCustom MODEL = AdvancedModelLoader.loadModel(new ResourceLocation("remoteio:models/transceiver.obj"));
 
     @Override

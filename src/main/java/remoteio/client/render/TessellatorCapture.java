@@ -4,7 +4,6 @@ package remoteio.client.render;
  * @author dmillerw
  */
 public class TessellatorCapture {
-
     private static boolean capture = false;
 
     public static double rotationAngle = 0D;

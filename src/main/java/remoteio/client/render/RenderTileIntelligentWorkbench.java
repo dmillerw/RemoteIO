@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
  * @author dmillerw
  */
 public class RenderTileIntelligentWorkbench extends TileEntitySpecialRenderer {
-
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partial) {
         GL11.glPushMatrix();

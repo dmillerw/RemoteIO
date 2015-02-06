@@ -1,10 +1,5 @@
 package remoteio.common.block;
 
-import remoteio.common.core.TabRemoteIO;
-import remoteio.common.lib.ModInfo;
-import remoteio.common.tile.TileMachineHeater;
-import remoteio.common.tile.TileMachineReservoir;
-import remoteio.common.tile.core.TileCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -21,6 +16,11 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import remoteio.common.core.TabRemoteIO;
+import remoteio.common.lib.ModInfo;
+import remoteio.common.tile.TileMachineHeater;
+import remoteio.common.tile.TileMachineReservoir;
+import remoteio.common.tile.core.TileCore;
 
 import java.util.List;
 

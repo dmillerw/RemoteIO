@@ -16,7 +16,6 @@ import net.minecraftforge.client.ForgeHooksClient;
  * @author dmillerw
  */
 public class RenderBlockRemoteInterface implements ISimpleBlockRenderingHandler {
-
     @Override
     public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
         IIcon inactive = BlockIOCore.icons[0];

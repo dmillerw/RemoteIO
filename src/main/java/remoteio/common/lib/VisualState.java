@@ -12,4 +12,22 @@ public enum VisualState {
     public boolean isCamouflage() {
         return this == CAMOUFLAGE_REMOTE || this == CAMOUFLAGE_SIMPLE || this == CAMOUFLAGE_BOTH;
     }
+
+    @Override
+    public String toString(){
+        switch(this)
+        {
+            case INACTIVE_BLINK:
+            case INACTIVE:{
+                return "Inactive";
+            }
+            case ACTIVE:
+            case ACTIVE_BLINK:{
+                return "Active";
+            }
+            default:{
+                return null;
+            }
+        }
+    }
 }

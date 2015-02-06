@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL11;
  * @author dmillerw
  */
 public class RenderTileRemoteInventory extends TileEntitySpecialRenderer {
-
     public void renderRemoteInterfaceAt(TileRemoteInventory tile, double x, double y, double z, float partial) {
         if (!tile.visualState.isCamouflage()) {
             IIcon icon = BlockIOCore.overlays[tile.visualState.ordinal()];

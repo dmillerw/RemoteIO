@@ -23,7 +23,6 @@ import org.lwjgl.opengl.GL11;
  * @author dmillerw
  */
 public class RenderTileRemoteInterface extends TileEntitySpecialRenderer {
-
     private RenderBlocks renderBlocks;
 
     private static boolean shouldRender(VisualState visualState) {
