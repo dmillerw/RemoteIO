@@ -14,6 +14,7 @@ public class DependencyInfo {
     public static final class Paths {
         public static final class COFH {
             public static final String IENERGYHANDLER = "cofh.api.energy.IEnergyHandler";
+            public static final String IENERGYRECEIVER = "cofh.api.energy.IEnergyReceiver";
         }
 
         public static final class IC2 {

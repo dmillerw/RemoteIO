@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
  * @author dmillerw
  */
 public class IC2TransferHelper {
-
     public static boolean requiresCharge(IInventory inventory) {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);

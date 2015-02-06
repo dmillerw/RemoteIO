@@ -61,6 +61,7 @@ item.chip.upgrade.simple_camo.name=Simple Camouflage Upgrade
 item.wireless_transmitter.name=Wireless Transmitter
 item.io_tool.name=IO Tool
 item.interaction_inhibitor.name=Interaction Inhibitor
+item.pda.name=PDA
 
 # Block
 tile.remote_interface.name=Remote Interface

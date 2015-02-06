@@ -85,6 +85,17 @@ public class ModRecipes {
                 'S', Items.stick
         );
 
+        RecipeHelper.addOreRecipe(
+                new ItemStack(ModItems.pda),
+                "IGI",
+                "IRI",
+                "IBI",
+                'I', Items.iron_ingot,
+                'R', Items.redstone,
+                'G', Blocks.glass,
+                'B', Blocks.stone_button
+        );
+
         // LOCATION CHIP
         RecipeHelper.addOreRecipe(
                 new ItemStack(ModItems.locationChip),
