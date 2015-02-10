@@ -24,7 +24,6 @@ import net.minecraft.world.World;
  * @author dmillerw
  */
 public abstract class BlockIOCore extends BlockContainer {
-
     @SideOnly(Side.CLIENT)
     public static IIcon[] icons;
     @SideOnly(Side.CLIENT)
@@ -32,7 +31,6 @@ public abstract class BlockIOCore extends BlockContainer {
 
     public BlockIOCore() {
         super(Material.iron);
-
         setHardness(5F);
         setResistance(5F);
         setCreativeTab(TabRemoteIO.TAB);

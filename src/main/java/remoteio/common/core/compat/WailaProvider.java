@@ -18,7 +18,6 @@ import java.util.List;
  * @author dmillerw
  */
 public class WailaProvider implements IWailaDataProvider {
-
     public static void registerProvider(IWailaRegistrar wailaRegistrar) {
         WailaProvider provider = new WailaProvider();
         wailaRegistrar.registerStackProvider(provider, BlockRemoteInterface.class);

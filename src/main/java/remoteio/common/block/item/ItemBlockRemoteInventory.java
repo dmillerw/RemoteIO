@@ -12,7 +12,6 @@ import java.util.List;
  * @author dmillerw
  */
 public class ItemBlockRemoteInventory extends ItemBlock {
-
     public ItemBlockRemoteInventory(Block block) {
         super(block);
     }
