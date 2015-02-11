@@ -20,7 +20,7 @@ public class CoreTransformer implements IClassTransformer {
     }
 
     public CoreTransformer() {
-        addTransformer(new TransformWorld());
+        // addTransformer(new TransformWorld());
         addTransformer(new TransformTessellator());
     }
 
