@@ -17,6 +17,8 @@ public class ModItems {
     public static Item interactionInhibitor;
     public static Item wirelessLocationChip;
     public static Item pda;
+    public static Item remoteAccessor;
+    public static Item linker;
 
     public static void initialize() {
         locationChip = new ItemLocationChip().setUnlocalizedName("chip.location");
@@ -37,14 +39,14 @@ public class ModItems {
         wirelessTransmitter = new ItemWirelessTransmitter().setUnlocalizedName("wireless_transmitter");
         register(wirelessTransmitter);
 
-//        interactionInhibitor = new ItemInteractionInhibitor().setUnlocalizedName("interaction_inhibitor");
-//        register(interactionInhibitor);
-
-//        wirelessLocationChip = new ItemWirelessLocationChip().setUnlocalizedName("wireless_chip.location");
-//        register(wirelessLocationChip);
-
         pda = new ItemPDA().setUnlocalizedName("pda");
         register(pda);
+
+        remoteAccessor = new ItemRemoteAccessor().setUnlocalizedName("remoteAccessor");
+        register(remoteAccessor);
+
+        linker = new ItemLinker().setUnlocalizedName("linker");
+        register(linker);
     }
 
     private static void register(Item item) {

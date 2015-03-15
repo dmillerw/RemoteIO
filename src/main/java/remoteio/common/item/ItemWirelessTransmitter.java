@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -25,6 +26,28 @@ import java.util.List;
  */
 public class ItemWirelessTransmitter
 extends Item {
+    private final IIcon[] icons = new IIcon[2];
+
+    @Override
+    public IIcon getIconIndex(ItemStack stack){
+        boolean bound = getPlayerName(stack) != null;
+        if(bound){
+            return icons[1];
+        } else{
+            return icons[0];
+        }
+    }
+
+    @Override
+    public IIcon getIcon(ItemStack stack, int pass){
+        boolean bound = getPlayerName(stack) != null;
+        if(bound){
+            return icons[1];
+        } else{
+            return icons[0];
+        }
+    }
+
     public static boolean hasValidRemote(EntityPlayer player) {
         for (ItemStack stack : player.inventory.mainInventory) {
             if (stack != null && stack.getItem() == ModItems.wirelessTransmitter) {
@@ -194,6 +217,7 @@ extends Item {
 
     @Override
     public void registerIcons(IIconRegister register) {
-        this.itemIcon = register.registerIcon(ModInfo.RESOURCE_PREFIX + "transmitter");
+        this.icons[0] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "transmitter");
+        this.icons[1] = register.registerIcon(ModInfo.RESOURCE_PREFIX + "transmitter_active");
     }
 }

@@ -195,29 +195,26 @@ extends GuiScreen {
                 }
 
                 if (currentCategory != null) {
-                    categoryCache = Documentation.get(currentCategory);
+                    this.categoryCache = Documentation.get(currentCategory);
                 }
             } else if(currentEntry == null){
-                if(isEntry(mouseX, mouseY)){
-                    this.currentEntry = getEntry(mouseX, mouseY);
-                }
+                this.currentEntry = getEntry(mouseX, mouseY);
             }
 
             if (mouseX >= guiLeft + HOME_X && mouseX <= guiLeft + HOME_X + HOME_WIDTH && mouseY >= guiTop + HOME_Y && mouseY <= guiTop + HOME_Y + HOME_HEIGHT) {
-                currentCategory = null;
-                categoryCache = null;
-                currentEntry = null;
-                currentPage = null;
+                this.currentCategory = null;
+                this.categoryCache = null;
+                this.currentEntry = null;
+                this.currentPage = null;
             }
         }
     }
 
-    private boolean isEntry(int x, int y){
-        return this.categoryCache != null && getEntry(x, y) != null;
-
-    }
-
     private DocumentationEntry getEntry(int x, int y){
+        if(this.categoryCache == null){
+            return null;
+        }
+
         int mousePadding = 25;
         for(int i = 0; i < this.categoryCache.size(); i++){
             boolean selected = x >= guiLeft + mousePadding && x <= guiLeft + XSIZE - mousePadding && y >= guiTop + SCREEN_Y + 20 + (15 * i) && y <= guiTop + SCREEN_Y + 20 + (15 * i) + 10;

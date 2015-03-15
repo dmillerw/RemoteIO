@@ -56,6 +56,17 @@ public class ModRecipes {
                 'G', Blocks.gold_block
         );
 
+        // REMOTE ACCESSOR
+        RecipeHelper.addOreRecipe(new ItemStack(ModItems.remoteAccessor),
+                " I ",
+                "LCL",
+                " T ",
+                'I', ModBlocks.remoteInterface,
+                'L', ModItems.linker,
+                'C', ModItems.locationChip,
+                'T', ModItems.wirelessTransmitter
+        );
+
         // SKY LIGHT
         GameRegistry.addShapedRecipe(
                 new ItemStack(ModBlocks.skylight),
@@ -85,6 +96,7 @@ public class ModRecipes {
                 'S', Items.stick
         );
 
+        // PDA
         RecipeHelper.addOreRecipe(
                 new ItemStack(ModItems.pda),
                 "IGI",

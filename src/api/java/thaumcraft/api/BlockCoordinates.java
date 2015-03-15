@@ -3,7 +3,7 @@ package thaumcraft.api;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-public class WorldCoordinates implements Comparable
+public class BlockCoordinates implements Comparable
 {
     public int x;
 
@@ -12,60 +12,54 @@ public class WorldCoordinates implements Comparable
 
     /** the z coordinate */
     public int z;
-    
-    public int dim;
 
-    public WorldCoordinates() {}
+    public BlockCoordinates() {}
 
-    public WorldCoordinates(int par1, int par2, int par3, int d)
+    public BlockCoordinates(int par1, int par2, int par3)
     {
         this.x = par1;
         this.y = par2;
         this.z = par3;
-        this.dim = d;
     }
     
-    public WorldCoordinates(TileEntity tile)
+    public BlockCoordinates(TileEntity tile)
     {
         this.x = tile.xCoord;
         this.y = tile.yCoord;
         this.z = tile.zCoord;
-        this.dim = tile.getWorldObj().provider.dimensionId;
     }
 
-    public WorldCoordinates(WorldCoordinates par1ChunkCoordinates)
+    public BlockCoordinates(BlockCoordinates par1ChunkCoordinates)
     {
         this.x = par1ChunkCoordinates.x;
         this.y = par1ChunkCoordinates.y;
         this.z = par1ChunkCoordinates.z;
-        this.dim = par1ChunkCoordinates.dim;
     }
 
     public boolean equals(Object par1Obj)
     {
-        if (!(par1Obj instanceof WorldCoordinates))
+        if (!(par1Obj instanceof BlockCoordinates))
         {
             return false;
         }
         else
         {
-        	WorldCoordinates coordinates = (WorldCoordinates)par1Obj;
-            return this.x == coordinates.x && this.y == coordinates.y && this.z == coordinates.z && this.dim == coordinates.dim ;
+        	BlockCoordinates coordinates = (BlockCoordinates)par1Obj;
+            return this.x == coordinates.x && this.y == coordinates.y && this.z == coordinates.z ;
         }
     }
 
     public int hashCode()
     {
-        return this.x + this.y << 8 + this.z << 16 + this.dim << 24;
+        return this.x + this.y << 8 + this.z << 16;
     }
 
     /**
      * Compare the coordinate with another coordinate
      */
-    public int compareWorldCoordinate(WorldCoordinates par1)
+    public int compareWorldCoordinate(BlockCoordinates par1)
     {
-        return this.dim == par1.dim ? (
-        		this.y == par1.y ? (this.z == par1.z ? this.x - par1.x : this.z - par1.z) : this.y - par1.y) : -1;
+        return this.y == par1.y ? (this.z == par1.z ? this.x - par1.x : this.z - par1.z) : this.y - par1.y;
     }
 
     public void set(int par1, int par2, int par3, int d)
@@ -73,7 +67,6 @@ public class WorldCoordinates implements Comparable
         this.x = par1;
         this.y = par2;
         this.z = par3;
-        this.dim = d;
     }
 
     /**
@@ -90,28 +83,26 @@ public class WorldCoordinates implements Comparable
     /**
      * Return the squared distance between this coordinates and the ChunkCoordinates given as argument.
      */
-    public float getDistanceSquaredToWorldCoordinates(WorldCoordinates par1ChunkCoordinates)
+    public float getDistanceSquaredToWorldCoordinates(BlockCoordinates par1ChunkCoordinates)
     {
         return this.getDistanceSquared(par1ChunkCoordinates.x, par1ChunkCoordinates.y, par1ChunkCoordinates.z);
     }
 
     public int compareTo(Object par1Obj)
     {
-        return this.compareWorldCoordinate((WorldCoordinates)par1Obj);
+        return this.compareWorldCoordinate((BlockCoordinates)par1Obj);
     }
     
     public void readNBT(NBTTagCompound nbt) {
-    	this.x = nbt.getInteger("w_x");
-    	this.y = nbt.getInteger("w_y");
-    	this.z = nbt.getInteger("w_z");
-    	this.dim = nbt.getInteger("w_d");
+    	this.x = nbt.getInteger("b_x");
+    	this.y = nbt.getInteger("b_y");
+    	this.z = nbt.getInteger("b_z");
     }
     
     public void writeNBT(NBTTagCompound nbt) {
-    	nbt.setInteger("w_x",x);
-    	nbt.setInteger("w_y",y);
-    	nbt.setInteger("w_z",z);
-    	nbt.setInteger("w_d",dim);
+    	nbt.setInteger("b_x",x);
+    	nbt.setInteger("b_y",y);
+    	nbt.setInteger("b_z",z);
     }
     
 }

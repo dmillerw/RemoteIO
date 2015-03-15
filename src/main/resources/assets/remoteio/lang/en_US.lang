@@ -62,6 +62,8 @@ item.wireless_transmitter.name=Wireless Transmitter
 item.io_tool.name=IO Tool
 item.interaction_inhibitor.name=Interaction Inhibitor
 item.pda.name=PDA
+item.remoteAccessor.name=Remote Accessor
+item.linker.name=Linker
 
 # Block
 tile.remote_interface.name=Remote Interface

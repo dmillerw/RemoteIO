@@ -30,8 +30,5 @@ implements IDocumentationPage {
         }
     }
 
-    @Override
-    public void updateScreen(GuiScreen guiScreen) {
-
-    }
+    @Override public void updateScreen(GuiScreen guiScreen) {}
 }

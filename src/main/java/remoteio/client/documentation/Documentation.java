@@ -35,6 +35,8 @@ public class Documentation {
         list.add(new DocumentationEntry("documentation.item.wirelessTransmitter").addPage(new DocumentationPageText("documentation.item.wirelessTransmitter.page.1")));
         list.add(new DocumentationEntry("documentation.item.wirelessLocationChip").addPage(new DocumentationPageText("documentation.item.wirelessLocationChip.page.1")));
         list.add(new DocumentationEntry("documentation.item.upgrades").addPage(new DocumentationPageText("documentation.item.upgrades.page.1")));
+        list.add(new DocumentationEntry("documentation.item.linker").addPage(new DocumentationPageText("documentation.item.linker.page.1")));
+        list.add(new DocumentationEntry("documentation.item.remoteAccessor").addPage(new DocumentationPageText("documentation.item.remoteAccessor.page.1")));
         register(Category.ITEM, list);
     }
 

@@ -1,5 +1,5 @@
 package thaumcraft.api.entities;
 
-public interface ITaintedMob {
+public interface IEldritchMob {
 
 }
