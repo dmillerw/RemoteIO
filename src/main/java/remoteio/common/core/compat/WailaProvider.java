@@ -1,5 +1,8 @@
 package remoteio.common.core.compat;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import remoteio.common.block.BlockRemoteInterface;
 import remoteio.common.block.BlockRemoteInventory;
 import remoteio.common.lib.VisualState;
@@ -78,5 +81,10 @@ public class WailaProvider implements IWailaDataProvider {
             }
         }
         return currenttip;
+    }
+
+    @Override
+    public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity te, NBTTagCompound tag, World world, int x, int y, int z){
+        return tag;
     }
 }
