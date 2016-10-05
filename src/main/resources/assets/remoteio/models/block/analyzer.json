@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_top",
+  "textures": {
+    "top": "remoteio:blocks/inactive",
+    "side": "remoteio:blocks/blank"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "remoteio:block/remote_interface",
+  "textures": {
+    "layer0": "remoteio:blocks/remote_interface"
+  }
+}
