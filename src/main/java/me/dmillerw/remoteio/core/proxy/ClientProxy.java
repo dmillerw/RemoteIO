@@ -34,6 +34,13 @@ public class ClientProxy extends CommonProxy implements IProxy {
         ModelLoaderRegistry.registerLoader(new BaseModelLoader());
 
         ClientRegistry.bindTileEntitySpecialRenderer(TileRemoteInterface.class, new RenderTileRemoteInterface());
+
+//        RenderingRegistry.registerEntityRenderingHandler(EntityItemEnderPearl.class, new IRenderFactory<EntityItemEnderPearl>() {
+//            @Override
+//            public Render<? super EntityItemEnderPearl> createRenderFor(RenderManager manager) {
+//                return new RenderEntityItem(manager, Minecraft.getMinecraft().getRenderItem());
+//            }
+//        });
     }
 
     @Override

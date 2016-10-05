@@ -46,6 +46,9 @@ public class CommonProxy implements IProxy {
         PlayerEventHandler.initialize();
 
         MinecraftForge.EVENT_BUS.register(DeviceRegistry.TickHandler.INSTANCE);
+//        MinecraftForge.EVENT_BUS.register(new EntityEventHandler());
+
+//        EntityRegistry.registerModEntity(EntityItemEnderPearl.class, "entity.item.ender_pearl", 0, RemoteIO.instance, 64, 64, true);
     }
 
     @Override
