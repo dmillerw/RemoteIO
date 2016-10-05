@@ -84,3 +84,12 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+jar {
+    manifest {
+        attributes 'FMLCorePlugin': 'me.dmillerw.remoteio.asm.CoreLoader'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+    }
+
+    classifier = 'universal'
+}
