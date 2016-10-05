@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -112,6 +113,35 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
         } else {
             return super.getExtendedState(state, world, pos);
         }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        TileEntity tile = source.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            TileRemoteInterface remote = (TileRemoteInterface) tile;
+            IBlockState connected = remote.getRemoteState();
+
+            if (connected != null) {
+                return connected.getBlock().getBoundingBox(connected, source, remote.getRemotePosition());
+            }
+        }
+        return super.getBoundingBox(state, source, pos);
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            TileRemoteInterface remote = (TileRemoteInterface) tile;
+            IBlockState connected = remote.getRemoteState();
+
+            if (connected != null) {
+                return connected.getBlock().getCollisionBoundingBox(connected, worldIn, remote.getRemotePosition());
+            }
+        }
+        return super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
