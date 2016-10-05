@@ -3,9 +3,7 @@ package me.dmillerw.remoteio.block;
 import me.dmillerw.remoteio.RemoteIO;
 import me.dmillerw.remoteio.lib.ModInfo;
 import me.dmillerw.remoteio.lib.ModTab;
-import me.dmillerw.remoteio.lib.property.UnlistedBoolean;
-import me.dmillerw.remoteio.lib.property.UnlistedInteger;
-import me.dmillerw.remoteio.lib.property.UnlistedString;
+import me.dmillerw.remoteio.lib.property.RenderStateProperty;
 import me.dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -36,9 +34,7 @@ import java.util.Random;
  */
 public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
-    public static final UnlistedString MIMICK_BLOCK = new UnlistedString("mimick_block");
-    public static final UnlistedInteger MIMICK_VALUE = new UnlistedInteger("mimick_value");
-    public static final UnlistedBoolean CAMOUFLAGE = new UnlistedBoolean("camouflage");
+    public static final RenderStateProperty RENDER_STATE = new RenderStateProperty("render_state");
 
     public BlockRemoteInterface() {
         super(Material.IRON);
@@ -50,7 +46,7 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[] {MIMICK_BLOCK, MIMICK_VALUE, CAMOUFLAGE});
+        return new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[] {RENDER_STATE});
     }
 
     @Override
@@ -100,7 +96,9 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
                     return false;
                 }
 
-                return RemoteIO.proxy.onBlockActivated(worldIn, remote.getRemotePosition(), connected, playerIn, hand, null, side, hitX, hitY, hitZ);
+                RemoteIO.proxy.onBlockActivated(worldIn, remote.getRemotePosition(), connected, playerIn, hand, null, side, hitX, hitY, hitZ);
+
+                return true;
             }
         }
         return false;

@@ -3,6 +3,7 @@ package me.dmillerw.remoteio.client.model.model;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
+import me.dmillerw.remoteio.lib.property.RenderState;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -37,17 +38,17 @@ public class MagicalBakedModel implements IBakedModel {
         return Minecraft.getMinecraft().getBlockRendererDispatcher();
     }
 
-    private static IBlockState getMimickBlock(IBlockState oldState) {
-        IExtendedBlockState state = (IExtendedBlockState) oldState;
-        String mimickBlock = state.getValue(BlockRemoteInterface.MIMICK_BLOCK);
-        if (mimickBlock == null || mimickBlock.isEmpty() || !mimickBlock.contains(":"))
+    private static IBlockState getMimickBlock(RenderState renderState) {
+        if (renderState.block == null || renderState.block.isEmpty() || !renderState.block.contains(":"))
             return null;
 
-        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(mimickBlock));
+        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(renderState.block));
         if (block == Blocks.AIR)
             return null;
 
-        return block.getStateFromMeta(state.getValue(BlockRemoteInterface.MIMICK_VALUE));
+        IBlockState newState = block.getStateFromMeta(renderState.state);
+
+        return newState;
     }
 
     private VertexFormat format;
@@ -252,16 +253,17 @@ public class MagicalBakedModel implements IBakedModel {
         if (state == null)
             return getInactiveCube();
 
-        IBlockState mimick = getMimickBlock(state);
+        IExtendedBlockState estate = (IExtendedBlockState) state;
+        RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
+
+        IBlockState mimick = getMimickBlock(renderState);
         if (mimick == null)
             return getInactiveCube();
 
-        Boolean camouflage = ((IExtendedBlockState)state).getValue(BlockRemoteInterface.CAMOUFLAGE);
-
-        if (camouflage != null && camouflage) {
+        if (renderState.camouflage) {
             EnumBlockRenderType renderType = mimick.getRenderType();
             if (renderType == EnumBlockRenderType.LIQUID || renderType == EnumBlockRenderType.MODEL) {
-                return rendererDispatcher().getModelForState(mimick).getQuads(getMimickBlock(state), side, rand);
+                return rendererDispatcher().getModelForState(mimick).getQuads(mimick, side, rand);
             } else if (renderType == EnumBlockRenderType.ENTITYBLOCK_ANIMATED) {
                 return EMPTY_LIST;
             } else {

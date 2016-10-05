@@ -3,6 +3,10 @@ package me.dmillerw.remoteio.network.packet.server;
 import io.netty.buffer.ByteBuf;
 import me.dmillerw.remoteio.core.frequency.IFrequencyProvider;
 import me.dmillerw.remoteio.item.ItemPocketGadget;
+import me.dmillerw.remoteio.item.ModItems;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -52,7 +56,12 @@ public class SSetFrequency implements IMessage {
         @Override
         public IMessage onMessage(SSetFrequency message, MessageContext ctx) {
             if (message.tilePos == null) {
-                ItemPocketGadget.setFrequency(ctx.getServerHandler().playerEntity.getActiveItemStack(), message.frequency);
+                EntityPlayer player = ctx.getServerHandler().playerEntity;
+                ItemStack active = player.getHeldItemMainhand();
+                if (active != null && active.getItem() == ModItems.pocket_gadget) {
+                    ItemPocketGadget.setFrequency(active, message.frequency);
+                    player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, active);
+                }
             } else {
                 World world = ctx.getServerHandler().playerEntity.worldObj;
                 IFrequencyProvider provider = (IFrequencyProvider) world.getTileEntity(message.tilePos);

@@ -5,10 +5,10 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 /**
  * Created by dmillerw
  */
-public class UnlistedBoolean implements IUnlistedProperty<Boolean> {
+public class RenderStateProperty implements IUnlistedProperty<RenderState> {
 
     private final String name;
-    public UnlistedBoolean(String name) {
+    public RenderStateProperty(String name) {
         this.name = name;
     }
 
@@ -18,17 +18,17 @@ public class UnlistedBoolean implements IUnlistedProperty<Boolean> {
     }
 
     @Override
-    public boolean isValid(Boolean value) {
+    public boolean isValid(RenderState value) {
         return true;
     }
 
     @Override
-    public Class<Boolean> getType() {
-        return Boolean.class;
+    public Class<RenderState> getType() {
+        return RenderState.class;
     }
 
     @Override
-    public String valueToString(Boolean value) {
-        return Boolean.toString(value);
+    public String valueToString(RenderState value) {
+        return null;
     }
 }

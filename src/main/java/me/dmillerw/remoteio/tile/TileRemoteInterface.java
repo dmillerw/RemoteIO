@@ -4,6 +4,7 @@ import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
 import me.dmillerw.remoteio.core.frequency.IFrequencyProvider;
+import me.dmillerw.remoteio.lib.property.RenderState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -116,18 +117,16 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
         IBlockState connected = getRemoteState();
         if (connected == null) {
             return ((IExtendedBlockState) state)
-                    .withProperty(BlockRemoteInterface.MIMICK_BLOCK, "")
-                    .withProperty(BlockRemoteInterface.MIMICK_VALUE, -1)
-                    .withProperty(BlockRemoteInterface.CAMOUFLAGE, true);
+                    .withProperty(BlockRemoteInterface.RENDER_STATE, RenderState.BLANK);
         }
 
         String type = ForgeRegistries.BLOCKS.getKey(connected.getBlock()).toString();
         int data = connected.getBlock().getMetaFromState(connected);
 
+        RenderState renderState = new RenderState(type, data, true);
+
         return ((IExtendedBlockState) state)
-                .withProperty(BlockRemoteInterface.MIMICK_BLOCK, type)
-                .withProperty(BlockRemoteInterface.MIMICK_VALUE, data)
-                .withProperty(BlockRemoteInterface.CAMOUFLAGE, true);
+                .withProperty(BlockRemoteInterface.RENDER_STATE, renderState);
     }
 
     /* START CAPABILITY HANDLING */
