@@ -3,6 +3,7 @@ package me.dmillerw.remoteio.tile;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
+import me.dmillerw.remoteio.core.frequency.IFrequencyProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -18,15 +19,28 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by dmillerw
  */
-public class TileRemoteInterface extends TileCore implements ITickable {
+public class TileRemoteInterface extends TileCore implements ITickable, IFrequencyProvider {
 
     private BlockPos remotePosition;
     private boolean runSync = false;
+    private int frequency = 0;
+
+    @Override
+    public void writeToDisk(NBTTagCompound compound) {
+        compound.setInteger("_frequency", frequency);
+    }
+
+    @Override
+    public void readFromDisk(NBTTagCompound compound) {
+        frequency = compound.getInteger("_frequency");
+    }
 
     @Override
     public void writeDescription(NBTTagCompound compound) {
         if (remotePosition != null)
             compound.setLong("_remote_position", remotePosition.toLong());
+
+        compound.setInteger("_frequency", frequency);
     }
 
     @Override
@@ -35,22 +49,21 @@ public class TileRemoteInterface extends TileCore implements ITickable {
             remotePosition = BlockPos.fromLong(compound.getLong("_remote_position"));
         else
             remotePosition = null;
+
+        frequency = compound.getInteger("_frequency");
     }
 
     @Override
     public void onLoad() {
         if (!worldObj.isRemote) {
-            remotePosition = DeviceRegistry.getWatchedBlock(getFrequency());
-
-            if (remotePosition != null)
-                runSync = true;
+            remotePosition = DeviceRegistry.getWatchedBlock(worldObj.provider.getDimension(), getFrequency());
         }
     }
 
     @Override
     public void update() {
-        if (!worldObj.isRemote && !runSync) {
-            BlockPos pos = DeviceRegistry.getWatchedBlock(getFrequency());
+        if (!worldObj.isRemote) {
+            BlockPos pos = DeviceRegistry.getWatchedBlock(worldObj.provider.getDimension(), getFrequency());
             if (pos == null) {
                 if (remotePosition != null) {
                     this.remotePosition = null;
@@ -63,8 +76,20 @@ public class TileRemoteInterface extends TileCore implements ITickable {
         }
     }
 
-    private int getFrequency() {
-        return 0;
+    @Override
+    public int getFrequency() {
+        return frequency;
+    }
+
+    @Override
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+        markDirtyAndNotify();
+    }
+
+    @Override
+    public BlockPos getPosition() {
+        return pos;
     }
 
     public BlockPos getRemotePosition() {
@@ -74,6 +99,9 @@ public class TileRemoteInterface extends TileCore implements ITickable {
     public IBlockState getRemoteState() {
         if (remotePosition != null) {
             IBlockState state = worldObj.getBlockState(remotePosition);
+            if (state.getBlock().isAir(state, worldObj, remotePosition))
+                return null;
+
             if (state.getBlock() == ModBlocks.analyzer || state.getBlock() == ModBlocks.remote_interface)
                 return null;
 
@@ -86,15 +114,20 @@ public class TileRemoteInterface extends TileCore implements ITickable {
     @SideOnly(Side.CLIENT)
     public IExtendedBlockState getExtendedBlockState(IBlockState state) {
         IBlockState connected = getRemoteState();
-        if (connected == null)
-            return (IExtendedBlockState) state;
+        if (connected == null) {
+            return ((IExtendedBlockState) state)
+                    .withProperty(BlockRemoteInterface.MIMICK_BLOCK, "")
+                    .withProperty(BlockRemoteInterface.MIMICK_VALUE, -1)
+                    .withProperty(BlockRemoteInterface.CAMOUFLAGE, true);
+        }
 
         String type = ForgeRegistries.BLOCKS.getKey(connected.getBlock()).toString();
         int data = connected.getBlock().getMetaFromState(connected);
 
         return ((IExtendedBlockState) state)
                 .withProperty(BlockRemoteInterface.MIMICK_BLOCK, type)
-                .withProperty(BlockRemoteInterface.MIMICK_VALUE, data);
+                .withProperty(BlockRemoteInterface.MIMICK_VALUE, data)
+                .withProperty(BlockRemoteInterface.CAMOUFLAGE, true);
     }
 
     /* START CAPABILITY HANDLING */

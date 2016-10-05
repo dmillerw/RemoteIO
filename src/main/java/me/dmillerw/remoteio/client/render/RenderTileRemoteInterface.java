@@ -15,7 +15,7 @@ public class RenderTileRemoteInterface extends TileEntitySpecialRenderer<TileRem
 
     @Override
     public void renderTileEntityAt(TileRemoteInterface te, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (te.getRemotePosition() != null) {
+        if (te.getRemoteState() != null) {
             bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
             GlStateManager.pushMatrix();

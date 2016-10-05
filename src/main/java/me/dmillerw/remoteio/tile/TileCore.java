@@ -60,5 +60,7 @@ public class TileCore extends TileEntity {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readDescription(pkt.getNbtCompound());
+
+        worldObj.markBlockRangeForRenderUpdate(pos, pos);
     }
 }

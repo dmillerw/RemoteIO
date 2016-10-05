@@ -3,6 +3,7 @@ package me.dmillerw.remoteio.block;
 import me.dmillerw.remoteio.RemoteIO;
 import me.dmillerw.remoteio.lib.ModInfo;
 import me.dmillerw.remoteio.lib.ModTab;
+import me.dmillerw.remoteio.lib.property.UnlistedBoolean;
 import me.dmillerw.remoteio.lib.property.UnlistedInteger;
 import me.dmillerw.remoteio.lib.property.UnlistedString;
 import me.dmillerw.remoteio.tile.TileRemoteInterface;
@@ -37,6 +38,7 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     public static final UnlistedString MIMICK_BLOCK = new UnlistedString("mimick_block");
     public static final UnlistedInteger MIMICK_VALUE = new UnlistedInteger("mimick_value");
+    public static final UnlistedBoolean CAMOUFLAGE = new UnlistedBoolean("camouflage");
 
     public BlockRemoteInterface() {
         super(Material.IRON);
@@ -48,7 +50,7 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[] {MIMICK_BLOCK, MIMICK_VALUE});
+        return new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[] {MIMICK_BLOCK, MIMICK_VALUE, CAMOUFLAGE});
     }
 
     @Override
@@ -86,23 +88,29 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileRemoteInterface tile = (TileRemoteInterface) worldIn.getTileEntity(pos);
-        if (tile != null) {
-            BlockPos connected = tile.getRemotePosition();
-            if (connected == null) {
-                return false;
-            }
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            TileRemoteInterface remote = (TileRemoteInterface) tile;
+            if (playerIn.isSneaking()) {
+                playerIn.openGui(RemoteIO.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+                return true;
+            } else {
+                IBlockState connected = remote.getRemoteState();
+                if (connected == null) {
+                    return false;
+                }
 
-            return RemoteIO.proxy.onBlockActivated(worldIn, tile.getRemotePosition(), tile.getRemoteState(), playerIn, hand, heldItem, side, hitX, hitY, hitZ);
+                return RemoteIO.proxy.onBlockActivated(worldIn, remote.getRemotePosition(), connected, playerIn, hand, null, side, hitX, hitY, hitZ);
+            }
         }
         return false;
     }
 
     @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(pos);
-        if (tile != null) {
-            return tile.getExtendedBlockState(state);
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            return ((TileRemoteInterface)tile).getExtendedBlockState(state);
         } else {
             return super.getExtendedState(state, world, pos);
         }
@@ -110,16 +118,14 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Override
     public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileRemoteInterface tile = (TileRemoteInterface) world.getTileEntity(pos);
-        if (tile != null) {
-            if (tile.getRemotePosition() == null) {
-                return 0;
-            }
-            IBlockState connected = tile.getRemoteState();
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            TileRemoteInterface remote = (TileRemoteInterface) tile;
+            IBlockState connected = remote.getRemoteState();
             if (connected == null || (connected.getBlock() == Blocks.AIR || connected.getBlock() == this))
                 return 0;
 
-            return connected.getBlock().getLightValue(connected, world, tile.getRemotePosition());
+            return connected.getBlock().getLightValue(connected, world, remote.getRemotePosition());
         } else {
             return 0;
         }
@@ -127,9 +133,9 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        TileRemoteInterface tile = (TileRemoteInterface) worldIn.getTileEntity(pos);
-        if (tile != null) {
-            IBlockState connected = tile.getRemoteState();
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            IBlockState connected = ((TileRemoteInterface)tile).getRemoteState();
             if (connected != null)
                 connected.getBlock().randomDisplayTick(connected, worldIn, pos, rand);
         }

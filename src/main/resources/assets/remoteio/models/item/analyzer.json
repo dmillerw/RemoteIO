@@ -1,6 +1,6 @@
 {
   "parent": "remoteio:block/analyzer",
   "textures": {
-    "layer0": "remoteio:blocks/analyzer"
+    "layer0": "remoteio:blocks/inactive"
   }
 }

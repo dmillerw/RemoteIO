@@ -51,8 +51,10 @@ public class MagicalBakedModel implements IBakedModel {
     }
 
     private VertexFormat format;
-    private final List<BakedQuad> CUBE_LIST = Lists.newArrayList();
-    private TextureAtlasSprite remoteInterface;
+    private final List<BakedQuad> INACTIVE_CUBE_LIST = Lists.newArrayList();
+    private final List<BakedQuad> ACTIVE_CUBE_LIST = Lists.newArrayList();
+    private TextureAtlasSprite inactive;
+    private TextureAtlasSprite active;
 
     private void putVertex(UnpackedBakedQuad.Builder builder, Vec3d normal, Vec3d vertex, float u, float v, TextureAtlasSprite sprite) {
         for (int e = 0; e < format.getElementCount(); e++) {
@@ -125,8 +127,8 @@ public class MagicalBakedModel implements IBakedModel {
         return builder.build();
     }
 
-    private List<BakedQuad> getGenericCube() {
-        if (CUBE_LIST.isEmpty()) {
+    private List<BakedQuad> getInactiveCube() {
+        if (INACTIVE_CUBE_LIST.isEmpty()) {
             List<BakedQuad> list = Lists.newArrayList();
 
             list.add(createQuad(
@@ -134,7 +136,7 @@ public class MagicalBakedModel implements IBakedModel {
                     new Vec3d(1, 0, 0),
                     new Vec3d(1, 0, 1),
                     new Vec3d(0, 0, 1),
-                    remoteInterface
+                    inactive
             ));
 
             list.add(createQuad(
@@ -142,7 +144,7 @@ public class MagicalBakedModel implements IBakedModel {
                     new Vec3d(1, 1, 1),
                     new Vec3d(1, 1, 0),
                     new Vec3d(0, 1, 0),
-                    remoteInterface
+                    inactive
             ));
 
             list.add(createQuad(
@@ -150,7 +152,7 @@ public class MagicalBakedModel implements IBakedModel {
                     new Vec3d(1, 1, 0),
                     new Vec3d(1, 0, 0),
                     new Vec3d(0, 0, 0),
-                    remoteInterface
+                    inactive
             ));
 
             list.add(createQuad(
@@ -158,7 +160,7 @@ public class MagicalBakedModel implements IBakedModel {
                     new Vec3d(1, 0, 1),
                     new Vec3d(1, 1, 1),
                     new Vec3d(0, 1, 1),
-                    remoteInterface
+                    inactive
             ));
 
             list.add(createQuad(
@@ -166,7 +168,7 @@ public class MagicalBakedModel implements IBakedModel {
                     new Vec3d(0, 0, 1),
                     new Vec3d(0, 1, 1),
                     new Vec3d(0, 1, 0),
-                    remoteInterface
+                    inactive
             ));
 
             list.add(createQuad(
@@ -174,32 +176,99 @@ public class MagicalBakedModel implements IBakedModel {
                     new Vec3d(1, 1, 1),
                     new Vec3d(1, 0, 1),
                     new Vec3d(1, 0, 0),
-                    remoteInterface
+                    inactive
             ));
 
-            CUBE_LIST.addAll(list);
+            INACTIVE_CUBE_LIST.addAll(list);
         }
-        return CUBE_LIST;
+        return INACTIVE_CUBE_LIST;
+    }
+
+    private List<BakedQuad> getActiveCube() {
+        if (ACTIVE_CUBE_LIST.isEmpty()) {
+            List<BakedQuad> list = Lists.newArrayList();
+
+            list.add(createQuad(
+                    new Vec3d(0, 0, 0),
+                    new Vec3d(1, 0, 0),
+                    new Vec3d(1, 0, 1),
+                    new Vec3d(0, 0, 1),
+                    active
+            ));
+
+            list.add(createQuad(
+                    new Vec3d(0, 1, 1),
+                    new Vec3d(1, 1, 1),
+                    new Vec3d(1, 1, 0),
+                    new Vec3d(0, 1, 0),
+                    active
+            ));
+
+            list.add(createQuad(
+                    new Vec3d(0, 1, 0),
+                    new Vec3d(1, 1, 0),
+                    new Vec3d(1, 0, 0),
+                    new Vec3d(0, 0, 0),
+                    active
+            ));
+
+            list.add(createQuad(
+                    new Vec3d(0, 0, 1),
+                    new Vec3d(1, 0, 1),
+                    new Vec3d(1, 1, 1),
+                    new Vec3d(0, 1, 1),
+                    active
+            ));
+
+            list.add(createQuad(
+                    new Vec3d(0, 0, 0),
+                    new Vec3d(0, 0, 1),
+                    new Vec3d(0, 1, 1),
+                    new Vec3d(0, 1, 0),
+                    active
+            ));
+
+            list.add(createQuad(
+                    new Vec3d(1, 1, 0),
+                    new Vec3d(1, 1, 1),
+                    new Vec3d(1, 0, 1),
+                    new Vec3d(1, 0, 0),
+                    active
+            ));
+
+            ACTIVE_CUBE_LIST.addAll(list);
+        }
+        return ACTIVE_CUBE_LIST;
     }
 
     public MagicalBakedModel(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         this.format = format;
-        this.remoteInterface = bakedTextureGetter.apply(new ResourceLocation("remoteio:blocks/blank"));
+        this.inactive = bakedTextureGetter.apply(new ResourceLocation("remoteio:blocks/inactive"));
+        this.active = bakedTextureGetter.apply(new ResourceLocation("remoteio:blocks/active"));
     }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+        if (state == null)
+            return getInactiveCube();
+
         IBlockState mimick = getMimickBlock(state);
         if (mimick == null)
-            return getGenericCube();
+            return getInactiveCube();
 
-        EnumBlockRenderType renderType = mimick.getRenderType();
-        if (renderType == EnumBlockRenderType.LIQUID || renderType == EnumBlockRenderType.MODEL) {
-            return rendererDispatcher().getModelForState(mimick).getQuads(getMimickBlock(state), side, rand);
-        } else if (renderType == EnumBlockRenderType.ENTITYBLOCK_ANIMATED) {
-            return EMPTY_LIST;
+        Boolean camouflage = ((IExtendedBlockState)state).getValue(BlockRemoteInterface.CAMOUFLAGE);
+
+        if (camouflage != null && camouflage) {
+            EnumBlockRenderType renderType = mimick.getRenderType();
+            if (renderType == EnumBlockRenderType.LIQUID || renderType == EnumBlockRenderType.MODEL) {
+                return rendererDispatcher().getModelForState(mimick).getQuads(getMimickBlock(state), side, rand);
+            } else if (renderType == EnumBlockRenderType.ENTITYBLOCK_ANIMATED) {
+                return EMPTY_LIST;
+            } else {
+                return getActiveCube();
+            }
         } else {
-            return getGenericCube();
+            return getActiveCube();
         }
     }
 

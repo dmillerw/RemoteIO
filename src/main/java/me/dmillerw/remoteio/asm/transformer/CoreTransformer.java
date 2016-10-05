@@ -22,7 +22,6 @@ public class CoreTransformer implements IClassTransformer {
 
     public CoreTransformer() {
         addTransformer(new TransformEntityPlayer());
-        addTransformer(new TransformEntityPlayerMP());
     }
 
     @Override

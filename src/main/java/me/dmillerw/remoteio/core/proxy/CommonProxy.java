@@ -1,6 +1,7 @@
 package me.dmillerw.remoteio.core.proxy;
 
 import me.dmillerw.remoteio.RemoteIO;
+import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
 import me.dmillerw.remoteio.core.handler.ContainerHandler;
 import me.dmillerw.remoteio.core.handler.PlayerEventHandler;
 import me.dmillerw.remoteio.lib.ModInfo;
@@ -19,6 +20,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -42,6 +44,8 @@ public class CommonProxy implements IProxy {
         ContainerHandler.initialize();
         PacketHandler.initialize();
         PlayerEventHandler.initialize();
+
+        MinecraftForge.EVENT_BUS.register(DeviceRegistry.TickHandler.INSTANCE);
     }
 
     @Override

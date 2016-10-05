@@ -41,11 +41,11 @@ public class ItemPocketGadget extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         if (playerIn.isSneaking()) {
-            playerIn.openGui(RemoteIO.instance, 0, playerIn.worldObj, 0, 0, 0);
+            playerIn.openGui(RemoteIO.instance, 0, playerIn.worldObj, 0, -1, 0);
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
         }
         if (!worldIn.isRemote) {
-            BlockPos pos = DeviceRegistry.getWatchedBlock(getFrequency(itemStackIn));
+            BlockPos pos = DeviceRegistry.getWatchedBlock(worldIn.provider.getDimension(), getFrequency(itemStackIn));
             if (pos != null) {
                 boolean result = RemoteIO.proxy.onBlockActivated(worldIn, pos, worldIn.getBlockState(pos), playerIn, hand, itemStackIn, null, 0, 0, 0);
                 PacketHandler.INSTANCE.sendTo(new CActivateBlock(pos), (EntityPlayerMP) playerIn);
