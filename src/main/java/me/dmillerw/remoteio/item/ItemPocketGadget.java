@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -22,11 +23,21 @@ import net.minecraft.world.World;
 public class ItemPocketGadget extends Item {
 
     public static int getFrequency(ItemStack stack) {
-        return 0; // TEMP
+        if (stack.hasTagCompound())
+            return stack.getTagCompound().getInteger("_frequency");
+        else
+            return 0;
     }
 
     public static void setFrequency(ItemStack stack, int frequency) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
 
+        NBTTagCompound tag = stack.getTagCompound();
+
+        tag.setInteger("_frequency", frequency);
+
+        stack.setTagCompound(tag);
     }
 
     public ItemPocketGadget() {
