@@ -49,6 +49,10 @@ public class TileCore extends TileEntity {
         worldObj.notifyBlockUpdate(pos, state, state, 3);
     }
 
+    public void notifyNeighbors() {
+        worldObj.notifyNeighborsOfStateChange(pos, blockType);
+    }
+
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
@@ -60,7 +64,6 @@ public class TileCore extends TileEntity {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readDescription(pkt.getNbtCompound());
-
         worldObj.markBlockRangeForRenderUpdate(pos, pos);
     }
 }

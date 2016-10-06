@@ -1,5 +1,6 @@
 package me.dmillerw.remoteio.tile;
 
+import me.dmillerw.remoteio.util.ReflectionUtil;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
@@ -23,7 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class TileRemoteInterface extends TileCore implements ITickable, IFrequencyProvider {
 
     private BlockPos remotePosition;
-    private boolean runSync = false;
     private int frequency = 0;
 
     @Override
@@ -68,10 +68,14 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
             if (pos == null) {
                 if (remotePosition != null) {
                     this.remotePosition = null;
+
+                    notifyNeighbors();
                     markDirtyAndNotify();
                 }
             } else if (!pos.equals(remotePosition)) {
                 this.remotePosition = pos;
+
+                notifyNeighbors();
                 markDirtyAndNotify();
             }
         }
@@ -85,6 +89,8 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
     @Override
     public void setFrequency(int frequency) {
         this.frequency = frequency;
+
+        notifyNeighbors();
         markDirtyAndNotify();
     }
 
@@ -124,6 +130,8 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
         int data = connected.getBlock().getMetaFromState(connected);
 
         RenderState renderState = new RenderState(type, data, true);
+        if (connected instanceof IExtendedBlockState)
+            renderState.unlistedProperties = ReflectionUtil.getUnlistedProperties((IExtendedBlockState) connected);
 
         return ((IExtendedBlockState) state)
                 .withProperty(BlockRemoteInterface.RENDER_STATE, renderState);

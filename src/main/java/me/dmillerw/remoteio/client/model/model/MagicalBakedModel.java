@@ -2,6 +2,7 @@ package me.dmillerw.remoteio.client.model.model;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import me.dmillerw.remoteio.util.ReflectionUtil;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.lib.property.RenderState;
 import net.minecraft.block.Block;
@@ -47,6 +48,9 @@ public class MagicalBakedModel implements IBakedModel {
             return null;
 
         IBlockState newState = block.getStateFromMeta(renderState.state);
+
+        if (renderState.unlistedProperties != null)
+            ReflectionUtil.setUnlistedProperties((IExtendedBlockState) newState, renderState.unlistedProperties);
 
         return newState;
     }

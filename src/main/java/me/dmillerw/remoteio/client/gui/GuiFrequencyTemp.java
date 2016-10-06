@@ -103,6 +103,13 @@ public class GuiFrequencyTemp extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
+        if (keyCode == mc.gameSettings.keyBindInventory.getKeyCode()) {
+            this.mc.displayGuiScreen(null);
+            if (this.mc.currentScreen == null) {
+                this.mc.setIngameFocus();
+            }
+        }
+
         frequency.textboxKeyTyped(typedChar, keyCode);
     }
 

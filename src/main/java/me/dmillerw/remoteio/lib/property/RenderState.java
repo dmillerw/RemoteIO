@@ -1,8 +1,8 @@
 package me.dmillerw.remoteio.lib.property;
 
 import com.google.common.base.Optional;
-
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import net.minecraftforge.common.property.IUnlistedProperty;
 
 /**
  * Created by dmillerw
@@ -16,7 +16,7 @@ public class RenderState {
 
     public boolean camouflage;
 
-    public Map<String, Optional<?>> unlistedProperties;
+    public ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties;
 
     public RenderState(String block, int state, boolean camouflage) {
         this.block = block;
