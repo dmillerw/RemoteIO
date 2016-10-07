@@ -15,7 +15,7 @@ import java.io.File;
 /**
  * Created by dmillerw
  */
-@Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME, version = ModInfo.MOD_VERSION, dependencies = "required-after:Forge@[12.18.1.2092,)")
+@Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME, version = ModInfo.MOD_VERSION, dependencies = "required-after:Forge@[12.18.1.2095,)")
 public class RemoteIO {
 
     @Mod.Instance("remoteio")
