@@ -161,11 +161,12 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        TileEntity tile = worldIn.getTileEntity(pos);
+        //TODO: Disabled until I can find a way to shift particles spawned in world
+        /*TileEntity tile = worldIn.getTileEntity(pos);
         if (tile != null && tile instanceof TileRemoteInterface) {
             IBlockState connected = ((TileRemoteInterface)tile).getRemoteState();
             if (connected != null)
                 connected.getBlock().randomDisplayTick(connected, worldIn, pos, rand);
-        }
+        }*/
     }
 }
