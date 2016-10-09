@@ -23,6 +23,9 @@ import net.minecraft.world.World;
 public class ItemPocketGadget extends Item {
 
     public static int getFrequency(ItemStack stack) {
+        if (stack == null)
+            return 0;
+
         if (stack.hasTagCompound())
             return stack.getTagCompound().getInteger("_frequency");
         else
@@ -30,6 +33,9 @@ public class ItemPocketGadget extends Item {
     }
 
     public static void setFrequency(ItemStack stack, int frequency) {
+        if (stack == null)
+            return;
+
         if (!stack.hasTagCompound())
             stack.setTagCompound(new NBTTagCompound());
 
