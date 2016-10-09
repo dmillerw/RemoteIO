@@ -7,7 +7,7 @@ public class ModInfo {
 
     public static final String MOD_ID = "remoteio";
     public static final String MOD_NAME = "RemoteIO";
-    public static final String MOD_VERSION = "0.0.2";
+    public static final String MOD_VERSION = "0.0.3";
 
     public static final String CORE_PACKAGE = "me.dmillerw.remoteio";
 }
