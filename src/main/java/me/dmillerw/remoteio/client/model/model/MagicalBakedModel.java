@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -316,7 +315,7 @@ public class MagicalBakedModel implements IBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return rendererDispatcher().getModelForState(Blocks.STONE.getDefaultState()).getParticleTexture();
+        return inactive;
     }
 
     @Override
