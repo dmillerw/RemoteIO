@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -243,6 +244,9 @@ public class MagicalBakedModel implements IBakedModel {
         IBlockState mimick = renderState.blockState;
         if (mimick == null)
             return getInactiveCube();
+
+        if (mimick.getBlock().getRenderType(mimick) == EnumBlockRenderType.ENTITYBLOCK_ANIMATED)
+            return EMPTY_LIST;
 
         if (!mimick.getBlock().canRenderInLayer(mimick, MinecraftForgeClient.getRenderLayer()))
             return EMPTY_LIST;
