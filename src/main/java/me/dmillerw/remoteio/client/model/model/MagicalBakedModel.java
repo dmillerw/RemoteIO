@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -60,13 +61,21 @@ public class MagicalBakedModel implements IBakedModel {
             }
         }
 
+        return newState;
+    }
+
+    public static IBlockState attachUnlistedProperties(IBlockState mimick, RenderState renderState) {
+        if (renderState == null)
+            return mimick;
+
         if (renderState.unlistedProperties != null) {
             for (Map.Entry<IUnlistedProperty, Optional> entry : renderState.unlistedProperties.entrySet()) {
-                newState = ((IExtendedBlockState)newState).withProperty(entry.getKey(), entry.getValue());
+                Optional optional = entry.getValue();
+                if (optional.isPresent())
+                    mimick = ((IExtendedBlockState)mimick).withProperty(entry.getKey(), entry.getValue().get());
             }
         }
-
-        return newState;
+        return mimick;
     }
 
     private VertexFormat format;
@@ -279,12 +288,19 @@ public class MagicalBakedModel implements IBakedModel {
             return getInactiveCube();
 
         if (renderState.camouflage) {
-            List<BakedQuad> quads = rendererDispatcher().getModelForState(mimick).getQuads(mimick, side, rand);
-//            if (quads.isEmpty()) {
-//                return mimick.getBlock().getRenderType(mimick) == EnumBlockRenderType.ENTITYBLOCK_ANIMATED ? EMPTY_LIST : getActiveCube();
-//            } else {
+            IBakedModel model = rendererDispatcher().getModelForState(mimick);
+            mimick = attachUnlistedProperties(mimick, renderState);
+
+            List<BakedQuad> quads = model.getQuads(mimick, side, rand);
+            if (quads.isEmpty() && side == null) {
+                EnumBlockRenderType type = mimick.getRenderType();
+//                if (type == EnumBlockRenderType.ENTITYBLOCK_ANIMATED || renderState.tileRender)
+                    return EMPTY_LIST;
+//                else
+//                    return getActiveCube();
+            } else {
                 return quads;
-//            }
+            }
         } else {
             return getActiveCube();
         }

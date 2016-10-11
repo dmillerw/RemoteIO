@@ -7,6 +7,7 @@ import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
 import me.dmillerw.remoteio.core.frequency.IFrequencyProvider;
 import me.dmillerw.remoteio.lib.property.RenderState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -82,6 +83,15 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
     }
 
     @Override
+    public boolean hasFastRenderer() {
+        TileEntity remote = getRemoteTile();
+        if (remote != null)
+            return remote.hasFastRenderer();
+        else
+            return false;
+    }
+
+    @Override
     public int getFrequency() {
         return frequency;
     }
@@ -126,19 +136,33 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
                     .withProperty(BlockRemoteInterface.RENDER_STATE, RenderState.BLANK);
         }
 
-        connected = connected.getActualState(worldObj, getRemotePosition());
+        TileEntity tile = worldObj.getTileEntity(getRemotePosition());
+        boolean tileRender = false;
+        if (tile != null) {
+            tileRender = TileEntityRendererDispatcher.instance.getSpecialRenderer(tile) != null;
+        }
 
         String type = ForgeRegistries.BLOCKS.getKey(connected.getBlock()).toString();
 
-        RenderState renderState = new RenderState(type, true);
+        RenderState renderState = new RenderState();
+        renderState.block = type;
+        renderState.camouflage = true;
+        renderState.tileRender = tileRender;
+
+        connected = connected.getActualState(worldObj, getRemotePosition());
 
         renderState.properties = Maps.newHashMap();
         connected.getProperties().forEach((iProperty, comparable) -> renderState.properties.put(iProperty, comparable));
 
+        connected = connected.getBlock().getExtendedState(connected, worldObj, getRemotePosition());
+
         if (connected instanceof IExtendedBlockState) {
             renderState.unlistedProperties = Maps.newHashMap();
-            ((IExtendedBlockState)state).getUnlistedProperties().forEach(
-                    (iUnlistedProperty, optional) -> renderState.unlistedProperties.put(iUnlistedProperty, optional)
+            ((IExtendedBlockState)connected).getUnlistedProperties().forEach(
+                    (iUnlistedProperty, optional) -> {
+                        if (optional.isPresent())
+                            renderState.unlistedProperties.put(iUnlistedProperty, optional);
+                    }
             );
         }
 

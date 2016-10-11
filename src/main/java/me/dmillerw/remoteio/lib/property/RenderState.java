@@ -11,18 +11,24 @@ import java.util.Map;
  */
 public class RenderState {
 
-    public static final RenderState BLANK = new RenderState("", false);
+    public static final RenderState BLANK = new RenderState("", false, false);
 
     public String block;
 
-    public boolean camouflage;
+    public boolean camouflage = false;
+    public boolean tileRender = false;
 
     public Map<IProperty, Comparable> properties;
     public Map<IUnlistedProperty, Optional> unlistedProperties;
 
-    public RenderState(String block, boolean camouflage) {
+    public RenderState() {
+
+    }
+
+    public RenderState(String block, boolean camouflage, boolean tileRender) {
         this.block = block;
         this.camouflage = camouflage;
+        this.tileRender = tileRender;
     }
 
     @Override

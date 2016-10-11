@@ -82,12 +82,18 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        if (!(state instanceof IExtendedBlockState))
+            return super.canRenderInLayer(state, layer);
+
         IExtendedBlockState estate = (IExtendedBlockState) state;
         RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
 
-        IBlockState mimick = MagicalBakedModel.getMimickBlock(renderState);
+        if (renderState == null)
+            return super.canRenderInLayer(state, layer);
+
+        IBlockState mimick = MagicalBakedModel.attachUnlistedProperties(MagicalBakedModel.getMimickBlock(renderState), renderState);
         if (mimick != null)
-            return mimick.getBlock().canRenderInLayer(mimick, layer);
+            return layer == mimick.getBlock().getBlockLayer();
         else
             return super.canRenderInLayer(state, layer);
     }
