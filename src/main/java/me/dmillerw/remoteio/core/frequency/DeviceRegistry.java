@@ -49,7 +49,7 @@ public class DeviceRegistry {
         return tile.getWatchedPosition();
     }
 
-    public static enum TickHandler {
+    public enum TickHandler {
         INSTANCE;
 
         @SubscribeEvent

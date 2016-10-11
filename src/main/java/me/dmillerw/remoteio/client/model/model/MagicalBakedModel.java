@@ -35,44 +35,6 @@ public class MagicalBakedModel implements IBakedModel {
         return Minecraft.getMinecraft().getBlockRendererDispatcher();
     }
 
-    public static IBlockState getMimickBlock(RenderState renderState) {
-        /*if (renderState == null)
-            return null;
-
-        if (renderState.block == null || renderState.block.isEmpty() || !renderState.block.contains(":"))
-            return null;
-
-        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(renderState.block));
-        if (block == Blocks.AIR)
-            return null;
-
-        IBlockState newState = block.getDefaultState();
-
-        if (renderState.properties != null) {
-            for (Map.Entry<IProperty, Comparable> entry : renderState.properties.entrySet()) {
-                newState = newState.withProperty(entry.getKey(), entry.getValue());
-            }
-        }
-
-        return newState;*/
-        return null;
-    }
-
-    public static IBlockState attachUnlistedProperties(IBlockState mimick, RenderState renderState) {
-        /*if (renderState == null)
-            return mimick;
-
-        if (renderState.unlistedProperties != null) {
-            for (Map.Entry<IUnlistedProperty, Optional> entry : renderState.unlistedProperties.entrySet()) {
-                Optional optional = entry.getValue();
-                if (optional.isPresent())
-                    mimick = ((IExtendedBlockState)mimick).withProperty(entry.getKey(), entry.getValue().get());
-            }
-        }
-        return mimick;*/
-        return mimick;
-    }
-
     private VertexFormat format;
     private final List<BakedQuad> INACTIVE_CUBE_LIST = Lists.newArrayList();
     private final List<BakedQuad> ACTIVE_CUBE_LIST = Lists.newArrayList();

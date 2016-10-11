@@ -5,7 +5,7 @@ package me.dmillerw.remoteio.asm.transformer;
  */
 public interface ITransformer {
 
-    public String[] getClasses();
+    String[] getClasses();
 
-    public byte[] transform(String name, byte[] basicClass);
+    byte[] transform(String name, byte[] basicClass);
 }

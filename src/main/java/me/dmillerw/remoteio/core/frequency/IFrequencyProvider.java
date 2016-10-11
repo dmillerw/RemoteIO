@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos;
  */
 public interface IFrequencyProvider {
 
-    public int getFrequency();
-    public void setFrequency(int frequency);
-    public BlockPos getPosition();
+    int getFrequency();
+    void setFrequency(int frequency);
+    BlockPos getPosition();
 }

@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
  */
 public class ElementTextBox extends ElementBase {
 
-    public static enum Alignment {
+    public enum Alignment {
         LEFT, CENTER, RIGHT
     }
 

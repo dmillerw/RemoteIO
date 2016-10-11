@@ -18,8 +18,8 @@ import javax.annotation.Nullable;
  */
 public interface IProxy {
 
-    public void preInit(FMLPreInitializationEvent event);
-    public void init(FMLInitializationEvent event);
-    public void postInit(FMLPostInitializationEvent event);
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ);
+    void preInit(FMLPreInitializationEvent event);
+    void init(FMLInitializationEvent event);
+    void postInit(FMLPostInitializationEvent event);
+    boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ);
 }
