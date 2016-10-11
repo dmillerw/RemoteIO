@@ -110,6 +110,18 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile != null && tile instanceof TileRemoteInterface) {
+            TileRemoteInterface remote = (TileRemoteInterface) tile;
+            IBlockState connected = remote.getRemoteState();
+
+            if (connected != null)
+                connected.getBlock().onBlockClicked(worldIn, remote.getRemotePosition(), playerIn);
+        }
+    }
+
+    @Override
     public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile != null && tile instanceof TileRemoteInterface) {
