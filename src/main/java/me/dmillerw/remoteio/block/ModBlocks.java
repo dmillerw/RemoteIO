@@ -40,6 +40,6 @@ public class ModBlocks {
                     new ItemBlock(ModBlocks.remote_interface).setRegistryName(ModInfo.MOD_ID, "remote_interface"),
                     new ItemBlock(ModBlocks.analyzer).setRegistryName(ModInfo.MOD_ID, "analyzer")
             );
-        }
+        };
     }
 }

@@ -42,7 +42,7 @@ public class MagicalBakedModel implements IBakedModel {
         return Minecraft.getMinecraft().getBlockRendererDispatcher();
     }
 
-    private static IBlockState getMimickBlock(RenderState renderState) {
+    public static IBlockState getMimickBlock(RenderState renderState) {
         if (renderState.block == null || renderState.block.isEmpty() || !renderState.block.contains(":"))
             return null;
 

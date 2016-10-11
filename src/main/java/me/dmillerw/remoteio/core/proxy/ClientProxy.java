@@ -1,11 +1,17 @@
 package me.dmillerw.remoteio.core.proxy;
 
+import me.dmillerw.remoteio.block.BlockRemoteInterface;
+import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.client.model.loader.BaseModelLoader;
+import me.dmillerw.remoteio.client.model.model.MagicalBakedModel;
 import me.dmillerw.remoteio.client.render.RenderTileRemoteInterface;
+import me.dmillerw.remoteio.lib.property.RenderState;
 import me.dmillerw.remoteio.network.player.ClientProxyPlayer;
 import me.dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -13,8 +19,10 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -51,6 +59,24 @@ public class ClientProxy extends CommonProxy implements IProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
+
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor() {
+            @Override
+            public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
+                if (state == null)
+                    return 0;
+
+                IExtendedBlockState estate = (IExtendedBlockState) state;
+                RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
+
+                IBlockState mimick = MagicalBakedModel.getMimickBlock(renderState);
+                if (mimick != null) {
+                    return Minecraft.getMinecraft().getBlockColors().colorMultiplier(mimick, worldIn, pos, tintIndex);
+                }
+
+                return 0;
+            }
+        }, ModBlocks.remote_interface);
     }
 
     @Override
