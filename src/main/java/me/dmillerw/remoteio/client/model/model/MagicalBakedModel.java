@@ -1,11 +1,12 @@
 package me.dmillerw.remoteio.client.model.model;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import me.dmillerw.remoteio.util.ReflectionUtil;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.lib.property.RenderState;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -23,10 +24,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dmillerw
@@ -47,10 +50,19 @@ public class MagicalBakedModel implements IBakedModel {
         if (block == Blocks.AIR)
             return null;
 
-        IBlockState newState = block.getStateFromMeta(renderState.state);
+        IBlockState newState = block.getDefaultState();
 
-        if (renderState.unlistedProperties != null)
-            ReflectionUtil.setUnlistedProperties((IExtendedBlockState) newState, renderState.unlistedProperties);
+        if (renderState.properties != null) {
+            for (Map.Entry<IProperty, Comparable> entry : renderState.properties.entrySet()) {
+                newState = newState.withProperty(entry.getKey(), entry.getValue());
+            }
+        }
+
+        if (renderState.unlistedProperties != null) {
+            for (Map.Entry<IUnlistedProperty, Optional> entry : renderState.unlistedProperties.entrySet()) {
+                newState = ((IExtendedBlockState)newState).withProperty(entry.getKey(), entry.getValue());
+            }
+        }
 
         return newState;
     }

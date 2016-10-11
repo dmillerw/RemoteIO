@@ -1,6 +1,6 @@
 package me.dmillerw.remoteio.tile;
 
-import me.dmillerw.remoteio.util.ReflectionUtil;
+import com.google.common.collect.Maps;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
@@ -126,12 +126,21 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
                     .withProperty(BlockRemoteInterface.RENDER_STATE, RenderState.BLANK);
         }
 
-        String type = ForgeRegistries.BLOCKS.getKey(connected.getBlock()).toString();
-        int data = connected.getBlock().getMetaFromState(connected);
+        connected = connected.getActualState(worldObj, getRemotePosition());
 
-        RenderState renderState = new RenderState(type, data, true);
-        if (connected instanceof IExtendedBlockState)
-            renderState.unlistedProperties = ReflectionUtil.getUnlistedProperties((IExtendedBlockState) connected);
+        String type = ForgeRegistries.BLOCKS.getKey(connected.getBlock()).toString();
+
+        RenderState renderState = new RenderState(type, true);
+
+        renderState.properties = Maps.newHashMap();
+        connected.getProperties().forEach((iProperty, comparable) -> renderState.properties.put(iProperty, comparable));
+
+        if (connected instanceof IExtendedBlockState) {
+            renderState.unlistedProperties = Maps.newHashMap();
+            ((IExtendedBlockState)state).getUnlistedProperties().forEach(
+                    (iUnlistedProperty, optional) -> renderState.unlistedProperties.put(iUnlistedProperty, optional)
+            );
+        }
 
         return ((IExtendedBlockState) state)
                 .withProperty(BlockRemoteInterface.RENDER_STATE, renderState);
