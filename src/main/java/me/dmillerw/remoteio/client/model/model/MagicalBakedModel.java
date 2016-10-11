@@ -1,12 +1,9 @@
 package me.dmillerw.remoteio.client.model.model;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.lib.property.RenderState;
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -17,19 +14,16 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by dmillerw
@@ -43,7 +37,7 @@ public class MagicalBakedModel implements IBakedModel {
     }
 
     public static IBlockState getMimickBlock(RenderState renderState) {
-        if (renderState == null)
+        /*if (renderState == null)
             return null;
 
         if (renderState.block == null || renderState.block.isEmpty() || !renderState.block.contains(":"))
@@ -61,11 +55,12 @@ public class MagicalBakedModel implements IBakedModel {
             }
         }
 
-        return newState;
+        return newState;*/
+        return null;
     }
 
     public static IBlockState attachUnlistedProperties(IBlockState mimick, RenderState renderState) {
-        if (renderState == null)
+        /*if (renderState == null)
             return mimick;
 
         if (renderState.unlistedProperties != null) {
@@ -75,6 +70,7 @@ public class MagicalBakedModel implements IBakedModel {
                     mimick = ((IExtendedBlockState)mimick).withProperty(entry.getKey(), entry.getValue().get());
             }
         }
+        return mimick;*/
         return mimick;
     }
 
@@ -283,24 +279,18 @@ public class MagicalBakedModel implements IBakedModel {
         IExtendedBlockState estate = (IExtendedBlockState) state;
         RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
 
-        IBlockState mimick = getMimickBlock(renderState);
+        IBlockState mimick = renderState.blockState;
         if (mimick == null)
             return getInactiveCube();
 
+        if (!mimick.getBlock().canRenderInLayer(mimick, MinecraftForgeClient.getRenderLayer()))
+            return EMPTY_LIST;
+
         if (renderState.camouflage) {
             IBakedModel model = rendererDispatcher().getModelForState(mimick);
-            mimick = attachUnlistedProperties(mimick, renderState);
+            mimick = renderState.extendedBlockState;
 
-            List<BakedQuad> quads = model.getQuads(mimick, side, rand);
-            if (quads.isEmpty() && side == null) {
-                EnumBlockRenderType type = mimick.getRenderType();
-//                if (type == EnumBlockRenderType.ENTITYBLOCK_ANIMATED || renderState.tileRender)
-                    return EMPTY_LIST;
-//                else
-//                    return getActiveCube();
-            } else {
-                return quads;
-            }
+            return model.getQuads(mimick, side, rand);
         } else {
             return getActiveCube();
         }

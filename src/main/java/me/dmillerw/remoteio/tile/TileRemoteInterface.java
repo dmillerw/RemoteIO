@@ -1,6 +1,5 @@
 package me.dmillerw.remoteio.tile;
 
-import com.google.common.collect.Maps;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.core.frequency.DeviceRegistry;
@@ -15,7 +14,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -142,29 +140,11 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
             tileRender = TileEntityRendererDispatcher.instance.getSpecialRenderer(tile) != null;
         }
 
-        String type = ForgeRegistries.BLOCKS.getKey(connected.getBlock()).toString();
-
         RenderState renderState = new RenderState();
-        renderState.block = type;
+        renderState.blockState = connected.getActualState(worldObj, getRemotePosition());
+        renderState.extendedBlockState = connected.getBlock().getExtendedState(renderState.blockState, worldObj, getRemotePosition());
         renderState.camouflage = true;
         renderState.tileRender = tileRender;
-
-        connected = connected.getActualState(worldObj, getRemotePosition());
-
-        renderState.properties = Maps.newHashMap();
-        connected.getProperties().forEach((iProperty, comparable) -> renderState.properties.put(iProperty, comparable));
-
-        connected = connected.getBlock().getExtendedState(connected, worldObj, getRemotePosition());
-
-        if (connected instanceof IExtendedBlockState) {
-            renderState.unlistedProperties = Maps.newHashMap();
-            ((IExtendedBlockState)connected).getUnlistedProperties().forEach(
-                    (iUnlistedProperty, optional) -> {
-                        if (optional.isPresent())
-                            renderState.unlistedProperties.put(iUnlistedProperty, optional);
-                    }
-            );
-        }
 
         return ((IExtendedBlockState) state)
                 .withProperty(BlockRemoteInterface.RENDER_STATE, renderState);

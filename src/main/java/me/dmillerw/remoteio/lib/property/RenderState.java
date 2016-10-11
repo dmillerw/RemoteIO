@@ -1,38 +1,34 @@
 package me.dmillerw.remoteio.lib.property;
 
-import com.google.common.base.Optional;
-import net.minecraft.block.properties.IProperty;
-import net.minecraftforge.common.property.IUnlistedProperty;
-
-import java.util.Map;
+import net.minecraft.block.state.IBlockState;
 
 /**
  * Created by dmillerw
  */
 public class RenderState {
 
-    public static final RenderState BLANK = new RenderState("", false, false);
+    public static final RenderState BLANK = new RenderState(null, null, false, false);
 
-    public String block;
+    // Horrible, I know, but it works, I guess
+    public IBlockState blockState;
+    public IBlockState extendedBlockState;
 
     public boolean camouflage = false;
     public boolean tileRender = false;
-
-    public Map<IProperty, Comparable> properties;
-    public Map<IUnlistedProperty, Optional> unlistedProperties;
 
     public RenderState() {
 
     }
 
-    public RenderState(String block, boolean camouflage, boolean tileRender) {
-        this.block = block;
+    public RenderState(IBlockState blockState, IBlockState extendedBlockState, boolean camouflage, boolean tileRender) {
+        this.blockState = blockState;
+        this.extendedBlockState = extendedBlockState;
         this.camouflage = camouflage;
         this.tileRender = tileRender;
     }
 
     @Override
     public String toString() {
-        return "{block: " + block + ", camouflage: " + camouflage + ", properties:" + properties + ", unlisted: " + unlistedProperties + "}";
+        return "{ " + blockState + " }";
     }
 }

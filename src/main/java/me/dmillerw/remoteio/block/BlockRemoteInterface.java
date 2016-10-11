@@ -1,10 +1,8 @@
 package me.dmillerw.remoteio.block;
 
 import me.dmillerw.remoteio.RemoteIO;
-import me.dmillerw.remoteio.client.model.model.MagicalBakedModel;
 import me.dmillerw.remoteio.lib.ModInfo;
 import me.dmillerw.remoteio.lib.ModTab;
-import me.dmillerw.remoteio.lib.property.RenderState;
 import me.dmillerw.remoteio.lib.property.RenderStateProperty;
 import me.dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.Block;
@@ -25,7 +23,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -82,20 +79,12 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        if (!(state instanceof IExtendedBlockState))
-            return super.canRenderInLayer(state, layer);
+        return true;
+    }
 
-        IExtendedBlockState estate = (IExtendedBlockState) state;
-        RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
-
-        if (renderState == null)
-            return super.canRenderInLayer(state, layer);
-
-        IBlockState mimick = MagicalBakedModel.attachUnlistedProperties(MagicalBakedModel.getMimickBlock(renderState), renderState);
-        if (mimick != null)
-            return layer == mimick.getBlock().getBlockLayer();
-        else
-            return super.canRenderInLayer(state, layer);
+    @Override
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return true;
     }
 
     @Override
