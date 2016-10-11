@@ -1,10 +1,12 @@
 package me.dmillerw.remoteio.core.proxy;
 
+import me.dmillerw.remoteio.RemoteIO;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.client.model.loader.BaseModelLoader;
 import me.dmillerw.remoteio.client.render.RenderTileRemoteInterface;
 import me.dmillerw.remoteio.lib.property.RenderState;
+import me.dmillerw.remoteio.network.packet.client.CActivateBlock;
 import me.dmillerw.remoteio.network.player.ClientProxyPlayer;
 import me.dmillerw.remoteio.tile.TileRemoteInterface;
 import net.minecraft.block.state.IBlockState;
@@ -22,6 +24,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -68,6 +71,9 @@ public class ClientProxy extends CommonProxy implements IProxy {
                 IExtendedBlockState estate = (IExtendedBlockState) state;
                 RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
 
+                if (renderState == null)
+                    return 0;
+
                 IBlockState mimick = renderState.blockState;
                 if (mimick != null) {
                     return Minecraft.getMinecraft().getBlockColors().colorMultiplier(mimick, worldIn, pos, tintIndex);
@@ -76,6 +82,22 @@ public class ClientProxy extends CommonProxy implements IProxy {
                 return 0;
             }
         }, ModBlocks.remote_interface);
+    }
+
+    public void handleClientBlockActivationMessage(CActivateBlock message) {
+        EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
+        World world = player.worldObj;
+
+        RemoteIO.proxy.onBlockActivated(
+                world,
+                message.blockPos,
+                world.getBlockState(message.blockPos),
+                player,
+                EnumHand.MAIN_HAND,
+                player.getHeldItem(EnumHand.MAIN_HAND),
+                null,
+                0, 0, 0
+        );
     }
 
     @Override

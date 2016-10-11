@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import me.dmillerw.remoteio.core.frequency.IFrequencyProvider;
 import me.dmillerw.remoteio.item.ItemPocketGadget;
 import me.dmillerw.remoteio.item.ModItems;
+import me.dmillerw.remoteio.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -55,6 +56,11 @@ public class SSetFrequency implements IMessage {
 
         @Override
         public IMessage onMessage(SSetFrequency message, MessageContext ctx) {
+            PacketHandler.addScheduledTask(ctx.netHandler, () -> handleMessage(message, ctx));
+            return null;
+        }
+
+        private void handleMessage(SSetFrequency message, MessageContext ctx) {
             if (message.tilePos == null) {
                 EntityPlayer player = ctx.getServerHandler().playerEntity;
                 ItemStack active = player.getHeldItemMainhand();
@@ -69,7 +75,6 @@ public class SSetFrequency implements IMessage {
                 if (provider != null)
                     provider.setFrequency(message.frequency);
             }
-            return null;
         }
     }
 }

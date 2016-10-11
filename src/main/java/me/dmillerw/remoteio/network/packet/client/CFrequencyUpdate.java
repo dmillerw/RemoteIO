@@ -2,14 +2,13 @@ package me.dmillerw.remoteio.network.packet.client;
 
 import io.netty.buffer.ByteBuf;
 import me.dmillerw.remoteio.client.gui.GuiFrequency;
-import net.minecraft.client.Minecraft;
+import me.dmillerw.remoteio.network.PacketHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nullable;
-import java.util.concurrent.Callable;
 
 /**
  * Created by dmillerw
@@ -53,19 +52,17 @@ public class CFrequencyUpdate implements IMessage {
     public static class Handler implements IMessageHandler<CFrequencyUpdate, IMessage> {
 
         @Override
-        public IMessage onMessage(final CFrequencyUpdate message, MessageContext ctx) {
-            Minecraft.getMinecraft().addScheduledTask(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    if (message.type == TYPE_ADD) {
-                        GuiFrequency.frequencies.put(message.frequency, message.name);
-                    } else if (message.type == TYPE_REMOVE) {
-                        GuiFrequency.frequencies.remove(message.frequency);
-                    }
-                    return null;
-                }
-            });
+        public IMessage onMessage(CFrequencyUpdate message, MessageContext ctx) {
+            PacketHandler.addScheduledTask(ctx.netHandler, () -> handleMessage(message, ctx));
             return null;
+        }
+
+        private void handleMessage(CFrequencyUpdate message, MessageContext ctx) {
+            if (message.type == TYPE_ADD) {
+                GuiFrequency.frequencies.put(message.frequency, message.name);
+            } else if (message.type == TYPE_REMOVE) {
+                GuiFrequency.frequencies.remove(message.frequency);
+            }
         }
     }
 }

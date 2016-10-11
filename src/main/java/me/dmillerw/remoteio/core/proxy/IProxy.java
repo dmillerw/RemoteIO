@@ -1,5 +1,6 @@
 package me.dmillerw.remoteio.core.proxy;
 
+import me.dmillerw.remoteio.network.packet.client.CActivateBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -21,5 +22,7 @@ public interface IProxy {
     void preInit(FMLPreInitializationEvent event);
     void init(FMLInitializationEvent event);
     void postInit(FMLPostInitializationEvent event);
+
+    void handleClientBlockActivationMessage(CActivateBlock message);
     boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ);
 }

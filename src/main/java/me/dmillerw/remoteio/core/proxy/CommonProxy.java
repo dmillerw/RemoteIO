@@ -7,6 +7,7 @@ import me.dmillerw.remoteio.core.handler.PlayerEventHandler;
 import me.dmillerw.remoteio.lib.ModInfo;
 import me.dmillerw.remoteio.network.GuiHandler;
 import me.dmillerw.remoteio.network.PacketHandler;
+import me.dmillerw.remoteio.network.packet.client.CActivateBlock;
 import me.dmillerw.remoteio.network.player.ServerProxyPlayer;
 import me.dmillerw.remoteio.tile.TileAnalyzer;
 import me.dmillerw.remoteio.tile.TileRemoteInterface;
@@ -59,6 +60,11 @@ public class CommonProxy implements IProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
 
+    }
+
+    @Override
+    public void handleClientBlockActivationMessage(CActivateBlock message) {
+        // NOOP
     }
 
     @Override
