@@ -3,7 +3,6 @@ package me.dmillerw.remoteio.core.proxy;
 import me.dmillerw.remoteio.block.BlockRemoteInterface;
 import me.dmillerw.remoteio.block.ModBlocks;
 import me.dmillerw.remoteio.client.model.loader.BaseModelLoader;
-import me.dmillerw.remoteio.client.model.model.MagicalBakedModel;
 import me.dmillerw.remoteio.client.render.RenderTileRemoteInterface;
 import me.dmillerw.remoteio.lib.property.RenderState;
 import me.dmillerw.remoteio.network.player.ClientProxyPlayer;
@@ -69,7 +68,7 @@ public class ClientProxy extends CommonProxy implements IProxy {
                 IExtendedBlockState estate = (IExtendedBlockState) state;
                 RenderState renderState = estate.getValue(BlockRemoteInterface.RENDER_STATE);
 
-                IBlockState mimick = MagicalBakedModel.getMimickBlock(renderState);
+                IBlockState mimick = renderState.blockState;
                 if (mimick != null) {
                     return Minecraft.getMinecraft().getBlockColors().colorMultiplier(mimick, worldIn, pos, tintIndex);
                 }
