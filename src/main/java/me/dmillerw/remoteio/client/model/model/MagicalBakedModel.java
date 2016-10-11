@@ -288,6 +288,9 @@ public class MagicalBakedModel implements IBakedModel {
 
         if (renderState.camouflage) {
             IBakedModel model = rendererDispatcher().getModelForState(mimick);
+            if (model == rendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel())
+                return EMPTY_LIST;
+
             mimick = renderState.extendedBlockState;
 
             return model.getQuads(mimick, side, rand);
