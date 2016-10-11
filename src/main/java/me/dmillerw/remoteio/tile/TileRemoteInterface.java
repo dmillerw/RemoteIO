@@ -126,6 +126,10 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
             return null;
     }
 
+    private TileEntity getRemoteTile() {
+        return getRemoteState() == null ? null : worldObj.getTileEntity(getRemotePosition());
+    }
+
     @SideOnly(Side.CLIENT)
     public IExtendedBlockState getExtendedBlockState(IBlockState state) {
         IBlockState connected = getRemoteState();
@@ -151,13 +155,6 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
     }
 
     /* START CAPABILITY HANDLING */
-
-    private TileEntity getRemoteTile() {
-        if (remotePosition != null)
-            return worldObj.getTileEntity(remotePosition);
-        else
-            return null;
-    }
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
