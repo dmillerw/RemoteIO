@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -43,6 +42,9 @@ public class MagicalBakedModel implements IBakedModel {
     }
 
     public static IBlockState getMimickBlock(RenderState renderState) {
+        if (renderState == null)
+            return null;
+
         if (renderState.block == null || renderState.block.isEmpty() || !renderState.block.contains(":"))
             return null;
 
@@ -277,14 +279,12 @@ public class MagicalBakedModel implements IBakedModel {
             return getInactiveCube();
 
         if (renderState.camouflage) {
-            EnumBlockRenderType renderType = mimick.getRenderType();
-            if (renderType == EnumBlockRenderType.LIQUID || renderType == EnumBlockRenderType.MODEL) {
-                return rendererDispatcher().getModelForState(mimick).getQuads(mimick, side, rand);
-            } else if (renderType == EnumBlockRenderType.ENTITYBLOCK_ANIMATED) {
-                return EMPTY_LIST;
-            } else {
-                return getActiveCube();
-            }
+            List<BakedQuad> quads = rendererDispatcher().getModelForState(mimick).getQuads(mimick, side, rand);
+//            if (quads.isEmpty()) {
+//                return mimick.getBlock().getRenderType(mimick) == EnumBlockRenderType.ENTITYBLOCK_ANIMATED ? EMPTY_LIST : getActiveCube();
+//            } else {
+                return quads;
+//            }
         } else {
             return getActiveCube();
         }
