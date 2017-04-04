@@ -68,7 +68,7 @@ public class CommonProxy implements IProxy {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) entityPlayer;
         Container container = entityPlayer.openContainer;
         ServerProxyPlayer proxyPlayer = new ServerProxyPlayer(entityPlayerMP);
@@ -78,11 +78,11 @@ public class CommonProxy implements IProxy {
         proxyPlayer.currentWindowId = entityPlayerMP.currentWindowId;
         proxyPlayer.inventoryContainer = entityPlayerMP.inventoryContainer;
         proxyPlayer.openContainer = entityPlayerMP.openContainer;
-        proxyPlayer.worldObj = entityPlayerMP.worldObj;
+        proxyPlayer.world = entityPlayerMP.world;
 
-        EnumActionResult result = proxyPlayer.interactionManager.processRightClickBlock(proxyPlayer, world, heldItem, hand, pos, side, hitX, hitY, hitZ);
+        EnumActionResult result = proxyPlayer.interactionManager.processRightClickBlock(proxyPlayer, world, proxyPlayer.getHeldItem(hand), hand, pos, side, hitX, hitY, hitZ);
 
-        entityPlayerMP.interactionManager.thisPlayerMP = entityPlayerMP;
+        entityPlayerMP.interactionManager.player = entityPlayerMP;
         if (container != proxyPlayer.openContainer) {
             entityPlayerMP.openContainer = proxyPlayer.openContainer;
         }

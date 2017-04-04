@@ -55,15 +55,15 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
 
     @Override
     public void onLoad() {
-        if (!worldObj.isRemote) {
-            remotePosition = DeviceRegistry.getWatchedBlock(worldObj.provider.getDimension(), getFrequency());
+        if (!world.isRemote) {
+            remotePosition = DeviceRegistry.getWatchedBlock(world.provider.getDimension(), getFrequency());
         }
     }
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
-            BlockPos pos = DeviceRegistry.getWatchedBlock(worldObj.provider.getDimension(), getFrequency());
+        if (!world.isRemote) {
+            BlockPos pos = DeviceRegistry.getWatchedBlock(world.provider.getDimension(), getFrequency());
             if (pos == null) {
                 if (remotePosition != null) {
                     this.remotePosition = null;
@@ -113,8 +113,8 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
 
     public IBlockState getRemoteState() {
         if (remotePosition != null) {
-            IBlockState state = worldObj.getBlockState(remotePosition);
-            if (state.getBlock().isAir(state, worldObj, remotePosition))
+            IBlockState state = world.getBlockState(remotePosition);
+            if (state.getBlock().isAir(state, world, remotePosition))
                 return null;
 
             if (state.getBlock() == ModBlocks.analyzer || state.getBlock() == ModBlocks.remote_interface)
@@ -127,7 +127,7 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
     }
 
     private TileEntity getRemoteTile() {
-        return getRemoteState() == null ? null : worldObj.getTileEntity(getRemotePosition());
+        return getRemoteState() == null ? null : world.getTileEntity(getRemotePosition());
     }
 
     @SideOnly(Side.CLIENT)
@@ -138,15 +138,15 @@ public class TileRemoteInterface extends TileCore implements ITickable, IFrequen
                     .withProperty(BlockRemoteInterface.RENDER_STATE, RenderState.BLANK);
         }
 
-        TileEntity tile = worldObj.getTileEntity(getRemotePosition());
+        TileEntity tile = world.getTileEntity(getRemotePosition());
         boolean tileRender = false;
         if (tile != null) {
             tileRender = TileEntityRendererDispatcher.instance.getSpecialRenderer(tile) != null;
         }
 
         RenderState renderState = new RenderState();
-        renderState.blockState = connected.getActualState(worldObj, getRemotePosition());
-        renderState.extendedBlockState = connected.getBlock().getExtendedState(renderState.blockState, worldObj, getRemotePosition());
+        renderState.blockState = connected.getActualState(world, getRemotePosition());
+        renderState.extendedBlockState = connected.getBlock().getExtendedState(renderState.blockState, world, getRemotePosition());
         renderState.camouflage = true;
         renderState.tileRender = tileRender;
 

@@ -11,7 +11,7 @@ public class ClientProxyPlayer extends EntityPlayerSP {
 
     private EntityPlayerSP parentPlayer;
     public ClientProxyPlayer(EntityPlayerSP parentPlayer) {
-        super(Minecraft.getMinecraft(),parentPlayer.worldObj, parentPlayer.connection, parentPlayer.getStatFileWriter());
+        super(Minecraft.getMinecraft(),parentPlayer.world, parentPlayer.connection, parentPlayer.getStatFileWriter());
     }
 
     @Override

@@ -45,12 +45,12 @@ public class TileCore extends TileEntity {
     public void markDirtyAndNotify() {
         markDirty();
 
-        IBlockState state = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, state, state, 3);
+        IBlockState state = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, state, state, 3);
     }
 
     public void notifyNeighbors() {
-        worldObj.notifyNeighborsOfStateChange(pos, blockType);
+        world.notifyNeighborsOfStateChange(pos, blockType, true);
     }
 
     @Nullable
@@ -64,6 +64,6 @@ public class TileCore extends TileEntity {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readDescription(pkt.getNbtCompound());
-        worldObj.markBlockRangeForRenderUpdate(pos, pos);
+        world.markBlockRangeForRenderUpdate(pos, pos);
     }
 }

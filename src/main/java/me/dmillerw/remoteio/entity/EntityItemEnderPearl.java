@@ -22,7 +22,7 @@ public class EntityItemEnderPearl extends EntityItem {
     }
 
     public EntityItemEnderPearl(EntityItem entity) {
-        super(entity.worldObj, entity.posX, entity.posY, entity.posZ, entity.getEntityItem().copy());
+        super(entity.world, entity.posX, entity.posY, entity.posZ, entity.getEntityItem().copy());
     }
 
     @Override
@@ -30,18 +30,18 @@ public class EntityItemEnderPearl extends EntityItem {
         super.onUpdate();
 
         AxisAlignedBB aabb = new AxisAlignedBB(new BlockPos(this)).addCoord(1, 1, 1);
-        List<EntityFallingBlock> entities = worldObj.getEntitiesWithinAABB(EntityFallingBlock.class, aabb);
+        List<EntityFallingBlock> entities = world.getEntitiesWithinAABB(EntityFallingBlock.class, aabb);
 
         for (EntityFallingBlock block : entities) {
             IBlockState state = block.getBlock();
             if (state != null && state.getBlock() == Blocks.ANVIL) {
                 ItemStack stack = new ItemStack(Items.REDSTONE, rand.nextInt(5), 0);
-                EntityItem entity = new EntityItem(worldObj, posX, posY, posZ, stack);
+                EntityItem entity = new EntityItem(world, posX, posY, posZ, stack);
                 entity.setDefaultPickupDelay();
 
                 setDead();
 
-                worldObj.spawnEntityInWorld(entity);
+                world.spawnEntity(entity);
             }
         }
     }

@@ -24,5 +24,5 @@ public interface IProxy {
     void postInit(FMLPostInitializationEvent event);
 
     void handleClientBlockActivationMessage(CActivateBlock message);
-    boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ);
+    boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ);
 }

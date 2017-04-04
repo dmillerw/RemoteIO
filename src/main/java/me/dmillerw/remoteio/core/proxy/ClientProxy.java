@@ -86,7 +86,7 @@ public class ClientProxy extends CommonProxy implements IProxy {
 
     public void handleClientBlockActivationMessage(CActivateBlock message) {
         EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
-        World world = player.worldObj;
+        World world = player.world;
 
         RemoteIO.proxy.onBlockActivated(
                 world,
@@ -94,16 +94,15 @@ public class ClientProxy extends CommonProxy implements IProxy {
                 world.getBlockState(message.blockPos),
                 player,
                 EnumHand.MAIN_HAND,
-                player.getHeldItem(EnumHand.MAIN_HAND),
                 null,
                 0, 0, 0
         );
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (entityPlayer instanceof EntityPlayerMP) {
-            return super.onBlockActivated(world, pos, state, entityPlayer, hand, heldItem, side, hitX, hitY, hitZ);
+            return super.onBlockActivated(world, pos, state, entityPlayer, hand, side, hitX, hitY, hitZ);
         } else {
             EntityPlayerSP entityPlayerSP = (EntityPlayerSP) entityPlayer;
             ClientProxyPlayer proxyPlayer = new ClientProxyPlayer(entityPlayerSP);
@@ -113,13 +112,13 @@ public class ClientProxy extends CommonProxy implements IProxy {
             proxyPlayer.movementInput = entityPlayerSP.movementInput;
 
             //SoundHandler.INSTANCE.translateNextSound(x, y, z); //TODO: implement sound handler
-
+            ItemStack heldItem = entityPlayer.getHeldItem(hand);
             if (heldItem != null) {
-                if (heldItem.getItem().onItemUseFirst(heldItem, proxyPlayer, world, pos, side, hitX, hitY, hitZ, hand) == EnumActionResult.SUCCESS) {
+                if (heldItem.getItem().onItemUseFirst(proxyPlayer, world, pos, side, hitX, hitY, hitZ, hand) == EnumActionResult.SUCCESS) {
                     return false; // I think?
                 }
             }
-            boolean result = state.getBlock().onBlockActivated(proxyPlayer.worldObj, pos, state, proxyPlayer, hand, heldItem, side, hitX, hitY, hitZ);
+            boolean result = state.getBlock().onBlockActivated(proxyPlayer.world, pos, state, proxyPlayer, hand, side, hitX, hitY, hitZ);
 
             if (entityPlayerSP.openContainer != proxyPlayer.openContainer) {
                 entityPlayerSP.openContainer = proxyPlayer.openContainer;

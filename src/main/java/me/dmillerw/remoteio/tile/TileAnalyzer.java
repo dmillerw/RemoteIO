@@ -35,7 +35,7 @@ public class TileAnalyzer extends TileCore implements IFrequencyProvider {
 
     @Override
     public void onLoad() {
-        if (!worldObj.isRemote) {
+        if (!world.isRemote) {
             DeviceRegistry.registerAnalyzer(this);
         }
     }
