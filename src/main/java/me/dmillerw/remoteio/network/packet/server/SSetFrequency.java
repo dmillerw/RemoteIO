@@ -69,7 +69,7 @@ public class SSetFrequency implements IMessage {
                     player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, active);
                 }
             } else {
-                World world = ctx.getServerHandler().playerEntity.worldObj;
+                World world = ctx.getServerHandler().playerEntity.world;
                 IFrequencyProvider provider = (IFrequencyProvider) world.getTileEntity(message.tilePos);
 
                 if (provider != null)

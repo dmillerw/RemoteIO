@@ -88,7 +88,7 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile != null && tile instanceof TileRemoteInterface) {
             TileRemoteInterface remote = (TileRemoteInterface) tile;
@@ -101,7 +101,7 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
                     return false;
                 }
 
-                RemoteIO.proxy.onBlockActivated(worldIn, remote.getRemotePosition(), connected, playerIn, hand, null, side, hitX, hitY, hitZ);
+                RemoteIO.proxy.onBlockActivated(worldIn, remote.getRemotePosition(), connected, playerIn, hand, side, hitX, hitY, hitZ);
 
                 return true;
             }
@@ -147,8 +147,8 @@ public class BlockRemoteInterface extends Block implements ITileEntityProvider {
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-        TileEntity tile = worldIn.getTileEntity(pos);
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    	TileEntity tile = worldIn.getTileEntity(pos);
         if (tile != null && tile instanceof TileRemoteInterface) {
             TileRemoteInterface remote = (TileRemoteInterface) tile;
             IBlockState connected = remote.getRemoteState();

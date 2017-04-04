@@ -25,7 +25,7 @@ public class EntityEventHandler {
             entity.motionY = entityItem.motionY;
             entity.motionZ = entityItem.motionZ;
             entity.setDefaultPickupDelay();
-            entityItem.worldObj.spawnEntityInWorld(entity);
+            entityItem.world.spawnEntity(entity);
         }
     }
 }

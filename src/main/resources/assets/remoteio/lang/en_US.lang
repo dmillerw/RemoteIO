@@ -4,3 +4,6 @@ item.remoteio:pocket_gadget.name=Pocket Gadget
 # Blocks
 tile.remoteio:block.analyzer.name=Block Analyzer
 tile.remoteio:block.remote_interface.name=Remote interface
+
+# Tab
+itemGroup.remoteio=Remote IO

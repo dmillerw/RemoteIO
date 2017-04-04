@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 public class ItemPocketGadget extends Item {
 
     public static int getFrequency(ItemStack stack) {
-        if (stack == null)
+        if (stack.isEmpty())
             return 0;
 
         if (stack.hasTagCompound())
@@ -33,7 +33,7 @@ public class ItemPocketGadget extends Item {
     }
 
     public static void setFrequency(ItemStack stack, int frequency) {
-        if (stack == null)
+        if (stack.isEmpty())
             return;
 
         if (!stack.hasTagCompound())
@@ -56,20 +56,21 @@ public class ItemPocketGadget extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    	ItemStack itemStackIn = playerIn.getHeldItem(hand);
         if (playerIn.isSneaking()) {
-            playerIn.openGui(RemoteIO.instance, 0, playerIn.worldObj, 0, -1, 0);
+            playerIn.openGui(RemoteIO.instance, 0, playerIn.world, 0, -1, 0);
             return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
         }
         if (!worldIn.isRemote) {
             BlockPos pos = DeviceRegistry.getWatchedBlock(worldIn.provider.getDimension(), getFrequency(itemStackIn));
             if (pos != null) {
-                boolean result = RemoteIO.proxy.onBlockActivated(worldIn, pos, worldIn.getBlockState(pos), playerIn, hand, itemStackIn, null, 0, 0, 0);
+                boolean result = RemoteIO.proxy.onBlockActivated(worldIn, pos, worldIn.getBlockState(pos), playerIn, hand, null, 0, 0, 0);
                 PacketHandler.INSTANCE.sendTo(new CActivateBlock(pos), (EntityPlayerMP) playerIn);
                 if (result)
                     return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
             }
         }
-        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+        return super.onItemRightClick(worldIn, playerIn, hand);
     }
 }

@@ -19,7 +19,7 @@ public class PlayerEventHandler {
 
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.player.worldObj.isRemote) {
+        if (!event.player.world.isRemote) {
             CBulkFrequencyUpdate packet = new CBulkFrequencyUpdate(FrequencyRegistry.getSavedFrequencies());
             PacketHandler.INSTANCE.sendTo(packet, (EntityPlayerMP) event.player);
         }
