@@ -1,0 +1,9 @@
+# Items
+item.remoteio:pocket_gadget.name=Карманное устройство
+
+# Blocks
+tile.remoteio:block.analyzer.name=Блок-анализатор
+tile.remoteio:block.remote_interface.name=Дистанционный интерфейс
+
+# Tab
+itemGroup.remoteio=Remote IO
